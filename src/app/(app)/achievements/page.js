@@ -76,7 +76,7 @@ export default function AchievementsPage() {
       <h3 className="mb-3 text-lg font-extrabold text-ink">الأوسمة</h3>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         {BADGES.map((b, i) => {
-          const unlocked = xp >= b.need;
+          const unlocked = (profile?.xp || 0) >= b.need;
           return (
             <motion.div
               key={b.name}
