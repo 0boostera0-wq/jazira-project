@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase-client';
-import { BRAND } from '@/lib/constants';
+import BrandLogo from '@/components/BrandLogo';
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN = 60;
@@ -168,11 +168,8 @@ export default function VerifyEmailPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 py-12 bg-gradient-to-br from-cream to-white">
-      <Link href="/" className="mb-8 flex items-center gap-3">
-        <span className="text-4xl">{BRAND.emoji}</span>
-        <span className="text-3xl font-bold bg-gradient-to-r from-gold to-champagne bg-clip-text text-transparent">
-          {BRAND.name}
-        </span>
+      <Link href="/" className="mb-8">
+        <BrandLogo size="lg" />
       </Link>
 
       <motion.div

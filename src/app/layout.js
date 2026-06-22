@@ -1,7 +1,7 @@
 import { Tajawal } from "next/font/google";
 import { AppProvider } from "@/context/AppContext";
-import { AuthProvider as OldAuthProvider } from "@/context/AuthProvider";
-import { AuthProvider } from "@/hooks/useAuth";
+import { AuthProvider } from "@/context/AuthProvider";
+import { AuthProvider as FormAuthProvider } from "@/hooks/useAuth";
 import "./globals.css";
 
 const tajawal = Tajawal({
@@ -27,12 +27,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ar" dir="rtl" className={tajawal.variable}>
       <body className="min-h-screen antialiased">
+        {/* AuthProvider: app-wide Supabase auth state (isSignedIn, userId, name…) */}
         <AuthProvider>
-          <OldAuthProvider>
+          {/* FormAuthProvider: signIn / signUp / signOut actions for form pages */}
+          <FormAuthProvider>
             <AppProvider>
               {children}
             </AppProvider>
-          </OldAuthProvider>
+          </FormAuthProvider>
         </AuthProvider>
       </body>
     </html>

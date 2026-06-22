@@ -72,7 +72,7 @@ function renderRichText(text, onNavigate) {
 export default function AIAssistant() {
   const router = useRouter();
   const { isElite } = useApp();
-  const { userId } = useAuthUser();
+  const { userId, isSignedIn, isLoaded } = useAuthUser();
   const usage = useAiUsage(isElite, userId);
 
   const [open, setOpen] = useState(false);
@@ -308,6 +308,39 @@ export default function AIAssistant() {
                 <X size={18} />
               </button>
             </div>
+
+            {/* ===== GUEST GATE — not logged in ===== */}
+            {isLoaded && !isSignedIn ? (
+              <div className="relative flex flex-1 flex-col items-center justify-center gap-4 px-6 py-8 text-center">
+                <IslandBackdrop />
+                <div className="relative z-10">
+                  <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-3xl text-5xl shadow-gold"
+                    style={{ background: "linear-gradient(135deg,rgba(230,199,126,0.35),rgba(201,168,106,0.25))" }}>
+                    🔒
+                  </div>
+                  <h3 className="mb-2 text-lg font-extrabold text-ink">
+                    سجّل الدخول للمحادثة
+                  </h3>
+                  <p className="mb-5 text-sm text-ink-soft leading-relaxed">
+                    المساعد الذكي متاح فقط للمستخدمين المسجّلين. سجّل الدخول مجاناً لتحصل على{" "}
+                    <span className="font-bold text-gold">{usage.limit} رسائل</span> مجانية كل ٨ ساعات.
+                  </p>
+                  <button
+                    onClick={() => { setOpen(false); router.push("/sign-in"); }}
+                    className="btn-gold w-full"
+                  >
+                    تسجيل الدخول
+                  </button>
+                  <button
+                    onClick={() => { setOpen(false); router.push("/sign-up"); }}
+                    className="btn-ghost mt-2 w-full text-sm"
+                  >
+                    إنشاء حساب جديد مجاناً
+                  </button>
+                </div>
+              </div>
+            ) : (
+            <>
 
             {/* ===== HISTORY VIEW (three-line menu) ===== */}
             {view === "history" && (
@@ -555,9 +588,12 @@ export default function AIAssistant() {
                 </div>
               </>
             )}
+            </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
 }
+

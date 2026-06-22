@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
-import { BRAND } from '@/lib/constants';
+import BrandLogo from '@/components/BrandLogo';
+import GoogleSignInButton from '@/components/GoogleSignInButton';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -32,11 +33,8 @@ export default function SignInPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 py-12 bg-gradient-to-br from-cream to-white">
-      <Link href="/" className="mb-8 flex items-center gap-3">
-        <span className="text-4xl">{BRAND.emoji}</span>
-        <span className="text-3xl font-bold bg-gradient-to-r from-gold to-champagne bg-clip-text text-transparent">
-          {BRAND.name}
-        </span>
+      <Link href="/" className="mb-8">
+        <BrandLogo size="lg" />
       </Link>
 
       <div className="glass-strong w-full max-w-md rounded-3xl border border-white/20 p-8 shadow-lg">
@@ -46,7 +44,7 @@ export default function SignInPage() {
         </p>
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-100 p-3 text-sm text-red-700 border border-red-200">
+          <div className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 border border-red-200">
             {error}
           </div>
         )}
@@ -62,7 +60,8 @@ export default function SignInPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="example@email.com"
-              className="w-full rounded-lg border border-white/30 bg-white/50 px-4 py-2.5 text-ink placeholder-ink-soft focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+              dir="ltr"
+              className="w-full rounded-xl border border-white/30 bg-white/50 px-4 py-2.5 text-ink placeholder-ink-soft focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
             />
           </div>
 
@@ -76,20 +75,30 @@ export default function SignInPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="••••••••"
-              className="w-full rounded-lg border border-white/30 bg-white/50 px-4 py-2.5 text-ink placeholder-ink-soft focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+              className="w-full rounded-xl border border-white/30 bg-white/50 px-4 py-2.5 text-ink placeholder-ink-soft focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-gradient-to-r from-gold to-champagne px-4 py-2.5 font-semibold text-white transition-all hover:shadow-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-xl bg-gradient-to-r from-gold to-champagne px-4 py-2.5 font-semibold text-white transition-all hover:shadow-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
           </button>
         </form>
 
-        <div className="mt-6 border-t border-white/20 pt-6">
+        {/* Divider */}
+        <div className="my-6 flex items-center gap-3">
+          <span className="flex-1 border-t border-white/30" />
+          <span className="text-xs text-ink-soft">أو</span>
+          <span className="flex-1 border-t border-white/30" />
+        </div>
+
+        {/* Google OAuth */}
+        <GoogleSignInButton />
+
+        <div className="mt-6 border-t border-white/20 pt-6 space-y-3">
           <p className="text-center text-sm text-ink-soft">
             ليس لديك حساب؟{' '}
             <Link
@@ -99,15 +108,14 @@ export default function SignInPage() {
               إنشاء حساب جديد
             </Link>
           </p>
-        </div>
-
-        <div className="mt-4">
-          <button
-            type="button"
-            className="w-full text-sm text-ink-soft hover:text-ink transition"
-          >
-            هل نسيت كلمة المرور؟
-          </button>
+          <p className="text-center">
+            <button
+              type="button"
+              className="text-sm text-ink-soft hover:text-ink transition"
+            >
+              هل نسيت كلمة المرور؟
+            </button>
+          </p>
         </div>
       </div>
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -21,12 +20,12 @@ import {
   ChevronDown,
   Crown,
 } from "lucide-react";
-import { NAV_SECTIONS, BRAND } from "@/lib/constants";
-import { isClerkEnabled } from "@/lib/authConfig";
+import { NAV_SECTIONS } from "@/lib/constants";
 import { useAuthUser } from "@/context/AuthProvider";
 import { useApp } from "@/context/AppContext";
 import DefaultAvatar from "./DefaultAvatar";
 import GoldBadge from "./GoldBadge";
+import BrandLogo from "./BrandLogo";
 
 const ICONS = {
   Home,
@@ -60,10 +59,10 @@ export default function Sidebar() {
     router.push("/sign-in");
   };
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     close();
-    if (isClerkEnabled) signOut();
-    else router.push("/");
+    await signOut();
+    router.push("/");
   };
 
   const isActive = (href) =>
@@ -100,12 +99,9 @@ export default function Sidebar() {
               transition={{ type: "spring", stiffness: 300, damping: 32 }}
               className="glass-strong fixed right-0 top-0 z-50 flex h-full w-[86vw] max-w-[340px] flex-col overflow-hidden rounded-l-3xl"
             >
-              {/* Header / brand */}
+              {/* Header / brand — name then emoji in HTML = emoji after name visually in RTL */}
               <div className="flex items-center justify-between px-5 pt-5">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">{BRAND.emoji}</span>
-                  <span className="text-lg font-extrabold gold-text">{BRAND.name}</span>
-                </div>
+                <BrandLogo size="sm" />
                 <button
                   onClick={close}
                   className="rounded-full p-1.5 text-ink-soft hover:bg-white/40"
@@ -177,7 +173,6 @@ export default function Sidebar() {
                     {section.items.map((item) => {
                       const Icon = ICONS[item.icon] || Home;
 
-                      // Accordion item (المسارات الدراسية)
                       if (item.accordion) {
                         return (
                           <div key={item.key}>
@@ -226,7 +221,6 @@ export default function Sidebar() {
                         );
                       }
 
-                      // Regular link item
                       return (
                         <button
                           key={item.key}
@@ -249,7 +243,6 @@ export default function Sidebar() {
                 ))}
               </nav>
 
-              {/* Logout — only when signed in */}
               {isSignedIn && (
                 <div className="border-t border-champagne-200/60 p-4">
                   <button

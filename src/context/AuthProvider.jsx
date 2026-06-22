@@ -1,48 +1,63 @@
 "use client";
 
-import { createContext, useContext } from "react";
-import { useUser, useClerk } from "@clerk/nextjs";
-import { isClerkEnabled } from "@/lib/authConfig";
+import { createContext, useContext, useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase-client";
 
-// Unified auth context so the rest of the app never imports Clerk directly.
-// Shape: { isLoaded, isSignedIn, name, email, imageUrl, signOut }
+// Unified auth context backed by Supabase.
+// Shape: { isLoaded, isSignedIn, userId, name, email, imageUrl, signOut }
+// Components import useAuthUser() — never touch Supabase or Clerk directly.
 const AuthContext = createContext(null);
 
-// Reads the real Clerk session. Only rendered when Clerk is configured.
-function ClerkAuthBridge({ children }) {
-  const { isLoaded, isSignedIn, user } = useUser();
-  const { signOut } = useClerk();
-
-  const value = {
-    isLoaded,
-    isSignedIn: !!isSignedIn,
-    userId: user?.id || null,
-    name: user?.fullName || user?.firstName || "",
-    email: user?.primaryEmailAddress?.emailAddress || "",
-    imageUrl: user?.imageUrl || "",
-    signOut: () => signOut({ redirectUrl: "/" }),
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-// Guest fallback used when Clerk keys are absent (demo mode).
-function GuestAuthBridge({ children }) {
-  const value = {
-    isLoaded: true,
+export function AuthProvider({ children }) {
+  const supabase = createClient();
+  const [state, setState] = useState({
+    isLoaded: false,
     isSignedIn: false,
     userId: null,
     name: "",
     email: "",
     imageUrl: "",
-    signOut: () => {},
-  };
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+  });
 
-export function AuthProvider({ children }) {
-  if (isClerkEnabled) return <ClerkAuthBridge>{children}</ClerkAuthBridge>;
-  return <GuestAuthBridge>{children}</GuestAuthBridge>;
+  useEffect(() => {
+    function fromUser(user) {
+      if (!user) {
+        return { isLoaded: true, isSignedIn: false, userId: null, name: "", email: "", imageUrl: "" };
+      }
+      const meta = user.user_metadata || {};
+      return {
+        isLoaded: true,
+        isSignedIn: true,
+        userId: user.id,
+        name: meta.full_name || meta.name || user.email?.split("@")[0] || "",
+        email: user.email || "",
+        imageUrl: meta.avatar_url || meta.picture || "",
+      };
+    }
+
+    // Initial session check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setState(fromUser(session?.user ?? null));
+    });
+
+    // Keep in sync with any auth state change (login, logout, token refresh, OAuth callback)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setState(fromUser(session?.user ?? null));
+    });
+
+    return () => subscription.unsubscribe();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const signOut = async () => {
+    const supabaseClient = createClient();
+    await supabaseClient.auth.signOut();
+  };
+
+  return (
+    <AuthContext.Provider value={{ ...state, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuthUser() {
