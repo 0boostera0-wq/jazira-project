@@ -71,6 +71,8 @@ export default function SignUpPage() {
     );
 
     if (result.success) {
+      // Store email so verify-email page can read it without a session
+      sessionStorage.setItem('otp_email', formData.email);
       router.push('/auth/verify-email');
     } else {
       setError(result.error || 'حدث خطأ أثناء إنشاء الحساب');
