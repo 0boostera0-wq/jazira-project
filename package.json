@@ -10,9 +10,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^5.7.5",
     "@clerk/localizations": "latest",
+    "@clerk/nextjs": "^5.7.5",
     "@google/generative-ai": "^0.21.0",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.2",
     "framer-motion": "^11.11.17",
     "lucide-react": "^0.460.0",
     "next": "14.2.18",

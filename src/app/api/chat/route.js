@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { createClient } from "@/lib/supabase-server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -6,6 +7,7 @@ export const dynamic = "force-dynamic";
 // ---------------------------------------------------------------------------
 // مساعد جزيرة الذكي — secure server-side chat endpoint.
 // The API key is read ONLY here (server). It is never sent to the browser.
+// Messages are saved to Supabase chat_history table.
 // ---------------------------------------------------------------------------
 
 const SYSTEM_INSTRUCTION = `أنت "مساعد جزيرة الذكي"، مرشد تعليمي راقٍ وودود في منصة جزيرة التعليمية (طابع جزيرة 🏝️).
@@ -54,9 +56,17 @@ export async function POST(req) {
     return textStream("طلب غير مصرّح به.", 403);
   }
 
+  // Check authentication
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return textStream("يجب تسجيل الدخول أولاً", 401);
+  }
+
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
-  // 1) Missing key — clear setup guidance.
+  // 1) Missing key — clear setup guidance (development-only message).
   if (!apiKey) {
     return textStream(
       "⚙️ المساعد غير مُهيّأ بعد: أضِف المتغيّر GEMINI_API_KEY في ملف .env.local ثم أعد تشغيل الخادم."
@@ -79,11 +89,20 @@ export async function POST(req) {
   }
 
   const messages = Array.isArray(body?.messages) ? body.messages : [];
+  const sessionId = body?.sessionId || crypto.randomUUID();
   const last = messages[messages.length - 1];
   const userText = (last?.content || "").toString().slice(0, 4000);
   if (!userText.trim()) return textStream("الرسالة فارغة.", 400);
 
   const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+
+  // Save user message to Supabase
+  await supabase.from('chat_history').insert({
+    user_id: user.id,
+    session_id: sessionId,
+    message_type: 'user',
+    content: userText,
+  });
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -110,13 +129,26 @@ export async function POST(req) {
     const result = await chat.sendMessageStream(userText);
     const encoder = new TextEncoder();
 
+    // Collect full response to save to database
+    let fullResponse = '';
+
     const stream = new ReadableStream({
       async start(controller) {
         try {
           for await (const chunk of result.stream) {
             const text = chunk.text();
-            if (text) controller.enqueue(encoder.encode(text));
+            if (text) {
+              fullResponse += text;
+              controller.enqueue(encoder.encode(text));
+            }
           }
+          // Save assistant response to Supabase
+          await supabase.from('chat_history').insert({
+            user_id: user.id,
+            session_id: sessionId,
+            message_type: 'assistant',
+            content: fullResponse,
+          });
         } catch {
           controller.enqueue(encoder.encode("\n\n[انقطع البث مؤقتًا، حاول مرة أخرى]"));
         } finally {

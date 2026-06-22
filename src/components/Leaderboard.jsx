@@ -1,76 +1,85 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { Crown, Medal } from "lucide-react";
-import { useApp } from "@/context/AppContext";
-import { useAuthUser } from "@/context/AuthProvider";
-import GoldBadge from "./GoldBadge";
-
-// Simulated competitors. The current user is injected with their real XP.
-const SEED = [
-  { name: "نورة العتيبي", xp: 980, elite: true },
-  { name: "عبدالله القحطاني", xp: 910, elite: true },
-  { name: "سارة الدوسري", xp: 870, elite: false },
-  { name: "محمد الشهري", xp: 760, elite: false },
-  { name: "ريم الغامدي", xp: 690, elite: true },
-  { name: "فيصل المطيري", xp: 540, elite: false },
-  { name: "لمى الحربي", xp: 430, elite: false },
-];
+import { motion } from 'framer-motion';
+import { Crown, Medal } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useLeaderboard } from '@/hooks/useSupabase';
+import GoldBadge from './GoldBadge';
 
 const rankStyles = {
-  1: { ring: "ring-[#C9A227]", badge: "bg-[#C9A227]" },
-  2: { ring: "ring-[#B9B9B9]", badge: "bg-[#B9B9B9]" },
-  3: { ring: "ring-[#CD7F32]", badge: "bg-[#CD7F32]" },
+  1: { ring: 'ring-[#C9A227]', badge: 'bg-[#C9A227]' },
+  2: { ring: 'ring-[#B9B9B9]', badge: 'bg-[#B9B9B9]' },
+  3: { ring: 'ring-[#CD7F32]', badge: 'bg-[#CD7F32]' },
 };
 
+function EmptyState() {
+  return (
+    <div className="glass-strong rounded-3xl p-12 text-center">
+      <span className="text-5xl">📊</span>
+      <h3 className="mt-4 text-lg font-bold text-ink">
+        لا توجد نتائج بعد
+      </h3>
+      <p className="mt-2 text-sm text-ink-soft">
+        ابدأ بحل التحديات لتظهر في لوحة المتصدرين
+      </p>
+    </div>
+  );
+}
+
 export default function Leaderboard() {
-  const { xp, isElite } = useApp();
-  const { name, isSignedIn } = useAuthUser();
+  const { profile } = useAuth();
+  const { leaderboard, loading } = useLeaderboard(10);
 
-  const me = {
-    name: isSignedIn && name ? name : "أنت",
-    xp,
-    elite: isElite,
-    isMe: true,
-  };
+  if (loading) {
+    return (
+      <div className="glass-strong rounded-3xl p-12 text-center">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gold"></div>
+        <p className="mt-4 text-ink-soft">جاري التحميل...</p>
+      </div>
+    );
+  }
 
-  const rows = [...SEED, me].sort((a, b) => b.xp - a.xp);
+  if (!leaderboard || leaderboard.length === 0) {
+    return <EmptyState />;
+  }
 
   return (
     <div className="glass-strong rounded-3xl p-5">
-      <h3 className="mb-4 flex items-center gap-2 text-lg font-extrabold text-ink">
-        <Crown className="text-gold" size={22} /> لوحة المتصدرين
-      </h3>
-      <div className="space-y-2">
-        {rows.map((r, i) => {
-          const rank = i + 1;
-          const rs = rankStyles[rank];
+      <div className="space-y-3">
+        {leaderboard.map((entry, index) => {
+          const isMe = profile && entry.id === profile.id;
+          const rank = (index + 1);
+          const style = rankStyles[rank] || { ring: 'ring-gray-300', badge: 'bg-gray-300' };
+
           return (
             <motion.div
-              key={r.name + i}
-              initial={{ opacity: 0, x: 20 }}
+              key={entry.id}
+              initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className={`flex items-center gap-3 rounded-2xl p-3 ${
-                r.isMe ? "bg-champagne-100 ring-2 ring-champagne-400" : "bg-white/50"
+              transition={{ delay: index * 0.05 }}
+              className={`flex items-center justify-between rounded-2xl p-4 ${
+                isMe ? 'bg-gold/10 ring-2 ring-gold' : 'bg-white/30'
               }`}
-              style={{ border: "1px solid rgba(201,168,106,0.25)" }}
             >
-              <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-white ${
-                  rs ? rs.badge : "bg-champagne-400"
-                }`}
-              >
-                {rank <= 3 ? <Medal size={16} /> : rank}
-              </span>
-              <div className="flex flex-1 items-center gap-2">
-                <span className={`font-bold ${r.isMe ? "text-gold-dark" : "text-ink"}`}>
-                  {r.name}
-                </span>
-                {r.elite && <GoldBadge />}
-                {r.isMe && <span className="text-xs text-ink-muted">(أنت)</span>}
+              <div className="flex items-center gap-3 flex-1">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-full ${style.badge} text-white font-bold`}>
+                  {rank === 1 ? <Crown size={20} /> : rank === 2 ? <Medal size={20} /> : rank}
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`font-bold ${isMe ? 'text-gold' : 'text-ink'}`}>
+                      {entry.username || entry.full_name || 'مستخدم'}
+                    </span>
+                    {entry.is_elite && <GoldBadge />}
+                  </div>
+                  <p className="text-xs text-ink-soft">{entry.role === 'student' ? 'طالب' : entry.role}</p>
+                </div>
               </div>
-              <span className="ltr-nums font-extrabold text-ink">{r.xp} XP</span>
+
+              <div className="text-right">
+                <p className="text-lg font-extrabold gold-text ltr-nums">{entry.xp} XP</p>
+              </div>
             </motion.div>
           );
         })}

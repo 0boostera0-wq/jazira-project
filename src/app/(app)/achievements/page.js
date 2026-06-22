@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { Trophy, Flame, Star, Lock } from "lucide-react";
-import PageHeader from "@/components/PageHeader";
-import { useApp } from "@/context/AppContext";
+import { motion } from 'framer-motion';
+import { Trophy, Flame, Star, Lock } from 'lucide-react';
+import PageHeader from '@/components/PageHeader';
+import { useAuth } from '@/hooks/useAuth';
 
 const BADGES = [
   { icon: "🎯", name: "أول اختبار", desc: "أكمل اختبارك الأول", need: 0 },
@@ -17,8 +17,8 @@ const BADGES = [
 const WEEK = ["السبت", "الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
 
 export default function AchievementsPage() {
-  const { xp } = useApp();
-  const streakDays = 3; // demo streak
+  const { profile } = useAuth();
+  const streakDays = 0;
 
   return (
     <div>
@@ -36,7 +36,7 @@ export default function AchievementsPage() {
           </span>
           <div>
             <p className="text-sm text-ink-soft">نقاط الخبرة</p>
-            <p className="text-3xl font-extrabold gold-text ltr-nums">{xp} XP</p>
+          <p className="text-3xl font-extrabold gold-text ltr-nums">{profile?.xp || 0} XP</p>
           </div>
         </div>
         <div className="glass-strong flex items-center gap-4 rounded-3xl p-5">

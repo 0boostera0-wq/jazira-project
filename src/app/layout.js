@@ -1,9 +1,7 @@
 import { Tajawal } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import { arSA } from "@clerk/localizations";
-import { isClerkEnabled } from "@/lib/authConfig";
 import { AppProvider } from "@/context/AppContext";
-import { AuthProvider } from "@/context/AuthProvider";
+import { AuthProvider as OldAuthProvider } from "@/context/AuthProvider";
+import { AuthProvider } from "@/hooks/useAuth";
 import "./globals.css";
 
 const tajawal = Tajawal({
@@ -26,34 +24,17 @@ export const viewport = {
 };
 
 export default function RootLayout({ children }) {
-  const tree = (
+  return (
     <html lang="ar" dir="rtl" className={tajawal.variable}>
       <body className="min-h-screen antialiased">
-        <AppProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </AppProvider>
+        <AuthProvider>
+          <OldAuthProvider>
+            <AppProvider>
+              {children}
+            </AppProvider>
+          </OldAuthProvider>
+        </AuthProvider>
       </body>
     </html>
   );
-
-  // Only mount ClerkProvider when real keys exist, otherwise run in demo mode.
-  if (isClerkEnabled) {
-    return (
-      <ClerkProvider
-        localization={arSA}
-        appearance={{
-          variables: {
-            colorPrimary: "#C9A86A",
-            colorText: "#4A3F2F",
-            colorBackground: "#FFFDF9",
-            borderRadius: "1rem",
-          },
-        }}
-      >
-        {tree}
-      </ClerkProvider>
-    );
-  }
-
-  return tree;
 }
