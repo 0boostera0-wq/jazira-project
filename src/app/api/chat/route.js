@@ -66,18 +66,10 @@ export async function POST(req) {
 
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
-  // 1) Missing key — clear setup guidance (development-only message).
-  if (!apiKey) {
+  // Key missing entirely — setup guidance only (key value is never exposed).
+  if (!apiKey || apiKey.length < 8) {
     return textStream(
-      "⚙️ المساعد غير مُهيّأ بعد: أضِف المتغيّر GEMINI_API_KEY في ملف .env.local ثم أعد تشغيل الخادم."
-    );
-  }
-
-  // 2) Obviously malformed key — fail fast with a precise message.
-  if (!apiKey.startsWith("AIza")) {
-    return textStream(
-      "🔑 مفتاح Gemini الحالي يبدو غير صالح. مفاتيح Gemini تبدأ بـ \"AIza\". " +
-        "أنشئ مفتاحًا صحيحًا من https://aistudio.google.com/apikey وضعه في GEMINI_API_KEY داخل .env.local."
+      "⚙️ المساعد غير مُهيّأ بعد: أضِف المتغيّر GEMINI_API_KEY في إعدادات Vercel أو ملف .env.local ثم أعد التشغيل."
     );
   }
 
