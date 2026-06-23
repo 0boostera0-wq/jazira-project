@@ -4,7 +4,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase-client";
 
 // Unified Supabase auth context.
-// Fetches profiles.display_name + avatar_url as the authoritative source — never exposes email as a display name.
+// Uses profiles.username (public display name) and profiles.full_name.
+// Never exposes email as a display name.
 // Shape: { isLoaded, isSignedIn, userId, name, email, imageUrl, needsProfileSetup, signOut }
 const AuthContext = createContext(null);
 
@@ -37,16 +38,31 @@ export function AuthProvider({ children }) {
 
       const meta = user.user_metadata || {};
 
-      // profiles table is the authoritative source for display name and avatar
+      // profiles table is the authoritative source — select existing columns only
       const { data: profile } = await supabase
         .from("profiles")
-        .select("display_name, avatar_url")
+        .select("username, full_name, avatar_url")
         .eq("id", user.id)
         .single();
 
-      // Prefer DB display_name; fall back to OAuth metadata but NEVER to email prefix
-      const name = profile?.display_name || meta.full_name || meta.name || "";
-      const imageUrl = profile?.avatar_url || meta.avatar_url || meta.picture || "";
+      // Priority: DB username → DB full_name → OAuth full_name → OAuth name
+      // NEVER fall back to email or email prefix
+      const name =
+        profile?.username ||
+        profile?.full_name ||
+        meta.full_name ||
+        meta.name ||
+        "";
+
+      const imageUrl =
+        profile?.avatar_url ||
+        meta.avatar_url ||
+        meta.picture ||
+        "";
+
+      // needsProfileSetup: true when the user has no username set in DB
+      // (email-registered users have username set during signUp; Google users need profile-setup)
+      const needsProfileSetup = !profile?.username;
 
       return {
         isLoaded: true,
@@ -55,7 +71,7 @@ export function AuthProvider({ children }) {
         name,
         email: user.email || "",
         imageUrl,
-        needsProfileSetup: !profile?.display_name,
+        needsProfileSetup,
       };
     }
 

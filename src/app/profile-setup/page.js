@@ -11,7 +11,7 @@ import Link from "next/link";
 export default function ProfileSetupPage() {
   const router = useRouter();
   const { userId, isLoaded, isSignedIn } = useAuthUser();
-  const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [error, setError] = useState("");
@@ -34,13 +34,17 @@ export default function ProfileSetupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!displayName.trim()) { setError("الاسم المعروض مطلوب"); return; }
+    const trimmed = username.trim();
+    if (!trimmed) { setError("الاسم المعروض مطلوب"); return; }
+    if (trimmed.length < 2) { setError("الاسم يجب أن يكون حرفين على الأقل"); return; }
+
     setLoading(true);
     setError("");
 
     const supabase = createClient();
     let avatar_url = null;
 
+    // Upload avatar if selected
     if (avatarFile) {
       const ext = avatarFile.name.split(".").pop();
       const path = `${userId}/avatar.${ext}`;
@@ -49,12 +53,19 @@ export default function ProfileSetupPage() {
         .upload(path, avatarFile, { upsert: true });
 
       if (!uploadError) {
-        const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+        const { data: { publicUrl } } = supabase.storage
+          .from("avatars")
+          .getPublicUrl(path);
         avatar_url = publicUrl;
       }
     }
 
-    const updates = { id: userId, display_name: displayName.trim() };
+    // Upsert into profiles using existing columns: username, full_name, avatar_url
+    const updates = {
+      id: userId,
+      username: trimmed,
+      full_name: trimmed,
+    };
     if (avatar_url) updates.avatar_url = avatar_url;
 
     const { error: profileError } = await supabase
@@ -62,7 +73,8 @@ export default function ProfileSetupPage() {
       .upsert(updates, { onConflict: "id" });
 
     if (profileError) {
-      setError("حدث خطأ أثناء حفظ الملف الشخصي. حاول مجدداً.");
+      console.error("Profile upsert error:", profileError.message);
+      setError("تعذّر حفظ الملف الشخصي. تأكد من صلاحيات قاعدة البيانات وحاول مجدداً.");
       setLoading(false);
       return;
     }
@@ -70,7 +82,7 @@ export default function ProfileSetupPage() {
     router.push("/dashboard");
   };
 
-  const initial = displayName.trim().charAt(0) || "م";
+  const initial = username.trim().charAt(0) || "م";
 
   return (
     <div
@@ -92,7 +104,7 @@ export default function ProfileSetupPage() {
           </p>
         </div>
 
-        {/* Avatar upload */}
+        {/* Avatar upload with first-letter fallback */}
         <div className="mb-6 flex justify-center">
           <div className="relative">
             <button
@@ -137,8 +149,8 @@ export default function ProfileSetupPage() {
             </label>
             <input
               type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               maxLength={50}
               placeholder="مثال: طالب جزيرة"
@@ -151,7 +163,7 @@ export default function ProfileSetupPage() {
 
           <button
             type="submit"
-            disabled={loading || !displayName.trim()}
+            disabled={loading || !username.trim()}
             className="w-full rounded-xl bg-gradient-to-r from-gold to-champagne px-4 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (

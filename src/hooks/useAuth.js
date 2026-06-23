@@ -103,9 +103,8 @@ export function useAuth() {
     }
   }, [supabase]);
 
-  const signUp = useCallback(async (email, password, username, fullName) => {
+  const signUp = useCallback(async (email, password, username, fullName, phone) => {
     try {
-      // Sign up user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -113,18 +112,29 @@ export function useAuth() {
 
       if (authError) throw authError;
 
-      // Create profile
-      const { error: profileError } = await supabase
+      // Build profile row — try with phone first, fall back without it
+      const baseProfile = {
+        id: authData.user.id,
+        username,
+        full_name: fullName,
+      };
+
+      const profileWithPhone = phone ? { ...baseProfile, phone } : baseProfile;
+
+      let { error: profileError } = await supabase
         .from('profiles')
-        .insert({
-          id: authData.user.id,
-          username,
-          full_name: fullName,
-        });
+        .insert(profileWithPhone);
+
+      // If insert failed because phone column doesn't exist, retry without it
+      if (profileError && phone && /column|phone/i.test(profileError.message || '')) {
+        ({ error: profileError } = await supabase
+          .from('profiles')
+          .insert(baseProfile));
+      }
 
       if (profileError) throw profileError;
 
-      // Create subscription record
+      // Create free subscription record (ignore if it already exists)
       await supabase.from('subscriptions').insert({
         user_id: authData.user.id,
         tier: 'free',
