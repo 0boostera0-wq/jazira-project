@@ -1,0 +1,170 @@
+"use client";
+
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { Camera } from "lucide-react";
+import { createClient } from "@/lib/supabase-client";
+import { useAuthUser } from "@/context/AuthProvider";
+import BrandLogo from "@/components/BrandLogo";
+import Link from "next/link";
+
+export default function ProfileSetupPage() {
+  const router = useRouter();
+  const { userId, isLoaded, isSignedIn } = useAuthUser();
+  const [displayName, setDisplayName] = useState("");
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const fileRef = useRef(null);
+
+  // Guard: redirect unauthenticated visitors
+  if (isLoaded && !isSignedIn) {
+    router.replace("/sign-in");
+    return null;
+  }
+
+  const handleAvatarSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarFile(file);
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!displayName.trim()) { setError("الاسم المعروض مطلوب"); return; }
+    setLoading(true);
+    setError("");
+
+    const supabase = createClient();
+    let avatar_url = null;
+
+    if (avatarFile) {
+      const ext = avatarFile.name.split(".").pop();
+      const path = `${userId}/avatar.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(path, avatarFile, { upsert: true });
+
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+        avatar_url = publicUrl;
+      }
+    }
+
+    const updates = { id: userId, display_name: displayName.trim() };
+    if (avatar_url) updates.avatar_url = avatar_url;
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert(updates, { onConflict: "id" });
+
+    if (profileError) {
+      setError("حدث خطأ أثناء حفظ الملف الشخصي. حاول مجدداً.");
+      setLoading(false);
+      return;
+    }
+
+    router.push("/dashboard");
+  };
+
+  const initial = displayName.trim().charAt(0) || "م";
+
+  return (
+    <div
+      className="flex min-h-screen flex-col items-center justify-center px-6 py-12"
+      style={{ background: "linear-gradient(135deg, #fffdf5 0%, #ffffff 100%)" }}
+    >
+      <Link href="/" className="mb-8">
+        <BrandLogo size="lg" />
+      </Link>
+
+      <div
+        className="glass-strong w-full max-w-md rounded-3xl p-8 shadow-lg"
+        style={{ border: "1px solid rgba(201,168,106,0.25)" }}
+      >
+        <div className="mb-6 text-center">
+          <h1 className="text-2xl font-bold text-ink mb-2">أهلاً في جزيرة! 🏝️</h1>
+          <p className="text-sm text-ink-soft">
+            اختر اسمك المعروض للمجتمع — لن يظهر بريدك الإلكتروني لأحد.
+          </p>
+        </div>
+
+        {/* Avatar upload */}
+        <div className="mb-6 flex justify-center">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="flex h-24 w-24 items-center justify-center rounded-full bg-gold-gradient text-4xl font-bold text-white overflow-hidden ring-4 ring-champagne-200 hover:ring-champagne-400 transition-all"
+              aria-label="اختر صورة شخصية"
+            >
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <span>{initial}</span>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-gold text-white shadow-gold"
+            >
+              <Camera size={14} />
+            </button>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarSelect}
+              hidden
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-ink mb-2">
+              الاسم المعروض
+            </label>
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              required
+              maxLength={50}
+              placeholder="مثال: طالب جزيرة"
+              className="w-full rounded-xl border border-white/30 bg-white/50 px-4 py-2.5 text-ink focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+            />
+            <p className="mt-1.5 text-xs text-ink-muted">
+              هذا ما يراه الآخرون في المجتمع. يمكنك تغييره لاحقاً من الإعدادات.
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || !displayName.trim()}
+            className="w-full rounded-xl bg-gradient-to-r from-gold to-champagne px-4 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                جاري الحفظ...
+              </span>
+            ) : (
+              "ابدأ رحلتك في جزيرة ✨"
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}

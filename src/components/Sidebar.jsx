@@ -138,12 +138,7 @@ export default function Sidebar() {
                           </p>
                           {isElite && <GoldBadge />}
                         </div>
-                        {email && (
-                          <p className="truncate text-xs text-ink-muted" dir="ltr">
-                            {email}
-                          </p>
-                        )}
-                        <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-gold-gradient px-2 py-0.5 text-[11px] font-bold text-white">
+<span className="mt-1 inline-flex items-center gap-1 rounded-full bg-gold-gradient px-2 py-0.5 text-[11px] font-bold text-white">
                           <Crown size={11} /> المستوى الذهبي
                         </span>
                       </>
