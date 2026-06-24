@@ -23,6 +23,8 @@ export default function SignInPage() {
     const result = await signIn(email, password);
 
     if (result.success) {
+      // Refresh so server components & auth-aware UI pick up the new session
+      router.refresh();
       router.push('/dashboard');
     } else {
       setError(result.error || 'حدث خطأ أثناء تسجيل الدخول');

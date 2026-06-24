@@ -131,6 +131,7 @@ export default function VerifyEmailPage() {
 
       sessionStorage.removeItem('otp_email');
       setSuccess('تم التحقق بنجاح! جاري التوجيه إلى لوحة التحكم...');
+      router.refresh();
       setTimeout(() => router.push('/dashboard'), 1500);
     } catch {
       setError('حدث خطأ غير متوقع، يرجى المحاولة مجدداً');

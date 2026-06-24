@@ -7,6 +7,19 @@
   --champagne: #c9a86a;
   --gold: #c9a227;
   --ink: #4a3f2f;
+  --app-bg: linear-gradient(135deg, #ffffff 0%, #fffdfa 55%, #fdf8ef 100%);
+  --orb-1: rgba(201, 168, 106, 0.12);
+  --orb-2: rgba(201, 162, 39, 0.08);
+  color-scheme: light;
+}
+
+/* ── Dark mode palette ─────────────────────────────────────────────── */
+html.dark {
+  --ink: #e9e3d4;
+  --app-bg: linear-gradient(135deg, #0c0e14 0%, #11131b 55%, #141019 100%);
+  --orb-1: rgba(201, 162, 39, 0.10);
+  --orb-2: rgba(120, 110, 200, 0.08);
+  color-scheme: dark;
 }
 
 * {
@@ -21,8 +34,9 @@ body {
   color: var(--ink);
   font-family: var(--font-arabic), "Tajawal", system-ui, -apple-system, sans-serif;
   /* Brighter luxury base: mostly white with a whisper of warm cream */
-  background: linear-gradient(135deg, #ffffff 0%, #fffdfa 55%, #fdf8ef 100%);
+  background: var(--app-bg);
   background-attachment: fixed;
+  transition: background 0.4s ease, color 0.3s ease;
 }
 
 /* Soft ambient champagne orbs — subtle, premium */
@@ -33,9 +47,72 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(42rem 42rem at 88% -12%, rgba(201, 168, 106, 0.12), transparent 60%),
-    radial-gradient(38rem 38rem at -6% 112%, rgba(201, 162, 39, 0.08), transparent 55%);
+    radial-gradient(42rem 42rem at 88% -12%, var(--orb-1), transparent 60%),
+    radial-gradient(38rem 38rem at -6% 112%, var(--orb-2), transparent 55%);
 }
+
+/* ── Dark mode surface & text overrides ────────────────────────────── */
+/* Glass surfaces become deep translucent panels */
+html.dark .glass {
+  background: rgba(28, 31, 42, 0.62);
+  border-color: rgba(201, 168, 106, 0.22);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+html.dark .glass-strong {
+  background: rgba(24, 27, 37, 0.82);
+  border-color: rgba(201, 168, 106, 0.26);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45), 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Text tokens */
+html.dark .text-ink { color: #e9e3d4; }
+html.dark .text-ink-soft { color: #c0b8a4; }
+html.dark .text-ink-muted { color: #948c78; }
+
+/* Solid white surfaces → dark translucent (cards, inputs, pills) */
+html.dark .bg-white\/30 { background-color: rgba(255, 255, 255, 0.05); }
+html.dark .bg-white\/50 { background-color: rgba(255, 255, 255, 0.06); }
+html.dark .bg-white\/55 { background-color: rgba(255, 255, 255, 0.07); }
+html.dark .bg-white\/60 { background-color: rgba(255, 255, 255, 0.07); }
+html.dark .bg-white\/70 { background-color: rgba(255, 255, 255, 0.08); }
+html.dark .bg-white\/90 { background-color: rgba(28, 31, 42, 0.9); }
+html.dark .bg-white { background-color: #1b1e28; }
+
+/* White borders soften */
+html.dark .border-white\/20 { border-color: rgba(255, 255, 255, 0.08); }
+html.dark .border-white\/30 { border-color: rgba(255, 255, 255, 0.1); }
+
+/* Full-screen auth gradient (from-cream to-white) → dark */
+html.dark .from-cream { --tw-gradient-from: #11131b var(--tw-gradient-from-position); --tw-gradient-to: rgb(17 19 27 / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+html.dark .to-white { --tw-gradient-to: #0c0e14 var(--tw-gradient-to-position); }
+
+/* Placeholder + ghost button */
+html.dark .placeholder-ink-soft::placeholder { color: #7d765f; }
+html.dark .btn-ghost {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(201, 168, 106, 0.3);
+}
+
+/* Light helper backgrounds used on alerts keep contrast in dark */
+html.dark .bg-red-50 { background-color: rgba(127, 29, 29, 0.25); }
+html.dark .bg-green-50 { background-color: rgba(20, 83, 45, 0.25); }
+html.dark .bg-cream,
+html.dark .bg-cream-50,
+html.dark .bg-cream-100 { background-color: #14161d; }
+
+/* ── Animated starfield ────────────────────────────────────────────── */
+@keyframes jz-twinkle {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+@keyframes jz-drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-2000px); }
+}
+/* Starfield is nearly invisible on the bright light theme, vivid in the dark. */
+.jz-starfield { opacity: 0; transition: opacity 0.6s ease; }
+html.dark .jz-starfield { opacity: 1; }
 
 @layer components {
   /* Glassmorphism surface — brighter, whiter, softer shadows */

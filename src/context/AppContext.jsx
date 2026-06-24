@@ -25,6 +25,7 @@ export function AppProvider({ children }) {
   const [freeTrialUsed, setFreeTrialUsed] = useState(false);
   const [referrals, setReferrals] = useState(0);
   const [referralCode, setReferralCode] = useState("");
+  const [theme, setThemeState] = useState("light");
   const [hydrated, setHydrated] = useState(false);
 
   // Hydrate from localStorage on mount.
@@ -40,7 +41,34 @@ export function AppProvider({ children }) {
       window.localStorage.setItem(STORAGE.referralCode, JSON.stringify(code));
     }
     setReferralCode(code);
+
+    // Theme: read saved preference (falls back to light)
+    const savedTheme = readJSON(STORAGE.theme, "light");
+    setThemeState(savedTheme === "dark" ? "dark" : "light");
+
     setHydrated(true);
+  }, []);
+
+  // Keep <html class="dark"> in sync with the theme state.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const root = document.documentElement;
+    if (theme === "dark") root.classList.add("dark");
+    else root.classList.remove("dark");
+  }, [theme]);
+
+  const setTheme = useCallback((next) => {
+    const value = next === "dark" ? "dark" : "light";
+    setThemeState(value);
+    window.localStorage.setItem(STORAGE.theme, JSON.stringify(value));
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setThemeState((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      window.localStorage.setItem(STORAGE.theme, JSON.stringify(next));
+      return next;
+    });
   }, []);
 
   const persist = (key, value) =>
@@ -95,6 +123,10 @@ export function AppProvider({ children }) {
     referrals,
     referralTarget: REFERRAL_TARGET,
     referralCode,
+    theme,
+    isDark: theme === "dark",
+    setTheme,
+    toggleTheme,
     subscribeElite,
     cancelElite,
     addXp,

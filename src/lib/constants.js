@@ -95,4 +95,5 @@ export const STORAGE = {
   referrals: "jazira_referrals_v1",
   referralCode: "jazira_referral_code_v1",
   chats: "jazira_chats_v1", // prefix; actual key is per-user
+  theme: "jazira_theme_v1", // "light" | "dark"
 };

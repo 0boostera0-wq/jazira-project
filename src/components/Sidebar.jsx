@@ -44,7 +44,7 @@ export default function Sidebar() {
   const [tracksOpen, setTracksOpen] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-  const { isSignedIn, name, email, imageUrl, signOut } = useAuthUser();
+  const { isSignedIn, name, imageUrl, signOut } = useAuthUser();
   const { isElite } = useApp();
 
   const close = () => setOpen(false);

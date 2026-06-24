@@ -21,15 +21,14 @@ function Toggle({ on, onClick }) {
 }
 
 export default function SettingsPage() {
-  const { isElite, xp } = useApp();
-  const { isSignedIn, name, email } = useAuthUser();
+  const { isElite, xp, isDark, toggleTheme } = useApp();
+  const { isSignedIn, name } = useAuthUser();
   const [notif, setNotif] = useState(true);
-  const [dark, setDark] = useState(false);
   const [sound, setSound] = useState(true);
 
   const rows = [
     { icon: Bell, label: "الإشعارات", on: notif, set: () => setNotif((v) => !v) },
-    { icon: Moon, label: "الوضع الليلي", on: dark, set: () => setDark((v) => !v) },
+    { icon: Moon, label: "الوضع الليلي", on: isDark, set: toggleTheme },
     { icon: Globe, label: "المؤثرات الصوتية", on: sound, set: () => setSound((v) => !v) },
   ];
 
@@ -43,7 +42,6 @@ export default function SettingsPage() {
         {isSignedIn ? (
           <div className="space-y-1 text-sm">
             <p className="text-ink"><b>الاسم:</b> {name || "—"}</p>
-            <p className="text-ink" dir="ltr"><b>البريد:</b> {email || "—"}</p>
             <p className="flex items-center gap-1.5 text-ink">
               <b>الباقة:</b>{" "}
               {isElite ? (
