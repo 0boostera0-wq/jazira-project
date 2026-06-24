@@ -79,7 +79,8 @@ export const NAV_SECTIONS = [
     title: "الدعم والمعلومات",
     items: [
       { key: "about", label: "عن جزيرة", href: "/about", icon: "Info" },
-      { key: "feedback", label: "تقييم الآراء", href: "/feedback", icon: "Star" },
+      { key: "reviews", label: "آراء الطلبة", href: "/reviews", icon: "Star" },
+      { key: "faq", label: "الأسئلة الشائعة", href: "/faq", icon: "HelpCircle" },
       { key: "support", label: "الدعم الفني", href: "/support", icon: "Headphones" },
       { key: "settings", label: "الإعدادات", href: "/settings", icon: "Settings" },
     ],

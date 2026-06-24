@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useContext, createContext, useCallback } from 'react';
 import { createClient } from '@/lib/supabase-client';
+import { genHandle } from '@/lib/profile';
 
 const AuthContext = createContext(null);
 
@@ -112,10 +113,12 @@ export function useAuth() {
 
       if (authError) throw authError;
 
-      // Build profile row — try with phone first, fall back without it
+      // username is a UNIQUE internal handle (never displayed). full_name is the
+      // public, duplicate-allowed display name. Generating a unique handle lets
+      // two users share the same visible name without a unique-constraint clash.
       const baseProfile = {
         id: authData.user.id,
-        username,
+        username: genHandle(username || fullName),
         full_name: fullName,
       };
 

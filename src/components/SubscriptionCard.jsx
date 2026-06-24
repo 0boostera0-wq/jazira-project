@@ -1,36 +1,47 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Check, Crown, ShieldCheck, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Check, Crown, ShieldCheck, X, Lock } from "lucide-react";
 import { ELITE } from "@/lib/constants";
 import { useApp } from "@/context/AppContext";
+import PaymentBadges, {
+  ApplePayBadge,
+  MadaBadge,
+  VisaBadge,
+  MastercardBadge,
+  PayPalBadge,
+} from "@/components/PaymentBadges";
 
-// Mada / Apple Pay marks (inline so no external assets are needed).
-function PayMark({ label, bg, color }) {
+const COMING_SOON = "سيتم ربط بوابة الدفع قريبًا";
+
+function PayOption({ active, onClick, children }) {
   return (
-    <span
-      className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold"
-      style={{ background: bg, color }}
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-right transition ${
+        active
+          ? "ring-2 ring-gold bg-gold/5"
+          : "bg-white/70 hover:bg-white"
+      }`}
+      style={{ border: "1px solid rgba(201,168,106,0.3)" }}
     >
-      {label}
-    </span>
+      {children}
+    </button>
   );
 }
 
 export default function SubscriptionCard() {
-  const { isElite, subscribeElite, cancelElite } = useApp();
+  const { isElite } = useApp();
   const [showPay, setShowPay] = useState(false);
-  const [processing, setProcessing] = useState(false);
+  const [method, setMethod] = useState("applepay");
+  const [notice, setNotice] = useState("");
 
-  const pay = () => {
-    setProcessing(true);
-    // Simulated Stripe/Tap payment confirmation.
-    setTimeout(() => {
-      subscribeElite();
-      setProcessing(false);
-      setShowPay(false);
-    }, 1400);
+  const handleAttempt = () => {
+    // No real gateway yet — never fake a successful payment / upgrade.
+    setNotice(COMING_SOON);
+    setTimeout(() => setNotice(""), 4000);
   };
 
   return (
@@ -69,13 +80,8 @@ export default function SubscriptionCard() {
         </ul>
 
         {isElite ? (
-          <div className="mt-6">
-            <div className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-50 py-3 font-bold text-emerald-700">
-              <ShieldCheck size={20} /> أنت مشترك في باقة النخبة
-            </div>
-            <button onClick={cancelElite} className="mt-2 w-full text-center text-xs text-ink-muted underline">
-              إلغاء الاشتراك (للعرض التجريبي)
-            </button>
+          <div className="mt-6 flex items-center justify-center gap-2 rounded-2xl bg-emerald-50 py-3 font-bold text-emerald-700">
+            <ShieldCheck size={20} /> أنت مشترك في باقة النخبة
           </div>
         ) : (
           <button onClick={() => setShowPay(true)} className="btn-gold mt-6 w-full text-lg">
@@ -83,56 +89,132 @@ export default function SubscriptionCard() {
           </button>
         )}
 
-        {/* Payment methods */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-          <span className="text-xs text-ink-muted">طرق الدفع المدعومة:</span>
-          <PayMark label="Apple Pay" bg="#000" color="#fff" />
-          <PayMark label="mada" bg="#1A1A6E" color="#84D8F0" />
-          <PayMark label="Visa" bg="#1A1F71" color="#fff" />
-          <PayMark label="Mastercard" bg="#EB001B" color="#fff" />
+        {/* Supported methods — professional brand badges */}
+        <div className="mt-5">
+          <p className="mb-2 text-center text-xs text-ink-muted">طرق الدفع المدعومة</p>
+          <PaymentBadges />
         </div>
+
+        <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-ink-muted">
+          <ShieldCheck size={13} /> دفع آمن ومشفّر — لا نخزّن بيانات بطاقتك
+        </p>
       </motion.div>
 
-      {/* Payment modal (Stripe/Tap UI) */}
-      {showPay && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/40 p-4 backdrop-blur-sm">
+      {/* Professional checkout modal */}
+      <AnimatePresence>
+        {showPay && (
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="glass-strong w-full max-w-md rounded-3xl p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/40 p-4 backdrop-blur-sm"
+            onClick={() => setShowPay(false)}
           >
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-extrabold text-ink">إتمام الدفع الآمن</h3>
-              <button onClick={() => setShowPay(false)} className="rounded-full p-1.5 hover:bg-white/50">
-                <X size={20} />
-              </button>
-            </div>
-
-            <button onClick={pay} disabled={processing} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-black py-3.5 font-bold text-white disabled:opacity-60">
-               Apple Pay
-            </button>
-
-            <div className="my-3 flex items-center gap-3 text-xs text-ink-muted">
-              <span className="h-px flex-1 bg-champagne-200" /> أو ببطاقة مدى / ائتمانية <span className="h-px flex-1 bg-champagne-200" />
-            </div>
-
-            <div className="space-y-3">
-              <input placeholder="رقم البطاقة" dir="ltr" className="w-full rounded-2xl bg-white/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-champagne-400" style={{ border: "1px solid rgba(201,168,106,0.3)" }} />
-              <div className="flex gap-3">
-                <input placeholder="MM / YY" dir="ltr" className="w-1/2 rounded-2xl bg-white/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-champagne-400" style={{ border: "1px solid rgba(201,168,106,0.3)" }} />
-                <input placeholder="CVC" dir="ltr" className="w-1/2 rounded-2xl bg-white/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-champagne-400" style={{ border: "1px solid rgba(201,168,106,0.3)" }} />
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass-strong w-full max-w-md rounded-3xl p-6"
+            >
+              <div className="mb-1 flex items-center justify-between">
+                <h3 className="text-lg font-extrabold text-ink">إتمام الاشتراك</h3>
+                <button onClick={() => setShowPay(false)} className="rounded-full p-1.5 hover:bg-white/50">
+                  <X size={20} />
+                </button>
               </div>
-            </div>
+              <p className="mb-4 text-sm text-ink-soft">
+                باقة النخبة — <b className="gold-text">{ELITE.priceSAR} ريال / شهريًا</b>
+              </p>
 
-            <button onClick={pay} disabled={processing} className="btn-gold mt-4 w-full">
-              {processing ? "جارٍ المعالجة..." : `ادفع ${ELITE.priceSAR} ريال`}
-            </button>
-            <p className="mt-2 flex items-center justify-center gap-1 text-center text-xs text-ink-muted">
-              <ShieldCheck size={13} /> دفع آمن ومشفّر عبر Stripe / Tap
-            </p>
+              {/* Method selector */}
+              <div className="space-y-2">
+                <PayOption active={method === "applepay"} onClick={() => setMethod("applepay")}>
+                  <span className="font-semibold text-ink">Apple Pay</span>
+                  <ApplePayBadge />
+                </PayOption>
+                <PayOption active={method === "mada"} onClick={() => setMethod("mada")}>
+                  <span className="font-semibold text-ink">مدى / بطاقة ائتمانية</span>
+                  <span className="flex gap-1"><MadaBadge /><VisaBadge /><MastercardBadge /></span>
+                </PayOption>
+                <PayOption active={method === "paypal"} onClick={() => setMethod("paypal")}>
+                  <span className="font-semibold text-ink">PayPal</span>
+                  <PayPalBadge />
+                </PayOption>
+              </div>
+
+              {/* Method-specific UI */}
+              <div className="mt-4">
+                {method === "applepay" && (
+                  <button
+                    onClick={handleAttempt}
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-black py-3.5 font-semibold text-white"
+                  >
+                    <ApplePayBadge /> الدفع عبر Apple Pay
+                  </button>
+                )}
+
+                {method === "mada" && (
+                  <div className="space-y-3">
+                    <input
+                      placeholder="اسم حامل البطاقة"
+                      className="w-full rounded-2xl bg-white/80 px-4 py-3 text-sm text-ink outline-none focus:ring-2 focus:ring-champagne-400"
+                      style={{ border: "1px solid rgba(201,168,106,0.3)" }}
+                    />
+                    <input
+                      placeholder="رقم البطاقة"
+                      dir="ltr"
+                      inputMode="numeric"
+                      className="w-full rounded-2xl bg-white/80 px-4 py-3 text-sm text-ink outline-none focus:ring-2 focus:ring-champagne-400"
+                      style={{ border: "1px solid rgba(201,168,106,0.3)" }}
+                    />
+                    <div className="flex gap-3">
+                      <input
+                        placeholder="تاريخ الانتهاء MM/YY"
+                        dir="ltr"
+                        className="w-1/2 rounded-2xl bg-white/80 px-4 py-3 text-sm text-ink outline-none focus:ring-2 focus:ring-champagne-400"
+                        style={{ border: "1px solid rgba(201,168,106,0.3)" }}
+                      />
+                      <input
+                        placeholder="CVV"
+                        dir="ltr"
+                        inputMode="numeric"
+                        maxLength={4}
+                        className="w-1/2 rounded-2xl bg-white/80 px-4 py-3 text-sm text-ink outline-none focus:ring-2 focus:ring-champagne-400"
+                        style={{ border: "1px solid rgba(201,168,106,0.3)" }}
+                      />
+                    </div>
+                    <button onClick={handleAttempt} className="btn-gold w-full">
+                      ادفع {ELITE.priceSAR} ريال
+                    </button>
+                  </div>
+                )}
+
+                {method === "paypal" && (
+                  <button
+                    onClick={handleAttempt}
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 font-extrabold italic text-white"
+                    style={{ background: "#0070BA" }}
+                  >
+                    <span style={{ color: "#fff" }}>Pay</span>
+                    <span style={{ color: "#cfe8ff" }}>Pal</span>
+                  </button>
+                )}
+              </div>
+
+              {notice && (
+                <p className="mt-4 flex items-center justify-center gap-1.5 rounded-2xl bg-gold/10 py-3 text-center text-sm font-semibold text-gold-dark">
+                  <Lock size={15} /> {notice}
+                </p>
+              )}
+
+              <p className="mt-3 flex items-center justify-center gap-1 text-center text-xs text-ink-muted">
+                <ShieldCheck size={13} /> دفع آمن ومشفّر
+              </p>
+            </motion.div>
           </motion.div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </>
   );
 }

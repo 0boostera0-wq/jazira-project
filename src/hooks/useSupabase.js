@@ -19,7 +19,7 @@ export function useLeaderboard(limit = 10) {
         const supabase = createClient();
         const { data } = await supabase
           .from("profiles")
-          .select("id, username, full_name, display_name, xp, is_elite, role")
+          .select("id, username, full_name, avatar_url, xp, is_elite, role")
           .order("xp", { ascending: false })
           .limit(limit);
         if (!cancelled) setLeaderboard(data || []);

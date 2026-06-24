@@ -1,20 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Copy, Check, Users, Gift, UserPlus } from "lucide-react";
+import { Copy, Check, Users, Gift, UserPlus, Sparkles, Lock } from "lucide-react";
 import { useApp } from "@/context/AppContext";
+import { useAuthUser } from "@/context/AuthProvider";
+import { createClient } from "@/lib/supabase-client";
+
+const REWARD_AT = 5;
 
 export default function ReferralProgress() {
-  const { referrals, referralTarget, referralCode, addReferral, hasPremiumAccess } = useApp();
+  const { referrals, referralRewardUnlocked, syncReferrals } = useApp();
+  const { userId, isSignedIn } = useAuthUser();
   const [copied, setCopied] = useState(false);
 
+  // Personal invite link tied to the account id (stable & unique per user).
+  const code = userId || "guest";
   const link =
     typeof window !== "undefined"
-      ? `${window.location.origin}/?ref=${referralCode}`
-      : `https://jazira.edu/?ref=${referralCode}`;
+      ? `${window.location.origin}/?ref=${code}`
+      : `https://jazira.edu/?ref=${code}`;
 
-  const pct = Math.min(100, Math.round((referrals / referralTarget) * 100));
+  // Pull the authoritative successful-invite count from Supabase.
+  const refresh = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const supabase = createClient();
+      const { count } = await supabase
+        .from("referrals")
+        .select("id", { count: "exact", head: true })
+        .eq("referrer_id", userId);
+      if (typeof count === "number") syncReferrals(count);
+    } catch {
+      // table may not exist yet — keep local value
+    }
+  }, [userId, syncReferrals]);
+
+  useEffect(() => { refresh(); }, [refresh]);
 
   const copy = async () => {
     try {
@@ -29,7 +51,7 @@ export default function ReferralProgress() {
       try {
         await navigator.share({
           title: "منصة جزيرة التعليمية",
-          text: "انضم إليّ في منصة جزيرة وافتح اختبارات القدرات!",
+          text: "انضم إليّ في منصة جزيرة!",
           url: link,
         });
       } catch {}
@@ -37,6 +59,9 @@ export default function ReferralProgress() {
       copy();
     }
   };
+
+  const toReward = Math.max(0, REWARD_AT - referrals);
+  const pct = Math.min(100, Math.round((referrals / REWARD_AT) * 100));
 
   return (
     <div className="glass-strong rounded-3xl p-6">
@@ -46,34 +71,52 @@ export default function ReferralProgress() {
         </span>
         <div>
           <h3 className="text-lg font-extrabold text-ink">نظام الدعوات</h3>
-          <p className="text-sm text-ink-soft">ادعُ {referralTarget} أصدقاء لفتح الاختبارات مجانًا</p>
+          <p className="text-sm text-ink-soft">ادعُ أصدقاءك بلا حدود — كل دعوة ناجحة تقرّبك من المزايا</p>
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div className="mt-5">
-        <div className="mb-1.5 flex items-center justify-between text-sm font-bold text-ink">
-          <span className="flex items-center gap-1">
-            <Users size={16} className="text-champagne-500" /> {referrals} / {referralTarget} دعوات ناجحة
-          </span>
-          <span className="text-gold-dark ltr-nums">{pct}%</span>
+      {/* Unlimited success counter (no "/5") */}
+      <div className="mt-5 flex items-center gap-3 rounded-2xl bg-white/60 p-4">
+        <Users size={22} className="text-champagne-500" />
+        <div>
+          <p className="text-2xl font-extrabold gold-text ltr-nums">{referrals}</p>
+          <p className="text-sm font-semibold text-ink-soft">دعوات ناجحة</p>
         </div>
-        <div className="h-3 w-full overflow-hidden rounded-full bg-white/60">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ duration: 0.6 }}
-            className="h-full rounded-full bg-gold-gradient"
-          />
-        </div>
-        {hasPremiumAccess && (
-          <p className="mt-2 flex items-center gap-1 text-sm font-bold text-emerald-700">
-            <Check size={16} /> رائع! تم فتح جميع الاختبارات المميّزة.
+      </div>
+
+      {/* Reward state */}
+      {referralRewardUnlocked ? (
+        <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+          <p className="flex items-center gap-2 font-bold text-emerald-700">
+            <Sparkles size={18} /> تم فتح مزايا الدعوات بنجاح
           </p>
-        )}
-      </div>
+          <ul className="mt-2 space-y-1 text-sm text-emerald-800">
+            <li className="flex items-center gap-1.5"><Check size={14} /> 5 محاولات إضافية للمساعد الذكي</li>
+            <li className="flex items-center gap-1.5"><Check size={14} /> 3 محاولات اختبار مجانية</li>
+            <li className="flex items-center gap-1.5"><Check size={14} /> وصول محدود لمزايا مختارة من النخبة</li>
+          </ul>
+        </div>
+      ) : (
+        <div className="mt-4">
+          <p className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-ink">
+            <Lock size={15} className="text-champagne-500" />
+            ادعُ {REWARD_AT} أصدقاء وافتح مزايا مجانية إضافية
+          </p>
+          <div className="h-3 w-full overflow-hidden rounded-full bg-white/60">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${pct}%` }}
+              transition={{ duration: 0.6 }}
+              className="h-full rounded-full bg-gold-gradient"
+            />
+          </div>
+          <p className="mt-1.5 text-xs text-ink-muted">
+            باقٍ {toReward} {toReward === 1 ? "دعوة" : "دعوات"} لفتح المزايا الإضافية
+          </p>
+        </div>
+      )}
 
-      {/* Share link */}
+      {/* Personal share link */}
       <div className="mt-5">
         <p className="mb-1.5 text-sm font-semibold text-ink-soft">رابط الدعوة الخاص بك</p>
         <div className="flex items-center gap-2">
@@ -94,16 +137,13 @@ export default function ReferralProgress() {
           <button onClick={share} className="btn-ghost flex items-center gap-2 text-sm">
             <UserPlus size={16} /> مشاركة الرابط
           </button>
-          {/* Demo helper to simulate a successful referral */}
-          <button
-            onClick={addReferral}
-            disabled={referrals >= referralTarget}
-            className="btn-ghost flex items-center gap-2 text-sm disabled:opacity-50"
-            title="محاكاة دعوة ناجحة (للعرض التجريبي)"
-          >
-            <Users size={16} /> محاكاة دعوة ناجحة
-          </button>
         </div>
+
+        {!isSignedIn && (
+          <p className="mt-3 text-xs text-ink-muted">
+            سجّل الدخول للحصول على رابط دعوة شخصي وتتبّع دعواتك الناجحة.
+          </p>
+        )}
       </div>
     </div>
   );

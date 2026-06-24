@@ -97,13 +97,20 @@ export function AppProvider({ children }) {
     persist(STORAGE.freeTrialUsed, true);
   }, []);
 
-  // Simulate a successful referral (in production a webhook would call this).
+  // Invitations are UNLIMITED — there is no cap on how many friends a user invites.
   const addReferral = useCallback(() => {
     setReferrals((prev) => {
-      const next = Math.min(prev + 1, REFERRAL_TARGET);
+      const next = prev + 1;
       persist(STORAGE.referrals, next);
       return next;
     });
+  }, []);
+
+  // Set the count from an authoritative source (Supabase count of successful invites).
+  const syncReferrals = useCallback((n) => {
+    const next = Math.max(0, Number(n) || 0);
+    setReferrals(next);
+    persist(STORAGE.referrals, next);
   }, []);
 
   const resetReferrals = useCallback(() => {
@@ -111,8 +118,11 @@ export function AppProvider({ children }) {
     persist(STORAGE.referrals, 0);
   }, []);
 
-  // Premium access: subscribed OR reached the referral target.
-  const hasPremiumAccess = isElite || referrals >= REFERRAL_TARGET;
+  // Referral REWARD (limited bonus features) unlocks at REFERRAL_TARGET invites.
+  const referralRewardUnlocked = referrals >= REFERRAL_TARGET;
+
+  // Premium access: real subscription OR the referral reward threshold.
+  const hasPremiumAccess = isElite || referralRewardUnlocked;
 
   const value = {
     hydrated,
@@ -122,6 +132,7 @@ export function AppProvider({ children }) {
     freeTrialUsed,
     referrals,
     referralTarget: REFERRAL_TARGET,
+    referralRewardUnlocked,
     referralCode,
     theme,
     isDark: theme === "dark",
@@ -132,6 +143,7 @@ export function AppProvider({ children }) {
     addXp,
     markFreeTrialUsed,
     addReferral,
+    syncReferrals,
     resetReferrals,
   };
 

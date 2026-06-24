@@ -69,7 +69,7 @@ export default function Leaderboard() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <span className={`font-bold ${isMe ? 'text-gold' : 'text-ink'}`}>
-                      {entry.username || entry.full_name || 'مستخدم'}
+                      {entry.full_name || 'مستخدم'}
                     </span>
                     {entry.is_elite && <GoldBadge />}
                   </div>

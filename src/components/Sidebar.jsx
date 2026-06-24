@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -12,6 +11,7 @@ import {
   Trophy,
   Info,
   Star,
+  HelpCircle,
   Headphones,
   Settings,
   LogOut,
@@ -24,6 +24,7 @@ import { NAV_SECTIONS } from "@/lib/constants";
 import { useAuthUser } from "@/context/AuthProvider";
 import { useApp } from "@/context/AppContext";
 import DefaultAvatar from "./DefaultAvatar";
+import Avatar from "./Avatar";
 import GoldBadge from "./GoldBadge";
 import BrandLogo from "./BrandLogo";
 
@@ -35,6 +36,7 @@ const ICONS = {
   Trophy,
   Info,
   Star,
+  HelpCircle,
   Headphones,
   Settings,
 };
@@ -62,6 +64,7 @@ export default function Sidebar() {
   const handleSignOut = async () => {
     close();
     await signOut();
+    router.refresh();
     router.push("/");
   };
 
@@ -117,14 +120,8 @@ export default function Sidebar() {
                   className="flex items-center gap-3 rounded-3xl bg-white/55 p-3.5"
                   style={{ border: "1px solid rgba(201,168,106,0.35)" }}
                 >
-                  {isSignedIn && imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt={name || "المستخدم"}
-                      width={56}
-                      height={56}
-                      className="h-14 w-14 rounded-full object-cover ring-2 ring-champagne-300"
-                    />
+                  {isSignedIn ? (
+                    <Avatar src={imageUrl} name={name} size={56} />
                   ) : (
                     <DefaultAvatar size={56} />
                   )}

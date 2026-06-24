@@ -3,6 +3,7 @@ import { AppProvider } from "@/context/AppContext";
 import { AuthProvider } from "@/context/AuthProvider";
 import { AuthProvider as FormAuthProvider } from "@/hooks/useAuth";
 import Starfield from "@/components/Starfield";
+import ReferralCapture from "@/components/ReferralCapture";
 import "./globals.css";
 
 // Apply saved theme before first paint to avoid a light→dark flash.
@@ -38,6 +39,8 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen antialiased">
         {/* Animated starfield — vivid in dark mode, hidden in light */}
         <Starfield />
+        {/* Captures ?ref= invite codes and attributes successful invitations */}
+        <ReferralCapture />
         {/* AuthProvider: app-wide Supabase auth state (isSignedIn, userId, name…) */}
         <AuthProvider>
           {/* FormAuthProvider: signIn / signUp / signOut actions for form pages */}

@@ -210,7 +210,7 @@ function PostCard({ post, currentUserId, onDelete, onEdit }) {
   const [localComments, setLocalComments] = useState(post.comments_count ?? 0);
 
   const isOwner = currentUserId && post.user_id === currentUserId;
-  const authorName = post.profiles?.display_name || "مستخدم";
+  const authorName = post.profiles?.full_name || "مستخدم";
   const authorAvatar = post.profiles?.avatar_url || null;
 
   const fetchComments = useCallback(async () => {
@@ -218,7 +218,7 @@ function PostCard({ post, currentUserId, onDelete, onEdit }) {
     const supabase = createClient();
     const { data } = await supabase
       .from("post_comments")
-      .select("id, content, created_at, user_id, profiles(display_name, avatar_url)")
+      .select("id, content, created_at, user_id, profiles(full_name, avatar_url)")
       .eq("post_id", post.id)
       .order("created_at", { ascending: true });
     setComments(data || []);
@@ -288,7 +288,7 @@ function PostCard({ post, currentUserId, onDelete, onEdit }) {
     const { data } = await supabase
       .from("post_comments")
       .insert({ post_id: post.id, user_id: currentUserId, content: commentText.trim() })
-      .select("id, content, created_at, user_id, profiles(display_name, avatar_url)")
+      .select("id, content, created_at, user_id, profiles(full_name, avatar_url)")
       .single();
     if (data) {
       setComments((prev) => [...prev, data]);
@@ -439,7 +439,7 @@ function PostCard({ post, currentUserId, onDelete, onEdit }) {
               {comments.map((c) => (
                 <div key={c.id} className="flex items-start gap-2">
                   <Avatar
-                    name={c.profiles?.display_name}
+                    name={c.profiles?.full_name}
                     src={c.profiles?.avatar_url}
                     size={32}
                   />
@@ -448,7 +448,7 @@ function PostCard({ post, currentUserId, onDelete, onEdit }) {
                     style={{ border: "1px solid rgba(201,168,106,0.2)" }}
                   >
                     <p className="text-xs font-bold text-ink mb-0.5">
-                      {c.profiles?.display_name || "مستخدم"}
+                      {c.profiles?.full_name || "مستخدم"}
                     </p>
                     <p className="text-sm text-ink-soft">{c.content}</p>
                   </div>
@@ -493,7 +493,7 @@ export default function CommunityFeed() {
     const supabase = createClient();
     const { data } = await supabase
       .from("community_posts")
-      .select("id, user_id, content, media_url, media_type, likes_count, dislikes_count, comments_count, reposts_count, created_at, profiles(display_name, avatar_url)")
+      .select("id, user_id, content, media_url, media_type, likes_count, dislikes_count, comments_count, reposts_count, created_at, profiles(full_name, avatar_url)")
       .order("created_at", { ascending: false })
       .limit(30);
     setPosts(data || []);
@@ -529,7 +529,7 @@ export default function CommunityFeed() {
         comments_count: 0,
         reposts_count: 0,
       })
-      .select("id, user_id, content, media_url, media_type, likes_count, dislikes_count, comments_count, reposts_count, created_at, profiles(display_name, avatar_url)")
+      .select("id, user_id, content, media_url, media_type, likes_count, dislikes_count, comments_count, reposts_count, created_at, profiles(full_name, avatar_url)")
       .single();
 
     if (error) throw error;
