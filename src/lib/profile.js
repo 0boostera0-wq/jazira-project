@@ -19,6 +19,25 @@ export function avatarInitial(name) {
   return n ? n.charAt(0) : "م";
 }
 
+// Public display-name rules (mirrors the DB update_full_name() enforcement):
+//  - exactly two words
+//  - Arabic OR English letters and spaces only (no digits/symbols/emoji)
+// Returns { ok, error } with an Arabic message. Duplicates ARE allowed.
+const NAME_RE = /^[A-Za-z؀-ۿ]+\s+[A-Za-z؀-ۿ]+$/;
+
+export function validateFullName(name) {
+  const trimmed = (name || "").trim().replace(/\s+/g, " ");
+  if (!trimmed) return { ok: false, error: "الاسم المعروض مطلوب" };
+
+  const words = trimmed.split(" ");
+  if (words.length === 1) return { ok: false, error: "يجب إدخال اسمين (الاسم الأول والثاني)" };
+  if (words.length > 2) return { ok: false, error: "الاسم يجب أن يتكوّن من كلمتين فقط" };
+  if (!NAME_RE.test(trimmed)) {
+    return { ok: false, error: "يُسمح بالحروف العربية أو الإنجليزية فقط بدون أرقام أو رموز" };
+  }
+  return { ok: true, value: trimmed };
+}
+
 // A unique, never-displayed internal handle. Satisfies a NOT NULL / UNIQUE
 // `username` column without affecting the public (duplicate-allowed) name.
 export function genHandle(name) {

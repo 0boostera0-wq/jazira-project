@@ -25,6 +25,7 @@ import IslandBackdrop from "./IslandBackdrop";
 import ChatMascots from "./ChatMascots";
 import { useApp } from "@/context/AppContext";
 import { useAuthUser } from "@/context/AuthProvider";
+import { usePreferences } from "@/context/PreferencesProvider";
 import { useAiUsage, formatCountdown } from "@/hooks/useAiUsage";
 import { supportWhatsAppUrl } from "@/lib/constants";
 import { FAQ_GROUPS } from "@/lib/faq";
@@ -39,7 +40,15 @@ import {
 const GREETING = "مرحباً بك في منصة جزيرة! كيف أقدر أساعدك اليوم؟ 🏝️";
 const greetingMsg = () => ({ role: "assistant", content: GREETING });
 
-const QUICK_PROMPTS = ["أين اختبار القدرات؟", "اشرح لي التناظر اللفظي", "كيف أشترك في باقة النخبة؟"];
+// At least 5 useful suggestions (shown only when the AI-suggestions pref is on).
+const QUICK_PROMPTS = [
+  "أين اختبار القدرات؟",
+  "اشرح لي التناظر اللفظي",
+  "كيف أشترك في باقة النخبة؟",
+  "أعطني خطة مذاكرة لأسبوع",
+  "لخّص لي درس الكسور",
+  "كيف أنظّم وقتي للاختبارات؟",
+];
 
 // Turn [نص](/path) into interactive in-app navigation buttons.
 function renderRichText(text, onNavigate) {
@@ -73,6 +82,7 @@ export default function AIAssistant() {
   const router = useRouter();
   const { isElite } = useApp();
   const { userId, isSignedIn, isLoaded } = useAuthUser();
+  const { aiSuggestions } = usePreferences();
   const usage = useAiUsage(isElite, userId);
 
   const [open, setOpen] = useState(false);
@@ -497,8 +507,8 @@ export default function AIAssistant() {
                   </div>
                 </div>
 
-                {/* Quick prompts on a fresh chat */}
-                {messages.length === 1 && !usage.limited && (
+                {/* Quick prompts on a fresh chat — hidden when AI suggestions are off */}
+                {messages.length === 1 && !usage.limited && aiSuggestions && (
                   <div className="relative z-10 flex flex-wrap gap-2 px-4 pb-2">
                     {QUICK_PROMPTS.map((p) => (
                       <button

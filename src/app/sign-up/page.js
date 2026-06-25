@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
+import { validateFullName } from '@/lib/profile';
 import BrandLogo from '@/components/BrandLogo';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
 
@@ -48,23 +49,13 @@ export default function SignUpPage() {
     e.preventDefault();
     setError('');
 
-    // Validate الاسم
-    if (!formData.name.trim()) {
-      setError('الاسم مطلوب');
-      return;
-    }
-    if (formData.name.trim().length < 2) {
-      setError('الاسم يجب أن يكون حرفين على الأقل');
-      return;
-    }
+    // Validate الاسم — exactly two words, Arabic/English letters only
+    const nameCheck = validateFullName(formData.name);
+    if (!nameCheck.ok) { setError(nameCheck.error); return; }
 
-    // Validate phone — exactly 9 digits
-    if (formData.phone.length < 9) {
+    // Phone is OPTIONAL. If entered, it must be exactly 9 digits.
+    if (formData.phone && formData.phone.length !== 9) {
       setError('رقم الجوال يجب أن يتكون من 9 أرقام');
-      return;
-    }
-    if (formData.phone.length > 9) {
-      setError('رقم الجوال يجب أن يتكون من 9 أرقام فقط');
       return;
     }
 
@@ -80,13 +71,13 @@ export default function SignUpPage() {
 
     setLoading(true);
 
-    // Use name as both username and full_name; store full phone with country code
+    // full_name = the two-word public name; phone optional (with +966 prefix).
     const result = await signUp(
       formData.email,
       formData.password,
-      formData.name.trim(),       // username
-      formData.name.trim(),       // full_name
-      `+966${formData.phone}`,    // phone with country code
+      nameCheck.value,                                  // username seed
+      nameCheck.value,                                  // full_name (public)
+      formData.phone ? `+966${formData.phone}` : null,  // optional phone
     );
 
     if (result.success) {
@@ -135,7 +126,7 @@ export default function SignUpPage() {
               value={formData.name}
               onChange={handleChange}
               required
-              placeholder="اسمك الكامل"
+              placeholder="مثال: عبدالله محمد (اسمان فقط)"
               className="w-full rounded-xl border border-white/30 bg-white/50 px-4 py-2.5 text-ink placeholder-ink-soft focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
             />
           </div>
@@ -157,7 +148,7 @@ export default function SignUpPage() {
 
           {/* رقم الجوال — Saudi format */}
           <div>
-            <label className="block text-sm font-medium text-ink mb-2">رقم الجوال</label>
+            <label className="block text-sm font-medium text-ink mb-2">رقم الجوال (اختياري)</label>
             <div className="flex" dir="ltr">
               {/* Fixed country code */}
               <span className="flex items-center justify-center rounded-r-xl border border-white/30 bg-white/30 px-3 py-2.5 text-sm font-semibold text-ink select-none flex-shrink-0">

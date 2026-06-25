@@ -46,7 +46,7 @@ export default function Sidebar() {
   const [tracksOpen, setTracksOpen] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-  const { isSignedIn, name, imageUrl, signOut } = useAuthUser();
+  const { isLoaded, isSignedIn, name, imageUrl, signOut } = useAuthUser();
   const { isElite } = useApp();
 
   const close = () => setOpen(false);
@@ -120,14 +120,22 @@ export default function Sidebar() {
                   className="flex items-center gap-3 rounded-3xl bg-white/55 p-3.5"
                   style={{ border: "1px solid rgba(201,168,106,0.35)" }}
                 >
-                  {isSignedIn ? (
+                  {!isLoaded ? (
+                    <span className="h-14 w-14 shrink-0 animate-pulse rounded-full bg-champagne-100" />
+                  ) : isSignedIn ? (
                     <Avatar src={imageUrl} name={name} size={56} />
                   ) : (
                     <DefaultAvatar size={56} />
                   )}
 
                   <div className="min-w-0 flex-1">
-                    {isSignedIn ? (
+                    {!isLoaded ? (
+                      /* Loading skeleton — never flash the guest CTA to a logged-in user */
+                      <div className="space-y-2">
+                        <span className="block h-4 w-28 animate-pulse rounded bg-champagne-100" />
+                        <span className="block h-3 w-20 animate-pulse rounded bg-champagne-100" />
+                      </div>
+                    ) : isSignedIn ? (
                       <>
                         <div className="flex items-center gap-1.5">
                           <p className="truncate font-extrabold text-ink">
@@ -135,7 +143,7 @@ export default function Sidebar() {
                           </p>
                           {isElite && <GoldBadge />}
                         </div>
-<span className="mt-1 inline-flex items-center gap-1 rounded-full bg-gold-gradient px-2 py-0.5 text-[11px] font-bold text-white">
+                        <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-gold-gradient px-2 py-0.5 text-[11px] font-bold text-white">
                           <Crown size={11} /> المستوى الذهبي
                         </span>
                       </>

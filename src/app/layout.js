@@ -2,13 +2,15 @@ import { Tajawal } from "next/font/google";
 import { AppProvider } from "@/context/AppContext";
 import { AuthProvider } from "@/context/AuthProvider";
 import { AuthProvider as FormAuthProvider } from "@/hooks/useAuth";
+import { PreferencesProvider } from "@/context/PreferencesProvider";
 import Starfield from "@/components/Starfield";
 import ReferralCapture from "@/components/ReferralCapture";
 import "./globals.css";
 
-// Apply saved theme before first paint to avoid a light→dark flash.
+// Apply saved theme + language before first paint to avoid a flash / wrong dir.
 const themeScript = `
-(function(){try{var t=JSON.parse(localStorage.getItem("jazira_theme_v1"));if(t==="dark"){document.documentElement.classList.add("dark");}}catch(e){}})();
+(function(){try{var t=JSON.parse(localStorage.getItem("jazira_theme_v1"));if(t==="dark"){document.documentElement.classList.add("dark");}}catch(e){}
+try{var p=JSON.parse(localStorage.getItem("jazira_user_prefs_v1"));if(p&&p.language==="en"){document.documentElement.lang="en";document.documentElement.dir="ltr";}}catch(e){}})();
 `;
 
 const tajawal = Tajawal({
@@ -46,7 +48,10 @@ export default function RootLayout({ children }) {
           {/* FormAuthProvider: signIn / signUp / signOut actions for form pages */}
           <FormAuthProvider>
             <AppProvider>
-              {children}
+              {/* PreferencesProvider: per-account sound / language / AI suggestions */}
+              <PreferencesProvider>
+                {children}
+              </PreferencesProvider>
             </AppProvider>
           </FormAuthProvider>
         </AuthProvider>

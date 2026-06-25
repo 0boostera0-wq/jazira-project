@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Camera } from "lucide-react";
 import { createClient } from "@/lib/supabase-client";
 import { useAuthUser } from "@/context/AuthProvider";
-import { genHandle } from "@/lib/profile";
+import { genHandle, validateFullName } from "@/lib/profile";
 import BrandLogo from "@/components/BrandLogo";
 import Link from "next/link";
 
@@ -39,9 +39,11 @@ export default function ProfileSetupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const trimmed = displayName.trim();
-    if (!trimmed) { setError("الاسم المعروض مطلوب"); return; }
-    if (trimmed.length < 2) { setError("الاسم يجب أن يكون حرفين على الأقل"); return; }
+
+    // Public-name rules: exactly two words, Arabic/English letters only.
+    const check = validateFullName(displayName);
+    if (!check.ok) { setError(check.error); return; }
+    const trimmed = check.value;
 
     setLoading(true);
     setError("");
@@ -55,7 +57,7 @@ export default function ProfileSetupPage() {
       const path = `${userId}/avatar.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from("avatars")
-        .upload(path, avatarFile, { upsert: true });
+        .upload(path, avatarFile, { upsert: true, contentType: avatarFile.type });
 
       if (!uploadError) {
         const { data: { publicUrl } } = supabase.storage
@@ -65,30 +67,43 @@ export default function ProfileSetupPage() {
       }
     }
 
-    // full_name is the public (non-unique) name. Only generate a unique username
-    // handle if the row doesn't already have one (avoids unique-constraint clashes).
+    // Ensure a profile row exists with the internal unique username handle and
+    // avatar (full_name is set via the RPC below so the cooldown clock starts).
     const { data: existing } = await supabase
       .from("profiles")
       .select("username")
       .eq("id", userId)
       .single();
 
-    const updates = {
-      id: userId,
-      full_name: trimmed,
-    };
-    if (!existing?.username) updates.username = genHandle(trimmed);
-    if (avatar_url) updates.avatar_url = avatar_url;
+    const baseRow = { id: userId };
+    if (!existing?.username) baseRow.username = genHandle(trimmed);
+    if (avatar_url) baseRow.avatar_url = avatar_url;
 
-    const { error: profileError } = await supabase
+    const { error: rowError } = await supabase
       .from("profiles")
-      .upsert(updates, { onConflict: "id" });
+      .upsert(baseRow, { onConflict: "id" });
 
-    if (profileError) {
-      console.error("Profile upsert error:", profileError.message);
+    if (rowError) {
+      console.error("Profile upsert error:", rowError.message);
       setError("تعذّر حفظ الملف الشخصي. حاول مجدداً.");
       setLoading(false);
       return;
+    }
+
+    // Set the public name through the secure RPC (validates + starts cooldown).
+    // Fall back to a direct update if the migration isn't applied yet.
+    const { error: rpcError } = await supabase.rpc("update_full_name", { new_name: trimmed });
+    if (rpcError) {
+      const code = rpcError.code || "";
+      if (code === "PGRST202" || /function|does not exist|schema cache/i.test(rpcError.message || "")) {
+        await supabase.from("profiles").update({ full_name: trimmed }).eq("id", userId);
+      } else if (/invalid_name_format/i.test(rpcError.message || "")) {
+        setError("يُسمح باسمين فقط بالحروف العربية أو الإنجليزية.");
+        setLoading(false);
+        return;
+      } else {
+        await supabase.from("profiles").update({ full_name: trimmed }).eq("id", userId);
+      }
     }
 
     // Refresh auth context so needsProfileSetup flips to false BEFORE we navigate,
@@ -180,11 +195,11 @@ export default function ProfileSetupPage() {
               onChange={(e) => setDisplayName(e.target.value)}
               required
               maxLength={50}
-              placeholder="مثال: عبدالله"
+              placeholder="مثال: عبدالله محمد"
               className="w-full rounded-xl border border-white/30 bg-white/50 px-4 py-2.5 text-ink focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
             />
             <p className="mt-1.5 text-xs text-ink-muted">
-              يمكن لأكثر من مستخدم اختيار نفس الاسم. يمكنك تغييره لاحقاً من الإعدادات.
+              اسمان فقط (عربي أو إنجليزي). يمكن لأكثر من مستخدم اختيار نفس الاسم، ويمكنك تغييره مرة كل 7 أيام.
             </p>
           </div>
 

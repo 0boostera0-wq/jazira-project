@@ -113,35 +113,27 @@ export function useAuth() {
 
       if (authError) throw authError;
 
-      // username is a UNIQUE internal handle (never displayed). full_name is the
-      // public, duplicate-allowed display name. Generating a unique handle lets
-      // two users share the same visible name without a unique-constraint clash.
-      const baseProfile = {
-        id: authData.user.id,
-        username: genHandle(username || fullName),
-        full_name: fullName,
-      };
+      const uid = authData.user.id;
 
-      const profileWithPhone = phone ? { ...baseProfile, phone } : baseProfile;
-
-      let { error: profileError } = await supabase
+      // Insert only guaranteed columns so signup never fails on optional schema.
+      // username is a UNIQUE internal handle (never displayed); full_name is the
+      // public, duplicate-allowed display name.
+      const { error: profileError } = await supabase
         .from('profiles')
-        .insert(profileWithPhone);
-
-      // If insert failed because phone column doesn't exist, retry without it
-      if (profileError && phone && /column|phone/i.test(profileError.message || '')) {
-        ({ error: profileError } = await supabase
-          .from('profiles')
-          .insert(baseProfile));
-      }
+        .insert({ id: uid, username: genHandle(username || fullName), full_name: fullName });
 
       if (profileError) throw profileError;
 
+      // Best-effort extras — these columns may not exist until migrations run.
+      // PostgREST returns (not throws) on a missing column, so we simply ignore.
+      if (phone) {
+        await supabase.from('profiles').update({ phone }).eq('id', uid);
+      }
+      // Start the 7-day name-change cooldown from first signup.
+      await supabase.from('profiles').update({ full_name_changed_at: new Date().toISOString() }).eq('id', uid);
+
       // Create free subscription record (ignore if it already exists)
-      await supabase.from('subscriptions').insert({
-        user_id: authData.user.id,
-        tier: 'free',
-      });
+      await supabase.from('subscriptions').insert({ user_id: uid, tier: 'free' });
 
       return { success: true, user: authData.user };
     } catch (err) {

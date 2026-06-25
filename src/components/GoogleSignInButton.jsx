@@ -33,10 +33,13 @@ export default function GoogleSignInButton({ redirectTo }) {
   const handleClick = async () => {
     setLoading(true);
     const supabase = createClient();
+    // Route OAuth back through the server callback so the session cookie is set
+    // server-side and the user is logged in instantly (no manual refresh).
+    const target = redirectTo || "/dashboard";
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: redirectTo || `${window.location.origin}/dashboard`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(target)}`,
       },
     });
     // No setLoading(false) — the page will redirect away

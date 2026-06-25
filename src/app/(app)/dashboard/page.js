@@ -1,45 +1,67 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  GraduationCap,
-  Users,
-  Trophy,
-  Sparkles,
-  BookOpen,
-  Flame,
-  Star,
-  ArrowLeft,
-  Crown,
+  GraduationCap, Users, Trophy, Sparkles, BookOpen, Flame, Star, ArrowLeft, Crown,
 } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import GlassCard from "@/components/GlassCard";
 import { useApp } from "@/context/AppContext";
 import { useAuthUser } from "@/context/AuthProvider";
-
-const SHORTCUTS = [
-  { href: "/high-school", icon: GraduationCap, title: "اختبارات القدرات", desc: "ابدأ اختبارًا الآن" },
-  { href: "/elementary", icon: BookOpen, title: "المرحلة الابتدائية", desc: "كتابة وقراءة تفاعلية" },
-  { href: "/community", icon: Users, title: "المجتمع التعليمي", desc: "شارك إنجازاتك" },
-  { href: "/competitions", icon: Trophy, title: "المسابقات", desc: "تصدّر القائمة" },
-];
+import { usePreferences } from "@/context/PreferencesProvider";
+import { useStreak } from "@/hooks/useStreak";
+import { createClient } from "@/lib/supabase-client";
 
 export default function DashboardPage() {
-  const { xp, isElite, hasPremiumAccess, referrals, referralTarget } = useApp();
-  const { isSignedIn, name } = useAuthUser();
+  const { isElite, hasPremiumAccess } = useApp();
+  const { isSignedIn, userId, name } = useAuthUser();
+  const { t, isRTL } = usePreferences();
+  const { streak } = useStreak(userId);
+
+  // Real, persisted values from Supabase (no hard-coded/mock numbers).
+  const [xp, setXp] = useState(0);
+  const [referrals, setReferrals] = useState(0);
+
+  useEffect(() => {
+    if (!userId) { setXp(0); setReferrals(0); return; }
+    let cancelled = false;
+    (async () => {
+      const supabase = createClient();
+      try {
+        const { data } = await supabase.from("profiles").select("xp").eq("id", userId).single();
+        if (!cancelled) setXp(data?.xp ?? 0);
+      } catch {}
+      try {
+        const { count } = await supabase
+          .from("referrals")
+          .select("id", { count: "exact", head: true })
+          .eq("referrer_id", userId);
+        if (!cancelled && typeof count === "number") setReferrals(count);
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [userId]);
 
   const stats = [
-    { label: "نقاط الخبرة (XP)", value: xp, icon: Star, color: "#C9A227" },
-    { label: "السلسلة اليومية", value: "3 أيام", icon: Flame, color: "#E0793B" },
-    { label: "الدعوات الناجحة", value: `${referrals}/${referralTarget}`, icon: Users, color: "#7C9A6A" },
+    { label: t("نقاط الخبرة (XP)", "Experience (XP)"), value: xp, icon: Star, color: "#C9A227" },
+    { label: t("السلسلة اليومية", "Daily streak"), value: t(`${streak} يوم`, `${streak} days`), icon: Flame, color: "#E0793B" },
+    { label: t("الدعوات الناجحة", "Successful invites"), value: t(`${referrals} دعوات ناجحة`, `${referrals} invites`), icon: Users, color: "#7C9A6A" },
+  ];
+
+  const SHORTCUTS = [
+    { href: "/high-school", icon: GraduationCap, title: t("اختبارات القدرات", "Aptitude tests"), desc: t("ابدأ اختبارًا الآن", "Start a test now") },
+    { href: "/elementary", icon: BookOpen, title: t("المرحلة الابتدائية", "Elementary"), desc: t("كتابة وقراءة تفاعلية", "Interactive reading & writing") },
+    { href: "/community", icon: Users, title: t("المجتمع التعليمي", "Community"), desc: t("شارك إنجازاتك", "Share your achievements") },
+    { href: "/competitions", icon: Trophy, title: t("المسابقات", "Competitions"), desc: t("تصدّر القائمة", "Top the leaderboard") },
   ];
 
   return (
     <div>
       <PageHeader
-        title={isSignedIn && name ? `أهلاً بك، ${name} 👋` : "لوحة التحكم"}
-        subtitle="نظرة سريعة على تقدّمك في منصة جزيرة"
+        title={isSignedIn && name ? t(`أهلاً بك، ${name} 👋`, `Welcome, ${name} 👋`) : t("لوحة التحكم", "Dashboard")}
+        subtitle={t("نظرة سريعة على تقدّمك في منصة جزيرة", "A quick look at your progress on Jazira")}
         icon={Sparkles}
       />
 
@@ -51,18 +73,22 @@ export default function DashboardPage() {
           </span>
           <div>
             <p className="font-extrabold text-ink">
-              {isElite ? "أنت عضو في باقة النخبة ✨" : hasPremiumAccess ? "تم فتح الوصول المميّز 🎉" : "حسابك مجاني"}
+              {isElite
+                ? t("أنت عضو في باقة النخبة ✨", "You're an Elite member ✨")
+                : hasPremiumAccess
+                ? t("تم فتح الوصول المميّز 🎉", "Premium access unlocked 🎉")
+                : t("حسابك مجاني", "Free account")}
             </p>
             <p className="text-sm text-ink-soft">
               {hasPremiumAccess
-                ? "تتمتع بوصول كامل لجميع الاختبارات المتقدمة."
-                : "اشترك أو ادعُ ٥ أصدقاء لفتح كل الاختبارات."}
+                ? t("تتمتع بوصول كامل لجميع الاختبارات المتقدمة.", "You have full access to all advanced tests.")
+                : t("اشترك أو ادعُ ٥ أصدقاء لفتح كل الاختبارات.", "Subscribe or invite 5 friends to unlock all tests.")}
             </p>
           </div>
         </div>
         {!hasPremiumAccess && (
           <Link href="/subscriptions" className="btn-gold flex items-center gap-2">
-            ترقية الحساب <ArrowLeft size={16} />
+            {t("ترقية الحساب", "Upgrade")} <ArrowLeft size={16} className={isRTL ? "" : "rotate-180"} />
           </Link>
         )}
       </GlassCard>
@@ -89,7 +115,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Shortcuts */}
-      <h2 className="mb-3 text-lg font-extrabold text-ink">روابط سريعة</h2>
+      <h2 className="mb-3 text-lg font-extrabold text-ink">{t("روابط سريعة", "Quick links")}</h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {SHORTCUTS.map((s, i) => (
           <motion.div
