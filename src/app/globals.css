@@ -139,6 +139,86 @@ html.dark .jz-ai-bubble-ai {
   border-color: rgba(201, 168, 106, 0.28);
 }
 
+/* ── Premium landing utilities (Editorial Luxury) ──────────────────── */
+/* Fixed film-grain overlay — physical paper feel. pointer-events-none. */
+.lux-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Eyebrow tag — microscopic pill above section headings */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(201, 168, 106, 0.35);
+  background: rgba(255, 255, 255, 0.55);
+  padding: 0.4rem 0.9rem;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+}
+html.dark .eyebrow { background: rgba(255, 255, 255, 0.05); }
+
+/* Double-bezel: machined "glass plate in an aluminium tray" enclosure */
+.bezel {
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.4);
+  padding: 0.5rem;
+  border: 1px solid rgba(201, 168, 106, 0.22);
+}
+html.dark .bezel { background: rgba(255, 255, 255, 0.04); }
+.bezel-core {
+  border-radius: calc(2rem - 0.5rem);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+/* Premium CTA — magnetic press + button-in-button trailing icon */
+.cta-lux {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 9999px;
+  padding: 0.7rem 0.85rem 0.7rem 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #e6c77e 0%, #c9a86a 50%, #b8923f 100%);
+  box-shadow: 0 10px 34px rgba(201, 162, 39, 0.34);
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.cta-lux:hover { transform: translateY(-2px); box-shadow: 0 16px 44px rgba(201, 162, 39, 0.45); }
+.cta-lux:active { transform: scale(0.98); }
+.cta-lux .cta-puck {
+  display: inline-grid;
+  place-items: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.22);
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.cta-lux:hover .cta-puck { transform: translateX(-4px) scale(1.06); }
+
+/* Ghost pill CTA */
+.cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.7rem 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(255, 253, 249, 0.6);
+  border: 1px solid rgba(201, 168, 106, 0.35);
+  transition: background 0.4s cubic-bezier(0.32, 0.72, 0, 1), transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.cta-ghost:hover { background: rgba(201, 168, 106, 0.14); transform: translateY(-1px); }
+
 @layer components {
   /* Glassmorphism surface — brighter, whiter, softer shadows */
   .glass {
