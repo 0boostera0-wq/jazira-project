@@ -80,7 +80,6 @@ drop policy if exists "reposts_read"   on public.post_reposts;
 drop policy if exists "reposts_write"  on public.post_reposts;
 drop policy if exists "reposts_delete" on public.post_reposts;
 drop policy if exists "comments_write" on public.post_comments;
-drop policy if exists "reviews_write"  on public.reviews;
 
 -- interactions: everyone reads counts/rows; only the owner writes/removes their own
 do $$
@@ -150,6 +149,7 @@ create table if not exists public.reviews (
   created_at timestamptz not null default now()
 );
 alter table public.reviews enable row level security;
+drop policy if exists "reviews_write"  on public.reviews; -- legacy name
 drop policy if exists "reviews_read"   on public.reviews;
 drop policy if exists "reviews_insert" on public.reviews;
 drop policy if exists "reviews_update" on public.reviews;
