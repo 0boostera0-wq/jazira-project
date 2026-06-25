@@ -114,6 +114,18 @@ export default function AIAssistant() {
     if (userId) hydrateFromServer(userId).then(() => refreshList());
   }, [userId, refreshList]);
 
+  // Let other parts of the app (e.g. the dashboard AI card) open the assistant,
+  // optionally pre-filling a prompt — the user still reviews before sending.
+  useEffect(() => {
+    const handler = (e) => {
+      setOpen(true);
+      setView("chat");
+      if (e?.detail?.prompt) setInput(e.detail.prompt);
+    };
+    window.addEventListener("jazira:open-assistant", handler);
+    return () => window.removeEventListener("jazira:open-assistant", handler);
+  }, []);
+
   // Auto-scroll on new content.
   useEffect(() => {
     if (view === "chat") endRef.current?.scrollIntoView({ behavior: "smooth" });

@@ -1,12 +1,15 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 // Cinematic easing used across the site (Linear/Vercel-grade spring feel).
 export const EASE = [0.32, 0.72, 0, 1];
 
 // Heavy fade-up + de-blur as the element enters the viewport (runs once).
+// Respects prefers-reduced-motion (renders statically).
 export function Reveal({ children, delay = 0, y = 32, className, blur = true }) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
   return (
     <motion.div
       initial={{ opacity: 0, y, filter: blur ? "blur(8px)" : "blur(0px)" }}
@@ -28,6 +31,8 @@ const child = {
 
 // Stagger container — children reveal in sequence as the group scrolls in.
 export function Stagger({ children, className }) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
   return (
     <motion.div
       variants={parent}
@@ -42,11 +47,15 @@ export function Stagger({ children, className }) {
 }
 
 export function StaggerItem({ children, className }) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
   return <motion.div variants={child} className={className}>{children}</motion.div>;
 }
 
-// Infinite gentle float (GPU-safe transform only) for illustrations & the logo.
+// Infinite gentle float (GPU-safe transform only). Static under reduced-motion.
 export function Float({ children, className, amount = 10, duration = 6, delay = 0 }) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
   return (
     <motion.div
       animate={{ y: [0, -amount, 0] }}
