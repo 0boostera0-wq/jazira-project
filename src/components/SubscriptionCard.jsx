@@ -38,10 +38,21 @@ export default function SubscriptionCard() {
   const [method, setMethod] = useState("applepay");
   const [notice, setNotice] = useState("");
 
-  const handleAttempt = () => {
-    // No real gateway yet — never fake a successful payment / upgrade.
-    setNotice(COMING_SOON);
-    setTimeout(() => setNotice(""), 4000);
+  const handleAttempt = async () => {
+    // Ask the server for a real checkout URL. If the gateway isn't configured,
+    // it returns a truthful "coming soon" — we NEVER fake a payment or set Elite.
+    try {
+      const res = await fetch("/api/checkout", { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (data?.configured && data?.url) {
+        window.location.href = data.url;
+        return;
+      }
+      setNotice(data?.message || COMING_SOON);
+    } catch {
+      setNotice(COMING_SOON);
+    }
+    setTimeout(() => setNotice(""), 4500);
   };
 
   return (

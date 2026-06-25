@@ -6,8 +6,9 @@ import { Copy, Check, Users, Gift, UserPlus, Sparkles, Lock } from "lucide-react
 import { useApp } from "@/context/AppContext";
 import { useAuthUser } from "@/context/AuthProvider";
 import { createClient } from "@/lib/supabase-client";
+import { REFERRAL_REWARD } from "@/lib/constants";
 
-const REWARD_AT = 5;
+const REWARD_AT = REFERRAL_REWARD.target;
 
 export default function ReferralProgress() {
   const { referrals, referralRewardUnlocked, syncReferrals } = useApp();
@@ -88,13 +89,14 @@ export default function ReferralProgress() {
       {referralRewardUnlocked ? (
         <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
           <p className="flex items-center gap-2 font-bold text-emerald-700">
-            <Sparkles size={18} /> تم فتح مزايا الدعوات بنجاح
+            <Sparkles size={18} /> تم فتح مكافأة الدعوات المحدودة
           </p>
           <ul className="mt-2 space-y-1 text-sm text-emerald-800">
-            <li className="flex items-center gap-1.5"><Check size={14} /> 5 محاولات إضافية للمساعد الذكي</li>
-            <li className="flex items-center gap-1.5"><Check size={14} /> 3 محاولات اختبار مجانية</li>
-            <li className="flex items-center gap-1.5"><Check size={14} /> وصول محدود لمزايا مختارة من النخبة</li>
+            {REFERRAL_REWARD.perks.map((perk) => (
+              <li key={perk} className="flex items-center gap-1.5"><Check size={14} /> {perk}</li>
+            ))}
           </ul>
+          <p className="mt-2 text-xs text-emerald-700/80">هذه مكافأة محدودة وليست اشتراك النخبة المدفوع.</p>
         </div>
       ) : (
         <div className="mt-4">

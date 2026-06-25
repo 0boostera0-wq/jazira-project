@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { STORAGE, REFERRAL_TARGET } from "@/lib/constants";
+import { useAuthUser } from "@/context/AuthProvider";
 
 const AppContext = createContext(null);
 
@@ -20,7 +21,11 @@ function makeReferralCode() {
 }
 
 export function AppProvider({ children }) {
-  const [isElite, setIsElite] = useState(false);
+  // Elite is DB-verified (profiles.is_elite, set only by the payment webhook).
+  // It is NEVER toggled from the client.
+  const { isElite: dbElite } = useAuthUser();
+  const isElite = !!dbElite;
+
   const [xp, setXp] = useState(0);
   const [freeTrialUsed, setFreeTrialUsed] = useState(false);
   const [referrals, setReferrals] = useState(0);
@@ -30,7 +35,6 @@ export function AppProvider({ children }) {
 
   // Hydrate from localStorage on mount.
   useEffect(() => {
-    setIsElite(readJSON(STORAGE.subscription, { isElite: false }).isElite);
     setXp(readJSON(STORAGE.xp, 0));
     setFreeTrialUsed(readJSON(STORAGE.freeTrialUsed, false));
     setReferrals(readJSON(STORAGE.referrals, 0));
@@ -73,16 +77,6 @@ export function AppProvider({ children }) {
 
   const persist = (key, value) =>
     window.localStorage.setItem(key, JSON.stringify(value));
-
-  const subscribeElite = useCallback(() => {
-    setIsElite(true);
-    persist(STORAGE.subscription, { isElite: true, since: Date.now() });
-  }, []);
-
-  const cancelElite = useCallback(() => {
-    setIsElite(false);
-    persist(STORAGE.subscription, { isElite: false });
-  }, []);
 
   const addXp = useCallback((amount) => {
     setXp((prev) => {
@@ -138,8 +132,6 @@ export function AppProvider({ children }) {
     isDark: theme === "dark",
     setTheme,
     toggleTheme,
-    subscribeElite,
-    cancelElite,
     addXp,
     markFreeTrialUsed,
     addReferral,

@@ -34,6 +34,7 @@ import {
   upsertConversation,
   deleteConversation,
   searchConversations,
+  hydrateFromServer,
   newId,
 } from "@/lib/chatStore";
 
@@ -107,6 +108,11 @@ export default function AIAssistant() {
   useEffect(() => {
     if (open) refreshList();
   }, [open, userId, refreshList]);
+
+  // Pull server-side history (cross-device) once per signed-in user.
+  useEffect(() => {
+    if (userId) hydrateFromServer(userId).then(() => refreshList());
+  }, [userId, refreshList]);
 
   // Auto-scroll on new content.
   useEffect(() => {
@@ -197,12 +203,14 @@ export default function AIAssistant() {
     setInput("");
     setIsLoading(true);
 
-    let convoId = activeId;
+    // Use the conversation id as the server session id so all of a chat's
+    // messages persist under one session in Supabase (groupable cross-device).
+    let convoId = activeId || newId();
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: history, sessionId: convoId }),
       });
 
       if (!res.body) throw new Error("no stream");
@@ -473,17 +481,9 @@ export default function AIAssistant() {
                     {messages.map((m, i) => (
                       <div key={i} className={`flex ${m.role === "user" ? "justify-start" : "justify-end"}`}>
                         <div
-                          className={`max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                            m.role === "user" ? "bg-white/80 text-ink" : "text-ink"
+                          className={`max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-sm leading-relaxed text-ink ${
+                            m.role === "user" ? "jz-ai-bubble-user" : "jz-ai-bubble-ai"
                           }`}
-                          style={
-                            m.role === "assistant"
-                              ? {
-                                  background: "linear-gradient(135deg, rgba(255,253,249,0.92), rgba(241,228,200,0.92))",
-                                  border: "1px solid rgba(201,168,106,0.3)",
-                                }
-                              : { border: "1px solid rgba(201,168,106,0.2)" }
-                          }
                         >
                           {m.role === "assistant" ? renderRichText(m.content, navigate) : m.content}
                           {/* thinking dots */}

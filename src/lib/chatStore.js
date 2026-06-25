@@ -73,6 +73,49 @@ export function deleteConversation(userId, id) {
   );
 }
 
+// Pull the user's server-side history (Supabase, RLS-protected) and merge any
+// conversations missing locally. Lets history follow the account across devices.
+export async function hydrateFromServer(userId) {
+  if (!userId || typeof window === "undefined") return read(userId);
+  try {
+    const res = await fetch("/api/chat-history", { cache: "no-store" });
+    if (!res.ok) return read(userId);
+    const rows = await res.json();
+    if (!Array.isArray(rows)) return read(userId);
+
+    // Group flat messages by session_id into conversations.
+    const bySession = new Map();
+    for (const r of rows) {
+      const sid = r.session_id;
+      if (!sid) continue;
+      if (!bySession.has(sid)) bySession.set(sid, []);
+      bySession.get(sid).push({
+        role: r.message_type === "assistant" ? "assistant" : "user",
+        content: r.content || "",
+        at: r.created_at,
+      });
+    }
+
+    const local = read(userId);
+    const localIds = new Set(local.map((c) => c.id));
+    for (const [sid, msgs] of bySession) {
+      if (localIds.has(sid)) continue; // keep the richer local copy
+      const ts = msgs[0]?.at ? new Date(msgs[0].at).getTime() : Date.now();
+      local.push({
+        id: sid,
+        messages: [{ role: "assistant", content: "مرحباً بك في منصة جزيرة! كيف أقدر أساعدك اليوم؟ 🏝️" }, ...msgs.map((m) => ({ role: m.role, content: m.content }))],
+        title: deriveTitle(msgs),
+        createdAt: ts,
+        updatedAt: ts,
+      });
+    }
+    write(userId, local);
+    return local;
+  } catch {
+    return read(userId);
+  }
+}
+
 export function clearConversations(userId) {
   write(userId, []);
 }

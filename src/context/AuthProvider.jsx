@@ -24,6 +24,7 @@ export function AuthProvider({ children }) {
     email: "",
     phone: "",
     imageUrl: "",
+    isElite: false,
     needsProfileSetup: false,
   });
 
@@ -37,6 +38,7 @@ export function AuthProvider({ children }) {
         email: "",
         phone: "",
         imageUrl: "",
+        isElite: false,
         needsProfileSetup: false,
       };
     }
@@ -48,7 +50,7 @@ export function AuthProvider({ children }) {
     // phone) would fail the whole query and wrongly force profile-setup forever.
     const { data: profile } = await supabase
       .from("profiles")
-      .select("username, full_name, avatar_url")
+      .select("username, full_name, avatar_url, is_elite")
       .eq("id", user.id)
       .single();
 
@@ -78,6 +80,7 @@ export function AuthProvider({ children }) {
       email: user.email || "",
       phone: "", // fetched lazily in Settings (column may not exist yet)
       imageUrl,
+      isElite: !!profile?.is_elite, // DB-verified; set only by the payment webhook
       needsProfileSetup,
     };
   }, [supabase]);

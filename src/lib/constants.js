@@ -19,8 +19,20 @@ export const ELITE = {
   ],
 };
 
-// Referral system
-export const REFERRAL_TARGET = 5; // friends needed to unlock premium without paying
+// Referral system — single source of truth for the limited reward.
+// NOTE: this is NOT Elite. It never sets is_elite and never shows the crown.
+export const REFERRAL_TARGET = 5; // successful invites to unlock the limited reward
+export const REFERRAL_REWARD = {
+  target: 5,
+  // Limited, clearly temporary benefits (configurable here only):
+  bonusAiMessages: 5,   // extra assistant messages
+  bonusQuizAttempts: 3, // free test/quiz attempts
+  perks: [
+    "5 محاولات إضافية للمساعد الذكي",
+    "3 محاولات اختبار مجانية",
+    "وصول محدود لمزايا مختارة (ليست اشتراك النخبة)",
+  ],
+};
 
 // AI Assistant usage limits (free users)
 export const AI_FREE_LIMIT = 5; // messages (Elite = unlimited)
@@ -73,6 +85,7 @@ export const NAV_SECTIONS = [
         href: "/achievements",
         icon: "Trophy",
       },
+      { key: "subscription", label: "اشتراك النخبة", href: "/subscriptions", icon: "Crown" },
     ],
   },
   {

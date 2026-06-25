@@ -39,6 +39,7 @@ const ICONS = {
   HelpCircle,
   Headphones,
   Settings,
+  Crown,
 };
 
 export default function Sidebar() {

@@ -89,10 +89,13 @@ export async function POST(req) {
   // Ordered fallback list — first model wins; later ones tried if the chosen
   // one is unavailable for this key type (e.g. AQ. keys may have different
   // access than AIza keys).
+  // Account-agnostic ordered fallback. Same server key for every authenticated
+  // user — the assistant never depends on a specific account/profile/cache.
   const MODEL_FALLBACKS = [
     process.env.GEMINI_MODEL,   // honour explicit override first
     "gemini-2.5-flash",
     "gemini-2.0-flash",
+    "gemini-1.5-flash",
     "gemini-1.5-flash-8b",
   ].filter(Boolean);
 

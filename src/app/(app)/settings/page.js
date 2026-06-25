@@ -203,8 +203,9 @@ export default function SettingsPage() {
     setTimeout(() => setPwMsg(""), 4500);
   };
 
-  // ── Avatar ───────────────────────────────────────────────────────
+  // ── Avatar + delete-account modals ───────────────────────────────
   const [avatarModal, setAvatarModal] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const fileRef = useRef(null);
 
   const onPickAvatar = async (e) => {
@@ -262,12 +263,23 @@ export default function SettingsPage() {
     window.location.href = "/";
   };
 
-  const deleteAccount = async () => {
-    if (!confirm(t("هل أنت متأكد من حذف الحساب؟ سيتم تسجيل خروجك.", "Delete account? You'll be signed out."))) return;
-    const supabase = createClient();
-    try { await supabase.from("profiles").update({ avatar_url: null }).eq("id", userId); } catch {}
-    try { await supabase.auth.signOut(); } catch {}
-    window.location.href = "/";
+  // Secure, irreversible deletion via the server route (service role).
+  const confirmDeleteAccount = async () => {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/account/delete", { method: "POST" });
+      if (res.ok) {
+        try { await createClient().auth.signOut(); } catch {}
+        window.location.href = "/";
+        return;
+      }
+      const body = await res.json().catch(() => ({}));
+      flash(body?.message || t("تعذّر حذف الحساب الآن. حاول لاحقاً.", "Couldn't delete the account."));
+    } catch {
+      flash(t("تعذّر الاتصال بالخادم.", "Server connection failed."));
+    }
+    setBusy(false);
+    setShowDelete(false);
   };
 
   if (!isSignedIn) {
@@ -442,7 +454,7 @@ export default function SettingsPage() {
           <button onClick={signOutEverywhere} className="btn-ghost flex items-center gap-2 text-sm">
             <LogOut size={16} /> {t("تسجيل الخروج", "Sign out")}
           </button>
-          <button onClick={deleteAccount} className="flex items-center gap-2 rounded-2xl bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition">
+          <button onClick={() => setShowDelete(true)} className="flex items-center gap-2 rounded-2xl bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition">
             <Trash2 size={16} /> {t("حذف الحساب", "Delete account")}
           </button>
         </div>
@@ -481,6 +493,30 @@ export default function SettingsPage() {
                   <Trash2 size={16} /> {t("حذف الصورة", "Remove photo")}
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete-account confirmation (irreversible) */}
+      {showDelete && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/50 p-4 backdrop-blur-sm" onClick={() => !busy && setShowDelete(false)}>
+          <div className="glass-strong w-full max-w-sm rounded-3xl p-6 text-center" onClick={(e) => e.stopPropagation()}>
+            <span className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600"><Trash2 size={26} /></span>
+            <h3 className="text-lg font-extrabold text-ink">{t("حذف الحساب نهائياً", "Delete account permanently")}</h3>
+            <p className="mt-2 text-sm text-ink-soft">
+              {t(
+                "سيتم حذف حسابك وجميع بياناتك (الملف الشخصي، الصورة، المنشورات، التعليقات، التفاعلات، الآراء، التفضيلات، ومحادثات المساعد) نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+                "Your account and all data (profile, photo, posts, comments, interactions, reviews, preferences, AI chats) will be permanently deleted. This cannot be undone."
+              )}
+            </p>
+            <div className="mt-5 flex gap-3">
+              <button onClick={confirmDeleteAccount} disabled={busy} className="flex-1 rounded-xl bg-red-600 py-2.5 font-bold text-white hover:bg-red-700 transition disabled:opacity-50">
+                {busy ? t("جارٍ الحذف...", "Deleting...") : t("نعم، احذف نهائياً", "Yes, delete")}
+              </button>
+              <button onClick={() => setShowDelete(false)} disabled={busy} className="flex-1 rounded-xl border border-champagne-300 py-2.5 font-semibold text-ink hover:bg-champagne-50 transition">
+                {t("إلغاء", "Cancel")}
+              </button>
             </div>
           </div>
         </div>
