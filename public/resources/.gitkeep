@@ -1,0 +1,3 @@
+# Imported curriculum PDFs land here (key path = catalog key) when CONTENT_STORE=public.
+# Served on your own domain via /api/content/fetch?key=... and /resources/<key>.
+# For the `public` store on Vercel, commit the imported PDFs so they deploy.

@@ -31,6 +31,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# curriculum importer — keep private source URLs + run reports out of git
+/scripts/curriculum-sources.json
+/scripts/import-report.json
+# imported PDFs (public store). Remove this line if you use the `public` store
+# on Vercel and need the files committed so they deploy with the app.
+/public/resources/**/*.pdf
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

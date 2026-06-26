@@ -312,6 +312,25 @@ export function allCurriculumPaths() {
   return out;
 }
 
+// Flat list of every resource in the catalog (used by the importer + the API
+// allow-list). Each item carries its subject/stage context for nicer tooling.
+export function allResources() {
+  const out = [];
+  const visit = (nodes, trail) => {
+    for (const n of nodes) {
+      const t = [...trail, n.name];
+      for (const s of n.subjects || []) {
+        for (const r of s.resources || []) {
+          out.push({ ...r, subjectId: s.id, subjectName: s.name, path: t.join(" › ") });
+        }
+      }
+      if (n.children) visit(n.children, t);
+    }
+  };
+  visit(CURRICULUM, []);
+  return out;
+}
+
 // Flat lookup of a single resource by its content key (used by the API route to
 // confirm a requested key actually belongs to the catalog — allow-list).
 export function findResourceByKey(key) {

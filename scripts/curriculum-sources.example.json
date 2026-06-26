@@ -1,0 +1,17 @@
+{
+  "_about": "Manifest of APPROVED curriculum PDFs to import. Copy this file to scripts/curriculum-sources.json and fill it in. Each entry maps a Jazira catalog `key` (where the file will live on YOUR platform) to the authorized `url` to download it from ONCE. Only hosts listed in SOURCE_ALLOWLIST are fetched. Run `node scripts/import-curriculum.mjs --list-keys <prefix>` to see valid keys.",
+  "sources": [
+    {
+      "key": "1447/elementary/grade-1/math/t1/student-book.pdf",
+      "url": "https://your-authorized-source.example/path/elementary-g1-math-t1.pdf"
+    },
+    {
+      "key": "1447/elementary/grade-1/math/t1/exams.pdf",
+      "url": "https://your-authorized-source.example/path/elementary-g1-math-t1-exams.pdf"
+    },
+    {
+      "key": "1447/high-school/sharia/fiqh/t1/student-book.pdf",
+      "url": "https://your-authorized-source.example/path/hs-sharia-fiqh-t1.pdf"
+    }
+  ]
+}
