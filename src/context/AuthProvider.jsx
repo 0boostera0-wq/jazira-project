@@ -25,6 +25,8 @@ export function AuthProvider({ children }) {
     phone: "",
     imageUrl: "",
     isElite: false,
+    showEliteBadge: true,
+    anonymousCommunity: false,
     needsProfileSetup: false,
   });
 
@@ -39,6 +41,8 @@ export function AuthProvider({ children }) {
         phone: "",
         imageUrl: "",
         isElite: false,
+        showEliteBadge: true,
+        anonymousCommunity: false,
         needsProfileSetup: false,
       };
     }
@@ -48,11 +52,26 @@ export function AuthProvider({ children }) {
     // profiles is the source of truth. Select ONLY columns guaranteed to exist
     // (id, username, full_name, avatar_url). Selecting a missing column (e.g.
     // phone) would fail the whole query and wrongly force profile-setup forever.
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("username, full_name, avatar_url, is_elite")
-      .eq("id", user.id)
-      .single();
+    // Try the full select (incl. display prefs); fall back to the guaranteed
+    // columns if the new columns aren't migrated yet (never break auth).
+    let profile = null;
+    {
+      const full = await supabase
+        .from("profiles")
+        .select("username, full_name, avatar_url, is_elite, show_elite_badge, anonymous_community")
+        .eq("id", user.id)
+        .single();
+      if (full.error) {
+        const basic = await supabase
+          .from("profiles")
+          .select("username, full_name, avatar_url, is_elite")
+          .eq("id", user.id)
+          .single();
+        profile = basic.data;
+      } else {
+        profile = full.data;
+      }
+    }
 
     // Public name: full_name (non-unique). Fall back to OAuth metadata for the
     // brief window before profile-setup completes, but NEVER to email.
@@ -81,6 +100,8 @@ export function AuthProvider({ children }) {
       phone: "", // fetched lazily in Settings (column may not exist yet)
       imageUrl,
       isElite: !!profile?.is_elite, // DB-verified; set only by the payment webhook
+      showEliteBadge: profile?.show_elite_badge !== false, // default true
+      anonymousCommunity: !!profile?.anonymous_community,
       needsProfileSetup,
     };
   }, [supabase]);

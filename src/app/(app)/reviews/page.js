@@ -9,14 +9,12 @@ import GoldBadge from "@/components/GoldBadge";
 import { createClient } from "@/lib/supabase-client";
 import { useAuthUser } from "@/context/AuthProvider";
 import { publicName } from "@/lib/profile";
+import { fetchProfileMap } from "@/lib/profileJoin";
 
 // Client-side profile join (no PostgREST embed → no FK dependency).
 async function attachProfiles(supabase, rows) {
   if (!rows?.length) return rows || [];
-  const ids = [...new Set(rows.map((r) => r.user_id))];
-  const { data: profiles } = await supabase
-    .from("profiles").select("id, full_name, avatar_url, is_elite").in("id", ids);
-  const byId = Object.fromEntries((profiles || []).map((p) => [p.id, p]));
+  const byId = await fetchProfileMap(supabase, rows.map((r) => r.user_id));
   return rows.map((r) => ({ ...r, profile: byId[r.user_id] || null }));
 }
 
@@ -167,7 +165,7 @@ export default function ReviewsPage() {
                   <div className="flex items-center gap-3">
                     <Avatar src={r.profile?.avatar_url} name={displayName} size={42} />
                     <div className="flex-1">
-                      <p className="flex items-center gap-1.5 font-bold text-ink">{displayName} {r.profile?.is_elite && <GoldBadge />}</p>
+                      <p className="flex items-center gap-1.5 font-bold text-ink">{displayName} {r.profile?.is_elite && r.profile?.show_elite_badge !== false && <GoldBadge />}</p>
                       {editing ? <Stars value={editRating} onChange={setEditRating} /> : <Stars value={r.rating} />}
                     </div>
                     <span className="text-xs text-ink-muted">{new Date(r.created_at).toLocaleDateString("ar-SA")}</span>

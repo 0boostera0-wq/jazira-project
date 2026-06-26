@@ -64,6 +64,22 @@ export default function ReferralProgress() {
   const toReward = Math.max(0, REWARD_AT - referrals);
   const pct = Math.min(100, Math.round((referrals / REWARD_AT) * 100));
 
+  // Referrals require an account — no link/actions for anonymous visitors.
+  if (!isSignedIn) {
+    return (
+      <div className="glass-strong rounded-3xl p-6 text-center">
+        <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gold-gradient text-white shadow-gold">
+          <Gift size={24} />
+        </span>
+        <h3 className="text-lg font-extrabold text-ink">نظام الدعوات</h3>
+        <p className="mx-auto mt-2 max-w-xs text-sm text-ink-soft">
+          سجّل الدخول للحصول على رابط دعوة شخصي وتتبّع دعواتك الناجحة وفتح المكافآت.
+        </p>
+        <a href="/sign-in?next=/subscriptions" className="btn-gold mt-4 inline-block px-5 py-2.5 text-sm">تسجيل الدخول</a>
+      </div>
+    );
+  }
+
   return (
     <div className="glass-strong rounded-3xl p-6">
       <div className="flex items-center gap-3">

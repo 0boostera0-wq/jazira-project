@@ -4,10 +4,11 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart, ThumbsDown, MessageCircle, Repeat2, MoreVertical, Send,
-  ImageIcon, Video, X, Edit3, Trash2, RefreshCw, ImageOff,
+  ImageIcon, Video, X, Edit3, Trash2, RefreshCw, ImageOff, User,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase-client";
 import { useAuthUser } from "@/context/AuthProvider";
+import { fetchProfileMap, identityOf } from "@/lib/profileJoin";
 import GoldBadge from "./GoldBadge";
 
 const BUCKET = "post-media";
@@ -16,16 +17,11 @@ const MAX_IMAGE_BYTES = 5 * 1024 * 1024;   // 5 MB
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;  // 50 MB
 const POST_COLS = "id, user_id, content, media_url, media_type, media_path, likes_count, dislikes_count, comments_count, reposts_count, created_at";
 
-// Fetch profiles for a set of user ids and attach as row.profile (client-side
-// join — avoids PostgREST embed which needs a FK to profiles that may not exist).
+// Client-side profile join (avoids PostgREST embed). Includes the public
+// display preferences (anonymous mode / Elite badge visibility).
 async function attachProfiles(supabase, rows) {
   if (!rows?.length) return rows || [];
-  const ids = [...new Set(rows.map((r) => r.user_id))];
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, full_name, avatar_url, is_elite")
-    .in("id", ids);
-  const byId = Object.fromEntries((profiles || []).map((p) => [p.id, p]));
+  const byId = await fetchProfileMap(supabase, rows.map((r) => r.user_id));
   return rows.map((r) => ({ ...r, profile: byId[r.user_id] || null }));
 }
 
@@ -52,9 +48,17 @@ function readVideoDuration(file) {
   });
 }
 
-// ── Avatar (with optional click-to-preview) ─────────────────────────────────
-function Avatar({ name, src, size = 44, onClick }) {
+// ── Avatar (with optional click-to-preview + anonymous silhouette) ──────────
+function Avatar({ name, src, size = 44, onClick, anonymous }) {
   const cls = "rounded-full object-cover ring-2 ring-champagne-300 flex-shrink-0";
+  if (anonymous) {
+    // Blank profile silhouette (Instagram-style) for anonymous posters.
+    return (
+      <span className="flex items-center justify-center rounded-full bg-champagne-100 text-ink-muted ring-2 ring-champagne-200 flex-shrink-0" style={{ width: size, height: size }}>
+        <User size={size * 0.55} strokeWidth={1.5} />
+      </span>
+    );
+  }
   if (src) {
     return (
       <img
@@ -212,9 +216,7 @@ function PostCard({ post, currentUserId, reaction, onDelete, onEdit, onImage, on
   }, [post.likes_count, post.dislikes_count, post.comments_count, post.reposts_count]);
 
   const isOwner = currentUserId && post.user_id === currentUserId;
-  const authorName = post.profile?.full_name || "مستخدم";
-  const authorAvatar = post.profile?.avatar_url || null;
-  const authorElite = !!post.profile?.is_elite;
+  const author = identityOf(post.profile); // applies anonymous + badge rules
 
   const supa = () => createClient();
 
@@ -315,10 +317,10 @@ function PostCard({ post, currentUserId, reaction, onDelete, onEdit, onImage, on
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <Avatar name={authorName} src={authorAvatar} onClick={authorAvatar ? () => onAvatar(authorAvatar) : undefined} />
+          <Avatar name={author.name} src={author.avatar} anonymous={author.anonymous} onClick={author.avatar ? () => onAvatar(author.avatar) : undefined} />
           <div>
             <span className="flex items-center gap-1.5 font-bold text-ink">
-              {authorName} {authorElite && <GoldBadge />}
+              {author.name} {author.showBadge && <GoldBadge />}
             </span>
             <p className="text-xs text-ink-soft">{new Date(post.created_at).toLocaleDateString("ar-SA")}</p>
           </div>
@@ -396,17 +398,20 @@ function PostCard({ post, currentUserId, reaction, onDelete, onEdit, onImage, on
             <div className="mt-4 space-y-3">
               {loadingComments && <p className="text-sm text-ink-muted text-center py-2">جاري التحميل...</p>}
               {!loadingComments && comments.length === 0 && <p className="text-sm text-ink-muted text-center py-2">لا توجد تعليقات بعد</p>}
-              {comments.map((c) => (
-                <div key={c.id} className="flex items-start gap-2">
-                  <Avatar name={c.profile?.full_name} src={c.profile?.avatar_url} size={32} />
-                  <div className="flex-1 rounded-2xl bg-white/60 px-3 py-2" style={{ border: "1px solid rgba(201,168,106,0.2)" }}>
-                    <p className="flex items-center gap-1 text-xs font-bold text-ink mb-0.5">
-                      {c.profile?.full_name || "مستخدم"} {c.profile?.is_elite && <GoldBadge />}
-                    </p>
-                    <p className="text-sm text-ink-soft">{c.content}</p>
+              {comments.map((c) => {
+                const ci = identityOf(c.profile);
+                return (
+                  <div key={c.id} className="flex items-start gap-2">
+                    <Avatar name={ci.name} src={ci.avatar} anonymous={ci.anonymous} size={32} />
+                    <div className="flex-1 rounded-2xl bg-white/60 px-3 py-2" style={{ border: "1px solid rgba(201,168,106,0.2)" }}>
+                      <p className="flex items-center gap-1 text-xs font-bold text-ink mb-0.5">
+                        {ci.name} {ci.showBadge && <GoldBadge />}
+                      </p>
+                      <p className="text-sm text-ink-soft">{c.content}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {currentUserId && (

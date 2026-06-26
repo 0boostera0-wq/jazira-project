@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import BrandLogo from '@/components/BrandLogo';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
+
+const SID_KEY = 'jazira_session_id_v1';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -14,6 +16,18 @@ export default function SignInPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [next, setNext] = useState('/dashboard');
+  const [revoked, setRevoked] = useState(false);
+
+  // Read ?next= / ?reason= from the URL without useSearchParams (no Suspense dep).
+  useEffect(() => {
+    try {
+      const p = new URLSearchParams(window.location.search);
+      const n = p.get('next');
+      if (n && n.startsWith('/')) setNext(n);
+      if (p.get('reason') === 'revoked') setRevoked(true);
+    } catch {}
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,9 +37,11 @@ export default function SignInPage() {
     const result = await signIn(email, password);
 
     if (result.success) {
+      // Rotate the local session id so a previously-revoked device gets a clean one.
+      try { localStorage.removeItem(SID_KEY); } catch {}
       // Refresh so server components & auth-aware UI pick up the new session
       router.refresh();
-      router.push('/dashboard');
+      router.push(next);
     } else {
       setError(result.error || 'حدث خطأ أثناء تسجيل الدخول');
     }
@@ -44,6 +60,12 @@ export default function SignInPage() {
         <p className="text-sm text-ink-soft mb-6">
           استخدم بيانات حسابك للدخول إلى منصة جزيرة
         </p>
+
+        {revoked && (
+          <div className="mb-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-800 border border-amber-200">
+            تم تسجيل خروجك من هذا الجهاز. سجّل الدخول مرة أخرى للمتابعة.
+          </div>
+        )}
 
         {error && (
           <div className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 border border-red-200">
@@ -98,7 +120,7 @@ export default function SignInPage() {
         </div>
 
         {/* Google OAuth */}
-        <GoogleSignInButton />
+        <GoogleSignInButton redirectTo={next} />
 
         <div className="mt-6 border-t border-white/20 pt-6 space-y-3">
           <p className="text-center text-sm text-ink-soft">

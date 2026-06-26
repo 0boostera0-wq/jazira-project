@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { BRAND } from "@/lib/constants";
 
 // Simple SVG humanoid robot — recognizable at small sizes
@@ -40,6 +40,8 @@ function RobotSvg({ size = 16 }) {
 
 // Two SVG robots that orbit the palm emoji — one chasing the other
 function OrbitingRobots({ radius = 28 }) {
+  // Skip the perpetual orbit animation when the user prefers reduced motion.
+  if (useReducedMotion()) return null;
   return (
     <motion.div
       className="pointer-events-none absolute inset-0 flex items-center justify-center"
@@ -72,6 +74,7 @@ function OrbitingRobots({ radius = 28 }) {
 
 export default function BrandLogo({ size = "lg" }) {
   const isLg = size === "lg";
+  const reduce = useReducedMotion();
 
   return (
     <div className="flex items-center gap-3">
@@ -92,8 +95,8 @@ export default function BrandLogo({ size = "lg" }) {
         <OrbitingRobots radius={isLg ? 24 : 16} />
         <motion.span
           className={isLg ? "text-4xl" : "text-2xl"}
-          animate={{ y: [0, -5, 0] }}
-          transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+          animate={reduce ? undefined : { y: [0, -5, 0] }}
+          transition={reduce ? undefined : { duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
         >
           {BRAND.emoji}
         </motion.span>

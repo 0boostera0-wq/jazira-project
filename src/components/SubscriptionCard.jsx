@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, Crown, ShieldCheck, X, Lock } from "lucide-react";
 import { ELITE } from "@/lib/constants";
 import { useApp } from "@/context/AppContext";
+import { useAuthUser } from "@/context/AuthProvider";
 import PaymentBadges, {
   ApplePayBadge,
   MadaBadge,
@@ -34,11 +35,22 @@ function PayOption({ active, onClick, children }) {
 
 export default function SubscriptionCard() {
   const { isElite } = useApp();
+  const { isSignedIn } = useAuthUser();
   const [showPay, setShowPay] = useState(false);
   const [method, setMethod] = useState("applepay");
   const [notice, setNotice] = useState("");
 
+  // Checkout requires an account — never let anonymous users subscribe.
+  const startSubscribe = () => {
+    if (!isSignedIn) {
+      window.location.href = "/sign-in?next=/subscriptions";
+      return;
+    }
+    setShowPay(true);
+  };
+
   const handleAttempt = async () => {
+    if (!isSignedIn) { window.location.href = "/sign-in?next=/subscriptions"; return; }
     // Ask the server for a real checkout URL. If the gateway isn't configured,
     // it returns a truthful "coming soon" — we NEVER fake a payment or set Elite.
     try {
@@ -95,8 +107,8 @@ export default function SubscriptionCard() {
             <ShieldCheck size={20} /> أنت مشترك في باقة النخبة
           </div>
         ) : (
-          <button onClick={() => setShowPay(true)} className="btn-gold mt-6 w-full text-lg">
-            اشترك الآن ✨
+          <button onClick={startSubscribe} className="btn-gold mt-6 w-full text-lg">
+            {isSignedIn ? "اشترك الآن ✨" : "سجّل الدخول للاشتراك"}
           </button>
         )}
 
