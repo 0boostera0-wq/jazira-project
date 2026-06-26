@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut({ scope: "local" });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });

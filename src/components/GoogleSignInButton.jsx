@@ -40,6 +40,9 @@ export default function GoogleSignInButton({ redirectTo }) {
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(target)}`,
+        // Always show Google's account chooser — never silently reuse the last
+        // account (important after a remote sign-out). Mirrors Google's own UX.
+        queryParams: { prompt: "select_account" },
       },
     });
     // No setLoading(false) — the page will redirect away

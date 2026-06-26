@@ -77,7 +77,7 @@ export async function signInWithEmail(email, password) {
 
 export async function signOut() {
   const supabase = await createClient();
-  return await supabase.auth.signOut();
+  return await supabase.auth.signOut({ scope: "local" });
 }
 
 export async function resetPassword(email) {

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useInView } from "framer-motion";
 
 // Cinematic easing used across the site (Linear/Vercel-grade spring feel).
 export const EASE = [0.32, 0.72, 0, 1];
@@ -52,14 +53,18 @@ export function StaggerItem({ children, className }) {
   return <motion.div variants={child} className={className}>{children}</motion.div>;
 }
 
-// Infinite gentle float (GPU-safe transform only). Static under reduced-motion.
+// Infinite gentle float (GPU-safe transform only). Static under reduced-motion,
+// and PAUSED while off-screen so it never burns rAF/CPU on weak devices.
 export function Float({ children, className, amount = 10, duration = 6, delay = 0 }) {
   const reduce = useReducedMotion();
+  const ref = useRef(null);
+  const inView = useInView(ref, { margin: "0px 0px -10% 0px" });
   if (reduce) return <div className={className}>{children}</div>;
   return (
     <motion.div
-      animate={{ y: [0, -amount, 0] }}
-      transition={{ duration, repeat: Infinity, ease: "easeInOut", delay }}
+      ref={ref}
+      animate={inView ? { y: [0, -amount, 0] } : { y: 0 }}
+      transition={inView ? { duration, repeat: Infinity, ease: "easeInOut", delay } : { duration: 0.3 }}
       className={className}
     >
       {children}

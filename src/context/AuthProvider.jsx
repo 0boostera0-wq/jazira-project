@@ -128,7 +128,10 @@ export function AuthProvider({ children }) {
   }, [supabase, resolveUser]);
 
   const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
+    // 'local' so signing out on one device never logs out the user's other
+    // devices. Rotate the session id so the next login starts a clean session.
+    try { localStorage.removeItem("jazira_session_id_v1"); } catch {}
+    await supabase.auth.signOut({ scope: "local" });
     setState({
       isLoaded: true,
       isSignedIn: false,

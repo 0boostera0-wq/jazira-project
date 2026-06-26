@@ -123,7 +123,7 @@ export default function Landing() {
           {/* Illustration + floating Z-cascade cards */}
           <div className="relative" onMouseMove={onHeroMove} onMouseLeave={onHeroLeave}>
             <motion.div style={{ x: sx, y: sy }}>
-              <Illustration name="hero-future.png" icon={Compass} alt="رحلتك التعليمية" ratio="1 / 1" />
+              <Illustration name="hero-main.png" icon={Compass} alt="رحلتك التعليمية مع منصة جزيرة" ratio="1 / 1" priority sizes="(max-width: 768px) 92vw, 40vw" />
             </motion.div>
 
             <Float amount={12} duration={6} className="absolute -left-2 top-6 hidden md:block">

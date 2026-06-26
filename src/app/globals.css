@@ -121,6 +121,27 @@ html.dark .jz-starfield { opacity: 1; }
   .jz-starfield * { animation: none !important; }
 }
 
+/* ── Mobile performance ─────────────────────────────────────────────── */
+/* backdrop-filter (frosted glass) is re-computed every frame during scroll and
+   is the single biggest scroll-jank source on weak phones. On small screens we
+   drop it entirely and use a near-opaque themed surface instead — visually still
+   premium, but buttery smooth. The film-grain fixed layer is also dropped. */
+@media (max-width: 768px) {
+  .glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(255, 255, 255, 0.88);
+  }
+  .glass-strong {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(255, 255, 255, 0.95);
+  }
+  html.dark .glass { background: rgba(28, 31, 42, 0.92); }
+  html.dark .glass-strong { background: rgba(24, 27, 37, 0.96); }
+  .lux-grain { display: none; }
+}
+
 /* ── AI assistant chat bubbles (readable in light AND dark) ─────────── */
 .jz-ai-bubble-user {
   background: rgba(255, 255, 255, 0.85);

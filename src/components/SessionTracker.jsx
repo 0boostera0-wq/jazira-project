@@ -44,8 +44,24 @@ export default function SessionTracker() {
       if (handledRef.current) return;
       handledRef.current = true;
       try { localStorage.removeItem(SID_KEY); } catch {}      // rotate → clean next login
-      try { await supabase.auth.signOut(); } catch {}
+      // CRITICAL: scope 'local' — sign out ONLY this device. The default 'global'
+      // revokes every device's refresh token, which previously logged out the
+      // device that initiated the remote sign-out too.
+      try { await supabase.auth.signOut({ scope: "local" }); } catch {}
       window.location.href = "/sign-in?reason=revoked";
+    };
+
+    // Best-effort: ask the server to stamp this row's approximate location from
+    // edge geo headers (city/country). Fire-and-forget — never blocks or throws.
+    const stampLocation = () => {
+      try {
+        fetch("/api/session/touch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: sid }),
+          keepalive: true,
+        }).catch(() => {});
+      } catch {}
     };
 
     const register = async () => {
@@ -59,6 +75,7 @@ export default function SessionTracker() {
         }, { onConflict: "user_id,session_id" });
       } catch {}
       await check(true);
+      stampLocation();
     };
 
     const check = async (skipTouch) => {

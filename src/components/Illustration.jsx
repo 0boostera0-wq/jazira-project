@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Float } from "./motion/Reveal";
 
-// Renders /public/illustrations/<name> when present; otherwise an elegant CSS
-// placeholder (double-bezel glass plate + soft gold glow). This lets the
-// homepage ship now and become the final artwork the moment the PNGs are added
-// to public/illustrations/ — with zero code changes.
+// Renders /public/illustrations/<name> via next/image (auto WebP/AVIF, correct
+// responsive sizing, async decode → far cheaper on weak devices). Falls back to
+// an elegant CSS placeholder if the file is missing.
 export default function Illustration({
   name,
   icon: Icon,
@@ -14,6 +14,8 @@ export default function Illustration({
   className = "",
   float = true,
   ratio = "4 / 3",
+  priority = false,
+  sizes = "(max-width: 768px) 92vw, 45vw",
 }) {
   const [errored, setErrored] = useState(false);
   const showImg = name && !errored;
@@ -21,16 +23,18 @@ export default function Illustration({
   const shell = (
     <div className={`relative bezel ${className}`}>
       <div
-        className="bezel-core overflow-hidden"
+        className="bezel-core relative overflow-hidden"
         style={{ background: "linear-gradient(135deg,#fffdf9,#f3e9d4)", aspectRatio: ratio }}
       >
         {showImg ? (
-          <img
+          <Image
             src={`/illustrations/${name}`}
             alt={alt}
+            fill
+            sizes={sizes}
+            priority={priority}
             onError={() => setErrored(true)}
-            loading="lazy"
-            className="h-full w-full object-cover"
+            className="object-cover"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">

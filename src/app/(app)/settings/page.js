@@ -4,8 +4,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Settings, Bell, Moon, Volume2, Globe, ShieldCheck, Crown, Camera,
   Eye, Trash2, RefreshCw, X, Lock, LogOut, Smartphone, Bot,
-  UserCog, KeyRound, Mail, Phone, Clock, BadgeCheck, UserX, Monitor,
-  Laptop, Pencil,
+  UserCog, KeyRound, Mail, Phone, Clock, BadgeCheck, UserX,
+  Laptop, Tablet, MapPin, Pencil,
 } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import Avatar from "@/components/Avatar";
@@ -14,7 +14,6 @@ import { useAuthUser } from "@/context/AuthProvider";
 import { usePreferences } from "@/context/PreferencesProvider";
 import { createClient } from "@/lib/supabase-client";
 import { validateFullName } from "@/lib/profile";
-import { parseDevice } from "@/lib/device";
 
 const LOCAL_KEY = "jazira_local_prefs_v1";
 const SID_KEY = "jazira_session_id_v1";
@@ -64,6 +63,18 @@ function fmtRemain(ms, t) {
   const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
   return t(`${d} يوم، ${h} ساعة، ${m} دقيقة، ${sec} ثانية`, `${d}d ${h}h ${m}m ${sec}s`);
 }
+// Friendly "last active" label for an active-session row.
+function relTime(ts, nowMs, t) {
+  if (!ts) return "";
+  const m = Math.floor((nowMs - new Date(ts).getTime()) / 60000);
+  if (m < 2) return t("نشط الآن", "Active now");
+  if (m < 60) return t(`نشط قبل ${m} دقيقة`, `${m}m ago`);
+  const h = Math.floor(m / 60);
+  if (h < 24) return t(`نشط قبل ${h} ساعة`, `${h}h ago`);
+  const d = Math.floor(h / 24);
+  if (d < 30) return t(`نشط قبل ${d} يوم`, `${d}d ago`);
+  return new Date(ts).toLocaleDateString(t("ar-SA", "en-US"));
+}
 
 export default function SettingsPage() {
   const { isDark, toggleTheme, xp } = useApp();
@@ -108,9 +119,17 @@ export default function SettingsPage() {
     if (!userId) return;
     try {
       const supabase = createClient();
-      const { data } = await supabase.from("user_sessions")
-        .select("session_id, device_label, browser, os, device_type, last_active_at, created_at")
+      const base = "session_id, device_label, browser, os, device_type, last_active_at, created_at";
+      // Try with location; gracefully fall back if migration 0007 isn't applied.
+      let { data, error } = await supabase.from("user_sessions")
+        .select(`${base}, location`)
         .eq("user_id", userId).is("revoked_at", null).order("last_active_at", { ascending: false });
+      if (error) {
+        const r = await supabase.from("user_sessions")
+          .select(base)
+          .eq("user_id", userId).is("revoked_at", null).order("last_active_at", { ascending: false });
+        data = r.data;
+      }
       setSessions(data || []);
     } catch {}
   }, [userId]);
@@ -285,7 +304,7 @@ export default function SettingsPage() {
     const isCurrent = s.session_id === sid;
     try {
       await supabase.from("user_sessions").update({ revoked_at: new Date().toISOString() }).eq("user_id", userId).eq("session_id", s.session_id);
-      if (isCurrent) { try { localStorage.removeItem(SID_KEY); } catch {}; await supabase.auth.signOut(); window.location.href = "/"; return; }
+      if (isCurrent) { try { localStorage.removeItem(SID_KEY); } catch {}; await supabase.auth.signOut({ scope: "local" }); window.location.href = "/"; return; }
       setSessions((prev) => prev.filter((x) => x.session_id !== s.session_id));
       flash(t("تم تسجيل الخروج من الجهاز", "Signed out that device"));
     } catch { flash(t("تعذّر تسجيل الخروج", "Couldn't sign out")); }
@@ -316,7 +335,7 @@ export default function SettingsPage() {
     );
   }
 
-  const deviceIcon = (dt) => dt === "جوال" ? Smartphone : dt === "جهاز لوحي" ? Monitor : Laptop;
+  const deviceIcon = (dt) => dt === "جوال" ? Smartphone : dt === "جهاز لوحي" ? Tablet : Laptop;
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -444,14 +463,23 @@ export default function SettingsPage() {
           {sessions.map((s) => {
             const Icon = deviceIcon(s.device_type);
             const current = s.session_id === sid;
+            const fresh = current || (s.last_active_at && now - new Date(s.last_active_at).getTime() < 5 * 60 * 1000);
+            const meta = [s.device_type, s.location].filter(Boolean).join(" · ");
             return (
               <div key={s.session_id} className="flex items-center gap-3 rounded-2xl bg-white/50 px-4 py-3" style={{ border: "1px solid rgba(201,168,106,0.25)" }}>
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/70 text-gold"><Icon size={18} strokeWidth={1.5} /></span>
                 <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-2 truncate text-sm font-bold text-ink">{s.device_label || t("جهاز غير معروف", "Unknown device")} {current && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">{t("هذا الجهاز", "This device")}</span>}</p>
-                  <p className="text-[11px] text-ink-muted ltr-nums">{s.device_type} · {new Date(s.last_active_at).toLocaleDateString("ar-SA")}</p>
+                  <p className="flex items-center gap-2 truncate text-sm font-bold text-ink">
+                    {s.os || t("نظام غير معروف", "Unknown OS")}{s.browser ? ` · ${s.browser}` : ""}
+                    {current && <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">{t("هذا الجهاز", "This device")}</span>}
+                  </p>
+                  {meta && <p className="flex items-center gap-1 truncate text-[11px] text-ink-muted">{s.location && <MapPin size={11} className="shrink-0 text-champagne-500" />} <span className="truncate">{meta}</span></p>}
+                  <p className="mt-0.5 flex items-center gap-1.5 text-[11px] font-semibold">
+                    <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${fresh ? "bg-emerald-500" : "bg-champagne-300"}`} />
+                    <span className={fresh ? "text-emerald-600" : "text-ink-muted"}>{relTime(s.last_active_at, now, t)}</span>
+                  </p>
                 </div>
-                <button onClick={() => revokeSession(s)} className="rounded-xl px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition">{current ? t("خروج", "Sign out") : t("إنهاء", "Revoke")}</button>
+                <button onClick={() => revokeSession(s)} className="shrink-0 rounded-xl px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition">{current ? t("خروج", "Sign out") : t("إنهاء", "Revoke")}</button>
               </div>
             );
           })}
