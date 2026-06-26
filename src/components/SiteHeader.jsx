@@ -10,6 +10,7 @@ import { EASE } from "@/components/motion/Reveal";
 const LINKS = [
   { label: "المنصة", href: "/#features" },
   { label: "المساعد الذكي", href: "/#ai" },
+  { label: "المناهج والمصادر", href: "/curriculum" },
   { label: "المسارات", href: "/#paths" },
   { label: "الباقات", href: "/subscriptions" },
   { label: "الأسئلة", href: "/faq" },

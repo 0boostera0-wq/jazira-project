@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Home,
   BookOpen,
+  Library,
   GraduationCap,
   Users,
   Trophy,
@@ -31,6 +32,7 @@ import BrandLogo from "./BrandLogo";
 const ICONS = {
   Home,
   BookOpen,
+  Library,
   GraduationCap,
   Users,
   Trophy,

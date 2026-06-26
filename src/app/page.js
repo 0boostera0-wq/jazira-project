@@ -6,12 +6,14 @@ import {
   GraduationCap, Sparkles, Users, Trophy, BookOpen, Bot, Calendar, BarChart3,
   ShieldCheck, Crown, Flame, Star, Clock, Compass, Layers, Rocket, ArrowLeft,
   Check, LineChart, Lightbulb, MessageSquareQuote, ChevronDown, Target, Zap,
+  Library, Accessibility,
 } from "lucide-react";
 import { Reveal, Stagger, StaggerItem, Float, EASE } from "@/components/motion/Reveal";
 import Illustration from "@/components/Illustration";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { ELITE, PRIZES } from "@/lib/constants";
+import { ACADEMIC_YEAR } from "@/lib/curriculum";
 
 /* ── tiny premium primitives ─────────────────────────────────────────── */
 function Eyebrow({ children }) {
@@ -197,14 +199,17 @@ export default function Landing() {
       {/* ════════ LEARNING PATHS ════════ */}
       <Section id="paths">
         <Reveal className="mx-auto mb-12 max-w-2xl text-center">
-          <Eyebrow>مسارات دراسية</Eyebrow>
-          <h2 className="mt-5 text-3xl font-extrabold text-ink sm:text-5xl">مسار مصمّم لكل مرحلة</h2>
-          <p className="mt-4 text-lg text-ink-soft">من الابتدائية إلى الثانوية — محتوى متدرّج يبني المهارة طبقة فوق طبقة.</p>
+          <Eyebrow>المناهج والمصادر</Eyebrow>
+          <h2 className="mt-5 text-3xl font-extrabold text-ink sm:text-5xl">مكتبة تعليمية لكل مرحلة</h2>
+          <p className="mt-4 text-lg text-ink-soft">كتب الطالب والنشاط ونماذج الاختبارات لكل مادة وفصل دراسي — للعام {ACADEMIC_YEAR}.</p>
         </Reveal>
         <Stagger className="grid gap-5 md:grid-cols-3">
-          <StaggerItem><FeatureCard icon={BookOpen} href="/elementary" title="المرحلة الابتدائية" desc="أساسيات القراءة والكتابة والحساب بأسلوب تفاعلي ممتع." /></StaggerItem>
-          <StaggerItem><FeatureCard icon={Layers} href="/middle" title="المرحلة المتوسطة" desc="ترسيخ المفاهيم وبناء التفكير النقدي بمسارات منظّمة." /></StaggerItem>
-          <StaggerItem><FeatureCard icon={GraduationCap} href="/high-school" title="المرحلة الثانوية" desc="استعداد كامل للقدرات والتحصيلي بمحرّك اختبارات ذكي." /></StaggerItem>
+          <StaggerItem><FeatureCard icon={BookOpen} href="/curriculum/elementary" title="المرحلة الابتدائية" desc="الصفوف من الأول إلى السادس — جميع المواد ومصادرها." /></StaggerItem>
+          <StaggerItem><FeatureCard icon={Layers} href="/curriculum/middle" title="المرحلة المتوسطة" desc="الصفوف من الأول إلى الثالث بمحتوى متدرّج منظّم." /></StaggerItem>
+          <StaggerItem><FeatureCard icon={GraduationCap} href="/curriculum/high-school" title="المرحلة الثانوية" desc="السنة الأولى المشتركة وخمسة مسارات تخصّصية." /></StaggerItem>
+          <StaggerItem><FeatureCard icon={Compass} href="/curriculum/continuing" title="التعليم المستمر" desc="مسار مرن لمواصلة التعلّم في كل الأعمار." /></StaggerItem>
+          <StaggerItem><FeatureCard icon={Accessibility} href="/curriculum/special" title="التربية الخاصة" desc="برامج وأدلة داعمة ومتخصّصة لكل احتياج." /></StaggerItem>
+          <StaggerItem><FeatureCard icon={Library} href="/curriculum" title="كل المراحل والمصادر" desc="تصفّح المكتبة التعليمية كاملة في مكان واحد." /></StaggerItem>
         </Stagger>
       </Section>
 
@@ -417,10 +422,11 @@ export default function Landing() {
         <Stagger className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {[
             { label: "لوحة التحكم", href: "/dashboard", icon: Compass },
+            { label: "المناهج والمصادر", href: "/curriculum", icon: Library },
             { label: "اختبارات القدرات", href: "/high-school", icon: GraduationCap },
-            { label: "المرحلة الابتدائية", href: "/elementary", icon: BookOpen },
-            { label: "المرحلة المتوسطة", href: "/middle", icon: Layers },
-            { label: "المرحلة الثانوية", href: "/high-school", icon: GraduationCap },
+            { label: "المرحلة الابتدائية", href: "/curriculum/elementary", icon: BookOpen },
+            { label: "المرحلة المتوسطة", href: "/curriculum/middle", icon: Layers },
+            { label: "المرحلة الثانوية", href: "/curriculum/high-school", icon: GraduationCap },
             { label: "المجتمع التعليمي", href: "/community", icon: Users },
             { label: "المسابقات", href: "/competitions", icon: Trophy },
             { label: "الإنجازات", href: "/achievements", icon: Star },

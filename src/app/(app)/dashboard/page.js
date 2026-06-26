@@ -7,7 +7,7 @@ import {
   Sparkles, Crown, Flame, Star, Users, GraduationCap, BookOpen, Trophy, Bot,
   ArrowLeft, Check, Target, Calendar, BarChart3, Layers, Compass, Zap, Lightbulb,
   ShieldCheck, MessageSquareQuote, Rocket, Lock, Medal, Clock,
-  TrendingUp, FileText,
+  TrendingUp, FileText, Library, Accessibility,
 } from "lucide-react";
 import { Reveal, Stagger, StaggerItem, Float } from "@/components/motion/Reveal";
 import Illustration from "@/components/Illustration";
@@ -210,9 +210,9 @@ export default function DashboardPage() {
       <section>
         <SectionHead eyebrow="واصل من حيث توقّفت" title="أكمل رحلتك" sub="اختر مسارك وابدأ الدرس التالي — كل خطوة تُحتسب." href="/high-school" cta="كل المسارات" />
         <Stagger className="grid gap-5 md:grid-cols-3">
-          <StaggerItem><NavCard icon={BookOpen} href="/elementary" title="المرحلة الابتدائية" desc="أساسيات القراءة والكتابة والحساب بأسلوب ممتع." /></StaggerItem>
-          <StaggerItem><NavCard icon={Layers} href="/middle" title="المرحلة المتوسطة" desc="ترسيخ المفاهيم وبناء التفكير النقدي." /></StaggerItem>
-          <StaggerItem><NavCard icon={GraduationCap} href="/high-school" title="المرحلة الثانوية" desc="استعداد كامل للقدرات والتحصيلي." /></StaggerItem>
+          <StaggerItem><NavCard icon={BookOpen} href="/curriculum/elementary" title="المرحلة الابتدائية" desc="أساسيات القراءة والكتابة والحساب بأسلوب ممتع." /></StaggerItem>
+          <StaggerItem><NavCard icon={Layers} href="/curriculum/middle" title="المرحلة المتوسطة" desc="ترسيخ المفاهيم وبناء التفكير النقدي." /></StaggerItem>
+          <StaggerItem><NavCard icon={GraduationCap} href="/curriculum/high-school" title="المرحلة الثانوية" desc="جميع المواد والمسارات ومصادرها." /></StaggerItem>
         </Stagger>
       </section>
 
@@ -244,7 +244,7 @@ export default function DashboardPage() {
         <div className="grid gap-5 md:grid-cols-3">
           {[
             { icon: Target, t: "حل اختبار قصير", d: "١٠ أسئلة تكشف مستواك اليوم.", href: "/high-school" },
-            { icon: BookOpen, t: "راجع درساً واحداً", d: "تثبيت المعلومة خير من الكم.", href: "/middle" },
+            { icon: BookOpen, t: "راجع درساً واحداً", d: "تثبيت المعلومة خير من الكم.", href: "/curriculum/middle" },
             { icon: Users, t: "شارك في المجتمع", d: "سؤال أو إنجاز يلهم غيرك.", href: "/community" },
           ].map((m, i) => (
             <Reveal key={m.t} delay={i * 0.06}>
@@ -276,14 +276,16 @@ export default function DashboardPage() {
 
       {/* ════ 7 · SCHOOL STAGES ════ */}
       <section>
-        <SectionHead eyebrow="المراحل الدراسية" title="مسار مصمّم لكل مرحلة" sub="محتوى متدرّج يبني المهارة طبقة فوق طبقة." />
+        <SectionHead eyebrow="المراحل الدراسية" title="مسار مصمّم لكل مرحلة" sub="محتوى متدرّج يبني المهارة طبقة فوق طبقة." href="/curriculum" cta="كل المراحل والمصادر" />
         <div className="grid items-center gap-8 md:grid-cols-2">
           <Reveal><Illustration name="dashboard/journey-start.png" icon={Rocket} alt="ابدأ رحلتك" ratio="3 / 2" /></Reveal>
           <Stagger className="grid gap-4">
             {[
-              { icon: BookOpen, t: "ابتدائي", d: "بناء الأساس بثقة ومتعة.", href: "/elementary" },
-              { icon: Layers, t: "متوسط", d: "تعميق الفهم والتفكير.", href: "/middle" },
-              { icon: GraduationCap, t: "ثانوي", d: "جاهزية كاملة للاختبارات.", href: "/high-school" },
+              { icon: BookOpen, t: "ابتدائي", d: "الصفوف من الأول إلى السادس.", href: "/curriculum/elementary" },
+              { icon: Layers, t: "متوسط", d: "الصفوف من الأول إلى الثالث.", href: "/curriculum/middle" },
+              { icon: GraduationCap, t: "ثانوي", d: "السنة الأولى المشتركة و٥ مسارات.", href: "/curriculum/high-school" },
+              { icon: Compass, t: "التعليم المستمر", d: "مسار مرن لمواصلة التعلّم.", href: "/curriculum/continuing" },
+              { icon: Accessibility, t: "التربية الخاصة", d: "برامج وأدلة داعمة ومتخصّصة.", href: "/curriculum/special" },
             ].map((s) => (
               <StaggerItem key={s.t}>
                 <Link href={s.href} className="group flex items-center gap-4 bezel transition-transform duration-500 hover:-translate-x-1" style={{ transitionTimingFunction: "cubic-bezier(0.32,0.72,0,1)" }}>
@@ -387,9 +389,10 @@ export default function DashboardPage() {
         <SectionHead eyebrow="إجراءات سريعة" title="كل ما تحتاجه بضغطة" />
         <Stagger className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {[
+            { label: "المناهج والمصادر", href: "/curriculum", icon: Library },
             { label: "اختبارات القدرات", href: "/high-school", icon: GraduationCap },
-            { label: "المرحلة الابتدائية", href: "/elementary", icon: BookOpen },
-            { label: "المرحلة المتوسطة", href: "/middle", icon: Layers },
+            { label: "المرحلة الابتدائية", href: "/curriculum/elementary", icon: BookOpen },
+            { label: "المرحلة المتوسطة", href: "/curriculum/middle", icon: Layers },
             { label: "المجتمع التعليمي", href: "/community", icon: Users },
             { label: "المسابقات", href: "/competitions", icon: Trophy },
             { label: "الإنجازات", href: "/achievements", icon: Star },

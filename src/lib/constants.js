@@ -63,13 +63,16 @@ export const NAV_SECTIONS = [
     items: [
       { key: "home", label: "الرئيسية", href: "/dashboard", icon: "Home" },
       {
-        key: "tracks",
-        label: "المسارات الدراسية",
-        icon: "BookOpen",
+        key: "curriculum",
+        label: "المناهج والمصادر",
+        icon: "Library",
         accordion: [
-          { label: "ابتدائي", href: "/elementary" },
-          { label: "متوسط", href: "/middle" },
-          { label: "ثانوي", href: "/high-school" },
+          { label: "كل المراحل والمصادر", href: "/curriculum" },
+          { label: "ابتدائي (١–٦)", href: "/curriculum/elementary" },
+          { label: "متوسط (١–٣)", href: "/curriculum/middle" },
+          { label: "ثانوي ومساراته", href: "/curriculum/high-school" },
+          { label: "التعليم المستمر", href: "/curriculum/continuing" },
+          { label: "التربية الخاصة", href: "/curriculum/special" },
         ],
       },
       {

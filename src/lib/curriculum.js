@@ -13,18 +13,41 @@ const YEAR_KEY = "1447";
 
 const ORD = ["", "الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس"];
 
+// --- terms -----------------------------------------------------------------
+// Saudi 1447 system runs on THREE terms. "all" = full year (every term's files).
+export const TERMS = [
+  { id: "t1", name: "الفصل الدراسي الأول", short: "الأول" },
+  { id: "t2", name: "الفصل الدراسي الثاني", short: "الثاني" },
+  { id: "t3", name: "الفصل الدراسي الثالث", short: "الثالث" },
+];
+export const TERM_FILTERS = [{ id: "all", name: "كامل العام", short: "كامل العام" }, ...TERMS];
+
 // --- resources -------------------------------------------------------------
-// A standard resource set per subject so the catalog + viewer are fully wired.
-// `key` is a path under YOUR content namespace; the API route validates it and
-// joins it to CONTENT_BASE_URL. Files that don't exist yet simply surface a
-// friendly "content not available" state in the viewer — nothing breaks.
+// A standard resource set per subject PER TERM so the catalog + viewer are fully
+// wired. `key` is a path under YOUR content namespace; the API route validates
+// it and joins it to CONTENT_BASE_URL. Files that don't exist yet simply surface
+// a friendly "content not available" state in the viewer — nothing breaks.
 function resourcesFor(path, subjectId) {
   const base = `${path}/${subjectId}`;
-  return [
-    { id: `${subjectId}-student`, title: "كتاب الطالب", kind: "textbook", key: `${base}/student-book.pdf` },
-    { id: `${subjectId}-activity`, title: "كتاب النشاط", kind: "workbook", key: `${base}/activity-book.pdf` },
-    { id: `${subjectId}-exams`, title: "نماذج اختبارات", kind: "exam", key: `${base}/exams.pdf` },
+  const docs = [
+    { suffix: "student", title: "كتاب الطالب", kind: "textbook", file: "student-book.pdf" },
+    { suffix: "activity", title: "كتاب النشاط", kind: "workbook", file: "activity-book.pdf" },
+    { suffix: "exams", title: "نماذج اختبارات", kind: "exam", file: "exams.pdf" },
   ];
+  const out = [];
+  for (const t of TERMS) {
+    for (const d of docs) {
+      out.push({
+        id: `${subjectId}-${t.id}-${d.suffix}`,
+        title: d.title,
+        kind: d.kind,
+        term: t.id,
+        termName: t.name,
+        key: `${base}/${t.id}/${d.file}`,
+      });
+    }
+  }
+  return out;
 }
 
 // --- subject factory -------------------------------------------------------
