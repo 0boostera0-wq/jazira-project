@@ -14,6 +14,7 @@ import { useAuthUser } from "@/context/AuthProvider";
 import { usePreferences } from "@/context/PreferencesProvider";
 import { createClient } from "@/lib/supabase-client";
 import { validateFullName } from "@/lib/profile";
+import SocialSettings from "@/components/social/SocialSettings";
 
 const LOCAL_KEY = "jazira_local_prefs_v1";
 const SID_KEY = "jazira_session_id_v1";
@@ -455,6 +456,9 @@ export default function SettingsPage() {
           </Row>
         </div>
       </Section>
+
+      {/* Privacy & social */}
+      <div className="mt-5"><SocialSettings /></div>
 
       {/* Active devices */}
       <Section icon={Smartphone} title={t("الأجهزة النشطة", "Active devices")} sub={t("راجع الأجهزة التي سجّلت الدخول إلى حسابك، وسجّل الخروج من أي جهاز لا تستخدمه.", "Review devices signed into your account; sign out any you don't use.")}>

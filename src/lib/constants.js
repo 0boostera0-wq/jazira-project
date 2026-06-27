@@ -82,6 +82,7 @@ export const NAV_SECTIONS = [
         icon: "GraduationCap",
       },
       { key: "community", label: "المجتمع التعليمي", href: "/community", icon: "Users" },
+      { key: "chat", label: "الدردشة", href: "/chat", icon: "MessageCircle", badge: "chat", premium: true },
       {
         key: "achievements",
         label: "الإنجازات والأوسمة والسلاسل اليومية",

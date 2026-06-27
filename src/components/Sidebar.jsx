@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -9,6 +9,7 @@ import {
   Library,
   GraduationCap,
   Users,
+  MessageCircle,
   Trophy,
   Info,
   Star,
@@ -21,6 +22,7 @@ import {
   ChevronDown,
   Crown,
 } from "lucide-react";
+import { unreadMessageCount } from "@/lib/social";
 import { NAV_SECTIONS } from "@/lib/constants";
 import { useAuthUser } from "@/context/AuthProvider";
 import { useApp } from "@/context/AppContext";
@@ -35,6 +37,7 @@ const ICONS = {
   Library,
   GraduationCap,
   Users,
+  MessageCircle,
   Trophy,
   Info,
   Star,
@@ -47,10 +50,21 @@ const ICONS = {
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
   const [tracksOpen, setTracksOpen] = useState(true);
+  const [chatUnread, setChatUnread] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
   const { isLoaded, isSignedIn, name, imageUrl, signOut } = useAuthUser();
   const { isElite } = useApp();
+
+  // best-effort unread DM count for the "الدردشة" nav badge (0 before migration)
+  useEffect(() => {
+    if (!isSignedIn) { setChatUnread(0); return; }
+    let alive = true;
+    const tick = () => unreadMessageCount().then((n) => alive && setChatUnread(n));
+    tick();
+    const id = setInterval(tick, 60000);
+    return () => { alive = false; clearInterval(id); };
+  }, [isSignedIn]);
 
   const close = () => setOpen(false);
 
@@ -234,11 +248,21 @@ export default function Sidebar() {
                               : "text-ink hover:bg-champagne-100/70"
                           }`}
                         >
-                          <Icon
-                            size={20}
-                            className={isActive(item.href) ? "text-white" : "text-champagne-500"}
-                          />
+                          <span className="relative">
+                            <Icon
+                              size={20}
+                              className={isActive(item.href) ? "text-white" : "text-champagne-500"}
+                            />
+                            {item.badge === "chat" && chatUnread > 0 && (
+                              <span className="absolute -right-1.5 -top-1.5 h-2.5 w-2.5 rounded-full bg-[#E0556B] ring-2 ring-white" />
+                            )}
+                          </span>
                           <span className="font-semibold">{item.label}</span>
+                          {item.badge === "chat" && chatUnread > 0 && (
+                            <span className={`mr-auto grid h-5 min-w-[20px] place-items-center rounded-full px-1.5 text-[11px] font-extrabold ${isActive(item.href) ? "bg-white/25 text-white" : "bg-gold-gradient text-white"}`}>
+                              {chatUnread > 99 ? "99+" : chatUnread}
+                            </span>
+                          )}
                         </button>
                       );
                     })}
