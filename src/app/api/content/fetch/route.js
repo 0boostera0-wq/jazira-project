@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
 import { findResourceByKey } from "@/lib/curriculum";
+import { pendingPdf } from "@/lib/pendingPdf";
 
 export const runtime = "nodejs";
 // Streamed per-request; the CDN still caches via the Cache-Control header below.
@@ -50,8 +51,21 @@ function pdfHeaders(key, asDownload, extra = {}) {
   return headers;
 }
 
+// Until the real file is imported, return a valid branded PDF so the viewer
+// always OPENS something (never the "تعذر تحميل المحتوى" failure). `?strict=1`
+// disables this so a truly-missing file can be detected (returns 404).
+function pendingResponse(key, asDownload, strict) {
+  if (strict) return NextResponse.json({ error: "not_found" }, { status: 404 });
+  const body = new Uint8Array(pendingPdf(key, findResourceByKey(key)?.title || ""));
+  const headers = pdfHeaders(key, asDownload, { "Content-Length": String(body.byteLength) });
+  // Never cache the placeholder as if it were the real file.
+  headers.set("Cache-Control", "no-store");
+  headers.set("X-Jazira-Content", "pending-import");
+  return new NextResponse(body, { status: 200, headers });
+}
+
 // ── local store: stream from /public/resources/<key> ──────────────────────
-async function serveLocal(key, asDownload) {
+async function serveLocal(key, asDownload, strict) {
   const filePath = path.join(PUBLIC_DIR, key);
   // Defense-in-depth: the resolved path must stay inside /public/resources.
   const rel = path.relative(PUBLIC_DIR, filePath);
@@ -67,8 +81,8 @@ async function serveLocal(key, asDownload) {
       headers: pdfHeaders(key, asDownload, { "Content-Length": String(body.byteLength) }),
     });
   } catch {
-    // Not imported yet → the viewer shows a friendly "content not available".
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+    // Not imported yet → serve the branded pending PDF (still opens cleanly).
+    return pendingResponse(key, asDownload, strict);
   }
 }
 
@@ -91,7 +105,7 @@ function resolveRemote(key) {
   return target.toString();
 }
 
-async function serveRemote(key, asDownload, range) {
+async function serveRemote(key, asDownload, range, strict) {
   const url = resolveRemote(key);
   if (!url) return NextResponse.json({ error: "unconfigured" }, { status: 400 });
 
@@ -99,13 +113,14 @@ async function serveRemote(key, asDownload, range) {
   try {
     upstream = await fetch(url, { headers: range ? { Range: range } : {}, cache: "no-store" });
   } catch {
-    return NextResponse.json({ error: "upstream_unreachable" }, { status: 502 });
+    // Source unreachable → fall back to the pending PDF so the app keeps working
+    // even when the original source is offline.
+    return pendingResponse(key, asDownload, strict);
   }
   if (!upstream.ok && upstream.status !== 206) {
-    return NextResponse.json(
-      { error: upstream.status === 404 ? "not_found" : "upstream_error" },
-      { status: upstream.status === 404 ? 404 : 502 }
-    );
+    // Not uploaded yet (404) → pending PDF; other upstream errors → pending too,
+    // unless strict mode asked us to surface the miss.
+    return pendingResponse(key, asDownload, strict);
   }
   const headers = pdfHeaders(key, asDownload, {
     "Content-Length": upstream.headers.get("content-length"),
@@ -118,13 +133,14 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const key = searchParams.get("key");
   const asDownload = searchParams.get("download") === "1";
+  const strict = searchParams.get("strict") === "1";
 
   if (!validKey(key)) {
     return NextResponse.json({ error: "invalid_key" }, { status: 400 });
   }
 
   if (STORE === "remote") {
-    return serveRemote(key, asDownload, request.headers.get("range"));
+    return serveRemote(key, asDownload, request.headers.get("range"), strict);
   }
-  return serveLocal(key, asDownload);
+  return serveLocal(key, asDownload, strict);
 }

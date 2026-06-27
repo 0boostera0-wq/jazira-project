@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, FileText, BookOpen, ClipboardCheck, X, Info, FolderOpen } from "lucide-react";
-import { TERM_FILTERS } from "@/lib/curriculum";
+import { TERMS, TERM_FILTERS, termName } from "@/lib/curriculum";
 import SubjectCard from "./SubjectCard";
 import PdfViewerModal from "./PdfViewerModal";
 
@@ -13,25 +13,25 @@ const KIND = {
   exam: { label: "نماذج اختبارات", Icon: ClipboardCheck },
 };
 
-// Leaf experience: a term filter bar → grid of animated subject cards → tap a
-// subject → a resource sheet of file cards (filtered by the chosen term) → tap a
-// file → the in-app PDF viewer opens.
+// Leaf experience:
+//   • term filter: الأول / الثاني / كامل العام
+//   • a specific term  → one grid of that term's subjects
+//   • كامل العام        → TWO sections (term 1, term 2), each with its subjects
+//   • tap a subject     → sheet of exactly its 3 resources for that term, ordered
+//     كتاب الطالب → كتاب النشاط → نماذج اختبارات (no duplicates)
 export default function SubjectBrowser({ subjects = [] }) {
-  const [term, setTerm] = useState("all"); // all | t1 | t2 | t3
-  const [selected, setSelected] = useState(null); // subject
+  const [term, setTerm] = useState("all"); // all | t1 | t2
+  const [selected, setSelected] = useState(null); // { subject, term }
   const [resource, setResource] = useState(null); // resource to view
 
-  // Resources for the current subject filtered by the selected term.
-  const sheetResources = useMemo(() => {
-    if (!selected) return [];
-    const all = selected.resources || [];
-    return term === "all" ? all : all.filter((r) => r.term === term);
-  }, [selected, term]);
+  const inTerm = (tid) => subjects.filter((s) => s.terms?.includes(tid));
+  const resourcesOf = (subject, tid) =>
+    (subject?.resources || []).filter((r) => r.term === tid).sort((a, b) => a.order - b.order);
 
-  const countFor = (s) => {
-    const all = s.resources || [];
-    return term === "all" ? all.length : all.filter((r) => r.term === term).length;
-  };
+  const sheetResources = useMemo(
+    () => (selected ? resourcesOf(selected.subject, selected.term) : []),
+    [selected]
+  );
 
   if (!subjects.length) {
     return (
@@ -43,19 +43,37 @@ export default function SubjectBrowser({ subjects = [] }) {
     );
   }
 
+  const Grid = ({ list, sectionTerm }) =>
+    list.length ? (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {list.map((s) => (
+          <SubjectCard
+            key={s.id}
+            subject={s}
+            count={resourcesOf(s, sectionTerm).length}
+            onClick={() => setSelected({ subject: s, term: sectionTerm })}
+          />
+        ))}
+      </div>
+    ) : (
+      <div className="bezel">
+        <div className="bezel-core glass p-6 text-center text-sm text-ink-soft">
+          لا توجد مواد في هذا الفصل.
+        </div>
+      </div>
+    );
+
   return (
     <>
       {/* Term filter bar */}
-      <div className="mb-5 flex flex-wrap items-center gap-2">
+      <div className="mb-6 flex flex-wrap items-center gap-2">
         <span className="ml-1 text-sm font-bold text-ink-muted">الفصل الدراسي:</span>
         {TERM_FILTERS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTerm(t.id)}
             className={`rounded-full px-4 py-2 text-sm font-bold transition-all ${
-              term === t.id
-                ? "bg-gold-gradient text-white shadow-gold"
-                : "glass text-ink hover:bg-white/70"
+              term === t.id ? "bg-gold-gradient text-white shadow-gold" : "glass text-ink hover:bg-white/70"
             }`}
           >
             {t.short}
@@ -63,30 +81,39 @@ export default function SubjectBrowser({ subjects = [] }) {
         ))}
       </div>
 
-      {/* Subjects grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {subjects.map((s) => (
-          <SubjectCard key={s.id} subject={s} count={countFor(s)} onClick={() => setSelected(s)} />
-        ))}
-      </div>
+      {/* كامل العام → split into two term sections; else a single grid */}
+      {term === "all" ? (
+        <div className="space-y-8">
+          {TERMS.map((t) => (
+            <section key={t.id}>
+              <div className="mb-4 flex items-center gap-3">
+                <span className="inline-block h-6 w-1.5 rounded-full bg-gold-gradient" />
+                <h2 className="text-lg font-extrabold text-ink">{t.name}</h2>
+              </div>
+              <Grid list={inTerm(t.id)} sectionTerm={t.id} />
+            </section>
+          ))}
+        </div>
+      ) : (
+        <Grid list={inTerm(term)} sectionTerm={term} />
+      )}
 
-      {/* Placeholder note — tells the admin where approved PDFs get added later */}
+      {/* Note: where the real approved PDFs come from */}
       <div
-        className="mt-6 flex items-start gap-3 rounded-2xl bg-white/55 p-4 text-sm text-ink-soft"
+        className="mt-8 flex items-start gap-3 rounded-2xl bg-white/55 p-4 text-sm text-ink-soft"
         style={{ border: "1px solid rgba(201,168,106,0.25)" }}
       >
         <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-gold-gradient text-white">
           <Info size={15} />
         </span>
         <p className="leading-relaxed">
-          المصادر معروضة كبطاقات لكل مادة وفصل دراسي. تُعرض حالياً كنماذج مبدئية — ستظهر ملفات
-          الكتب والاختبارات المعتمدة (PDF) فور رفعها إلى مخزن المحتوى الخاص بالمنصة
-          <span className="mx-1 rounded bg-champagne-100 px-1.5 py-0.5 font-mono text-xs text-ink" dir="ltr">CONTENT_BASE_URL</span>
-          دون أي تعديل على الواجهة.
+          كل مادة تعرض ثلاثة مصادر فقط لكل فصل: <b>كتاب الطالب</b>، <b>كتاب النشاط</b>، <b>نماذج اختبارات</b>.
+          تفتح الملفات داخل المنصة مباشرة. حتى تُرفع الملفات الرسمية المعتمدة، يُعرض ملف PDF مبدئي بعلامة جزيرة —
+          وتُستبدل تلقائياً عند استيراد الملف الرسمي (انظر <span dir="ltr" className="font-mono text-xs">scripts/README.md</span>).
         </p>
       </div>
 
-      {/* Resource sheet */}
+      {/* Resource sheet — exactly the 3 ordered types for {subject, term} */}
       <AnimatePresence>
         {selected && (
           <motion.div
@@ -101,12 +128,12 @@ export default function SubjectBrowser({ subjects = [] }) {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 40, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="bezel max-h-[85vh] w-full overflow-hidden sm:max-w-lg"
+              className="bezel w-full sm:max-w-lg"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="bezel-core glass-strong flex max-h-[85vh] flex-col p-6">
+              <div className="bezel-core glass-strong p-6">
                 <div className="mb-1 flex items-center justify-between">
-                  <h3 className="text-lg font-extrabold text-ink">{selected.name}</h3>
+                  <h3 className="text-lg font-extrabold text-ink">{selected.subject.name}</h3>
                   <button
                     onClick={() => setSelected(null)}
                     className="rounded-full p-1.5 text-ink-soft transition hover:bg-white/60"
@@ -115,16 +142,13 @@ export default function SubjectBrowser({ subjects = [] }) {
                     <X size={20} />
                   </button>
                 </div>
-                <p className="mb-4 text-xs font-bold text-ink-muted">
-                  {TERM_FILTERS.find((t) => t.id === term)?.name} · {sheetResources.length} مصادر
-                </p>
+                <p className="mb-4 text-xs font-bold text-ink-muted">{termName(selected.term)}</p>
 
-                <div className="-mx-1 flex-1 space-y-2 overflow-y-auto px-1">
+                <div className="space-y-2">
                   {sheetResources.length === 0 ? (
                     <div className="grid place-items-center py-10 text-center text-ink-soft">
                       <FolderOpen size={30} className="text-champagne-400" />
-                      <p className="mt-3 text-sm">لا توجد مصادر لهذا الفصل بعد.</p>
-                      <p className="mt-1 text-xs text-ink-muted">ستظهر هنا فور رفع الملفات المعتمدة.</p>
+                      <p className="mt-3 text-sm">لا توجد مصادر لهذا الفصل.</p>
                     </div>
                   ) : (
                     sheetResources.map((r) => {
@@ -141,10 +165,7 @@ export default function SubjectBrowser({ subjects = [] }) {
                           </span>
                           <div className="min-w-0 flex-1">
                             <p className="truncate text-sm font-bold text-ink">{r.title}</p>
-                            <p className="text-[11px] text-ink-muted">
-                              {k.label}
-                              {term === "all" && r.termName ? ` · ${r.termName}` : ""}
-                            </p>
+                            <p className="text-[11px] text-ink-muted">{r.termName}</p>
                           </div>
                           <ChevronLeft className="shrink-0 text-gold" size={18} />
                         </button>

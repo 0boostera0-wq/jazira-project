@@ -1,67 +1,76 @@
 // ============================================================================
 // Al-Jazira — Educational Curriculum & Resources (Academic Year 1447H)
 // ----------------------------------------------------------------------------
-// Pure data + resolvers. This module fetches NOTHING. Each resource carries a
-// `key` that resolves to YOUR OWN / licensed content store via CONTENT_BASE_URL
-// (see src/app/api/content/fetch/route.js). Replace the generated placeholder
-// resources with your actual licensed files (e.g. official MoE / "عين" content,
-// or material you own the rights to redistribute).
+// Pure data + resolvers. Fetches NOTHING. Each resource carries a `key` that
+// resolves to YOUR OWN hosted file via /api/content/fetch (local public store
+// or your remote store). See scripts/README.md for importing real PDFs.
+//
+// Model:  stage → (grade | grade→track) → subject → term → resource
+//   • TERMS: two terms only (الأول، الثاني) + "كامل العام" filter.
+//   • Each subject declares which terms it runs in (`terms`); resources are
+//     generated only for those terms — subjects are NOT forced into both.
+//   • Resource types are ALWAYS exactly three, in this order:
+//        كتاب الطالب → كتاب النشاط → نماذج اختبارات
 // ============================================================================
 
 export const ACADEMIC_YEAR = "1447هـ";
 const YEAR_KEY = "1447";
-
 const ORD = ["", "الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس"];
 
-// --- terms -----------------------------------------------------------------
-// Saudi 1447 system runs on THREE terms. "all" = full year (every term's files).
+// --- terms (exactly two) ---------------------------------------------------
 export const TERMS = [
   { id: "t1", name: "الفصل الدراسي الأول", short: "الأول" },
   { id: "t2", name: "الفصل الدراسي الثاني", short: "الثاني" },
-  { id: "t3", name: "الفصل الدراسي الثالث", short: "الثالث" },
 ];
 export const TERM_FILTERS = [{ id: "all", name: "كامل العام", short: "كامل العام" }, ...TERMS];
+export const termName = (id) => TERMS.find((t) => t.id === id)?.name || "";
 
-// --- resources -------------------------------------------------------------
-// A standard resource set per subject PER TERM so the catalog + viewer are fully
-// wired. `key` is a path under YOUR content namespace; the API route validates
-// it and joins it to CONTENT_BASE_URL. Files that don't exist yet simply surface
-// a friendly "content not available" state in the viewer — nothing breaks.
-function resourcesFor(path, subjectId) {
+// --- resource types (exactly three, fixed order) ---------------------------
+const DOC_TYPES = [
+  { suffix: "student", title: "كتاب الطالب", kind: "textbook", file: "student-book.pdf" },
+  { suffix: "activity", title: "كتاب النشاط", kind: "workbook", file: "activity-book.pdf" },
+  { suffix: "exams", title: "نماذج اختبارات", kind: "exam", file: "exams.pdf" },
+];
+
+// Build a subject's resources: for each term it runs in, the 3 types in order.
+function subjectResources(path, subjectId, terms) {
   const base = `${path}/${subjectId}`;
-  const docs = [
-    { suffix: "student", title: "كتاب الطالب", kind: "textbook", file: "student-book.pdf" },
-    { suffix: "activity", title: "كتاب النشاط", kind: "workbook", file: "activity-book.pdf" },
-    { suffix: "exams", title: "نماذج اختبارات", kind: "exam", file: "exams.pdf" },
-  ];
   const out = [];
   for (const t of TERMS) {
-    for (const d of docs) {
+    if (!terms.includes(t.id)) continue;
+    DOC_TYPES.forEach((d, i) => {
       out.push({
         id: `${subjectId}-${t.id}-${d.suffix}`,
         title: d.title,
         kind: d.kind,
+        order: i, // 0=student, 1=activity, 2=exams — UI sorts on this
         term: t.id,
         termName: t.name,
         key: `${base}/${t.id}/${d.file}`,
       });
-    }
+    });
   }
   return out;
 }
 
-// --- subject factory -------------------------------------------------------
-// tuple shape: [id, name, iconKey, accentHex]  →  full subject w/ resources
+// subject tuple: [id, name, icon, color, terms?]   terms defaults to BOTH.
+// Pass ["t1"] or ["t2"] for subjects that run in only one term.
 const mk = (path, list) =>
-  list.map(([id, name, icon, color]) => ({
+  list.map(([id, name, icon, color, terms = ["t1", "t2"]]) => ({
     id,
     name,
     icon,
     color,
-    resources: resourcesFor(path, id),
+    terms,
+    resources: subjectResources(path, id, terms),
   }));
 
-// --- subject sets (per stage) ---------------------------------------------
+// ---------------------------------------------------------------------------
+// Subject sets per stage. Most core subjects run BOTH terms (realistic for the
+// Saudi plan); a few single-term examples below demonstrate the per-term model
+// (the `terms` field). Confirm exact per-term availability against the official
+// source and edit `terms` here — the UI updates automatically.
+// ---------------------------------------------------------------------------
 const ELEMENTARY = (p) =>
   mk(p, [
     ["quran", "القرآن الكريم", "quran", "#7C9A6A"],
@@ -103,7 +112,7 @@ const HS_COMMON = (p) =>
     ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
     ["social", "الدراسات الاجتماعية", "social", "#A6643B"],
     ["digital", "التقنية الرقمية", "digital", "#4B5563"],
-    ["critical", "التفكير الناقد", "critical", "#8B5C9E"],
+    ["critical", "التفكير الناقد", "critical", "#8B5C9E", ["t1"]], // example: term 1 only
   ]);
 
 const HS_GENERAL = (p) =>
@@ -117,7 +126,6 @@ const HS_GENERAL = (p) =>
     ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
     ["social", "الدراسات الاجتماعية", "social", "#A6643B"],
     ["digital", "التقنية الرقمية", "digital", "#4B5563"],
-    ["critical", "التفكير الناقد", "critical", "#8B5C9E"],
   ]);
 
 const HS_SHARIA = (p) =>
@@ -128,7 +136,6 @@ const HS_SHARIA = (p) =>
     ["tawhid", "التوحيد", "tawhid", "#C9A227"],
     ["arabic", "الدراسات الأدبية", "arabic", "#C97B3B"],
     ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-    ["critical", "التفكير الناقد", "critical", "#8B5C9E"],
   ]);
 
 const HS_BUSINESS = (p) =>
@@ -139,7 +146,6 @@ const HS_BUSINESS = (p) =>
     ["math", "الرياضيات", "math", "#C9A227"],
     ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
     ["digital", "التقنية الرقمية", "digital", "#4B5563"],
-    ["social", "علم الاجتماع", "social", "#3B82A6"],
   ]);
 
 const HS_CS = (p) =>
@@ -148,9 +154,8 @@ const HS_CS = (p) =>
     ["math", "الرياضيات", "math", "#C9A227"],
     ["physics", "الفيزياء", "physics", "#3B82A6"],
     ["engineering", "الهندسة", "engineering", "#A6643B"],
-    ["digital", "التقنية الرقمية", "digital", "#6A6AC9"],
-    ["english", "اللغة الإنجليزية", "english", "#3BA67B"],
-    ["critical", "التفكير الناقد", "critical", "#8B5C9E"],
+    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
+    ["capstone", "مشروع التخرج", "engineering", "#8B5C9E", ["t2"]], // example: term 2 only
   ]);
 
 const HS_HEALTH = (p) =>
@@ -161,7 +166,6 @@ const HS_HEALTH = (p) =>
     ["physics", "الفيزياء", "physics", "#3B82A6"],
     ["math", "الرياضيات", "math", "#C9A227"],
     ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-    ["critical", "التفكير الناقد", "critical", "#8B5C9E"],
   ]);
 
 const CONTINUING = (p) =>
@@ -207,7 +211,7 @@ const SPECIAL_REHAB = (p) =>
 const SPECIAL_GUIDE = (p) =>
   mk(p, [["teacher", "الدليل المرجعي للمعلم", "teacher", "#4B5563"]]);
 
-// --- grade-leaf builder ----------------------------------------------------
+// --- grade-leaf builder (elementary / middle / continuing) -----------------
 function gradeLeaves(stageId, count, subjFn, color) {
   return Array.from({ length: count }, (_, i) => {
     const g = i + 1;
@@ -222,8 +226,17 @@ function gradeLeaves(stageId, count, subjFn, color) {
   });
 }
 
+// --- high-school tracks (shared by ثاني/ثالث ثانوي) ------------------------
+const HS_TRACKS = (gradeKey, color) => [
+  { id: "general", name: "المسار العام", icon: "critical", color: "#6A6AC9", subjects: HS_GENERAL(`${gradeKey}/general`) },
+  { id: "sharia", name: "المسار الشرعي", icon: "quran", color: "#7C9A6A", subjects: HS_SHARIA(`${gradeKey}/sharia`) },
+  { id: "business", name: "مسار إدارة الأعمال", icon: "business", color: "#A6643B", subjects: HS_BUSINESS(`${gradeKey}/business`) },
+  { id: "cs-eng", name: "مسار علوم الحاسب والهندسة", icon: "cs", color: "#4B5563", subjects: HS_CS(`${gradeKey}/cs-eng`) },
+  { id: "health", name: "مسار الصحة والحياة", icon: "health", color: "#C9485E", subjects: HS_HEALTH(`${gradeKey}/health`) },
+];
+
 // ============================================================================
-// The tree.  branch node → has `children`.  leaf node → has `subjects`.
+// The tree.  branch node → `children`.  leaf node → `subjects`.
 // ============================================================================
 export const CURRICULUM = [
   {
@@ -245,16 +258,36 @@ export const CURRICULUM = [
   {
     id: "high-school",
     name: "الثانوية العامة",
-    sub: "السنة الأولى المشتركة + 5 مسارات",
+    sub: "اختر الصف ثم المسار",
     icon: "physics",
     color: "#C97B3B",
     children: [
-      { id: "first-year", name: "السنة الأولى المشتركة", icon: "grade", color: "#C97B3B", subjects: HS_COMMON(`${YEAR_KEY}/high-school/first-year`) },
-      { id: "general", name: "المسار العام", icon: "critical", color: "#6A6AC9", subjects: HS_GENERAL(`${YEAR_KEY}/high-school/general`) },
-      { id: "sharia", name: "المسار الشرعي", icon: "quran", color: "#7C9A6A", subjects: HS_SHARIA(`${YEAR_KEY}/high-school/sharia`) },
-      { id: "business", name: "مسار إدارة الأعمال", icon: "business", color: "#A6643B", subjects: HS_BUSINESS(`${YEAR_KEY}/high-school/business`) },
-      { id: "cs-eng", name: "مسار علوم الحاسب والهندسة", icon: "cs", color: "#4B5563", subjects: HS_CS(`${YEAR_KEY}/high-school/cs-eng`) },
-      { id: "health", name: "مسار الصحة والحياة", icon: "health", color: "#C9485E", subjects: HS_HEALTH(`${YEAR_KEY}/high-school/health`) },
+      {
+        id: "grade-1",
+        name: "أول ثانوي",
+        sub: "السنة الأولى المشتركة",
+        icon: "grade",
+        color: "#C97B3B",
+        children: [
+          { id: "first-year", name: "السنة الأولى المشتركة", icon: "grade", color: "#C97B3B", subjects: HS_COMMON(`${YEAR_KEY}/high-school/grade-1/first-year`) },
+        ],
+      },
+      {
+        id: "grade-2",
+        name: "ثاني ثانوي",
+        sub: "خمسة مسارات تخصّصية",
+        icon: "grade",
+        color: "#C97B3B",
+        children: HS_TRACKS(`${YEAR_KEY}/high-school/grade-2`),
+      },
+      {
+        id: "grade-3",
+        name: "ثالث ثانوي",
+        sub: "خمسة مسارات تخصّصية",
+        icon: "grade",
+        color: "#C97B3B",
+        children: HS_TRACKS(`${YEAR_KEY}/high-school/grade-3`),
+      },
     ],
   },
   {
@@ -284,7 +317,7 @@ export const CURRICULUM = [
 // Resolvers
 // ============================================================================
 
-// Walk a slug array (e.g. ["high-school","sharia"]) → { node, trail } or null.
+// Walk a slug array → { node, trail } or null.
 export function resolveCurriculum(slug = []) {
   let nodes = CURRICULUM;
   let node = null;
@@ -312,8 +345,7 @@ export function allCurriculumPaths() {
   return out;
 }
 
-// Flat list of every resource in the catalog (used by the importer + the API
-// allow-list). Each item carries its subject/stage context for nicer tooling.
+// Flat list of every resource (importer + tooling).
 export function allResources() {
   const out = [];
   const visit = (nodes, trail) => {
@@ -331,8 +363,8 @@ export function allResources() {
   return out;
 }
 
-// Flat lookup of a single resource by its content key (used by the API route to
-// confirm a requested key actually belongs to the catalog — allow-list).
+// Allow-list lookup used by the content API (confirms a key belongs to the
+// catalog) and returns the resource (for its title in the pending fallback).
 export function findResourceByKey(key) {
   let found = null;
   const visit = (nodes) => {
@@ -340,7 +372,7 @@ export function findResourceByKey(key) {
       if (found) return;
       for (const s of n.subjects || []) {
         for (const r of s.resources || []) {
-          if (r.key === key) { found = r; return; }
+          if (r.key === key) { found = { ...r, subjectName: s.name }; return; }
         }
       }
       if (n.children) visit(n.children);

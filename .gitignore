@@ -34,9 +34,10 @@ yarn-error.log*
 # curriculum importer — keep private source URLs + run reports out of git
 /scripts/curriculum-sources.json
 /scripts/import-report.json
-# imported PDFs (public store). Remove this line if you use the `public` store
-# on Vercel and need the files committed so they deploy with the app.
-/public/resources/**/*.pdf
+# NOTE: PDFs under /public/resources ARE tracked so the `public` store deploys
+# with the app (seed samples + any files you import to the public store). For a
+# large library prefer the Supabase store (CONTENT_STORE=remote) to keep the
+# repo light — then the PDFs live in Supabase, not git.
 
 # typescript
 *.tsbuildinfo

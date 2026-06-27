@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "import:curriculum": "node scripts/import-curriculum.mjs"
+    "import:curriculum": "node scripts/import-curriculum.mjs",
+    "seed:curriculum": "node scripts/seed-sample-pdfs.mjs"
   },
   "dependencies": {
     "@clerk/localizations": "latest",
