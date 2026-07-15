@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
+import NavRobots from "@/components/NavRobots";
 import { EASE } from "@/components/motion/Reveal";
 
 const LINKS = [
@@ -21,6 +22,9 @@ export default function SiteHeader() {
 
   return (
     <>
+      {/* Robot troupe — lives behind the nav (z-30), never blocks interaction */}
+      <NavRobots />
+
       {/* Floating glass pill — detached from the top, centred */}
       <header className="pointer-events-none fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-5">
         <nav className="pointer-events-auto flex w-full max-w-4xl items-center justify-between gap-4 rounded-full border border-[rgba(201,168,106,0.28)] bg-white/65 px-3 py-2 shadow-[0_10px_40px_rgba(160,130,70,0.12)] backdrop-blur-2xl">
