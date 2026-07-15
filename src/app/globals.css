@@ -240,6 +240,10 @@ html.dark .bezel { background: rgba(255, 255, 255, 0.04); }
 }
 .cta-ghost:hover { background: rgba(201, 168, 106, 0.14); transform: translateY(-1px); }
 
+/* Skip rendering + layout for offscreen sections until scrolled near.
+   Big paint/scroll win on long pages (desktop + low-end) at zero JS cost. */
+.cv-auto { content-visibility: auto; contain-intrinsic-size: auto 700px; }
+
 @layer components {
   /* Glassmorphism surface — brighter, whiter, softer shadows */
   .glass {

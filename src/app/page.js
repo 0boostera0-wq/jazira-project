@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import {
@@ -38,9 +39,9 @@ function Bullet({ children }) {
     </li>
   );
 }
-function Section({ id, className = "", children }) {
+function Section({ id, className = "", children, cv = true }) {
   return (
-    <section id={id} className={`relative mx-auto w-full max-w-6xl px-4 py-20 sm:px-6 sm:py-28 ${className}`}>
+    <section id={id} className={`relative mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-10 ${cv ? "cv-auto" : ""} ${className}`}>
       {children}
     </section>
   );
@@ -73,12 +74,24 @@ export default function Landing() {
   const my = useMotionValue(0);
   const sx = useSpring(mx, { stiffness: 60, damping: 18 });
   const sy = useSpring(my, { stiffness: 60, damping: 18 });
+  // Only run the parallax on a fine pointer + wide screen + motion allowed.
+  // Skips the per-mousemove spring work on touch and low-end devices.
+  const [parallaxOn, setParallaxOn] = useState(false);
+  useEffect(() => {
+    try {
+      const ok = window.matchMedia("(pointer: fine)").matches
+        && window.matchMedia("(min-width: 768px)").matches
+        && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setParallaxOn(ok);
+    } catch {}
+  }, []);
   const onHeroMove = (e) => {
+    if (!parallaxOn) return;
     const r = e.currentTarget.getBoundingClientRect();
     mx.set(((e.clientX - r.left) / r.width - 0.5) * 20);
     my.set(((e.clientY - r.top) / r.height - 0.5) * 20);
   };
-  const onHeroLeave = () => { mx.set(0); my.set(0); };
+  const onHeroLeave = () => { if (!parallaxOn) return; mx.set(0); my.set(0); };
 
   return (
     <div className="relative overflow-x-clip">
@@ -92,7 +105,7 @@ export default function Landing() {
       </div>
 
       {/* ════════ HERO ════════ */}
-      <Section id="top" className="!pt-36 sm:!pt-44">
+      <Section id="top" cv={false} className="!pt-36 sm:!pt-44">
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div>
             <Reveal><Eyebrow>منصة جزيرة التعليمية <Sparkles size={13} /></Eyebrow></Reveal>

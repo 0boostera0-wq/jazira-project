@@ -9,6 +9,7 @@ import {
   ShieldCheck, MessageSquareQuote, Rocket, Lock, Medal, Clock,
   TrendingUp, FileText, Library, Accessibility,
 } from "lucide-react";
+import { GlowStar, GlowInvites } from "@/components/GlowIcon";
 import { Reveal, Stagger, StaggerItem, Float } from "@/components/motion/Reveal";
 import Illustration from "@/components/Illustration";
 import Avatar from "@/components/Avatar";
@@ -167,9 +168,9 @@ export default function DashboardPage() {
                 </div>
                 <p className="mt-4 max-w-md text-ink-soft">ابدأ يومك بخطة واضحة، وتابع تقدّمك خطوة بخطوة — كل جلسة دراسة تقرّبك من هدفك.</p>
                 <div className="mt-6 grid grid-cols-3 gap-3">
-                  <StatChip icon={Star} label="نقاط الخبرة" value={xp} color="#C9A227" />
+                  <StatChip icon={GlowStar} label="نقاط الخبرة" value={xp} color="#C9A227" />
                   <StatChip icon={Flame} label="سلسلة يومية" value={`${streak} يوم`} color="#E0793B" />
-                  <StatChip icon={Users} label="دعوات ناجحة" value={referrals} color="#7C9A6A" />
+                  <StatChip icon={GlowInvites} label="دعوات ناجحة" value={referrals} color="#7C9A6A" />
                 </div>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link href="/high-school" className="cta-lux"><span>متابعة التعلّم</span><span className="cta-puck"><ArrowLeft size={16} /></span></Link>
@@ -377,7 +378,7 @@ export default function DashboardPage() {
           <Stagger className="grid grid-cols-2 gap-4">
             <StaggerItem><div className="bezel"><div className="bezel-core glass p-5"><BarChart3 size={20} className="text-gold" /><p className="mt-3 text-2xl font-extrabold text-ink ltr-nums">{xp}</p><p className="text-xs text-ink-soft">إجمالي نقاط الخبرة</p></div></div></StaggerItem>
             <StaggerItem><div className="bezel"><div className="bezel-core glass p-5"><Flame size={20} className="text-[#E0793B]" /><p className="mt-3 text-2xl font-extrabold text-ink ltr-nums">{streak}</p><p className="text-xs text-ink-soft">أيام السلسلة</p></div></div></StaggerItem>
-            <StaggerItem><div className="bezel"><div className="bezel-core glass p-5"><Users size={20} className="text-[#7C9A6A]" /><p className="mt-3 text-2xl font-extrabold text-ink ltr-nums">{referrals}</p><p className="text-xs text-ink-soft">دعوات ناجحة</p></div></div></StaggerItem>
+            <StaggerItem><div className="bezel"><div className="bezel-core glass p-5"><GlowInvites size={20} /><p className="mt-3 text-2xl font-extrabold text-ink ltr-nums">{referrals}</p><p className="text-xs text-ink-soft">دعوات ناجحة</p></div></div></StaggerItem>
             <StaggerItem><div className="bezel"><div className="bezel-core glass p-5"><Zap size={20} className="text-gold" /><p className="mt-3 text-2xl font-extrabold text-ink ltr-nums">{level}</p><p className="text-xs text-ink-soft">مستواك الحالي</p></div></div></StaggerItem>
           </Stagger>
           <Reveal delay={0.1}><Illustration name="dashboard/smart-analytics.png" icon={BarChart3} alt="تحليلات ذكية" ratio="3 / 2" /></Reveal>
