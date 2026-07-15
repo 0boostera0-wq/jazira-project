@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
-import BrandLogo from '@/components/BrandLogo';
+import AuthShell from '@/components/AuthShell';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
 
 const SID_KEY = 'jazira_session_id_v1';
+const field =
+  'w-full rounded-xl border border-white/40 bg-white/60 px-4 py-2.5 text-ink placeholder-ink-muted focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -19,7 +21,7 @@ export default function SignInPage() {
   const [next, setNext] = useState('/dashboard');
   const [revoked, setRevoked] = useState(false);
 
-  // Read ?next= / ?reason= from the URL without useSearchParams (no Suspense dep).
+  // Read ?next= / ?reason= without useSearchParams (no Suspense dep).
   useEffect(() => {
     try {
       const p = new URLSearchParams(window.location.search);
@@ -33,122 +35,61 @@ export default function SignInPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     const result = await signIn(email, password);
-
     if (result.success) {
-      // Rotate the local session id so a previously-revoked device gets a clean one.
       try { localStorage.removeItem(SID_KEY); } catch {}
-      // Refresh so server components & auth-aware UI pick up the new session
       router.refresh();
       router.push(next);
     } else {
       setError(result.error || 'حدث خطأ أثناء تسجيل الدخول');
     }
-
     setLoading(false);
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6 py-12 bg-gradient-to-br from-cream to-white">
-      <Link href="/" className="mb-8">
-        <BrandLogo size="lg" />
-      </Link>
-
-      <div className="glass-strong w-full max-w-md rounded-3xl border border-white/20 p-8 shadow-lg">
-        <h1 className="text-2xl font-bold text-ink mb-2">تسجيل الدخول</h1>
-        <p className="text-sm text-ink-soft mb-6">
-          استخدم بيانات حسابك للدخول إلى منصة جزيرة
-        </p>
-
-        {revoked && (
-          <div className="mb-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-800 border border-amber-200">
-            تم تسجيل خروجك من هذا الجهاز. سجّل الدخول مرة أخرى للمتابعة.
-          </div>
-        )}
-
-        {error && (
-          <div className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 border border-red-200">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-ink mb-2">
-              البريد الإلكتروني
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="example@email.com"
-              dir="ltr"
-              className="w-full rounded-xl border border-white/30 bg-white/50 px-4 py-2.5 text-ink placeholder-ink-soft focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-ink mb-2">
-              كلمة المرور
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              className="w-full rounded-xl border border-white/30 bg-white/50 px-4 py-2.5 text-ink placeholder-ink-soft focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-gradient-to-r from-gold to-champagne px-4 py-2.5 font-semibold text-white transition-all hover:shadow-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
-          </button>
-        </form>
-
-        {/* Divider */}
-        <div className="my-6 flex items-center gap-3">
-          <span className="flex-1 border-t border-white/30" />
-          <span className="text-xs text-ink-soft">أو</span>
-          <span className="flex-1 border-t border-white/30" />
+    <AuthShell
+      title="تسجيل الدخول"
+      subtitle="استخدم بيانات حسابك للدخول إلى منصة جزيرة"
+      footer={<>بالدخول أنت توافق على <Link href="/terms" className="font-semibold text-gold hover:underline">شروط الخدمة</Link> و<Link href="/privacy" className="font-semibold text-gold hover:underline">سياسة الخصوصية</Link></>}
+    >
+      {revoked && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+          تم تسجيل خروجك من هذا الجهاز. سجّل الدخول مرة أخرى للمتابعة.
         </div>
+      )}
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
+      )}
 
-        {/* Google OAuth */}
-        <GoogleSignInButton redirectTo={next} />
-
-        <div className="mt-6 border-t border-white/20 pt-6 space-y-3">
-          <p className="text-center text-sm text-ink-soft">
-            ليس لديك حساب؟{' '}
-            <Link
-              href="/sign-up"
-              className="font-semibold text-gold hover:text-champagne transition"
-            >
-              إنشاء حساب جديد
-            </Link>
-          </p>
-          <p className="text-center">
-            <button
-              type="button"
-              className="text-sm text-ink-soft hover:text-ink transition"
-            >
-              هل نسيت كلمة المرور؟
-            </button>
-          </p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="mb-2 block text-sm font-medium text-ink">البريد الإلكتروني</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="example@email.com" dir="ltr" className={field} />
         </div>
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <label className="text-sm font-medium text-ink">كلمة المرور</label>
+            <Link href="/forgot-password" className="text-xs font-semibold text-gold hover:underline">نسيت كلمة المرور؟</Link>
+          </div>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" className={field} />
+        </div>
+        <button type="submit" disabled={loading} className="w-full rounded-xl bg-gold-gradient px-4 py-2.5 font-semibold text-white shadow-gold transition-all hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50">
+          {loading ? 'جاري تسجيل الدخول…' : 'تسجيل الدخول'}
+        </button>
+      </form>
+
+      <div className="my-6 flex items-center gap-3">
+        <span className="flex-1 border-t border-white/40" />
+        <span className="text-xs text-ink-soft">أو</span>
+        <span className="flex-1 border-t border-white/40" />
       </div>
 
-      <p className="mt-8 text-center text-xs text-ink-soft">
-        بالدخول، أنت توافق على{' '}
-        <Link href="/terms" className="text-gold hover:underline">
-          شروط الخدمة
-        </Link>
+      <GoogleSignInButton redirectTo={next} />
+
+      <p className="mt-6 border-t border-white/30 pt-6 text-center text-sm text-ink-soft">
+        ليس لديك حساب؟{' '}
+        <Link href="/sign-up" className="font-semibold text-gold hover:underline">إنشاء حساب جديد</Link>
       </p>
-    </div>
+    </AuthShell>
   );
 }

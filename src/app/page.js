@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Reveal, Stagger, StaggerItem, Float, EASE } from "@/components/motion/Reveal";
 import Illustration from "@/components/Illustration";
+import HeroStats from "@/components/HeroStats";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { ELITE, PRIZES } from "@/lib/constants";
@@ -128,19 +129,7 @@ export default function Landing() {
               <Illustration name="hero-main.png" icon={Compass} alt="رحلتك التعليمية مع منصة جزيرة" ratio="1 / 1" priority sizes="(max-width: 768px) 92vw, 40vw" />
             </motion.div>
 
-            <Float amount={12} duration={6} className="absolute -left-2 top-6 hidden md:block">
-              <div className="bezel"><div className="bezel-core glass-strong flex items-center gap-2 px-4 py-3">
-                <Flame size={18} className="text-[#E0793B]" />
-                <div><p className="text-sm font-extrabold text-ink ltr-nums">١٢ يوم</p><p className="text-[11px] text-ink-soft">سلسلة يومية</p></div>
-              </div></div>
-            </Float>
-
-            <Float amount={10} duration={7} delay={0.6} className="absolute -bottom-3 right-2 hidden md:block">
-              <div className="bezel"><div className="bezel-core glass-strong flex items-center gap-2 px-4 py-3">
-                <BarChart3 size={18} className="text-gold" />
-                <div><p className="text-sm font-extrabold text-ink ltr-nums">٨٥٪</p><p className="text-[11px] text-ink-soft">تقدّمك هذا الأسبوع</p></div>
-              </div></div>
-            </Float>
+            <HeroStats />
           </div>
         </div>
 

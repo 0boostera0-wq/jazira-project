@@ -53,7 +53,7 @@ export default function SiteFooter() {
             <div className="col-span-2 md:col-span-2">
               <Float amount={6} duration={7}><BrandLogo size="md" /></Float>
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-soft">
-                بيئة تعليمية فاخرة ترافق الطالب خطوة بخطوة نحو التفوق — بمسارات ذكية، ومساعد فاخر، ومجتمع ملهم.
+                بيئة تعليمية فاخرة ترافق الطالب خطوة بخطوة نحو التفوق بمسارات ذكية ومساعد فاخر ومجتمع ملهم.
               </p>
               <div className="mt-5 flex gap-2">
                 {SOCIAL.map(({ Icon, href, label }) => (
@@ -88,9 +88,11 @@ export default function SiteFooter() {
 
           <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-[rgba(201,168,106,0.25)] pt-6 text-center sm:flex-row sm:text-right">
             <p className="text-xs text-ink-muted">© 2026 منصة جزيرة التعليمية — جميع الحقوق محفوظة.</p>
-            <div className="flex gap-4 text-xs text-ink-muted">
-              <Link href="/about" className="hover:text-gold">الخصوصية</Link>
-              <Link href="/about" className="hover:text-gold">الشروط</Link>
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-xs text-ink-muted">
+              <Link href="/privacy" className="hover:text-gold">الخصوصية</Link>
+              <Link href="/terms" className="hover:text-gold">الشروط</Link>
+              <Link href="/acceptable-use" className="hover:text-gold">الاستخدام المقبول</Link>
+              <Link href="/community-guidelines" className="hover:text-gold">إرشادات المجتمع</Link>
               <Link href="/support" className="hover:text-gold">تواصل معنا</Link>
             </div>
           </div>
