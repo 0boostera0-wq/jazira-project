@@ -7,7 +7,7 @@ export const SITE_URL =
 
 export const SITE_NAME = "منصة جزيرة";
 export const SITE_DESC =
-  "منصة جزيرة التعليمية التفاعلية — اختبارات القدرات والتحصيلي، مسارات دراسية لكل المراحل، مساعد ذكي، ومجتمع تعليمي فاخر.";
+  "منصة جزيرة التعليمية التفاعلية — اختبارات القدرات والتحصيلي ومسارات دراسية لكل المراحل ومساعد ذكي ومجتمع تعليمي فاخر.";
 export const OG_IMAGE = "/illustrations/hero-main.png";
 
 // Public, crawlable routes (auth-gated app pages are intentionally excluded).

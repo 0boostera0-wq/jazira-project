@@ -301,7 +301,7 @@ export const CURRICULUM = [
   {
     id: "special",
     name: "التربية الخاصة",
-    sub: "ابتدائي، متوسط، التأهيلية، والدليل المرجعي",
+    sub: "ابتدائي ومتوسط والتأهيلية والدليل المرجعي",
     icon: "rehab",
     color: "#3BA67B",
     children: [

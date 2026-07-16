@@ -199,7 +199,7 @@ export default function ProfileSetupPage() {
               className="w-full rounded-xl border border-white/30 bg-white/50 px-4 py-2.5 text-ink focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
             />
             <p className="mt-1.5 text-xs text-ink-muted">
-              اسمان فقط (عربي أو إنجليزي). يمكن لأكثر من مستخدم اختيار نفس الاسم، ويمكنك تغييره مرة كل 7 أيام.
+              اسمان فقط (عربي أو إنجليزي). يمكن لأكثر من مستخدم اختيار نفس الاسم ويمكنك تغييره مرة كل 7 أيام.
             </p>
           </div>
 

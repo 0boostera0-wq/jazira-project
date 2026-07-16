@@ -24,7 +24,7 @@ export default function CurriculumIndex() {
           </span>
           <h1 className="mt-4 text-3xl font-extrabold text-ink sm:text-4xl">المناهج والمصادر التعليمية</h1>
           <p className="mt-2 max-w-2xl text-ink-soft">
-            العام الدراسي {ACADEMIC_YEAR} — اختر المرحلة للوصول إلى كتب الطالب والنشاط ونماذج الاختبارات،
+            العام الدراسي {ACADEMIC_YEAR} — اختر المرحلة للوصول إلى كتب الطالب والنشاط ونماذج الاختبارات
             وتصفّحها داخل المنصة مباشرة.
           </p>
         </div>

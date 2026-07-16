@@ -111,14 +111,14 @@ export default function Landing() {
             <Reveal><Eyebrow>منصة جزيرة التعليمية <Sparkles size={13} /></Eyebrow></Reveal>
             <Reveal delay={0.06}>
               <h1 className="mt-5 text-4xl font-extrabold leading-[1.15] text-ink sm:text-6xl">
-                رحلتك التعليمية،
+                رحلتك التعليمية
                 <br />
                 <span className="gold-text">مستقبلك المشرق</span>
               </h1>
             </Reveal>
             <Reveal delay={0.12}>
               <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-soft">
-                نرافقك خطوة بخطوة لتتعلّم بذكاء، وتطوّر مهاراتك، وتحقّق أهدافك بثقة — بمسارات متكاملة ومساعد ذكي فاخر يعمل لأجلك على مدار الساعة.
+                نرافقك خطوة بخطوة لتتعلّم بذكاء وتطوّر مهاراتك وتحقّق أهدافك بثقة — بمسارات متكاملة ومساعد ذكي فاخر يعمل لأجلك على مدار الساعة.
               </p>
             </Reveal>
             <Reveal delay={0.18}>
@@ -187,7 +187,7 @@ export default function Landing() {
           <div className="order-1 md:order-2">
             <Reveal><Eyebrow>المساعد الذكي <Bot size={13} /></Eyebrow></Reveal>
             <Reveal delay={0.06}><h2 className="mt-5 text-3xl font-extrabold leading-tight text-ink sm:text-5xl">مرشدك التعليمي الذي لا ينام</h2></Reveal>
-            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">مساعد فاخر بتقنية Gemini يشرح، ويلخّص، ويختبرك، ويبني لك خطة — بالعربية الفصحى وبأسلوب راقٍ يناسب كل مرحلة.</p></Reveal>
+            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">مساعد فاخر بتقنية Gemini يشرح ويلخّص ويختبرك ويبني لك خطة — بالعربية الفصحى وبأسلوب راقٍ يناسب كل مرحلة.</p></Reveal>
             <Stagger className="mt-6 grid gap-3 sm:grid-cols-2">
               {["تدريس ذكي خطوة بخطوة", "إرشاد شخصي لكل طالب", "حلّ الواجبات والتمارين", "الاستعداد للاختبارات", "توصيات تعليمية مخصّصة", "متاح ٢٤ ساعة دون انتظار"].map((f) => (
                 <StaggerItem key={f}><ul><Bullet>{f}</Bullet></ul></StaggerItem>
@@ -248,7 +248,7 @@ export default function Landing() {
           <div>
             <Reveal><Eyebrow>متابعة تقدّمك</Eyebrow></Reveal>
             <Reveal delay={0.06}><h2 className="mt-5 text-3xl font-extrabold leading-tight text-ink sm:text-5xl">تابع تقدّمك في كل مادة</h2></Reveal>
-            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">لوحة تحكّم فاخرة تعرض نقاط الخبرة، السلسلة اليومية، ومستوى إتقانك لكل مادة بشكل واضح ومنظّم.</p></Reveal>
+            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">لوحة تحكّم فاخرة تعرض نقاط الخبرة والسلسلة اليومية ومستوى إتقانك لكل مادة بشكل واضح ومنظّم.</p></Reveal>
             <Stagger className="mt-6 grid grid-cols-3 gap-3">
               {[
                 { icon: Star, t: "نقاط الخبرة", c: "#C9A227" },
@@ -274,7 +274,7 @@ export default function Landing() {
           <div className="order-1 md:order-2">
             <Reveal><Eyebrow>تنظيم وقتك</Eyebrow></Reveal>
             <Reveal delay={0.06}><h2 className="mt-5 text-3xl font-extrabold leading-tight text-ink sm:text-5xl">خطّط لدراستك بذكاء</h2></Reveal>
-            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">جدول دراسي مرن يناسب أهدافك، يوزّع وقتك على المواد بحكمة ليوصلك إلى أفضل النتائج دون إرهاق.</p></Reveal>
+            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">جدول دراسي مرن يناسب أهدافك ويوزّع وقتك على المواد بحكمة ليوصلك إلى أفضل النتائج دون إرهاق.</p></Reveal>
             <Reveal delay={0.16}><ul className="mt-6 grid gap-3 sm:grid-cols-2"><Bullet>جدول قابل للتخصيص</Bullet><Bullet>تذكيرات ذكية</Bullet><Bullet>أهداف يومية</Bullet><Bullet>توازن بين المواد</Bullet></ul></Reveal>
           </div>
         </div>
@@ -286,7 +286,7 @@ export default function Landing() {
           <div>
             <Reveal><Eyebrow>كل أدواتك للدراسة</Eyebrow></Reveal>
             <Reveal delay={0.06}><h2 className="mt-5 text-3xl font-extrabold leading-tight text-ink sm:text-5xl">دراستك في مكان واحد</h2></Reveal>
-            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">ملاحظاتك، واختباراتك، وملفاتك، ومصادرك المفضّلة — كلها مجتمعة في مساحة واحدة أنيقة تساعدك على التركيز والتفوّق.</p></Reveal>
+            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">ملاحظاتك واختباراتك وملفاتك ومصادرك المفضّلة — كلها مجتمعة في مساحة واحدة أنيقة تساعدك على التركيز والتفوّق.</p></Reveal>
             <Stagger className="mt-6 grid grid-cols-2 gap-3">
               {[
                 { icon: BookOpen, t: "ملاحظاتي", s: "كتابة وتنظيم" },
@@ -319,7 +319,7 @@ export default function Landing() {
                 <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gold-gradient text-white shadow-gold"><Users size={22} strokeWidth={1.5} /></span>
                 <div>
                   <h3 className="text-xl font-extrabold text-ink">مجتمع تعليمي راقٍ</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">شارك إنجازاتك، ناقش زملاءك، واستلهم من نخبة الطلاب في بيئة محفّزة وآمنة.</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">شارك إنجازاتك وناقش زملاءك واستلهم من نخبة الطلاب في بيئة محفّزة وآمنة.</p>
                 </div>
               </div>
             </Link>
@@ -331,7 +331,7 @@ export default function Landing() {
                 <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gold-gradient text-white shadow-gold"><Zap size={22} strokeWidth={1.5} /></span>
                 <div>
                   <h3 className="text-xl font-extrabold text-ink">نقاط الخبرة والأوسمة</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">اكسب XP مع كل إنجاز، واجمع الأوسمة، وحافظ على سلسلتك اليومية المشتعلة.</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">اكسب XP مع كل إنجاز واجمع الأوسمة وحافظ على سلسلتك اليومية المشتعلة.</p>
                 </div>
                 <div className="flex gap-2">
                   <span className="rounded-full bg-white/60 px-3 py-1 text-xs font-bold text-ink">🔥 سلسلة</span>
@@ -395,7 +395,7 @@ export default function Landing() {
           <div className="order-1 md:order-2">
             <Reveal><Eyebrow>حماية خصوصيتك</Eyebrow></Reveal>
             <Reveal delay={0.06}><h2 className="mt-5 text-3xl font-extrabold leading-tight text-ink sm:text-5xl">خصوصيتك أولويتنا</h2></Reveal>
-            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">نلتزم بحماية بياناتك بأعلى معايير الأمان — بريدك ورقمك لا يظهران علناً أبداً، وبياناتك مشفّرة ولا تُشارك مع أي جهة.</p></Reveal>
+            <Reveal delay={0.12}><p className="mt-4 text-lg leading-relaxed text-ink-soft">نلتزم بحماية بياناتك بأعلى معايير الأمان — بريدك ورقمك لا يظهران علناً أبداً وبياناتك مشفّرة ولا تُشارك مع أي جهة.</p></Reveal>
             <Reveal delay={0.16}><ul className="mt-6 grid gap-3 sm:grid-cols-2"><Bullet>تشفير متقدّم للبيانات</Bullet><Bullet>خصوصية كاملة لحسابك</Bullet><Bullet>لا مشاركة مع طرف ثالث</Bullet><Bullet>تحكّم كامل بحسابك</Bullet></ul></Reveal>
           </div>
         </div>
@@ -408,7 +408,7 @@ export default function Landing() {
             <div className="bezel-core glass flex flex-col items-center gap-5 p-10 text-center sm:p-14">
               <span className="grid h-14 w-14 place-items-center rounded-2xl bg-gold-gradient text-white shadow-gold"><MessageSquareQuote size={26} strokeWidth={1.5} /></span>
               <h2 className="text-3xl font-extrabold text-ink sm:text-4xl">صوت طلابنا يصنع جزيرة</h2>
-              <p className="max-w-xl text-lg text-ink-soft">اقرأ تجارب زملائك الحقيقية، وشارك رأيك ليستفيد غيرك — مجتمعنا يكبر بآرائكم الصادقة.</p>
+              <p className="max-w-xl text-lg text-ink-soft">اقرأ تجارب زملائك الحقيقية وشارك رأيك ليستفيد غيرك — مجتمعنا يكبر بآرائكم الصادقة.</p>
               <CTAPrimary href="/reviews">اطّلع على الآراء</CTAPrimary>
             </div>
           </div>

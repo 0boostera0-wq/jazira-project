@@ -24,7 +24,7 @@ const FEATURES = [
 const PILLARS = [
   { icon: Target, title: "رسالتنا", text: "تمكين كل طالب من التميّز عبر تجربة تعليمية فاخرة وممتعة." },
   { icon: Eye, title: "رؤيتنا", text: "أن نكون المنصة التعليمية العربية الأولى للنخبة." },
-  { icon: Heart, title: "قيمنا", text: "النزاهة، الإتقان، والابتكار في خدمة الطالب العربي." },
+  { icon: Heart, title: "قيمنا", text: "النزاهة والإتقان والابتكار في خدمة الطالب العربي." },
 ];
 
 export default function AboutPage() {
@@ -48,8 +48,8 @@ export default function AboutPage() {
         </motion.span>
         <h2 className="mt-2 text-3xl font-extrabold gold-text">{BRAND.name}</h2>
         <p className="mx-auto mt-3 max-w-xl leading-relaxed text-ink-soft">
-          منصة جزيرة بيئة تعليمية تفاعلية فاخرة تجمع المحتوى الأكاديمي عالي الجودة،
-          والذكاء الاصطناعي، والمجتمع التعليمي، في تجربة أنيقة تليق بطموحك — من
+          منصة جزيرة بيئة تعليمية تفاعلية فاخرة تجمع المحتوى الأكاديمي عالي الجودة
+          والذكاء الاصطناعي والمجتمع التعليمي في تجربة أنيقة تليق بطموحك — من
           المرحلة الابتدائية حتى اختبارات القدرات والتحصيلي.
         </p>
       </motion.div>

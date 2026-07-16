@@ -5,9 +5,9 @@ import PageHeader from "@/components/PageHeader";
 import QuduratTest from "@/components/QuduratTest";
 
 const SUBJECTS = [
-  { icon: Calculator, name: "الرياضيات", desc: "الجبر، الهندسة، والإحصاء", color: "#C9A227" },
-  { icon: Atom, name: "العلوم", desc: "أحياء، فيزياء، وكيمياء", color: "#3B7A57" },
-  { icon: Languages, name: "اللغة العربية", desc: "النحو، الإملاء، والنصوص", color: "#B23A48" },
+  { icon: Calculator, name: "الرياضيات", desc: "الجبر والهندسة والإحصاء", color: "#C9A227" },
+  { icon: Atom, name: "العلوم", desc: "أحياء وفيزياء وكيمياء", color: "#3B7A57" },
+  { icon: Languages, name: "اللغة العربية", desc: "النحو والإملاء والنصوص", color: "#B23A48" },
   { icon: Globe2, name: "الدراسات الاجتماعية", desc: "التاريخ والجغرافيا", color: "#3A6EA5" },
 ];
 

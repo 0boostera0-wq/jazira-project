@@ -16,7 +16,7 @@ export default function AppLayout({ children }) {
       <SessionTracker />
       <NotificationBell />
       <Sidebar />
-      <main className="mx-auto w-full max-w-6xl px-4 pb-24 pt-20 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl px-4 pb-24 pt-20 sm:px-6 lg:px-8">
         {children}
       </main>
       <AIAssistant />

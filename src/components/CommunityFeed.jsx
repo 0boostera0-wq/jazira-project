@@ -119,7 +119,7 @@ function PostComposer({ onPublish, authorName, authorAvatar }) {
       const duration = await readVideoDuration(file);
       if (duration > MAX_VIDEO_SECONDS) { setError("يجب أن يكون الفيديو 30 ثانية أو أقل"); return; }
     } catch {
-      setError("تعذّر قراءة الفيديو، جرّب ملفاً آخر"); return;
+      setError("تعذّر قراءة الفيديو — جرّب ملفاً آخر"); return;
     }
     clearMedia();
     setMediaFile(file); setMediaType("video");

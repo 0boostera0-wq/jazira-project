@@ -14,7 +14,7 @@ export default function CompetitionsPage() {
     <div>
       <PageHeader
         title="المسابقات"
-        subtitle="تنافس بنزاهة، اكسب نقاط XP، وتصدّر القائمة لتربح الجوائز"
+        subtitle="تنافس بنزاهة واكسب نقاط XP وتصدّر القائمة لتربح الجوائز"
         icon={Trophy}
       />
 

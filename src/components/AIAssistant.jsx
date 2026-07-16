@@ -245,7 +245,7 @@ export default function AIAssistant() {
     } catch {
       const errMsgs = [
         ...history,
-        { role: "assistant", content: "عذرًا، حدث خطأ أثناء الاتصال. حاول مرة أخرى 🙏" },
+        { role: "assistant", content: "عذراً حدث خطأ أثناء الاتصال. حاول مرة أخرى 🙏" },
       ];
       setMessages(errMsgs);
       convoId = persist(errMsgs, convoId);

@@ -108,7 +108,7 @@ export default function VerifyEmailPage() {
       return;
     }
     if (!userEmail) {
-      setError('البريد الإلكتروني غير موجود، يرجى التسجيل مجدداً');
+      setError('البريد الإلكتروني غير موجود — يرجى التسجيل مجدداً');
       return;
     }
 
@@ -134,7 +134,7 @@ export default function VerifyEmailPage() {
       router.refresh();
       setTimeout(() => router.push('/dashboard'), 1500);
     } catch {
-      setError('حدث خطأ غير متوقع، يرجى المحاولة مجدداً');
+      setError('حدث خطأ غير متوقع — يرجى المحاولة مجدداً');
     } finally {
       setLoading(false);
     }
@@ -156,7 +156,7 @@ export default function VerifyEmailPage() {
         return;
       }
 
-      setSuccess('تم إرسال رمز جديد، تحقق من بريدك الإلكتروني');
+      setSuccess('تم إرسال رمز جديد — تحقق من بريدك الإلكتروني');
       setCountdown(RESEND_COOLDOWN);
       setDigits(Array(OTP_LENGTH).fill(''));
       setTimeout(() => inputRefs.current[0]?.focus(), 50);
