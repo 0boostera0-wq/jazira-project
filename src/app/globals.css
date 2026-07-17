@@ -112,9 +112,15 @@ html.dark .bg-cream-100 { background-color: #14161d; }
   from { transform: translateY(0); }
   to { transform: translateY(-2000px); }
 }
-/* Starfield is nearly invisible on the bright light theme, vivid in the dark. */
-.jz-starfield { opacity: 0; transition: opacity 0.6s ease; }
-html.dark .jz-starfield { opacity: 1; }
+/* Starfield: vivid in the dark theme, absent on the bright light theme.
+   PERF: this MUST be display:none rather than opacity:0. With opacity:0 the
+   layer stays live — Chrome keeps running its 6 infinite animations and keeps
+   repainting 300+ box-shadow stars across a 2000px field every frame, on the
+   DEFAULT light theme where none of it is ever visible. That was a large slice
+   of main-thread work / TBT and showed up as non-composited animations.
+   display:none stops the animations and the paint completely. */
+.jz-starfield { display: none; }
+html.dark .jz-starfield { display: block; }
 
 /* Respect reduced-motion: keep the stars, drop all movement. */
 @media (prefers-reduced-motion: reduce) {

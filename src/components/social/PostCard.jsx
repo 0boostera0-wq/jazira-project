@@ -129,7 +129,7 @@ export default function PostCard({ post, author }) {
           <button onClick={toggleRepost} className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold transition hover:bg-champagne-100/70 ${reposted ? "text-[#3BA67B]" : ""}`}>
             <Repeat2 size={18} />{reposts > 0 && <span className="ltr-nums">{reposts}</span>}
           </button>
-          <button onClick={share} className="mr-auto flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold transition hover:bg-champagne-100/70">
+          <button onClick={share} aria-label="نسخ رابط المنشور" className="mr-auto flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold transition hover:bg-champagne-100/70">
             {copied ? <Check size={17} className="text-emerald-600" /> : <Share2 size={17} />}
           </button>
         </div>

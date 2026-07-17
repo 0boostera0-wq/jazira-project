@@ -206,7 +206,7 @@ export default function ChatPage() {
                       placeholder="اكتب رسالة…"
                       className="max-h-32 flex-1 resize-none rounded-2xl bg-white/70 px-4 py-2.5 text-sm text-ink outline-none placeholder:text-ink-muted"
                     />
-                    <button onClick={send} disabled={sending || !text.trim()} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gold-gradient text-white shadow-gold disabled:opacity-50">
+                    <button onClick={send} disabled={sending || !text.trim()} aria-label="إرسال" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gold-gradient text-white shadow-gold disabled:opacity-50">
                       {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={17} />}
                     </button>
                   </div>

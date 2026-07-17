@@ -162,6 +162,7 @@ export function PostComposer({ onSubmit, isLoading }) {
           <button
             type="button"
             onClick={clearMedia}
+            aria-label="إزالة المرفق"
             className="absolute top-2 right-2 rounded-full bg-red-500 p-2 text-white hover:bg-red-600 transition"
           >
             <X size={20} />

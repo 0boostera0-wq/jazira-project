@@ -104,6 +104,9 @@ export default function Landing() {
         <div className="absolute -left-40 top-72 h-[30rem] w-[30rem] rounded-full opacity-50 blur-3xl" style={{ background: "radial-gradient(circle, rgba(201,168,106,0.14), transparent 65%)" }} />
       </div>
 
+      {/* Primary landmark — every page needs exactly one <main> */}
+      <main id="main">
+
       {/* ════════ HERO ════════ */}
       <Section id="top" cv={false} className="!pt-36 sm:!pt-44">
         <div className="grid items-center gap-12 md:grid-cols-2">
@@ -467,6 +470,8 @@ export default function Landing() {
           </div>
         </Reveal>
       </Section>
+
+      </main>
 
       <SiteFooter />
     </div>

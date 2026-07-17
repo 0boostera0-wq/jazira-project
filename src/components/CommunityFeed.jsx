@@ -164,7 +164,7 @@ function PostComposer({ onPublish, authorName, authorAvatar }) {
           {mediaType === "image"
             ? <img src={preview} alt="معاينة" className="max-h-60 w-full rounded-2xl object-cover" />
             : <video src={preview} controls className="max-h-60 w-full rounded-2xl" />}
-          <button type="button" onClick={clearMedia} className="absolute right-2 top-2 rounded-full bg-black/60 p-1.5 text-white">
+          <button type="button" onClick={clearMedia} aria-label="إزالة المرفق" className="absolute right-2 top-2 rounded-full bg-black/60 p-1.5 text-white">
             <X size={14} />
           </button>
         </div>

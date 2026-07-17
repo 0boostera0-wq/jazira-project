@@ -27,6 +27,7 @@ export function PremiumModal({ isOpen, onClose, featureName }) {
         {/* Close Button */}
         <button
           onClick={onClose}
+          aria-label="إغلاق"
           className="absolute top-4 right-4 text-ink-soft hover:text-ink transition"
         >
           <X size={24} />

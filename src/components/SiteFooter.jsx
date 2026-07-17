@@ -72,7 +72,7 @@ export default function SiteFooter() {
             {/* Link columns */}
             {COLS.map((col) => (
               <div key={col.title}>
-                <h4 className="mb-3 text-sm font-extrabold text-ink">{col.title}</h4>
+                <h3 className="mb-3 text-sm font-extrabold text-ink">{col.title}</h3>
                 <ul className="space-y-2.5">
                   {col.links.map((l) => (
                     <li key={l.label}>
