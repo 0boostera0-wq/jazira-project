@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase-client";
+import { getSupabase } from "@/lib/supabase-lazy";
 
 // Records today's activity (Asia/Riyadh, server-authoritative) and returns the
 // live streak. Safe if the RPC isn't deployed yet — falls back to 0.
@@ -15,7 +15,7 @@ export function useStreak(userId) {
 
     (async () => {
       try {
-        const supabase = createClient();
+        const supabase = await getSupabase();
         const { data, error } = await supabase.rpc("record_daily_activity");
         if (!cancelled && !error && typeof data === "number") setStreak(data);
       } catch {

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
-import { createClient } from "@/lib/supabase-client";
+import { getSupabase } from "@/lib/supabase-lazy";
 import { useAuthUser } from "@/context/AuthProvider";
 import { setSoundEnabled } from "@/lib/sound";
 
@@ -50,7 +50,7 @@ export function PreferencesProvider({ children }) {
     loadedFor.current = userId;
     (async () => {
       try {
-        const supabase = createClient();
+        const supabase = await getSupabase();
         const { data } = await supabase
           .from("user_preferences")
           .select("sound, language, ai_suggestions")
@@ -69,26 +69,25 @@ export function PreferencesProvider({ children }) {
     })();
   }, [isSignedIn, userId]);
 
+  // NOTE: the Supabase write must NOT live inside a setState updater — React can
+  // invoke updaters twice (StrictMode) which would double-fire the request.
   const update = useCallback(async (patch) => {
-    setPrefs((prev) => {
-      const next = { ...prev, ...patch };
-      persistLS(next);
-      // best-effort Supabase upsert (per-account, cross-device)
-      if (userId) {
-        try {
-          const supabase = createClient();
-          supabase.from("user_preferences").upsert({
-            user_id: userId,
-            sound: next.sound,
-            language: next.language,
-            ai_suggestions: next.aiSuggestions,
-            updated_at: new Date().toISOString(),
-          }, { onConflict: "user_id" }).then(() => {});
-        } catch {}
-      }
-      return next;
-    });
-  }, [userId]);
+    const next = { ...prefs, ...patch };
+    setPrefs(next);
+    persistLS(next);
+    if (!userId) return;
+    // best-effort Supabase upsert (per-account, cross-device)
+    try {
+      const supabase = await getSupabase();
+      await supabase.from("user_preferences").upsert({
+        user_id: userId,
+        sound: next.sound,
+        language: next.language,
+        ai_suggestions: next.aiSuggestions,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: "user_id" });
+    } catch { /* table may not exist yet — local prefs still applied */ }
+  }, [prefs, userId]);
 
   const value = {
     ...prefs,

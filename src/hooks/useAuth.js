@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useState, useContext, createContext, useCallback } from 'react';
-import { createClient } from '@/lib/supabase-client';
+import { getSupabase } from '@/lib/supabase-lazy';
 import { genHandle } from '@/lib/profile';
 
+// PERF: Supabase is imported dynamically (supabase-lazy) so @supabase is not in
+// the critical-path bundle of every route. Behaviour is unchanged — the session
+// resolves a tick after hydration and `loading` already gates consumers.
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -12,58 +15,50 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const supabase = createClient();
-
   useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
+    let alive = true;
+    let subscription;
 
-        if (session?.user) {
-          setUser(session.user);
-
-          // Fetch user profile
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-
-          setProfile(profileData);
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    const loadProfile = async (supabase, id) => {
+      const { data } = await supabase.from('profiles').select('*').eq('id', id).single();
+      return data;
     };
 
-    initializeAuth();
+    (async () => {
+      const supabase = await getSupabase();
+      if (!alive) return;
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!alive) return;
         if (session?.user) {
           setUser(session.user);
+          const profileData = await loadProfile(supabase, session.user.id);
+          if (alive) setProfile(profileData);
+        }
+      } catch (err) {
+        if (alive) setError(err.message);
+      } finally {
+        if (alive) setLoading(false);
+      }
 
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-
-          setProfile(profileData);
+      const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (!alive) return;
+        if (session?.user) {
+          setUser(session.user);
+          const profileData = await loadProfile(supabase, session.user.id);
+          if (alive) setProfile(profileData);
         } else {
           setUser(null);
           setProfile(null);
         }
-      }
-    );
+      });
+      subscription = data.subscription;
+      if (!alive) subscription.unsubscribe();
+    })();
 
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [supabase]);
+    return () => { alive = false; subscription?.unsubscribe(); };
+  }, []);
 
   const value = {
     user,
@@ -87,30 +82,23 @@ export function useAuth() {
     throw new Error('useAuth must be used within AuthProvider');
   }
 
-  const supabase = createClient();
   const { user, profile, loading, isAuthenticated } = context;
 
   const signIn = useCallback(async (email, password) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
+      const supabase = await getSupabase();
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       return { success: true, user: data.user };
     } catch (err) {
       return { success: false, error: err.message };
     }
-  }, [supabase]);
+  }, []);
 
   const signUp = useCallback(async (email, password, username, fullName, phone) => {
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
+      const supabase = await getSupabase();
+      const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
       if (authError) throw authError;
 
       const uid = authData.user.id;
@@ -129,7 +117,7 @@ export function useAuth() {
       if (phone) {
         await supabase.from('profiles').update({ phone }).eq('id', uid);
       }
-      // Start the 7-day name-change cooldown from first signup.
+      // Start the name-change cooldown from first signup.
       await supabase.from('profiles').update({ full_name_changed_at: new Date().toISOString() }).eq('id', uid);
 
       // Create free subscription record (ignore if it already exists)
@@ -139,22 +127,23 @@ export function useAuth() {
     } catch (err) {
       return { success: false, error: err.message };
     }
-  }, [supabase]);
+  }, []);
 
   const signOut = useCallback(async () => {
     try {
+      const supabase = await getSupabase();
       const { error } = await supabase.auth.signOut({ scope: "local" });
       if (error) throw error;
       return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
     }
-  }, [supabase]);
+  }, []);
 
   const updateProfile = useCallback(async (updates) => {
     try {
       if (!user) throw new Error('No user logged in');
-
+      const supabase = await getSupabase();
       const { data, error } = await supabase
         .from('profiles')
         .update(updates)
@@ -167,36 +156,25 @@ export function useAuth() {
     } catch (err) {
       return { success: false, error: err.message };
     }
-  }, [user, supabase]);
+  }, [user]);
 
   const resetPassword = useCallback(async (email) => {
     try {
+      const supabase = await getSupabase();
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       });
-
       if (error) throw error;
       return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
     }
-  }, [supabase]);
+  }, []);
 
-  const getRole = () => {
-    return profile?.role || 'student';
-  };
-
-  const isAdmin = () => {
-    return profile?.role === 'admin';
-  };
-
-  const isTeacher = () => {
-    return profile?.role === 'teacher';
-  };
-
-  const isElite = () => {
-    return profile?.is_elite || false;
-  };
+  const getRole = () => profile?.role || 'student';
+  const isAdmin = () => profile?.role === 'admin';
+  const isTeacher = () => profile?.role === 'teacher';
+  const isElite = () => profile?.is_elite || false;
 
   return {
     user,

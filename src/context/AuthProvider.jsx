@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
-import { createClient } from "@/lib/supabase-client";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { getSupabase } from "@/lib/supabase-lazy";
 import { publicName } from "@/lib/profile";
 
 // Unified Supabase auth context.
@@ -9,43 +9,31 @@ import { publicName } from "@/lib/profile";
 // never the internal username handle.
 // Shape: { isLoaded, isSignedIn, userId, name, email, phone, imageUrl,
 //          needsProfileSetup, refreshUser, signOut }
+//
+// PERF: the Supabase client is imported dynamically (see supabase-lazy.js) so
+// ~248 kB of @supabase stays out of the critical path of every route. Auth
+// resolves a tick after hydration; consumers already gate on `isLoaded`.
 const AuthContext = createContext(null);
 
+const SIGNED_OUT = {
+  isLoaded: true,
+  isSignedIn: false,
+  userId: null,
+  name: "",
+  email: "",
+  phone: "",
+  imageUrl: "",
+  isElite: false,
+  showEliteBadge: true,
+  anonymousCommunity: false,
+  needsProfileSetup: false,
+};
+
 export function AuthProvider({ children }) {
-  const supabaseRef = useRef(null);
-  if (!supabaseRef.current) supabaseRef.current = createClient();
-  const supabase = supabaseRef.current;
+  const [state, setState] = useState({ ...SIGNED_OUT, isLoaded: false });
 
-  const [state, setState] = useState({
-    isLoaded: false,
-    isSignedIn: false,
-    userId: null,
-    name: "",
-    email: "",
-    phone: "",
-    imageUrl: "",
-    isElite: false,
-    showEliteBadge: true,
-    anonymousCommunity: false,
-    needsProfileSetup: false,
-  });
-
-  const resolveUser = useCallback(async (user) => {
-    if (!user) {
-      return {
-        isLoaded: true,
-        isSignedIn: false,
-        userId: null,
-        name: "",
-        email: "",
-        phone: "",
-        imageUrl: "",
-        isElite: false,
-        showEliteBadge: true,
-        anonymousCommunity: false,
-        needsProfileSetup: false,
-      };
-    }
+  const resolveUser = useCallback(async (user, supabase) => {
+    if (!user) return { ...SIGNED_OUT };
 
     const meta = user.user_metadata || {};
 
@@ -75,17 +63,8 @@ export function AuthProvider({ children }) {
 
     // Public name: full_name (non-unique). Fall back to OAuth metadata for the
     // brief window before profile-setup completes, but NEVER to email.
-    const name =
-      profile?.full_name ||
-      meta.full_name ||
-      meta.name ||
-      "";
-
-    const imageUrl =
-      profile?.avatar_url ||
-      meta.avatar_url ||
-      meta.picture ||
-      "";
+    const name = profile?.full_name || meta.full_name || meta.name || "";
+    const imageUrl = profile?.avatar_url || meta.avatar_url || meta.picture || "";
 
     // Setup is required only when there is no full_name yet (covers Google users
     // whose first login has no profile row). Once full_name exists, never again.
@@ -104,45 +83,47 @@ export function AuthProvider({ children }) {
       anonymousCommunity: !!profile?.anonymous_community,
       needsProfileSetup,
     };
-  }, [supabase]);
+  }, []);
 
   // Re-fetch the current user's profile and update context (used right after
   // profile-setup / avatar changes so guards & UI update without a full reload).
   const refreshUser = useCallback(async () => {
+    const supabase = await getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
-    setState(await resolveUser(user));
-  }, [supabase, resolveUser]);
+    setState(await resolveUser(user, supabase));
+  }, [resolveUser]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setState(await resolveUser(session?.user ?? null));
-    });
+    let alive = true;
+    let subscription;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setState(await resolveUser(session?.user ?? null));
-      }
-    );
+    (async () => {
+      const supabase = await getSupabase();
+      if (!alive) return;
 
-    return () => subscription.unsubscribe();
-  }, [supabase, resolveUser]);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!alive) return;
+      setState(await resolveUser(session?.user ?? null, supabase));
+
+      const { data } = supabase.auth.onAuthStateChange(async (_event, s) => {
+        if (!alive) return;
+        setState(await resolveUser(s?.user ?? null, supabase));
+      });
+      subscription = data.subscription;
+      if (!alive) subscription.unsubscribe();
+    })();
+
+    return () => { alive = false; subscription?.unsubscribe(); };
+  }, [resolveUser]);
 
   const signOut = useCallback(async () => {
     // 'local' so signing out on one device never logs out the user's other
     // devices. Rotate the session id so the next login starts a clean session.
     try { localStorage.removeItem("jazira_session_id_v1"); } catch {}
+    const supabase = await getSupabase();
     await supabase.auth.signOut({ scope: "local" });
-    setState({
-      isLoaded: true,
-      isSignedIn: false,
-      userId: null,
-      name: "",
-      email: "",
-      phone: "",
-      imageUrl: "",
-      needsProfileSetup: false,
-    });
-  }, [supabase]);
+    setState({ ...SIGNED_OUT });
+  }, []);
 
   return (
     <AuthContext.Provider value={{ ...state, refreshUser, signOut }}>
