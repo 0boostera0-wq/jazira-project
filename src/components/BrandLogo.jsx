@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { BRAND } from "@/lib/constants";
 import Robot from "@/components/Robot";
 
@@ -9,32 +9,32 @@ function OrbitingRobots({ radius = 28 }) {
   // Skip the perpetual orbit animation when the user prefers reduced motion.
   if (useReducedMotion()) return null;
   return (
-    <motion.div
+    <m.div
       className="pointer-events-none absolute inset-0 flex items-center justify-center"
       animate={{ rotate: 360 }}
       transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
       aria-hidden="true"
     >
       {/* Robot A — top of orbit */}
-      <motion.div
+      <m.div
         className="absolute opacity-90"
         style={{ translateY: -radius }}
         animate={{ rotate: -360 }}
         transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
       >
         <Robot size={14} />
-      </motion.div>
+      </m.div>
 
       {/* Robot B — bottom (180° behind A — chasing effect) */}
-      <motion.div
+      <m.div
         className="absolute opacity-90"
         style={{ translateY: radius }}
         animate={{ rotate: -360 }}
         transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
       >
         <Robot size={14} />
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
 
@@ -59,13 +59,13 @@ export default function BrandLogo({ size = "lg" }) {
         style={{ width: isLg ? 52 : 34, height: isLg ? 52 : 34 }}
       >
         <OrbitingRobots radius={isLg ? 24 : 16} />
-        <motion.span
+        <m.span
           className={isLg ? "text-4xl" : "text-2xl"}
           animate={reduce ? undefined : { y: [0, -5, 0] }}
           transition={reduce ? undefined : { duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
         >
           {BRAND.emoji}
-        </motion.span>
+        </m.span>
       </div>
     </div>
   );

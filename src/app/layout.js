@@ -3,6 +3,7 @@ import { AppProvider } from "@/context/AppContext";
 import { AuthProvider } from "@/context/AuthProvider";
 import { AuthProvider as FormAuthProvider } from "@/hooks/useAuth";
 import { PreferencesProvider } from "@/context/PreferencesProvider";
+import MotionProvider from "@/components/motion/MotionProvider";
 import Starfield from "@/components/Starfield";
 import ReferralCapture from "@/components/ReferralCapture";
 import { SITE_URL, SITE_NAME, SITE_DESC, OG_IMAGE, organizationJsonLd } from "@/lib/seo";
@@ -85,7 +86,11 @@ export default function RootLayout({ children }) {
             <AppProvider>
               {/* PreferencesProvider: per-account sound / language / AI suggestions */}
               <PreferencesProvider>
-                {children}
+                {/* MotionProvider: LazyMotion so critical-path components use
+                    the lightweight `m` primitive instead of full `motion`. */}
+                <MotionProvider>
+                  {children}
+                </MotionProvider>
               </PreferencesProvider>
             </AppProvider>
           </FormAuthProvider>

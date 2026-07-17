@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import BrandLogo from "@/components/BrandLogo";
 import NavRobots from "@/components/NavRobots";
@@ -68,7 +68,7 @@ export default function SiteHeader() {
       {/* Full-screen glass overlay (mobile) with staggered reveal */}
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -77,7 +77,7 @@ export default function SiteHeader() {
             onClick={() => setOpen(false)}
           >
             {[...LINKS, { label: "تسجيل الدخول", href: "/sign-in" }].map((l, i) => (
-              <motion.div
+              <m.div
                 key={l.href}
                 initial={{ opacity: 0, y: 28 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -87,9 +87,9 @@ export default function SiteHeader() {
                 <Link href={l.href} className="text-2xl font-extrabold text-ink" onClick={() => setOpen(false)}>
                   {l.label}
                 </Link>
-              </motion.div>
+              </m.div>
             ))}
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

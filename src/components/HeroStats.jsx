@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { BarChart3, LogIn } from "lucide-react";
 import { Float } from "@/components/motion/Reveal";
 import { useAuthUser } from "@/context/AuthProvider";
@@ -17,7 +17,7 @@ export function AnimatedFlame({ size = 22 }) {
     <span className="relative inline-grid place-items-center" style={{ width: size, height: size }}>
       {/* glow halo */}
       {!reduce && (
-        <motion.span
+        <m.span
           aria-hidden
           className="absolute inset-0 rounded-full"
           style={{ background: "radial-gradient(circle, rgba(224,121,59,0.55), transparent 68%)", willChange: "transform, opacity" }}
@@ -25,7 +25,7 @@ export function AnimatedFlame({ size = 22 }) {
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         />
       )}
-      <motion.svg
+      <m.svg
         width={size} height={size} viewBox="0 0 24 24" fill="none"
         style={{ transformOrigin: "50% 100%", willChange: "transform, opacity" }}
         animate={flicker}
@@ -43,13 +43,13 @@ export function AnimatedFlame({ size = 22 }) {
           fill="url(#flameGrad)"
         />
         {/* inner bright core */}
-        <motion.path
+        <m.path
           d="M12 12c1.5 1.4 2 2.7 1.3 4A3.3 3.3 0 0 1 12 22a3.4 3.4 0 0 1-1.6-6.4C11 14.6 11.3 13.4 12 12Z"
           fill="#FFF3D6"
           animate={reduce ? {} : { opacity: [0.75, 1, 0.75] }}
           transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
         />
-      </motion.svg>
+      </m.svg>
     </span>
   );
 }

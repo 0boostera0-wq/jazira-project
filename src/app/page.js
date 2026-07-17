@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { m, useMotionValue, useSpring } from "framer-motion";
 import {
   GraduationCap, Sparkles, Users, Trophy, BookOpen, Bot, Calendar, BarChart3,
   ShieldCheck, Crown, Flame, Star, Clock, Compass, Layers, Rocket, ArrowLeft,
@@ -141,23 +141,23 @@ export default function Landing() {
 
           {/* Illustration + floating Z-cascade cards */}
           <div className="relative" onMouseMove={onHeroMove} onMouseLeave={onHeroLeave}>
-            <motion.div style={{ x: sx, y: sy }}>
+            <m.div style={{ x: sx, y: sy }}>
               <Illustration name="hero-main.png" icon={Compass} alt="رحلتك التعليمية مع منصة جزيرة" ratio="1 / 1" priority sizes="(max-width: 768px) 92vw, 40vw" />
-            </motion.div>
+            </m.div>
 
             <HeroStats />
           </div>
         </div>
 
         {/* scroll indicator */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
           className="mt-16 flex justify-center"
         >
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} className="text-ink-muted">
+          <m.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} className="text-ink-muted">
             <ChevronDown size={26} strokeWidth={1.5} />
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       </Section>
 
       {/* ════════ TRUST BAND ════════ */}
