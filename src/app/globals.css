@@ -122,6 +122,42 @@ html.dark .bg-cream-100 { background-color: #14161d; }
 .jz-starfield { display: none; }
 html.dark .jz-starfield { display: block; }
 
+/* ── Robot mascot walk cycle ────────────────────────────────────────────────
+   Real leg + arm articulation driven by CSS (no per-frame JS). Transform-only
+   and GPU-friendly. Each limb group pivots from its own top edge via
+   transform-box: fill-box. `--gait` sets cadence per robot instance. */
+.jz-robot .rb-leg-a { transform-box: fill-box; transform-origin: 50% 6%; animation: jz-step-a var(--gait, .82s) ease-in-out infinite; }
+.jz-robot .rb-leg-b { transform-box: fill-box; transform-origin: 50% 6%; animation: jz-step-b var(--gait, .82s) ease-in-out infinite; }
+.jz-robot .rb-arm-a { transform-box: fill-box; transform-origin: 50% 8%; animation: jz-swing-a var(--gait, .82s) ease-in-out infinite; }
+.jz-robot .rb-arm-b { transform-box: fill-box; transform-origin: 50% 8%; animation: jz-swing-b var(--gait, .82s) ease-in-out infinite; }
+.jz-robot .rb-upper { transform-box: fill-box; transform-origin: 50% 100%; animation: jz-bob var(--gait, .82s) ease-in-out infinite; }
+.jz-robot .rb-head  { transform-box: fill-box; transform-origin: 50% 92%; animation: jz-look calc(var(--gait, .82s) * 8) ease-in-out infinite; }
+
+@keyframes jz-step-a { 0%,100% { transform: rotate(15deg); } 50% { transform: rotate(-15deg); } }
+@keyframes jz-step-b { 0%,100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
+@keyframes jz-swing-a { 0%,100% { transform: rotate(-13deg); } 50% { transform: rotate(13deg); } }
+@keyframes jz-swing-b { 0%,100% { transform: rotate(13deg); } 50% { transform: rotate(-13deg); } }
+@keyframes jz-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-0.7px); } }
+@keyframes jz-look {
+  0%, 70%, 100% { transform: rotate(0deg); }
+  78% { transform: rotate(-9deg); }
+  86% { transform: rotate(7deg); }
+  93% { transform: rotate(-3deg); }
+}
+
+/* Idle mascot — stands still (no stepping), just breathes + looks around. */
+.jz-robot.jz-idle .rb-leg-a, .jz-robot.jz-idle .rb-leg-b,
+.jz-robot.jz-idle .rb-arm-a, .jz-robot.jz-idle .rb-arm-b { animation: none; }
+.jz-robot.jz-idle .rb-upper { animation: jz-breathe calc(var(--gait, .82s) * 3.6) ease-in-out infinite; }
+@keyframes jz-breathe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.5px); } }
+
+/* Calm static mascot for reduced-motion users. */
+@media (prefers-reduced-motion: reduce) {
+  .jz-robot .rb-leg-a, .jz-robot .rb-leg-b,
+  .jz-robot .rb-arm-a, .jz-robot .rb-arm-b,
+  .jz-robot .rb-upper, .jz-robot .rb-head { animation: none !important; }
+}
+
 /* Respect reduced-motion: keep the stars, drop all movement. */
 @media (prefers-reduced-motion: reduce) {
   .jz-starfield * { animation: none !important; }

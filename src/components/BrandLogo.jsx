@@ -1,72 +1,21 @@
-"use client";
-
-import { m, useReducedMotion } from "framer-motion";
 import { BRAND } from "@/lib/constants";
-import Robot from "@/components/Robot";
+import IslandMark from "@/components/IslandMark";
 
-// Two upgraded robots that orbit the palm/island mark — one chasing the other
-function OrbitingRobots({ radius = 28 }) {
-  // Skip the perpetual orbit animation when the user prefers reduced motion.
-  if (useReducedMotion()) return null;
-  return (
-    <m.div
-      className="pointer-events-none absolute inset-0 flex items-center justify-center"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
-      aria-hidden="true"
-    >
-      {/* Robot A — top of orbit */}
-      <m.div
-        className="absolute opacity-90"
-        style={{ translateY: -radius }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
-      >
-        <Robot size={14} />
-      </m.div>
-
-      {/* Robot B — bottom (180° behind A — chasing effect) */}
-      <m.div
-        className="absolute opacity-90"
-        style={{ translateY: radius }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
-      >
-        <Robot size={14} />
-      </m.div>
-    </m.div>
-  );
-}
-
+// Brand lockup: the wordmark + the fixed Jazira island centerpiece. The island
+// never moves — the animated robot mascots (NavRobots) roam behind the nav
+// around it. No motion here, so it's cheap and stable everywhere it's reused.
 export default function BrandLogo({ size = "lg" }) {
   const isLg = size === "lg";
-  const reduce = useReducedMotion();
-
   return (
-    <div className="flex items-center gap-3">
-      {/* Brand name */}
+    <div className="flex items-center gap-2.5">
       <span
-        className={`font-extrabold bg-gradient-to-r from-gold to-champagne bg-clip-text text-transparent ${
+        className={`bg-gradient-to-r from-gold to-champagne bg-clip-text font-extrabold text-transparent ${
           isLg ? "text-3xl" : "text-lg"
         }`}
       >
         {BRAND.name}
       </span>
-
-      {/* Palm emoji + orbiting robots */}
-      <div
-        className="relative flex items-center justify-center"
-        style={{ width: isLg ? 52 : 34, height: isLg ? 52 : 34 }}
-      >
-        <OrbitingRobots radius={isLg ? 24 : 16} />
-        <m.span
-          className={isLg ? "text-4xl" : "text-2xl"}
-          animate={reduce ? undefined : { y: [0, -5, 0] }}
-          transition={reduce ? undefined : { duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-        >
-          {BRAND.emoji}
-        </m.span>
-      </div>
+      <IslandMark size={isLg ? 52 : 36} className="shrink-0 drop-shadow-[0_3px_6px_rgba(160,130,70,0.18)]" />
     </div>
   );
 }

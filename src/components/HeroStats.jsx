@@ -57,8 +57,18 @@ export function AnimatedFlame({ size = 22 }) {
 function Card({ children }) {
   return (
     <div className="bezel">
-      <div className="bezel-core glass-strong flex items-center gap-2.5 px-4 py-3">{children}</div>
+      <div className="bezel-core glass-strong flex items-center gap-2.5 px-3.5 py-2.5 ring-1 ring-[rgba(201,168,106,0.25)]">
+        {children}
+      </div>
     </div>
+  );
+}
+
+function Medallion({ children, tone = "rgba(201,168,106,0.16)" }) {
+  return (
+    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl" style={{ background: tone }}>
+      {children}
+    </span>
   );
 }
 
@@ -76,9 +86,9 @@ export default function HeroStats() {
 
   return (
     <>
-      <Float amount={12} duration={6} className="absolute -left-2 top-6 hidden md:block">
+      <Float amount={12} duration={6} className="absolute -left-3 top-5 hidden md:block">
         <Card>
-          <AnimatedFlame size={22} />
+          <Medallion tone="rgba(224,121,59,0.14)"><AnimatedFlame size={20} /></Medallion>
           {guest ? (
             <div className="max-w-[11.5rem]">
               <p className="text-[12px] font-bold leading-snug text-ink">سجّل دخولك لبدء سلسلتك اليومية</p>
@@ -93,9 +103,9 @@ export default function HeroStats() {
         </Card>
       </Float>
 
-      <Float amount={10} duration={7} delay={0.6} className="absolute -bottom-3 right-2 hidden md:block">
+      <Float amount={10} duration={7} delay={0.6} className="absolute -bottom-4 right-3 hidden md:block">
         <Card>
-          <BarChart3 size={18} className="text-gold" />
+          <Medallion tone="linear-gradient(135deg,#E6C77E,#B8923F)"><BarChart3 size={17} className="text-white" /></Medallion>
           {guest ? (
             <div className="max-w-[11.5rem]">
               <p className="text-[12px] font-bold leading-snug text-ink">سجّل دخولك لمتابعة تقدّمك هذا الأسبوع</p>

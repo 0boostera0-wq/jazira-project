@@ -12,6 +12,7 @@ import {
 import { Reveal, Stagger, StaggerItem, Float, EASE } from "@/components/motion/Reveal";
 import Illustration from "@/components/Illustration";
 import HeroStats from "@/components/HeroStats";
+import IslandMark from "@/components/IslandMark";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { ELITE, PRIZES } from "@/lib/constants";
@@ -108,51 +109,87 @@ export default function Landing() {
       <main id="main">
 
       {/* ════════ HERO ════════ */}
-      <Section id="top" cv={false} className="!pt-36 sm:!pt-44">
-        <div className="grid items-center gap-12 md:grid-cols-2">
-          <div>
-            <Reveal><Eyebrow>منصة جزيرة التعليمية <Sparkles size={13} /></Eyebrow></Reveal>
-            <Reveal delay={0.06}>
-              <h1 className="mt-5 text-4xl font-extrabold leading-[1.15] text-ink sm:text-6xl">
-                رحلتك التعليمية
-                <br />
-                <span className="gold-text">مستقبلك المشرق</span>
-              </h1>
-            </Reveal>
-            <Reveal delay={0.12}>
-              <p className="mt-5 max-w-md text-lg leading-relaxed text-ink-soft">
-                نرافقك خطوة بخطوة لتتعلّم بذكاء وتطوّر مهاراتك وتحقّق أهدافك بثقة — بمسارات متكاملة ومساعد ذكي فاخر يعمل لأجلك على مدار الساعة.
-              </p>
-            </Reveal>
-            <Reveal delay={0.18}>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <CTAPrimary href="/dashboard">ابدأ الآن</CTAPrimary>
-                <Link href="/sign-in" className="cta-ghost">تسجيل الدخول</Link>
-              </div>
-            </Reveal>
-            <Reveal delay={0.24}>
-              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-muted">
-                <span className="flex items-center gap-1.5"><Check size={15} className="text-gold" /> تعلّم بذكاء</span>
-                <span className="flex items-center gap-1.5"><Clock size={15} className="text-gold" /> متاح ٢٤/٧</span>
-                <span className="flex items-center gap-1.5"><ShieldCheck size={15} className="text-gold" /> محتوى موثوق</span>
-              </div>
-            </Reveal>
-          </div>
+      <Section id="top" cv={false} className="!pt-32 sm:!pt-40">
+        <Reveal>
+          {/* One integrated premium stage — text + visual read as a single composition */}
+          <div className="relative overflow-hidden rounded-[2.25rem] border border-[rgba(201,168,106,0.3)] bg-white/55 p-6 shadow-[0_34px_90px_rgba(160,130,70,0.16)] sm:rounded-[2.75rem] sm:bg-white/45 sm:p-10 sm:backdrop-blur-xl lg:p-14">
+            {/* stage ambience — fills the composition without clutter */}
+            <div aria-hidden className="pointer-events-none absolute inset-0">
+              <div className="absolute -right-24 -top-28 h-80 w-80 rounded-full opacity-70 blur-3xl" style={{ background: "radial-gradient(circle, rgba(201,162,39,0.22), transparent 65%)" }} />
+              <div className="absolute -left-32 -bottom-24 h-72 w-72 rounded-full opacity-60 blur-3xl" style={{ background: "radial-gradient(circle, rgba(124,154,106,0.12), transparent 65%)" }} />
+            </div>
 
-          {/* Illustration + floating Z-cascade cards */}
-          <div className="relative" onMouseMove={onHeroMove} onMouseLeave={onHeroLeave}>
-            <m.div style={{ x: sx, y: sy }}>
-              <Illustration name="hero-main.png" icon={Compass} alt="رحلتك التعليمية مع منصة جزيرة" ratio="1 / 1" priority sizes="(max-width: 768px) 92vw, 40vw" />
-            </m.div>
+            <div className="relative grid items-center gap-10 lg:grid-cols-[1.12fr_.88fr] lg:gap-16">
+              {/* ── text block ── */}
+              <div>
+                <Eyebrow>منصة جزيرة التعليمية <Sparkles size={13} /></Eyebrow>
+                <h1 className="mt-5 text-[2.6rem] font-extrabold leading-[1.12] text-ink sm:text-6xl lg:text-[4.2rem]">
+                  رحلتك التعليمية
+                  <br />
+                  <span className="gold-text">مستقبلك المشرق</span>
+                </h1>
 
-            <HeroStats />
+                {/* anchored paragraph — gold accent bar ties it to the heading */}
+                <div className="mt-6 border-r-[3px] border-gold/45 pr-4">
+                  <p className="max-w-xl text-lg leading-relaxed text-ink-soft">
+                    نرافقك خطوة بخطوة لتتعلّم بذكاء وتطوّر مهاراتك وتحقّق أهدافك بثقة — بمسارات متكاملة ومساعد ذكي فاخر يعمل لأجلك على مدار الساعة.
+                  </p>
+                </div>
+
+                {/* CTA anchor */}
+                <div className="mt-8">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <CTAPrimary href="/dashboard">ابدأ الآن</CTAPrimary>
+                    <Link href="/sign-in" className="cta-ghost">تسجيل الدخول</Link>
+                  </div>
+                  <p className="mt-3 flex items-center gap-1.5 text-xs text-ink-muted">
+                    <Check size={13} className="text-gold" /> ابدأ مجاناً — لا حاجة لبطاقة ائتمانية
+                  </p>
+                </div>
+
+                {/* feature chips */}
+                <div className="mt-7 flex flex-wrap gap-2.5">
+                  {[
+                    { Icon: Zap, t: "تعلّم بذكاء" },
+                    { Icon: Clock, t: "متاح ٢٤/٧" },
+                    { Icon: ShieldCheck, t: "محتوى موثوق" },
+                  ].map((c) => (
+                    <span key={c.t} className="inline-flex items-center gap-1.5 rounded-full border border-[rgba(201,168,106,0.3)] bg-white/60 px-3.5 py-1.5 text-sm font-semibold text-ink-soft">
+                      <c.Icon size={14} className="text-gold" /> {c.t}
+                    </span>
+                  ))}
+                </div>
+
+                {/* honest platform stat strip — anchors the block, fills the width */}
+                <div className="mt-8 grid max-w-lg grid-cols-3 gap-3 border-t border-champagne-200/70 pt-6">
+                  {[
+                    { Icon: Layers, t: "٦ مراحل دراسية" },
+                    { Icon: Bot, t: "مساعد ذكي ٢٤/٧" },
+                    { Icon: Library, t: "مناهج ومصادر متكاملة" },
+                  ].map((s) => (
+                    <div key={s.t} className="flex flex-col items-start gap-1.5">
+                      <span className="grid h-9 w-9 place-items-center rounded-xl bg-gold-gradient text-white shadow-gold"><s.Icon size={17} strokeWidth={1.6} /></span>
+                      <span className="text-xs font-bold leading-snug text-ink">{s.t}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── visual block ── */}
+              <div className="relative mx-auto w-full max-w-md lg:max-w-none" onMouseMove={onHeroMove} onMouseLeave={onHeroLeave}>
+                <m.div style={{ x: sx, y: sy }}>
+                  <Illustration name="hero-main.png" icon={Compass} alt="رحلتك التعليمية مع منصة جزيرة" ratio="1 / 1" float={false} priority sizes="(max-width: 768px) 88vw, 42vw" />
+                </m.div>
+                <HeroStats />
+              </div>
+            </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* scroll indicator */}
         <m.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
-          className="mt-16 flex justify-center"
+          className="mt-14 flex justify-center"
         >
           <m.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }} className="text-ink-muted">
             <ChevronDown size={26} strokeWidth={1.5} />
@@ -459,7 +496,7 @@ export default function Landing() {
         <Reveal>
           <div className="bezel">
             <div className="bezel-core relative overflow-hidden p-10 text-center sm:p-16" style={{ background: "linear-gradient(135deg, rgba(201,162,39,0.14), rgba(255,253,249,0.7))" }}>
-              <Float amount={8} duration={6} className="mx-auto mb-5 w-max"><span className="text-6xl">🏝️</span></Float>
+              <Float amount={8} duration={6} className="mx-auto mb-5 w-max"><IslandMark size={78} /></Float>
               <h2 className="text-3xl font-extrabold text-ink sm:text-5xl">ابدأ رحلتك اليوم</h2>
               <p className="mx-auto mt-4 max-w-xl text-lg text-ink-soft">استثمر في نفسك — فالمستقبل يصنعه من يتعلّم. انضمّ إلى جزيرة وابدأ خطوتك الأولى نحو التفوّق.</p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
