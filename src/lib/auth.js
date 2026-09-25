@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase-server';
+import { OWN_PROFILE_COLUMNS } from '@/lib/profile';
 
 export async function getCurrentUser() {
   const supabase = await createClient();
@@ -10,7 +11,7 @@ export async function getUserProfile(userId) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('profiles')
-    .select('*')
+    .select(OWN_PROFILE_COLUMNS) // never select('*'): private columns are not granted
     .eq('id', userId)
     .single();
 
@@ -37,25 +38,9 @@ export async function signUpWithEmail(email, password, username, fullName) {
     return { error: authError.message };
   }
 
-  // Create profile
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .insert({
-      id: authData.user.id,
-      username,
-      full_name: fullName,
-      email,
-    });
-
-  if (profileError) {
-    return { error: profileError.message };
-  }
-
-  // Create subscription record
-  await supabase.from('subscriptions').insert({
-    user_id: authData.user.id,
-    tier: 'free',
-  });
+  // The profile row is created by the handle_new_user() trigger from the
+  // metadata above; subscriptions are written only by the payment webhook
+  // (service role). Clients cannot insert either (migration 0009 / RLS).
 
   return { user: authData.user };
 }

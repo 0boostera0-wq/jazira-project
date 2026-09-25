@@ -34,6 +34,9 @@
 //    as the user (owner = uid), which is what the Storage API does under RLS.
 //  * No GoTrue: createUser() inserts straight into auth.users (the
 //    on_auth_user_created trigger still fires).
+//  * One connection: inside an asX() callback use ONLY the `tx` it receives.
+//    Calling h.sql()/h.asUser()/h.createUser() there would deadlock, so the
+//    harness rejects it with a clear error instead.
 // ============================================================================
 import { PGlite } from "@electric-sql/pglite";
 import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
@@ -41,6 +44,7 @@ import { pgcrypto } from "@electric-sql/pglite/contrib/pgcrypto";
 import { uuid_ossp } from "@electric-sql/pglite/contrib/uuid_ossp";
 import { readFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { AsyncLocalStorage } from "node:async_hooks";
 import path from "node:path";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -49,6 +53,8 @@ export const MIGRATIONS_DIR = path.join(REPO_ROOT, "supabase", "migrations");
 export const SHIM_FILE = path.join(HERE, "supabase-shim.sql");
 
 const ROLES = new Set(["anon", "authenticated", "service_role"]);
+// Holds the role while an asX() callback runs (detects nested top-level calls).
+const inTx = new AsyncLocalStorage();
 
 /** Sorted list of migration filenames (what a fresh Supabase project gets, in order). */
 export function listMigrations(dir = MIGRATIONS_DIR) {
@@ -129,9 +135,21 @@ export async function createDb(opts = {}) {
   // Claims cache so asUser() can put email / app_metadata in the JWT like GoTrue.
   const claimsByUid = new Map();
 
+  // PGlite has ONE connection and serialises transactions: a top-level query
+  // (or a nested asX()) issued from inside an asX() callback would wait for
+  // that very transaction forever. Detect the nesting and fail fast instead.
+  const nestedError = (what) => {
+    const role = inTx.getStore();
+    return role
+      ? new Error(`[db harness] ${what} called inside an as-${role} callback — use the callback's tx instead (it would deadlock).`)
+      : null;
+  };
+
   async function asRole(role, claims, fn, { rollback = false } = {}) {
     if (!ROLES.has(role)) throw new Error(`[db harness] unknown role: ${role}`);
-    const full = { role, ...(claims || {}) };
+    const nested = nestedError(`asRole("${role}")`);
+    if (nested) throw nested;
+    const full = { ...(claims || {}), role }; // PostgREST: DB role == JWT role claim
     return db.transaction(async (tx) => {
       await tx.exec(`set local role ${role}`);
       await tx.query(
@@ -140,13 +158,22 @@ export async function createDb(opts = {}) {
                 set_config('request.jwt.claim.role', $3, true)`,
         [JSON.stringify(full), full.sub ?? "", role],
       );
-      const result = await fn(wrapRunner(tx));
+      const result = await inTx.run(role, () => fn(wrapRunner(tx)));
       if (rollback && !tx.closed) await tx.rollback();
       return result;
     });
   }
 
-  const superuser = wrapRunner(db);
+  const guarded = (name, f) => (...args) => {
+    const nested = nestedError(`h.${name}()`);
+    return nested ? Promise.reject(nested) : f(...args);
+  };
+  const raw = wrapRunner(db);
+  const superuser = {
+    query: guarded("query", raw.query),
+    sql: guarded("sql", raw.sql),
+    exec: guarded("exec", raw.exec),
+  };
 
   return {
     db,
@@ -179,7 +206,7 @@ export async function createDb(opts = {}) {
     asService(fn, opts = {}) {
       return asRole("service_role", { ...(opts.claims || {}) }, fn, opts);
     },
-    /** Generic: asRole("authenticated", { sub, … }, fn, { rollback }). */
+    /** Generic: asRole("anon"|"authenticated"|"service_role", claims, fn, { rollback }). */
     asRole,
 
     /**

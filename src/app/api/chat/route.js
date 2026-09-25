@@ -15,6 +15,7 @@ const SYSTEM_INSTRUCTION = `أنت "مساعد جزيرة الذكي"، مرشد
 - ساعد الطلاب في القدرات والتحصيلي والمواد الدراسية لجميع المراحل (ابتدائي، متوسط، ثانوي).
 - كن موجزًا وواضحًا، واستخدم خطوات مرقّمة عند الشرح.
 - لا تشجّع على الغش إطلاقًا، وحثّ الطالب على الأمانة والاجتهاد.
+- إذا سُئلت عن هويتك فأنت «مساعد جزيرة» فقط؛ لا تذكر اسم الشركة أو النموذج الذي يشغّلك.
 - إذا سأل المستخدم عن مكان ميزة داخل المنصة، وجّهه للصفحة المناسبة واكتب الرابط على سطر مستقل بصيغة [النص](/path)، مثل:
   - القدرات/التحصيلي => /high-school
   - الابتدائية => /elementary
@@ -39,6 +40,69 @@ function textStream(message, status = 200) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Server-side quota (public.ai_quota(): Elite unlimited; free = 5 user messages
+// per rolling 8 h, +5 with 5 referrals — see docs/DATA_API.md). Checked BEFORE
+// the model is contacted. User-visible texts never name the AI provider/model;
+// provider details go to server logs only.
+// ---------------------------------------------------------------------------
+const NOTICES = {
+  ar: {
+    quota: ({ limit, time }) =>
+      `وصلتَ إلى حدّ الرسائل المجانية مع المساعد (${limit} رسائل كل 8 ساعات).` +
+      (time ? ` يمكنك المتابعة بعد الساعة ${time} بتوقيت الرياض،` : " يمكنك المتابعة لاحقًا،") +
+      " أو الترقية إلى باقة النخبة لرسائل غير محدودة.",
+    unavailable: "المساعد غير متاح حاليًا. يرجى المحاولة بعد قليل.",
+  },
+  en: {
+    quota: ({ limit, time }) =>
+      `You've reached the free limit for the assistant (${limit} messages every 8 hours).` +
+      (time ? ` You can continue after ${time} (Riyadh time),` : " You can continue later,") +
+      " or upgrade to Elite for unlimited messages.",
+    unavailable: "The assistant is unavailable right now. Please try again shortly.",
+  },
+};
+
+// body.locale → NEXT_LOCALE cookie → Accept-Language → Arabic.
+function requestLocale(req, body) {
+  if (body?.locale === "ar" || body?.locale === "en") return body.locale;
+  const cookie = /(?:^|;\s*)NEXT_LOCALE=(ar|en)\b/.exec(req.headers.get("cookie") || "");
+  if (cookie) return cookie[1];
+  return /^\s*en\b/i.test(req.headers.get("accept-language") || "") ? "en" : "ar";
+}
+
+function riyadhTime(iso, locale) {
+  const d = iso ? new Date(iso) : null;
+  if (!d || Number.isNaN(d.getTime())) return null;
+  return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "ar-SA-u-nu-latn", {
+    hour: "numeric", minute: "2-digit", timeZone: "Asia/Riyadh",
+  }).format(d);
+}
+
+/** → { ok: true } | { ok: false, response } */
+async function checkQuota(supabase, locale) {
+  const { data: q, error } = await supabase.rpc("ai_quota");
+  if (error) {
+    if (error.code === "PGRST202" || error.code === "42883") {
+      console.warn("[AI] ai_quota() is not deployed yet — server-side quota not enforced");
+      return { ok: true };
+    }
+    console.error("[AI] ai_quota() failed:", error.code, error.message);
+    return { ok: false, response: textStream(NOTICES[locale].unavailable, 503) };
+  }
+  if (!q || q.unlimited || (typeof q.remaining === "number" && q.remaining > 0)) return { ok: true };
+
+  const retryAfter = q.resets_at ? Math.max(1, Math.ceil((new Date(q.resets_at).getTime() - Date.now()) / 1000)) : 3600;
+  const response = textStream(NOTICES[locale].quota({ limit: q.limit, time: riyadhTime(q.resets_at, locale) }), 429);
+  response.headers.set("Retry-After", String(retryAfter));
+  response.headers.set("Cache-Control", "no-store");
+  response.headers.set("X-Error-Code", "ai_quota_exhausted");
+  response.headers.set("X-Quota-Limit", String(q.limit ?? ""));
+  response.headers.set("X-Quota-Remaining", "0");
+  if (q.resets_at) response.headers.set("X-Quota-Reset", new Date(q.resets_at).toISOString());
+  return { ok: false, response };
+}
+
 // Basic protection: only accept same-origin requests (blocks casual external abuse).
 function isSameOrigin(req) {
   const origin = req.headers.get("origin");
@@ -58,6 +122,7 @@ export async function POST(req) {
 
   // Check authentication
   const supabase = await createClient();
+  if (!supabase) return textStream(NOTICES[requestLocale(req, null)].unavailable, 503);
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -66,11 +131,10 @@ export async function POST(req) {
 
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
-  // Key missing entirely — setup guidance only (key value is never exposed).
+  // Key missing entirely — neutral notice for the user, setup hint in the logs only.
   if (!apiKey || apiKey.length < 8) {
-    return textStream(
-      "⚙️ المساعد غير مُهيّأ بعد: أضِف المتغيّر GEMINI_API_KEY في إعدادات Vercel أو ملف .env.local ثم أعد التشغيل."
-    );
+    console.warn("[AI] GEMINI_API_KEY is not set — add it to the Vercel env / .env.local and restart.");
+    return textStream(NOTICES[requestLocale(req, null)].unavailable, 503);
   }
 
   let body;
@@ -85,6 +149,11 @@ export async function POST(req) {
   const last = messages[messages.length - 1];
   const userText = (last?.content || "").toString().slice(0, 4000);
   if (!userText.trim()) return textStream("الرسالة فارغة.", 400);
+
+  // Server-side quota — before anything is stored or sent to the model.
+  const locale = requestLocale(req, body);
+  const quota = await checkQuota(supabase, locale);
+  if (!quota.ok) return quota.response;
 
   // Ordered fallback list — first model wins; later ones tried if the chosen
   // one is unavailable for this key type (e.g. AQ. keys may have different
@@ -189,13 +258,15 @@ export async function POST(req) {
   // All models exhausted or a non-model error occurred.
   const errMsg = String(lastErr?.message || lastErr || "");
   if (/API key not valid|API_KEY_INVALID|invalid api key/i.test(errMsg)) {
-    return textStream("🔑 رفض Google المفتاح. تأكد من نسخه كاملًا وتفعيله من Google AI Studio.");
+    console.error("[AI] provider rejected the API key (check GEMINI_API_KEY)");
+    return textStream(NOTICES[locale].unavailable, 503);
   }
   if (/quota|rate limit|RESOURCE_EXHAUSTED/i.test(errMsg)) {
     return textStream("⏳ تم تجاوز الحصة المسموحة مؤقتًا. يرجى المحاولة بعد قليل.");
   }
   if (/not found|unsupported|model|404/i.test(errMsg)) {
-    return textStream("⚠️ لا يوجد نموذج Gemini متاح لهذا المفتاح حالياً. يرجى المحاولة لاحقاً.");
+    console.error("[AI] no model available for this key:", errMsg.slice(0, 200));
+    return textStream(NOTICES[locale].unavailable, 503);
   }
   return textStream("عذرًا، تعذّر الاتصال بالمساعد الذكي حاليًا. حاول مرة أخرى بعد قليل. 🙏");
 }

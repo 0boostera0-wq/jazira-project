@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase-server';
+import { OWN_PROFILE_COLUMNS } from '@/lib/profile';
 
 export async function getAuthSession() {
   const supabase = await createClient();
@@ -20,7 +21,7 @@ export async function getAuthProfile() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select(OWN_PROFILE_COLUMNS) // never select('*'): private columns are not granted
     .eq('id', user.id)
     .single();
 

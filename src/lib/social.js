@@ -110,9 +110,19 @@ export const DEFAULT_SOCIAL_SETTINGS = {
   notify_mentions: true,
 };
 
+const SOCIAL_SETTINGS_COLUMNS = Object.keys(DEFAULT_SOCIAL_SETTINGS).join(", ");
+
+// Own row → every setting. Another user's row is private (RLS, migration 0009):
+// only the prefs a profile page needs come back, via get_public_social_settings().
 export async function getSocialSettings(userId) {
   try {
-    const { data } = await sb().from("user_social_settings").select("*").eq("user_id", userId).maybeSingle();
+    const client = sb();
+    const { data: { session } } = await client.auth.getSession();
+    if (session?.user?.id && session.user.id === userId) {
+      const { data } = await client.from("user_social_settings").select(SOCIAL_SETTINGS_COLUMNS).eq("user_id", userId).maybeSingle();
+      return { ...DEFAULT_SOCIAL_SETTINGS, ...(data || {}) };
+    }
+    const { data } = await client.rpc("get_public_social_settings", { p_user: userId }).maybeSingle();
     return { ...DEFAULT_SOCIAL_SETTINGS, ...(data || {}) };
   } catch {
     return { ...DEFAULT_SOCIAL_SETTINGS };
@@ -165,6 +175,63 @@ export async function markNotificationsRead(ids) {
     if (Array.isArray(ids) && ids.length) q = q.in("id", ids);
     const { error } = await q;
     return { ok: !error };
+  } catch {
+    return { ok: false };
+  }
+}
+
+// ── direct messages (migration 0009: conversations, participants and message
+//    requests are written ONLY by these SECURITY DEFINER RPCs) ─────────────────
+const RPC_REASONS = [
+  "not_authenticated", "invalid_recipient", "blocked", "messages_disabled", "requests_disabled",
+  "request_rejected", "request_not_found", "request_already_accepted", "not_a_participant",
+];
+const rpcReason = (error) => {
+  if (!error) return null;
+  if (error.code === "PGRST202" || error.code === "42883") return "unavailable";
+  return RPC_REASONS.find((r) => (error.message || "").includes(r)) || "error";
+};
+
+/**
+ * Open (or reuse) the 1:1 conversation with `otherId`. Direct when they follow
+ * you, otherwise a message request. → { ok, conversationId } | { ok: false, reason }
+ * reason: blocked | messages_disabled | requests_disabled | request_rejected |
+ *         invalid_recipient | not_authenticated | unavailable | error
+ */
+export async function startConversation(otherId) {
+  try {
+    const { data, error } = await sb().rpc("start_conversation", { p_other: otherId });
+    if (error) return { ok: false, reason: rpcReason(error) };
+    return { ok: true, conversationId: data };
+  } catch {
+    return { ok: false, reason: "error" };
+  }
+}
+
+/** Accept (true) or reject (false) a message request addressed to you. */
+export async function respondMessageRequest(requestId, accept) {
+  try {
+    const { data, error } = await sb().rpc("respond_message_request", { p_request: requestId, p_accept: !!accept });
+    if (error) return { ok: false, reason: rpcReason(error) };
+    return { ok: true, status: data };
+  } catch {
+    return { ok: false, reason: "error" };
+  }
+}
+
+/** Mark the other side's messages read (read receipts) and move your last_read_at. */
+export async function markConversationRead(conversationId) {
+  try {
+    const { error } = await sb().rpc("mark_conversation_read", { p_conversation: conversationId });
+    if (!error) return { ok: true };
+    if (rpcReason(error) !== "unavailable") return { ok: false };
+    // RPC not migrated yet → at least keep the unread counter right.
+    const { data: { session } } = await sb().auth.getSession();
+    if (!session?.user) return { ok: false };
+    const res = await sb().from("conversation_participants")
+      .update({ last_read_at: new Date().toISOString() })
+      .eq("conversation_id", conversationId).eq("user_id", session.user.id);
+    return { ok: !res.error };
   } catch {
     return { ok: false };
   }

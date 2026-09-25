@@ -1,0 +1,2448 @@
+{
+  "year": "1447",
+  "academic_year_label": "1447/1448هـ (2025–2026)",
+  "generated": "2026-09-25",
+  "accessed": "2026-09-25",
+  "scope": "Saudi general education (التعليم العام): elementary grades 1-6 and intermediate grades 1-3.",
+  "report": "docs/research/curriculum-k9.md",
+  "notes": {
+    "terms_unverified": "Per-term split NOT verified: the official plan gives annual period counts only (no t1/t2 split) and the textbook portal (iEN) was unreachable. Kept at both terms as in the current catalog. Every annual figure is a multiple of 36, which is consistent with even weekly scheduling across the year, but that is an inference, not a source.",
+    "islamic_combined": "The official plan prints one combined subject 'القرآن الكريم والدراسات الإسلامية'. It is mapped here to the catalog id 'islamic'; the plan has no separate 'القرآن الكريم' row for general-education schools.",
+    "quran_not_separate": "Kept from the current catalog but NOT confirmed as a separate subject (see islamic_combined). Whether a separate Quran book or resource exists could not be checked because iEN was unreachable. The guide's glossary (p.9) says the Quran course (memorisation and recitation) is reachable through the 'مصحف مدرستي' app.",
+    "islamic_g5_6_tilawa": "Plan footnote (**) on p.21: for grades 5 and 6 the subject includes the course 'تلاوة القرآن الكريم وتجويده'.",
+    "arabic_textbook_title": "'اللغة العربية' is the plan subject name. The printed textbook title (e.g. لغتي / لغتي الجميلة / لغتي الخالدة) could not be checked on the official portal; secondary sites only, so unverified.",
+    "el_low_no_social_digital": "The official grades 1-3 table (الصفوف الأولية, p.19) has no 'الدراسات الاجتماعية' row and no 'المهارات الرقمية' row; both first appear in the grades 4-6 table (p.21).",
+    "tahfeez_track": "Separate official plan table for Quran-memorisation schools (مدارس تحفيظ القرآن الكريم). Not modelled in src/lib/curriculum.js. The printed total (1500) is not the arithmetic sum of the maximum figures; the page footnote says activity periods come from applying the 5% minimum rule."
+  },
+  "status_legend": {
+    "status": "verified = the subject, its official Arabic name and its annual period count are printed in the official study-plan guide for that grade/track; unverified = kept from the current catalog but not confirmed by an official source.",
+    "terms_status": "Whether the subject runs in t1, t2 or both. No official per-term split was obtained for any K-9 subject, so this is 'unverified' everywhere.",
+    "name_en": "Working English translations by the researcher, not official MOE English names.",
+    "annual_periods_max": "Column 'حد أعلى' (maximum number of periods in the academic year) of the official plan table. The page footnote allows a 5% reduction (the 'minimum') to be used for activity.",
+    "redistribution": "permitted = an explicit licence to redistribute was found; prohibited = the source explicitly reserves all rights or forbids it; not_stated = no clause addressing redistribution was found (default copyright rules then apply)."
+  },
+  "terms": {
+    "count": 2,
+    "ids": ["t1", "t2"],
+    "status": "verified",
+    "applies_to": "مدارس التعليم العام (general-education schools); the ministry keeps flexibility for some private and international schools and some regions (e.g. Makkah, Madinah).",
+    "statement_ar": "إقرار فصلين دراسيين لمدارس التعليم العام للعام الدراسي القادم 1447/ 1448هـ",
+    "evidence": [
+      {
+        "url": "https://moe.gov.sa/ar/mediacenter/MOEnews/Pages/news1_05082025.aspx",
+        "kind": "primary",
+        "states": "MOE news dated 11/02/1447: the ministry welcomes Cabinet approval of two terms (فصلين دراسيين) for general-education schools from 1447/1448H, applied over the next four years; minimum 180 school days kept.",
+        "accessed": "2026-09-25"
+      },
+      {
+        "url": "https://spa.gov.sa/N2373796",
+        "kind": "primary",
+        "states": "SPA headline: وزارة التعليم تثمن موافقة مجلس الوزراء على إقرار فصلين دراسيين لمدارس التعليم العام وتطبيقها في الأعوام الأربعة القادمة (body not rendered to the fetcher).",
+        "accessed": "2026-09-25"
+      },
+      {
+        "url": "https://x.com/moe_gov_sa/status/1952799080939233284",
+        "kind": "primary (not fetched)",
+        "states": "Official MOE X account post text as shown in search results: إقرار فصلين دراسيين لمدارس التعليم العام للعام الدراسي القادم 1447/ 1448هـ. The page itself returned HTTP 402 to the fetcher.",
+        "accessed": "2026-09-25"
+      }
+    ],
+    "dates": {
+      "status": "unverified",
+      "note": "Term dates were not found on an official page that renders to the fetcher. Secondary report only.",
+      "mid_year_break_hijri": "1447/7/20 – 1447/7/28",
+      "evidence": [
+        {
+          "url": "https://ajel.sa/local/p2qj353bxy",
+          "kind": "secondary",
+          "states": "Ajel (5 Aug 2025) lists breaks for 1447/1448H incl. mid-year break 1447/7/20–1447/7/28 and year-end break from 1448/1/10.",
+          "accessed": "2026-09-25"
+        }
+      ]
+    }
+  },
+  "plan_source": {
+    "name_ar": "دليل الخطط الدراسية – الإصدار الخامس (المركز الوطني للمناهج)",
+    "url": "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf",
+    "also_published_at": "https://www.moe.gov.sa/ar/mediacenter/MOEnews/DocLib/Curriculum_Guide_Fifth_Edition.pdf",
+    "listed_on": "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx",
+    "status": "verified",
+    "note": "Listed on the MOE study-plans page (last modified 21/04/1447) next to the year-labelled guides for 1443-1446. The PDF gives ANNUAL period counts only ('عدد الحصص الدراسية خلال العام الدراسي'); it contains no per-term split and no year label in its extractable text. The two published copies have identical K-9 tables (pp.19-24). Its link to 1447 rests on its listing as the successor of the 1446 guide and on secondary reports (e.g. posts labelling it 'عام الإصدار 1447 هـ - 2025 م').",
+    "pages": {
+      "elementary_1_3": 19,
+      "elementary_1_3_tahfeez": 20,
+      "elementary_4_6": 21,
+      "elementary_4_6_tahfeez": 22,
+      "intermediate": 23,
+      "intermediate_tahfeez": 24,
+      "general_rules": 13,
+      "special_rules": 14
+    }
+  },
+  "stages": [
+    {
+      "id": "elementary",
+      "name_ar": "المرحلة الابتدائية",
+      "grades": [
+        {
+          "id": "grade-1",
+          "name_ar": "الصف الأول",
+          "tracks": [
+            {
+              "id": "general",
+              "name_ar": "التعليم العام",
+              "catalog_path": ["elementary", "grade-1"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "name differs: catalog has \"الدراسات الإسلامية\", official plan prints \"القرآن الكريم والدراسات الإسلامية\"",
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "quran",
+                  "name_ar": "القرآن الكريم",
+                  "name_en": "Holy Quran",
+                  "terms": ["t1", "t2"],
+                  "status": "unverified",
+                  "terms_status": "unverified",
+                  "evidence": [],
+                  "notes": ["quran_not_separate"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 288,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "name differs: catalog has \"لغتي الجميلة\", official plan prints \"اللغة العربية\"",
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "name differs: catalog has \"التربية البدنية والصحية\", official plan prints \"التربية البدنية والدفاع عن النفس\""
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "add (subject is in the official plan but missing from src/lib/curriculum.js for this grade)"
+                }
+              ],
+              "not_in_official_plan": [
+                {
+                  "id": "social",
+                  "catalog_name_ar": "الدراسات الاجتماعية",
+                  "official_plan": "absent",
+                  "catalog_change": "remove from this grade (no row in the official plan table)",
+                  "notes": ["el_low_no_social_digital"],
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "digital",
+                  "catalog_name_ar": "المهارات الرقمية",
+                  "official_plan": "absent",
+                  "catalog_change": "remove from this grade (no row in the official plan table)",
+                  "notes": ["el_low_no_social_digital"],
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 108,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1428,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+              }
+            },
+            {
+              "id": "tahfeez",
+              "name_ar": "مدارس تحفيظ القرآن الكريم",
+              "catalog_path": null,
+              "notes": ["tahfeez_track"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 324,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"],
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 288,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 101,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "grade-2",
+          "name_ar": "الصف الثاني",
+          "tracks": [
+            {
+              "id": "general",
+              "name_ar": "التعليم العام",
+              "catalog_path": ["elementary", "grade-2"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "name differs: catalog has \"الدراسات الإسلامية\", official plan prints \"القرآن الكريم والدراسات الإسلامية\"",
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "quran",
+                  "name_ar": "القرآن الكريم",
+                  "name_en": "Holy Quran",
+                  "terms": ["t1", "t2"],
+                  "status": "unverified",
+                  "terms_status": "unverified",
+                  "evidence": [],
+                  "notes": ["quran_not_separate"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 252,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "name differs: catalog has \"لغتي الجميلة\", official plan prints \"اللغة العربية\"",
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "name differs: catalog has \"التربية البدنية والصحية\", official plan prints \"التربية البدنية والدفاع عن النفس\""
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "add (subject is in the official plan but missing from src/lib/curriculum.js for this grade)"
+                }
+              ],
+              "not_in_official_plan": [
+                {
+                  "id": "social",
+                  "catalog_name_ar": "الدراسات الاجتماعية",
+                  "official_plan": "absent",
+                  "catalog_change": "remove from this grade (no row in the official plan table)",
+                  "notes": ["el_low_no_social_digital"],
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "digital",
+                  "catalog_name_ar": "المهارات الرقمية",
+                  "official_plan": "absent",
+                  "catalog_change": "remove from this grade (no row in the official plan table)",
+                  "notes": ["el_low_no_social_digital"],
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 108,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1428,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+              }
+            },
+            {
+              "id": "tahfeez",
+              "name_ar": "مدارس تحفيظ القرآن الكريم",
+              "catalog_path": null,
+              "notes": ["tahfeez_track"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 324,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"],
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 252,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 101,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "grade-3",
+          "name_ar": "الصف الثالث",
+          "tracks": [
+            {
+              "id": "general",
+              "name_ar": "التعليم العام",
+              "catalog_path": ["elementary", "grade-3"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "name differs: catalog has \"الدراسات الإسلامية\", official plan prints \"القرآن الكريم والدراسات الإسلامية\"",
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "quran",
+                  "name_ar": "القرآن الكريم",
+                  "name_en": "Holy Quran",
+                  "terms": ["t1", "t2"],
+                  "status": "unverified",
+                  "terms_status": "unverified",
+                  "evidence": [],
+                  "notes": ["quran_not_separate"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "name differs: catalog has \"لغتي الجميلة\", official plan prints \"اللغة العربية\"",
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "name differs: catalog has \"التربية البدنية والصحية\", official plan prints \"التربية البدنية والدفاع عن النفس\""
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"],
+                  "catalog_change": "add (subject is in the official plan but missing from src/lib/curriculum.js for this grade)"
+                }
+              ],
+              "not_in_official_plan": [
+                {
+                  "id": "social",
+                  "catalog_name_ar": "الدراسات الاجتماعية",
+                  "official_plan": "absent",
+                  "catalog_change": "remove from this grade (no row in the official plan table)",
+                  "notes": ["el_low_no_social_digital"],
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                },
+                {
+                  "id": "digital",
+                  "catalog_name_ar": "المهارات الرقمية",
+                  "official_plan": "absent",
+                  "catalog_change": "remove from this grade (no row in the official plan table)",
+                  "notes": ["el_low_no_social_digital"],
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 108,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1428,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=19"]
+              }
+            },
+            {
+              "id": "tahfeez",
+              "name_ar": "مدارس تحفيظ القرآن الكريم",
+              "catalog_path": null,
+              "notes": ["tahfeez_track"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 324,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"],
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 101,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=20"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "grade-4",
+          "name_ar": "الصف الرابع",
+          "tracks": [
+            {
+              "id": "general",
+              "name_ar": "التعليم العام",
+              "catalog_path": ["elementary", "grade-4"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "name differs: catalog has \"الدراسات الإسلامية\", official plan prints \"القرآن الكريم والدراسات الإسلامية\"",
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "quran",
+                  "name_ar": "القرآن الكريم",
+                  "name_en": "Holy Quran",
+                  "terms": ["t1", "t2"],
+                  "status": "unverified",
+                  "terms_status": "unverified",
+                  "evidence": [],
+                  "notes": ["quran_not_separate"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "name differs: catalog has \"لغتي الجميلة\", official plan prints \"اللغة العربية\"",
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "name differs: catalog has \"التربية البدنية والصحية\", official plan prints \"التربية البدنية والدفاع عن النفس\""
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "add (subject is in the official plan but missing from src/lib/curriculum.js for this grade)"
+                }
+              ],
+              "allocations": {
+                "activity_periods": 72,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1428,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+              }
+            },
+            {
+              "id": "tahfeez",
+              "name_ar": "مدارس تحفيظ القرآن الكريم",
+              "catalog_path": null,
+              "notes": ["tahfeez_track"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 288,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"],
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "tajweed",
+                  "name_ar": "التجويد",
+                  "name_en": "Tajweed",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 67,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "grade-5",
+          "name_ar": "الصف الخامس",
+          "tracks": [
+            {
+              "id": "general",
+              "name_ar": "التعليم العام",
+              "catalog_path": ["elementary", "grade-5"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "name differs: catalog has \"الدراسات الإسلامية\", official plan prints \"القرآن الكريم والدراسات الإسلامية\"",
+                  "notes": ["islamic_combined", "islamic_g5_6_tilawa"]
+                },
+                {
+                  "id": "quran",
+                  "name_ar": "القرآن الكريم",
+                  "name_en": "Holy Quran",
+                  "terms": ["t1", "t2"],
+                  "status": "unverified",
+                  "terms_status": "unverified",
+                  "evidence": [],
+                  "notes": ["quran_not_separate"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "name differs: catalog has \"لغتي الجميلة\", official plan prints \"اللغة العربية\"",
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "name differs: catalog has \"التربية البدنية والصحية\", official plan prints \"التربية البدنية والدفاع عن النفس\""
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "add (subject is in the official plan but missing from src/lib/curriculum.js for this grade)"
+                }
+              ],
+              "allocations": {
+                "activity_periods": 72,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1428,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+              }
+            },
+            {
+              "id": "tahfeez",
+              "name_ar": "مدارس تحفيظ القرآن الكريم",
+              "catalog_path": null,
+              "notes": ["tahfeez_track"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 288,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"],
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "tajweed",
+                  "name_ar": "التجويد",
+                  "name_en": "Tajweed",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 67,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "grade-6",
+          "name_ar": "الصف السادس",
+          "tracks": [
+            {
+              "id": "general",
+              "name_ar": "التعليم العام",
+              "catalog_path": ["elementary", "grade-6"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "name differs: catalog has \"الدراسات الإسلامية\", official plan prints \"القرآن الكريم والدراسات الإسلامية\"",
+                  "notes": ["islamic_combined", "islamic_g5_6_tilawa"]
+                },
+                {
+                  "id": "quran",
+                  "name_ar": "القرآن الكريم",
+                  "name_en": "Holy Quran",
+                  "terms": ["t1", "t2"],
+                  "status": "unverified",
+                  "terms_status": "unverified",
+                  "evidence": [],
+                  "notes": ["quran_not_separate"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "name differs: catalog has \"لغتي الجميلة\", official plan prints \"اللغة العربية\"",
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "name differs: catalog has \"التربية البدنية والصحية\", official plan prints \"التربية البدنية والدفاع عن النفس\""
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"],
+                  "catalog_change": "add (subject is in the official plan but missing from src/lib/curriculum.js for this grade)"
+                }
+              ],
+              "allocations": {
+                "activity_periods": 72,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1428,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=21"]
+              }
+            },
+            {
+              "id": "tahfeez",
+              "name_ar": "مدارس تحفيظ القرآن الكريم",
+              "catalog_path": null,
+              "notes": ["tahfeez_track"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 288,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"],
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "tajweed",
+                  "name_ar": "التجويد",
+                  "name_en": "Tajweed",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 67,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=22"]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "middle",
+      "name_ar": "المرحلة المتوسطة",
+      "grades": [
+        {
+          "id": "grade-1",
+          "name_ar": "الصف الأول",
+          "tracks": [
+            {
+              "id": "general",
+              "name_ar": "التعليم العام",
+              "catalog_path": ["middle", "grade-1"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"],
+                  "catalog_change": "name differs: catalog has \"الدراسات الإسلامية\", official plan prints \"القرآن الكريم والدراسات الإسلامية\"",
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "quran",
+                  "name_ar": "القرآن الكريم",
+                  "name_en": "Holy Quran",
+                  "terms": ["t1", "t2"],
+                  "status": "unverified",
+                  "terms_status": "unverified",
+                  "evidence": [],
+                  "notes": ["quran_not_separate"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                }
+              ],
+              "plan_zero_rows": [
+                {
+                  "id": "critical",
+                  "name_ar": "التفكير الناقد",
+                  "annual_periods_max": 0,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 36,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+              }
+            },
+            {
+              "id": "tahfeez",
+              "name_ar": "مدارس تحفيظ القرآن الكريم",
+              "catalog_path": null,
+              "notes": ["tahfeez_track"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 288,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"],
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "tajweed",
+                  "name_ar": "التجويد",
+                  "name_en": "Tajweed",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 67,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "grade-2",
+          "name_ar": "الصف الثاني",
+          "tracks": [
+            {
+              "id": "general",
+              "name_ar": "التعليم العام",
+              "catalog_path": ["middle", "grade-2"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"],
+                  "catalog_change": "name differs: catalog has \"الدراسات الإسلامية\", official plan prints \"القرآن الكريم والدراسات الإسلامية\"",
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "quran",
+                  "name_ar": "القرآن الكريم",
+                  "name_en": "Holy Quran",
+                  "terms": ["t1", "t2"],
+                  "status": "unverified",
+                  "terms_status": "unverified",
+                  "evidence": [],
+                  "notes": ["quran_not_separate"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 108,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                }
+              ],
+              "plan_zero_rows": [
+                {
+                  "id": "critical",
+                  "name_ar": "التفكير الناقد",
+                  "annual_periods_max": 0,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 36,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+              }
+            },
+            {
+              "id": "tahfeez",
+              "name_ar": "مدارس تحفيظ القرآن الكريم",
+              "catalog_path": null,
+              "notes": ["tahfeez_track"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 288,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"],
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "tajweed",
+                  "name_ar": "التجويد",
+                  "name_en": "Tajweed",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 67,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+              }
+            }
+          ]
+        },
+        {
+          "id": "grade-3",
+          "name_ar": "الصف الثالث",
+          "tracks": [
+            {
+              "id": "general",
+              "name_ar": "التعليم العام",
+              "catalog_path": ["middle", "grade-3"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 180,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"],
+                  "catalog_change": "name differs: catalog has \"الدراسات الإسلامية\", official plan prints \"القرآن الكريم والدراسات الإسلامية\"",
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "quran",
+                  "name_ar": "القرآن الكريم",
+                  "name_en": "Holy Quran",
+                  "terms": ["t1", "t2"],
+                  "status": "unverified",
+                  "terms_status": "unverified",
+                  "evidence": [],
+                  "notes": ["quran_not_separate"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+                },
+                {
+                  "id": "critical",
+                  "name_ar": "التفكير الناقد",
+                  "name_en": "Critical Thinking",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"],
+                  "catalog_change": "add (subject is in the official plan but missing from src/lib/curriculum.js for this grade)"
+                }
+              ],
+              "allocations": {
+                "activity_periods": 36,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=23"]
+              }
+            },
+            {
+              "id": "tahfeez",
+              "name_ar": "مدارس تحفيظ القرآن الكريم",
+              "catalog_path": null,
+              "notes": ["tahfeez_track"],
+              "subjects": [
+                {
+                  "id": "islamic",
+                  "name_ar": "القرآن الكريم والدراسات الإسلامية",
+                  "name_en": "Holy Quran and Islamic Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 252,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"],
+                  "notes": ["islamic_combined"]
+                },
+                {
+                  "id": "tajweed",
+                  "name_ar": "التجويد",
+                  "name_en": "Tajweed",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "arabic",
+                  "name_ar": "اللغة العربية",
+                  "name_en": "Arabic Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"],
+                  "notes": ["arabic_textbook_title"]
+                },
+                {
+                  "id": "social",
+                  "name_ar": "الدراسات الاجتماعية",
+                  "name_en": "Social Studies",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "math",
+                  "name_ar": "الرياضيات",
+                  "name_en": "Mathematics",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 216,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "science",
+                  "name_ar": "العلوم",
+                  "name_en": "Science",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "english",
+                  "name_ar": "اللغة الإنجليزية",
+                  "name_en": "English Language",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 144,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "digital",
+                  "name_ar": "المهارات الرقمية",
+                  "name_en": "Digital Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "art",
+                  "name_ar": "التربية الفنية",
+                  "name_en": "Art Education",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "pe",
+                  "name_ar": "التربية البدنية والدفاع عن النفس",
+                  "name_en": "Physical Education and Self-Defense",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "life",
+                  "name_ar": "المهارات الحياتية والأسرية",
+                  "name_en": "Life and Family Skills",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 36,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                },
+                {
+                  "id": "critical",
+                  "name_ar": "التفكير الناقد",
+                  "name_en": "Critical Thinking",
+                  "terms": ["t1", "t2"],
+                  "status": "verified",
+                  "terms_status": "unverified",
+                  "annual_periods_max": 72,
+                  "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+                }
+              ],
+              "allocations": {
+                "activity_periods": 68,
+                "extracurricular_periods": 240,
+                "annual_total_printed": 1500,
+                "evidence": ["https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf#page=24"]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "official_sources": [
+    {
+      "name": "وزارة التعليم – خبر إقرار فصلين دراسيين (11/02/1447)",
+      "url": "https://moe.gov.sa/ar/mediacenter/MOEnews/Pages/news1_05082025.aspx",
+      "kind": "ministerial announcement",
+      "redistribution": "not_stated",
+      "evidence": "News page; no redistribution clause. Portal-wide terms apply (see the terms entry)."
+    },
+    {
+      "name": "واس – وزارة التعليم تثمن موافقة مجلس الوزراء على إقرار فصلين دراسيين",
+      "url": "https://spa.gov.sa/N2373796",
+      "kind": "state news agency",
+      "redistribution": "not_stated",
+      "evidence": "Headline only rendered; no licence text seen."
+    },
+    {
+      "name": "وزارة التعليم – صفحة الخطط الدراسية",
+      "url": "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx",
+      "kind": "official study-plan index",
+      "redistribution": "not_stated",
+      "evidence": "Lists 'دليل الخطط الدراسية الإصدار الخامس' and the 1443-1446 guides; no licence text."
+    },
+    {
+      "name": "دليل الخطط الدراسية – الإصدار الخامس (NCC)",
+      "url": "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf",
+      "kind": "official study plan (PDF)",
+      "redistribution": "not_stated",
+      "evidence": "No licence or copyright page found in the extractable text of the PDF."
+    },
+    {
+      "name": "وزارة التعليم – خدمة مقرراتي (المقررات الدراسية)",
+      "url": "https://www.moe.gov.sa/ar/knowledgecenter/eservices/pages/courses.aspx",
+      "kind": "official textbook distribution service",
+      "redistribution": "not_stated",
+      "evidence": "Official MOE e-service that gives students, teachers and supervisors a digital copy of the textbooks ('نسخة رقمية من المقررات الدراسية'). Channels: منصة مدرستي (schools.madrasati.sa inside KSA, external.madrasati.sa outside) and the Madrasati app. Requires an active Madrasati account. No redistribution clause. Page last updated 06/01/1447."
+    },
+    {
+      "name": "بوابة عين الوطنية (iEN)",
+      "url": "https://www.ien.edu.sa/",
+      "kind": "official digital textbook portal",
+      "redistribution": "not_stated",
+      "evidence": "MOE news (https://www.moe.gov.sa/ar/mediacenter/MOEnews/Pages/i-85976-t.aspx, dated 05/01/1440) says digital textbooks are downloaded from iEN by choosing type of education, stage, grade, term (الفصل الدراسي) and subject. On 2026-09-25 www.ien.edu.sa answered HTTP 302 to https://maintenance.moe.gov.sa, so its current listings and terms of use could not be read."
+    },
+    {
+      "name": "وزارة التعليم – الشروط والأحكام والسياسات",
+      "url": "https://www.moe.gov.sa/ar/aboutus/Portal/Pages/TermsandConditions.aspx",
+      "kind": "portal terms of use",
+      "redistribution": "not_stated",
+      "evidence": "Portal services and materials are provided for personal use ('لاستخدامكم الشخصي') as is and as available; use of the portal gives the user no rights or licences ('لا يضمن للمستخدم أي حقوق أو تراخيص'); publishing material that infringes others' intellectual property is forbidden. No explicit clause on copying or redistributing ministry content, and no licence granted. Page last modified 03/04/1448."
+    },
+    {
+      "name": "المركز الوطني للمناهج (NCC) – الموقع الرسمي",
+      "url": "https://sncc.gov.sa/index_ar.html",
+      "kind": "curriculum authority",
+      "redistribution": "prohibited",
+      "evidence": "Footer: 'جميع الحقوق محفوظة 2025 - المركز الوطني للمناهج ©' (an all-rights-reserved notice for the site). Its stated remit includes 'بناء المناهج وإعدادها ... واعتمادها والترخيص لها' and it runs a licensed-books register (licensed_books_ar.html). This notice covers the NCC website, not a textbook-specific statement."
+    }
+  ],
+  "legal_basis": [
+    {
+      "name": "نظام حماية حقوق المؤلف (م/41 وتاريخ 2/7/1424هـ)",
+      "url": "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/67d159e6-ee98-4efc-a2ee-a9a700f17083/1",
+      "kind": "law",
+      "points": ["Art. 4 excludes from protection laws, judicial rulings, decisions of administrative bodies, international agreements and 'سائر الوثائق الرسمية' (other official documents), plus news and abstract ideas. School textbooks are not named; whether a ministry textbook is an 'official document' was not resolved by any source found.", "Art. 9 (per the fetched text) gives the author the rights to print and publish the work and to communicate it to the public.", "Art. 15 permits some uses without permission, incl. use for teaching 'على سبيل الإيضاح في حدود الهدف المنشود' (as illustration, within the intended purpose) and personal-use copying. These are narrow exceptions, not a licence to rehost whole books."]
+    }
+  ],
+  "redistribution_verdict": {
+    "verdict": "not_permitted_without_licence",
+    "summary": "No official source found grants third parties a right to redistribute or rehost the MOE textbooks. MOE portal content is offered for personal use and the terms say no rights or licences are granted. The Saudi Copyright Law reserves publishing rights to the rights holder, with only narrow educational exceptions. Rehosting textbook PDFs therefore needs written permission from the rights holder (MOE / NCC). Linking users to the official channels (Madrasati, iEN) is the low-risk option. This is research, not legal advice.",
+    "unverified": ["The copyright page printed inside the 1447 textbooks was not inspected (textbooks were not downloaded, and iEN was unreachable).", "iEN and Madrasati terms of use could not be read (iEN redirected to a maintenance page; external.madrasati.sa had an expired TLS certificate)."]
+  }
+}

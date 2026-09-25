@@ -1,0 +1,151 @@
+{
+  "source": "jazira-original",
+  "exam": "aptitude",
+  "section": "quantitative",
+  "questions": [
+    {
+      "key": "fx-aq-01",
+      "topic": "arithmetic",
+      "difficulty": 1,
+      "stem": "ما ناتج: 3 × 4 + 6 ÷ 2 ؟",
+      "passage": null,
+      "choices": ["9", "15", "12", "18"],
+      "answer": 1,
+      "explanation": "نبدأ بالضرب والقسمة: 3 × 4 = 12 و 6 ÷ 2 = 3، ثم نجمع: 12 + 3 = 15.",
+      "time_limit_seconds": 45,
+      "tags": ["أولويات العمليات"]
+    },
+    {
+      "key": "fx-aq-02",
+      "topic": "fractions-percent",
+      "difficulty": 1,
+      "stem": "كم يساوي 25٪ من 80؟",
+      "passage": null,
+      "choices": ["20", "25", "32", "40"],
+      "answer": 0,
+      "explanation": "25٪ تعني الربع، وربع 80 يساوي 80 ÷ 4 = 20.",
+      "time_limit_seconds": 45,
+      "tags": ["نسبة مئوية"]
+    },
+    {
+      "key": "fx-aq-03",
+      "topic": "fractions-percent",
+      "difficulty": 2,
+      "stem": "ارتفع سعر سلعة من 200 ريال إلى 250 ريالًا. ما نسبة الزيادة؟",
+      "passage": null,
+      "choices": ["20٪", "25٪", "50٪", "30٪"],
+      "answer": 1,
+      "explanation": "مقدار الزيادة 50 ريالًا، ونسبتها إلى السعر الأصلي 50 ÷ 200 = 0.25 أي 25٪.",
+      "time_limit_seconds": 60,
+      "tags": ["نسبة التغير", "نسبة مئوية"]
+    },
+    {
+      "key": "fx-aq-04",
+      "topic": "ratio-proportion",
+      "difficulty": 1,
+      "stem": "نسبة عدد الأولاد إلى عدد البنات في فصل 3 : 2، وعدد البنات 12. كم عدد الأولاد؟",
+      "passage": null,
+      "choices": ["8", "15", "18", "20"],
+      "answer": 2,
+      "explanation": "الجزء الواحد = 12 ÷ 2 = 6، وعدد الأولاد = 3 × 6 = 18.",
+      "time_limit_seconds": 60,
+      "tags": ["تناسب"]
+    },
+    {
+      "key": "fx-aq-05",
+      "topic": "algebra",
+      "difficulty": 1,
+      "stem": "إذا كان 2س + 5 = 17، فما قيمة س؟",
+      "passage": null,
+      "choices": ["5", "6", "7", "11"],
+      "answer": 1,
+      "explanation": "نطرح 5 من الطرفين: 2س = 12، ثم نقسم على 2: س = 6.",
+      "time_limit_seconds": 45,
+      "tags": ["معادلات خطية"]
+    },
+    {
+      "key": "fx-aq-06",
+      "topic": "algebra",
+      "difficulty": 2,
+      "stem": "إذا كان س + ص = 10 و س − ص = 4، فما قيمة س × ص؟",
+      "passage": null,
+      "choices": ["21", "24", "16", "28"],
+      "answer": 0,
+      "explanation": "بجمع المعادلتين: 2س = 14 فتكون س = 7، ومنها ص = 3، إذن س × ص = 21.",
+      "time_limit_seconds": 75,
+      "tags": ["نظام معادلتين"]
+    },
+    {
+      "key": "fx-aq-07",
+      "topic": "geometry",
+      "difficulty": 1,
+      "stem": "مستطيل طوله 8 سم وعرضه 5 سم. ما محيطه؟",
+      "passage": null,
+      "choices": ["13 سم", "26 سم", "40 سم", "30 سم"],
+      "answer": 1,
+      "explanation": "محيط المستطيل = 2 × (الطول + العرض) = 2 × (8 + 5) = 26 سم.",
+      "time_limit_seconds": 45,
+      "tags": ["محيط", "مستطيل"]
+    },
+    {
+      "key": "fx-aq-08",
+      "topic": "geometry",
+      "difficulty": 2,
+      "stem": "مثلث قائم الزاوية، طولا ضلعي القائمة فيه 6 سم و 8 سم. ما طول الوتر؟",
+      "passage": null,
+      "choices": ["10 سم", "12 سم", "14 سم", "9 سم"],
+      "answer": 0,
+      "explanation": "بنظرية فيثاغورس: الوتر² = 6² + 8² = 36 + 64 = 100، إذن الوتر = 10 سم.",
+      "time_limit_seconds": 60,
+      "tags": ["فيثاغورس"]
+    },
+    {
+      "key": "fx-aq-09",
+      "topic": "statistics",
+      "difficulty": 1,
+      "stem": "ما المتوسط الحسابي للأعداد: 4، 8، 10، 14؟",
+      "passage": null,
+      "choices": ["8", "9", "10", "12"],
+      "answer": 1,
+      "explanation": "مجموع الأعداد 36، وعددها 4، فالمتوسط = 36 ÷ 4 = 9.",
+      "time_limit_seconds": 45,
+      "tags": ["متوسط حسابي"]
+    },
+    {
+      "key": "fx-aq-10",
+      "topic": "statistics",
+      "difficulty": 2,
+      "stem": "ما وسيط القيم: 7، 3، 9، 5، 11، 1؟",
+      "passage": null,
+      "choices": ["5", "6", "7", "9"],
+      "answer": 1,
+      "explanation": "نرتّب القيم: 1، 3، 5، 7، 9، 11. عددها زوجي، فالوسيط متوسط القيمتين الوسطيين: (5 + 7) ÷ 2 = 6.",
+      "time_limit_seconds": 60,
+      "tags": ["وسيط"]
+    },
+    {
+      "key": "fx-aq-11",
+      "topic": "data-interpretation",
+      "difficulty": 2,
+      "stem": "ما متوسط المبيعات اليومية خلال الأيام الأربعة؟",
+      "passage": "مبيعات متجر خلال أربعة أيام: الأحد 120 ريالًا، الاثنين 150 ريالًا، الثلاثاء 90 ريالًا، الأربعاء 140 ريالًا.",
+      "choices": ["120 ريالًا", "125 ريالًا", "130 ريالًا", "500 ريال"],
+      "answer": 1,
+      "explanation": "مجموع المبيعات = 120 + 150 + 90 + 140 = 500 ريال، والمتوسط = 500 ÷ 4 = 125 ريالًا.",
+      "time_limit_seconds": 75,
+      "tags": ["قراءة بيانات", "متوسط"]
+    },
+    {
+      "key": "fx-aq-12",
+      "topic": "comparison",
+      "difficulty": 3,
+      "stem": "قارن بين: القيمة الأولى: 2¹⁰ ، القيمة الثانية: 10³",
+      "passage": null,
+      "choices": ["القيمة الأولى أكبر", "القيمة الثانية أكبر", "القيمتان متساويتان", "المعطيات غير كافية"],
+      "answer": 0,
+      "explanation": "2¹⁰ = 1024 و 10³ = 1000، إذن القيمة الأولى أكبر.",
+      "time_limit_seconds": 60,
+      "tags": ["مقارنة", "أسس"]
+    }
+  ]
+}
