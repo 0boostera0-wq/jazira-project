@@ -50,3 +50,13 @@ export function genHandle(name) {
   const rand = Math.random().toString(36).slice(2, 8);
   return `${base}_${rand}`;
 }
+
+// ── Column sets ────────────────────────────────────────────────────────────
+// `profiles` is readable by everyone for PUBLIC columns only; private columns
+// (phone, *_changed_at…) are not granted to clients, so `select("*")` on
+// profiles is forbidden — always use one of these explicit lists.
+export const PUBLIC_PROFILE_COLUMNS =
+  "id, username, full_name, avatar_url, bio, is_elite, show_elite_badge, xp, created_at";
+export const OWN_PROFILE_COLUMNS =
+  "id, username, full_name, avatar_url, bio, role, is_elite, show_elite_badge, anonymous_community, xp, created_at";
+export const BASIC_PROFILE_COLUMNS = "id, username, full_name, avatar_url, is_elite";

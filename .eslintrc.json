@@ -1,0 +1,20 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          { "name": "next/link", "message": "Use Link from '@/i18n/navigation' (locale-aware)." },
+          { "name": "next/navigation", "importNames": ["useRouter", "usePathname"], "message": "Use useRouter/usePathname from '@/i18n/navigation' (locale-aware)." }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/i18n/navigation.js", "src/context/PreferencesProvider.jsx", "src/components/providers/RouteProgress.jsx"],
+      "rules": { "no-restricted-imports": "off" }
+    }
+  ]
+}

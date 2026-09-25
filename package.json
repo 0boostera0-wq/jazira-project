@@ -8,26 +8,34 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "import:curriculum": "node scripts/import-curriculum.mjs",
-    "seed:curriculum": "node scripts/seed-sample-pdfs.mjs"
+    "test": "vitest run tests/unit",
+    "test:db": "vitest run tests/db",
+    "assets:check": "node scripts/check-assets.mjs",
+    "assets:optimize": "node scripts/optimize-svgs.mjs",
+    "import:curriculum": "node scripts/import-curriculum.mjs"
   },
   "dependencies": {
-    "@clerk/localizations": "latest",
-    "@clerk/nextjs": "^5.7.5",
     "@google/generative-ai": "^0.21.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
     "framer-motion": "^11.11.17",
     "lucide-react": "^0.460.0",
-    "next": "14.2.18",
+    "next": "^14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
-    "eslint-config-next": "14.2.18",
+    "eslint-config-next": "^14.2.35",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.15"
+    "sharp": "^0.35.4",
+    "svgo": "^4.1.0",
+    "tailwindcss": "^3.4.15",
+    "vitest": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

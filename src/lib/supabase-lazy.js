@@ -2,19 +2,13 @@
 
 // Async accessor for the Supabase browser client.
 //
-// WHY: the root layout mounts AuthProvider / FormAuthProvider /
-// PreferencesProvider / ReferralCapture on EVERY page. Each statically imported
-// `@/lib/supabase-client`, which statically imports `@supabase/ssr` — so ~248 kB
-// of Supabase was welded into the critical-path bundle of every route, including
-// the guest marketing homepage where nobody is signed in yet.
+// WHY: providers mounted on EVERY page need Supabase. A static import would
+// weld ~250 kB of @supabase into the critical-path bundle of every route,
+// including the guest homepage. Dynamically importing moves it into an async
+// chunk that loads after hydration. Consumers gate on `isLoaded`.
 //
-// Dynamically importing it here lets webpack move @supabase into an async chunk
-// that loads AFTER hydration, off the critical path. Auth still initialises on
-// mount, just a tick later — every consumer already gates on `isLoaded`.
-//
-// CRITICAL: this resolves the SAME singleton owned by supabase-client.js. Never
-// construct a second client — multiple GoTrueClients race on the OAuth `?code=`
-// and don't share session state.
+// Resolves the SAME singleton as supabase-client.js (never a second client),
+// or null when Supabase env vars are missing.
 let p;
 
 export function getSupabase() {

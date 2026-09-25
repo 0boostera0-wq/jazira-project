@@ -1,27 +1,35 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import { getSupabase } from "@/lib/supabase-lazy";
-import { publicName } from "@/lib/profile";
+import { OWN_PROFILE_COLUMNS, BASIC_PROFILE_COLUMNS } from "@/lib/profile";
 
-// Unified Supabase auth context.
-// Public display name comes from profiles.full_name (NON-UNIQUE) — never email,
-// never the internal username handle.
-// Shape: { isLoaded, isSignedIn, userId, name, email, phone, imageUrl,
-//          needsProfileSetup, refreshUser, signOut }
+// ============================================================================
+// The ONE app-wide Supabase auth subscription.
 //
-// PERF: the Supabase client is imported dynamically (see supabase-lazy.js) so
-// ~248 kB of @supabase stays out of the critical path of every route. Auth
-// resolves a tick after hydration; consumers already gate on `isLoaded`.
+// Previously two providers (this one + hooks/useAuth) each subscribed to auth
+// changes and each re-fetched the profile on every event — double network work
+// on every page. Now this provider owns the session + profile and
+// `useAuth()` (hooks/useAuth.js) is a thin action layer on top of it.
+//
+// Public display name = profiles.full_name (non-unique). Never email, never the
+// internal username handle.
+//
+// PERF: the Supabase client is imported lazily (supabase-lazy.js) so ~250 kB of
+// @supabase stays off the critical path. Consumers gate on `isLoaded`.
+// ============================================================================
+
 const AuthContext = createContext(null);
 
 const SIGNED_OUT = {
   isLoaded: true,
   isSignedIn: false,
+  user: null,
+  profile: null,
   userId: null,
   name: "",
+  username: "",
   email: "",
-  phone: "",
   imageUrl: "",
   isElite: false,
   showEliteBadge: true,
@@ -29,99 +37,90 @@ const SIGNED_OUT = {
   needsProfileSetup: false,
 };
 
+async function fetchProfile(supabase, id) {
+  // Explicit columns only: private columns (phone…) are not selectable by
+  // clients. Fall back to the minimal set if a newer column isn't migrated yet.
+  const full = await supabase.from("profiles").select(OWN_PROFILE_COLUMNS).eq("id", id).maybeSingle();
+  if (!full.error) return full.data;
+  const basic = await supabase.from("profiles").select(BASIC_PROFILE_COLUMNS).eq("id", id).maybeSingle();
+  return basic.data || null;
+}
+
+function toState(user, profile) {
+  if (!user) return { ...SIGNED_OUT };
+  const meta = user.user_metadata || {};
+  const name = profile?.full_name || meta.full_name || meta.name || "";
+  return {
+    isLoaded: true,
+    isSignedIn: true,
+    user,
+    profile,
+    userId: user.id,
+    name,
+    username: profile?.username || "",
+    email: user.email || "",
+    imageUrl: profile?.avatar_url || meta.avatar_url || meta.picture || "",
+    isElite: !!profile?.is_elite, // DB-verified; only the payment webhook sets it
+    showEliteBadge: profile?.show_elite_badge !== false,
+    anonymousCommunity: !!profile?.anonymous_community,
+    // Profile setup is required until a public name exists (e.g. first Google login).
+    needsProfileSetup: !profile?.full_name,
+  };
+}
+
 export function AuthProvider({ children }) {
   const [state, setState] = useState({ ...SIGNED_OUT, isLoaded: false });
+  const lastUserId = useRef(undefined);
 
-  const resolveUser = useCallback(async (user, supabase) => {
-    if (!user) return { ...SIGNED_OUT };
-
-    const meta = user.user_metadata || {};
-
-    // profiles is the source of truth. Select ONLY columns guaranteed to exist
-    // (id, username, full_name, avatar_url). Selecting a missing column (e.g.
-    // phone) would fail the whole query and wrongly force profile-setup forever.
-    // Try the full select (incl. display prefs); fall back to the guaranteed
-    // columns if the new columns aren't migrated yet (never break auth).
-    let profile = null;
-    {
-      const full = await supabase
-        .from("profiles")
-        .select("username, full_name, avatar_url, is_elite, show_elite_badge, anonymous_community")
-        .eq("id", user.id)
-        .single();
-      if (full.error) {
-        const basic = await supabase
-          .from("profiles")
-          .select("username, full_name, avatar_url, is_elite")
-          .eq("id", user.id)
-          .single();
-        profile = basic.data;
-      } else {
-        profile = full.data;
-      }
+  const resolve = useCallback(async (user, supabase, { force = false } = {}) => {
+    // Token refreshes fire auth events for the same user — don't refetch the
+    // profile for those, only when the identity actually changes.
+    if (!force && user && lastUserId.current === user.id) {
+      setState((s) => (s.isSignedIn ? { ...s, user } : s));
+      return;
     }
-
-    // Public name: full_name (non-unique). Fall back to OAuth metadata for the
-    // brief window before profile-setup completes, but NEVER to email.
-    const name = profile?.full_name || meta.full_name || meta.name || "";
-    const imageUrl = profile?.avatar_url || meta.avatar_url || meta.picture || "";
-
-    // Setup is required only when there is no full_name yet (covers Google users
-    // whose first login has no profile row). Once full_name exists, never again.
-    const needsProfileSetup = !profile?.full_name;
-
-    return {
-      isLoaded: true,
-      isSignedIn: true,
-      userId: user.id,
-      name,
-      email: user.email || "",
-      phone: "", // fetched lazily in Settings (column may not exist yet)
-      imageUrl,
-      isElite: !!profile?.is_elite, // DB-verified; set only by the payment webhook
-      showEliteBadge: profile?.show_elite_badge !== false, // default true
-      anonymousCommunity: !!profile?.anonymous_community,
-      needsProfileSetup,
-    };
+    lastUserId.current = user?.id ?? null;
+    const profile = user ? await fetchProfile(supabase, user.id) : null;
+    setState(toState(user, profile));
   }, []);
 
-  // Re-fetch the current user's profile and update context (used right after
-  // profile-setup / avatar changes so guards & UI update without a full reload).
   const refreshUser = useCallback(async () => {
     const supabase = await getSupabase();
     const { data: { user } } = await supabase.auth.getUser();
-    setState(await resolveUser(user, supabase));
-  }, [resolveUser]);
+    await resolve(user, supabase, { force: true });
+  }, [resolve]);
 
   useEffect(() => {
     let alive = true;
     let subscription;
-
     (async () => {
       const supabase = await getSupabase();
-      if (!alive) return;
-
+      if (!supabase || !alive) {
+        if (alive) setState({ ...SIGNED_OUT });
+        return;
+      }
       const { data: { session } } = await supabase.auth.getSession();
       if (!alive) return;
-      setState(await resolveUser(session?.user ?? null, supabase));
+      await resolve(session?.user ?? null, supabase, { force: true });
 
-      const { data } = supabase.auth.onAuthStateChange(async (_event, s) => {
+      const { data } = supabase.auth.onAuthStateChange((_event, s) => {
         if (!alive) return;
-        setState(await resolveUser(s?.user ?? null, supabase));
+        // Never await Supabase calls inside this callback (it can deadlock the
+        // auth lock); schedule the profile fetch instead.
+        setTimeout(() => alive && resolve(s?.user ?? null, supabase), 0);
       });
       subscription = data.subscription;
       if (!alive) subscription.unsubscribe();
     })();
-
     return () => { alive = false; subscription?.unsubscribe(); };
-  }, [resolveUser]);
+  }, [resolve]);
 
   const signOut = useCallback(async () => {
-    // 'local' so signing out on one device never logs out the user's other
-    // devices. Rotate the session id so the next login starts a clean session.
+    // 'local' so signing out here never logs the user out on other devices.
     try { localStorage.removeItem("jazira_session_id_v1"); } catch {}
     const supabase = await getSupabase();
-    await supabase.auth.signOut({ scope: "local" });
+    await supabase?.auth.signOut({ scope: "local" });
+    lastUserId.current = null;
     setState({ ...SIGNED_OUT });
   }, []);
 

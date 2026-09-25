@@ -1,64 +1,80 @@
 import { NextResponse } from "next/server";
-import { clerkMiddleware } from "@clerk/nextjs/server";
-import { createServerClient } from "@supabase/ssr";
-import { isClerkEnabled } from "@/lib/authConfig";
+import { DEFAULT_LOCALE, LOCALE_COOKIE, splitLocale, localizeHref } from "@/i18n/config";
 
-export async function middleware(request) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
+// ============================================================================
+// Edge middleware — locale routing + a zero-latency auth gate.
+//
+// 1. Locale ("as-needed" prefix):
+//      /en/...  → served as-is by app/[locale] with locale=en
+//      /ar/...  → 308 to the canonical unprefixed URL
+//      /...     → rewritten internally to /ar/...  (or 307 → /en/... when the
+//                 visitor previously chose English via the NEXT_LOCALE cookie)
+//
+// 2. Protected pages: if no Supabase auth cookie is present we redirect to
+//    sign-in immediately (no flash of a protected shell). This is a UX gate
+//    ONLY — authorization is enforced by Postgres RLS and server-side checks,
+//    and client guards still handle expired sessions. No network call is made
+//    here, so navigation stays instant.
+// ============================================================================
 
-  // Run Clerk middleware if enabled
-  if (isClerkEnabled) {
-    response = await clerkMiddleware()(request, { next: () => response });
+const PROTECTED = [
+  "/dashboard",
+  "/settings",
+  "/profile",
+  "/notifications",
+  "/chat",
+  "/assistant",
+  "/checkout",
+  "/exams/attempt",
+  "/exams/history",
+  "/profile-setup",
+];
+
+const isProtected = (path) => PROTECTED.some((p) => path === p || path.startsWith(`${p}/`));
+
+// Supabase SSR stores the session in `sb-<ref>-auth-token` (possibly chunked .0/.1).
+const hasAuthCookie = (req) =>
+  req.cookies.getAll().some(({ name, value }) => /^sb-.+-auth-token(\.\d+)?$/.test(name) && value);
+
+export function middleware(req) {
+  const { pathname, search } = req.nextUrl;
+  const { locale: prefixed, path } = splitLocale(pathname);
+  const hasPrefix = pathname === `/${prefixed}` || pathname.startsWith(`/${prefixed}/`);
+
+  // /ar/... is never public — collapse to the canonical unprefixed URL.
+  if (hasPrefix && prefixed === "ar") {
+    const url = req.nextUrl.clone();
+    url.pathname = path;
+    const res = NextResponse.redirect(url, 308);
+    res.cookies.set(LOCALE_COOKIE, "ar", { path: "/", maxAge: 31536000, sameSite: "lax" });
+    return res;
   }
 
-  // Supabase session refresh
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
-          });
-        },
-      },
-    }
-  );
+  let locale = hasPrefix ? prefixed : DEFAULT_LOCALE;
 
-  // Get session
-  const { data: { session } } = await supabase.auth.getSession();
-
-  // Protect app routes - require authentication
-  if (request.nextUrl.pathname.startsWith('/(app)')) {
-    if (!session) {
-      return NextResponse.redirect(new URL('/sign-in', request.url));
-    }
+  // Unprefixed request from a visitor who chose English → send to /en/...
+  if (!hasPrefix && req.cookies.get(LOCALE_COOKIE)?.value === "en") {
+    const url = req.nextUrl.clone();
+    url.pathname = localizeHref(path, "en");
+    return NextResponse.redirect(url, 307);
   }
 
-  // Redirect to dashboard if already authenticated
-  if (
-    request.nextUrl.pathname === '/sign-in' ||
-    request.nextUrl.pathname === '/sign-up'
-  ) {
-    if (session) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
+  if (isProtected(path) && !hasAuthCookie(req)) {
+    const url = req.nextUrl.clone();
+    url.pathname = localizeHref("/sign-in", locale);
+    url.search = `?next=${encodeURIComponent(path + (search || ""))}`;
+    return NextResponse.redirect(url, 307);
   }
 
-  return response;
+  if (hasPrefix) return NextResponse.next(); // /en/... maps straight onto app/[locale]
+
+  const url = req.nextUrl.clone();
+  url.pathname = `/${locale}${path === "/" ? "" : path}`;
+  return NextResponse.rewrite(url);
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
-  ],
+  // Everything except API routes, the OAuth callback, Next internals and files
+  // with an extension (images, fonts, robots.txt, sitemap.xml, manifest…).
+  matcher: ["/((?!api|auth/callback|_next|_vercel|.*\\..*).*)"],
 };

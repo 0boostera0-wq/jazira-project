@@ -1,14 +1,16 @@
-import Link from "next/link";
-
-export default function NotFound() {
+// Last-resort 404 for requests that never reach app/[locale] (the middleware
+// rewrites virtually everything into the locale tree, where the branded,
+// localized not-found page lives). Kept dependency-free on purpose.
+export default function GlobalNotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-      <span className="text-7xl">🏝️</span>
-      <h1 className="mt-4 text-3xl font-extrabold gold-text">٤٠٤</h1>
-      <p className="mt-2 text-ink-soft">عذراً الصفحة التي تبحث عنها غير موجودة.</p>
-      <Link href="/dashboard" className="btn-gold mt-6">
-        العودة إلى لوحة التحكم
-      </Link>
-    </div>
+    <html lang="ar" dir="rtl">
+      <body style={{ margin: 0, minHeight: "100vh", display: "grid", placeItems: "center", background: "#FAF7F0", color: "#2B2418", fontFamily: "system-ui, sans-serif" }}>
+        <main style={{ textAlign: "center", padding: 24 }}>
+          <p style={{ fontSize: 56, fontWeight: 700, margin: 0 }}>404</p>
+          <p style={{ margin: "8px 0 20px" }}>الصفحة غير موجودة · Page not found</p>
+          <a href="/" style={{ color: "#8A6A2E", fontWeight: 600 }}>منصة جزيرة · Jazira</a>
+        </main>
+      </body>
+    </html>
   );
 }
