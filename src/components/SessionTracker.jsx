@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { createClient } from "@/lib/supabase-client";
+import { getSupabase } from "@/lib/supabase-lazy";
+import { localizeHref } from "@/i18n/config";
+import { useLocale } from "@/i18n/client";
 import { useAuthUser } from "@/context/AuthProvider";
 import { parseDevice } from "@/lib/device";
 
@@ -33,9 +35,9 @@ export default function SessionTracker() {
 
   useEffect(() => {
     if (!isSignedIn || !userId) return;
-    const supabase = createClient();
     const sid = getSid();
     if (!sid) return;
+    let supabase = null;
     const dev = parseDevice();
     let timer;
     let cancelled = false;
@@ -48,7 +50,7 @@ export default function SessionTracker() {
       // revokes every device's refresh token, which previously logged out the
       // device that initiated the remote sign-out too.
       try { await supabase.auth.signOut({ scope: "local" }); } catch {}
-      window.location.href = "/sign-in?reason=revoked";
+      window.location.href = localizeHref("/sign-in?reason=revoked", locale);
     };
 
     // Best-effort: ask the server to stamp this row's approximate location from
@@ -65,6 +67,8 @@ export default function SessionTracker() {
     };
 
     const register = async () => {
+      supabase = await getSupabase();
+      if (!supabase || cancelled) return;
       try {
         // Upsert WITHOUT revoked_at so an existing revoked flag is preserved.
         await supabase.from("user_sessions").upsert({
@@ -79,6 +83,7 @@ export default function SessionTracker() {
     };
 
     const check = async (skipTouch) => {
+      if (!supabase) return;
       try {
         const { data } = await supabase.from("user_sessions")
           .select("revoked_at").eq("user_id", userId).eq("session_id", sid).single();
@@ -96,7 +101,7 @@ export default function SessionTracker() {
     const onFocus = () => check(false);
     window.addEventListener("focus", onFocus);
     return () => { cancelled = true; clearInterval(timer); window.removeEventListener("focus", onFocus); };
-  }, [isSignedIn, userId]);
+  }, [isSignedIn, userId, locale]);
 
   return null;
 }

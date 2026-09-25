@@ -212,7 +212,7 @@ html.dark .bezel { background: rgba(255, 255, 255, 0.04); }
    Big paint/scroll win on long pages (desktop + low-end) at zero JS cost. */
 .cv-auto { content-visibility: auto; contain-intrinsic-size: auto 700px; }
 
-@layer components {
+
   /* Glassmorphism surface — brighter, whiter, softer shadows */
   .glass {
     background: rgba(255, 255, 255, 0.72);
@@ -256,7 +256,7 @@ html.dark .bezel { background: rgba(255, 255, 255, 0.04); }
   .btn-ghost:hover {
     background: rgba(201, 168, 106, 0.16);
   }
-}
+
 
 /* RTL niceties */
 [dir="rtl"] .ltr-nums {

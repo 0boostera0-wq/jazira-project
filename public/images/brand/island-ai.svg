@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <defs>
+    <linearGradient id="ia-cream" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#F1E6D0"/>
+    </linearGradient>
+    <linearGradient id="ia-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#DDBB77"/>
+      <stop offset="1" stop-color="#A67F38"/>
+    </linearGradient>
+    <linearGradient id="ia-visor" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#9DBEA6"/>
+      <stop offset="1" stop-color="#5E8C6A"/>
+    </linearGradient>
+    <radialGradient id="ia-glow">
+      <stop offset="0" stop-color="#F2FBF6" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#F2FBF6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ia-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#78A583"/>
+      <stop offset="1" stop-color="#4E7D5B"/>
+    </linearGradient>
+    <linearGradient id="ia-water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#CFE3E4"/>
+      <stop offset="1" stop-color="#A9CBCF"/>
+    </linearGradient>
+    <linearGradient id="ia-sand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EFE4D0"/>
+      <stop offset="1" stop-color="#E3D3B5"/>
+    </linearGradient>
+    <linearGradient id="ia-grass" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0" stop-color="#6E9A78"/>
+      <stop offset="1" stop-color="#3F6B4E"/>
+    </linearGradient>
+    <linearGradient id="ia-trunk" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#A67F38"/>
+      <stop offset="1" stop-color="#7A5A2B"/>
+    </linearGradient>
+    <linearGradient id="ia-badge" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#F3EADA"/>
+    </linearGradient>
+    <linearGradient id="ia-bulb" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#F4E3B8"/>
+      <stop offset="1" stop-color="#D9BE8C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <g>
+    <circle cx="400" cy="300" r="215" fill="#F7F0E3"/>
+    <circle cx="420" cy="290" r="130" fill="#F4E3B8" opacity="0.7"/>
+  </g>
+
+  <!-- constellation -->
+  <g stroke="#A67F38" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 8" opacity="0.7">
+    <path d="M198 222 L322 128"/>
+    <path d="M362 112 L468 92"/>
+    <path d="M478 94 L556 150"/>
+    <path d="M628 176 L646 250"/>
+    <path d="M168 262 L132 318"/>
+  </g>
+  <g fill="#D9BE8C">
+    <circle cx="472" cy="92" r="5"/>
+    <circle cx="648" cy="256" r="4"/>
+    <circle cx="130" cy="322" r="4"/>
+    <path d="M250 110 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z"/>
+    <path d="M700 150 l2.5 7 7 2.5 -7 2.5 -2.5 7 -2.5 -7 -7 -2.5 7 -2.5z"/>
+    <path d="M540 60 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2z"/>
+  </g>
+
+  <!-- floating badges -->
+  <g>
+    <!-- book -->
+    <circle cx="180" cy="240" r="40" fill="url(#ia-badge)" stroke="#D9BE8C" stroke-width="3"/>
+    <path d="M154 230 Q167 222 180 230 V260 Q167 252 154 260Z" fill="#9DBEA6"/>
+    <path d="M206 230 Q193 222 180 230 V260 Q193 252 206 260Z" fill="#5E8C6A"/>
+    <path d="M158 228 Q169 221 180 228 V256 Q169 249 158 255Z" fill="#FFFDF9"/>
+    <path d="M202 228 Q191 221 180 228 V256 Q191 249 202 255Z" fill="#F7F0E3"/>
+    <path d="M180 228 V256" stroke="#7A5A2B" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- bulb -->
+    <circle cx="340" cy="118" r="40" fill="url(#ia-badge)" stroke="#D9BE8C" stroke-width="3"/>
+    <path d="M340 94 a19 19 0 0 1 12 33.6 V133 h-24 v-5.4 A19 19 0 0 1 340 94z" fill="url(#ia-bulb)"/>
+    <path d="M332 104 a11 11 0 0 1 8 -3" stroke="#FFFDF9" stroke-width="3" stroke-linecap="round"/>
+    <rect x="330" y="134" width="20" height="5" rx="2.5" fill="#A67F38"/>
+    <rect x="333" y="141" width="14" height="5" rx="2.5" fill="#7A5A2B"/>
+    <!-- atom -->
+    <circle cx="590" cy="162" r="40" fill="url(#ia-badge)" stroke="#D9BE8C" stroke-width="3"/>
+    <g stroke="#5E8C6A" stroke-width="2.5">
+      <ellipse cx="590" cy="162" rx="26" ry="10"/>
+      <ellipse cx="590" cy="162" rx="26" ry="10" transform="rotate(60 590 162)"/>
+      <ellipse cx="590" cy="162" rx="26" ry="10" transform="rotate(-60 590 162)"/>
+    </g>
+    <circle cx="590" cy="162" r="6" fill="#E39B7B"/>
+  </g>
+
+  <!-- water + island -->
+  <g>
+    <ellipse cx="400" cy="478" rx="320" ry="62" fill="url(#ia-water)"/>
+    <g stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.9">
+      <path d="M130 480 q14 -6 28 0"/>
+      <path d="M640 470 q14 -6 28 0"/>
+      <path d="M560 512 q12 -5 24 0"/>
+      <path d="M220 510 q12 -5 24 0"/>
+    </g>
+    <path d="M196 474 C240 500 560 500 606 474" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+    <path d="M205 468 C220 430 300 418 400 418 C510 418 590 430 598 468 C560 492 250 494 205 468Z" fill="url(#ia-sand)"/>
+    <path d="M232 448 C250 420 320 408 400 408 C490 408 560 420 572 448 C540 462 270 464 232 448Z" fill="url(#ia-grass)"/>
+    <path d="M262 436 C290 420 340 414 380 414 C340 420 300 428 278 440Z" fill="#9DBEA6" opacity="0.6"/>
+  </g>
+
+  <!-- palm -->
+  <g>
+    <path d="M276 446 C270 410 262 380 250 350 L258 347 C272 378 282 410 286 446Z" fill="url(#ia-trunk)"/>
+    <g fill="url(#ia-leaf)">
+      <path d="M254 348 C234 324 204 320 182 340 C206 334 232 340 254 356Z"/>
+      <path d="M254 348 C240 316 214 302 190 306 C214 316 234 332 251 353Z"/>
+      <path d="M254 348 C268 320 294 310 320 316 C296 322 276 334 258 353Z"/>
+      <path d="M254 348 C280 332 308 338 326 360 C304 350 280 348 256 355Z"/>
+      <path d="M254 348 C250 322 260 302 278 292 C270 312 264 332 259 350Z"/>
+    </g>
+    <circle cx="249" cy="356" r="6" fill="#7A5A2B"/>
+    <circle cx="260" cy="358" r="5.5" fill="#A67F38"/>
+  </g>
+  <!-- shrubs -->
+  <g>
+    <ellipse cx="520" cy="436" rx="26" ry="16" fill="#5E8C6A"/>
+    <ellipse cx="544" cy="440" rx="18" ry="12" fill="#3F6B4E"/>
+    <ellipse cx="514" cy="430" rx="12" ry="7" fill="#9DBEA6" opacity="0.7"/>
+  </g>
+
+  <!-- robot -->
+  <g transform="translate(404 352) scale(0.8)">
+    <ellipse cx="0" cy="110" rx="62" ry="10" fill="#3A3024" opacity="0.12"/>
+    <!-- arms -->
+    <g transform="translate(-54 4) rotate(24)">
+      <rect x="-14" y="0" width="28" height="60" rx="14" fill="url(#ia-cream)" stroke="#E3D3B5" stroke-width="2.5"/>
+      <circle cx="0" cy="58" r="12" fill="#EFE4D0" stroke="#E3D3B5" stroke-width="2.5"/>
+    </g>
+    <g transform="translate(54 4) rotate(-128)">
+      <rect x="-14" y="0" width="28" height="60" rx="14" fill="url(#ia-cream)" stroke="#E3D3B5" stroke-width="2.5"/>
+      <circle cx="0" cy="58" r="12" fill="#EFE4D0" stroke="#E3D3B5" stroke-width="2.5"/>
+    </g>
+    <!-- body -->
+    <rect x="-56" y="-16" width="112" height="100" rx="46" fill="url(#ia-cream)" stroke="#E3D3B5" stroke-width="2.5"/>
+    <circle cx="0" cy="28" r="16" fill="url(#ia-gold)"/>
+    <circle cx="0" cy="28" r="11" fill="url(#ia-visor)"/>
+    <circle cx="-3" cy="25" r="4" fill="#F2FBF6"/>
+    <rect x="-34" y="-26" width="68" height="16" rx="8" fill="url(#ia-gold)"/>
+    <!-- antenna -->
+    <path d="M0 -150 C0 -166 3 -174 8 -182" stroke="#7A5A2B" stroke-width="5" stroke-linecap="round"/>
+    <path d="M8 -182 C20 -212 54 -222 82 -200 Q74 -196 72 -184 Q68 -193 61 -197 Q55 -190 53 -178 Q49 -189 42 -194 Q36 -184 33 -171 Q29 -184 22 -189 Q14 -184 8 -182Z" fill="url(#ia-leaf)"/>
+    <path d="M11 -185 C30 -202 54 -208 78 -200" stroke="#3F6B4E" stroke-width="2" stroke-linecap="round"/>
+    <!-- head -->
+    <circle cx="-80" cy="-86" r="13" fill="url(#ia-gold)"/>
+    <circle cx="80" cy="-86" r="13" fill="url(#ia-gold)"/>
+    <rect x="-80" y="-150" width="160" height="128" rx="60" fill="url(#ia-cream)" stroke="#E3D3B5" stroke-width="2.5"/>
+    <ellipse cx="-46" cy="-132" rx="18" ry="8" transform="rotate(-24 -46 -132)" fill="#FFFFFF" opacity="0.9"/>
+    <rect x="-64" y="-130" width="128" height="88" rx="44" fill="url(#ia-gold)"/>
+    <rect x="-58" y="-124" width="116" height="76" rx="38" fill="url(#ia-visor)"/>
+    <path d="M-44 -108 C-38 -116 -28 -119 -16 -119" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.35"/>
+    <circle cx="-24" cy="-90" r="20" fill="url(#ia-glow)"/>
+    <circle cx="24" cy="-90" r="20" fill="url(#ia-glow)"/>
+    <ellipse cx="-24" cy="-90" rx="8" ry="10" fill="#F2FBF6"/>
+    <ellipse cx="24" cy="-90" rx="8" ry="10" fill="#F2FBF6"/>
+    <path d="M-12 -68 Q0 -59 12 -68" stroke="#F2FBF6" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+</svg>

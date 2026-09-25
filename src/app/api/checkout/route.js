@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 // state — it NEVER fakes a successful payment or grants Elite.
 export async function POST() {
   const supabase = await createClient();
+  if (!supabase) return Response.json({ error: "not_configured" }, { status: 503 });
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return Response.json({ error: "unauthorized" }, { status: 401 });
 

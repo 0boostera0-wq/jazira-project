@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <defs>
+    <linearGradient id="exams-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EFE4D0"/><stop offset="1" stop-color="#E3D3B5"/></linearGradient>
+    <linearGradient id="exams-board" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C9A45C"/><stop offset="1" stop-color="#A67F38"/></linearGradient>
+    <linearGradient id="exams-clip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5E8C6A"/><stop offset="1" stop-color="#3F6B4E"/></linearGradient>
+    <linearGradient id="exams-rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D9BE8C"/><stop offset="1" stop-color="#A67F38"/></linearGradient>
+    <linearGradient id="exams-face" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDF9"/><stop offset="1" stop-color="#F7F0E3"/></linearGradient>
+    <linearGradient id="exams-star" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D9BE8C"/><stop offset="1" stop-color="#C9A45C"/></linearGradient>
+    <linearGradient id="exams-pencil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5E8C6A"/><stop offset="1" stop-color="#3F6B4E"/></linearGradient>
+  </defs>
+
+  <g id="background">
+    <circle cx="396" cy="288" r="216" fill="#F7F0E3"/>
+    <circle cx="612" cy="146" r="40" fill="#F4E3B8"/>
+    <path d="M168 216q1.6 8.4 10 10q-8.4 1.6-10 10q-1.6-8.4-10-10q8.4-1.6 10-10z" fill="#D9BE8C"/>
+    <path d="M654 264q1.1 5.9 7 7q-5.9 1.1-7 7q-1.1-5.9-7-7q5.9-1.1 7-7z" fill="#D9BE8C"/>
+    <path d="M214 132q.9 5.1 6 6q-5.1.9-6 6q-.9-5.1-6-6q5.1-.9 6-6z" fill="#D9BE8C"/>
+  </g>
+
+  <g id="ground">
+    <path d="M122 482c0-34 120-50 280-50c162 0 278 14 278 46c0 32-122 44-278 44c-158 0-280-10-280-40z" fill="url(#exams-ground)"/>
+    <ellipse cx="384" cy="468" rx="150" ry="11" fill="#3A3024" opacity=".1"/>
+  </g>
+
+  <g id="clipboard" transform="rotate(-5 382 462)">
+    <rect x="236" y="138" width="210" height="300" rx="10" fill="#EFE4D0" transform="rotate(-9 340 440)"/>
+    <path d="M262 196h120M268 222h90" stroke="#E3D3B5" stroke-width="7" stroke-linecap="round" transform="rotate(-9 340 440)"/>
+    <rect x="262" y="120" width="240" height="340" rx="18" fill="url(#exams-board)"/>
+    <rect x="280" y="150" width="204" height="292" rx="8" fill="#FFFDF9"/>
+    <rect x="300" y="170" width="112" height="10" rx="5" fill="#D9BE8C"/>
+    <rect x="300" y="190" width="72" height="8" rx="4" fill="#E3D3B5"/>
+    <g id="rows" stroke-width="2.5">
+      <rect x="300" y="226" width="124" height="7" rx="3.5" fill="#E3D3B5"/>
+      <circle cx="307" cy="252" r="7" stroke="#D9BE8C"/>
+      <circle cx="331" cy="252" r="7" fill="#5E8C6A" stroke="#5E8C6A"/>
+      <circle cx="355" cy="252" r="7" stroke="#D9BE8C"/>
+      <circle cx="379" cy="252" r="7" stroke="#D9BE8C"/>
+      <rect x="300" y="284" width="108" height="7" rx="3.5" fill="#E3D3B5"/>
+      <circle cx="307" cy="310" r="7" stroke="#D9BE8C"/>
+      <circle cx="331" cy="310" r="7" stroke="#D9BE8C"/>
+      <circle cx="355" cy="310" r="7" fill="#5E8C6A" stroke="#5E8C6A"/>
+      <circle cx="379" cy="310" r="7" stroke="#D9BE8C"/>
+      <rect x="300" y="342" width="118" height="7" rx="3.5" fill="#E3D3B5"/>
+      <circle cx="307" cy="368" r="7" fill="#5E8C6A" stroke="#5E8C6A"/>
+      <circle cx="331" cy="368" r="7" stroke="#D9BE8C"/>
+      <circle cx="355" cy="368" r="7" stroke="#D9BE8C"/>
+      <circle cx="379" cy="368" r="7" stroke="#D9BE8C"/>
+      <rect x="300" y="400" width="96" height="7" rx="3.5" fill="#E3D3B5"/>
+      <circle cx="307" cy="424" r="6" stroke="#E3D3B5"/>
+      <circle cx="331" cy="424" r="6" stroke="#E3D3B5"/>
+      <circle cx="355" cy="424" r="6" stroke="#E3D3B5"/>
+      <circle cx="379" cy="424" r="6" stroke="#E3D3B5"/>
+    </g>
+    <path d="M436 244l8 8 16-18M436 302l8 8 16-18M436 360l8 8 16-18" stroke="#5E8C6A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M452 158l6.2 12.6 13.9 2-10 9.8 2.4 13.8L452 189.7l-12.5 6.5 2.4-13.8-10-9.8 13.9-2z" fill="url(#exams-star)" stroke="#A67F38" stroke-width="1.5" stroke-linejoin="round"/>
+    <rect x="334" y="104" width="96" height="34" rx="11" fill="url(#exams-clip)"/>
+    <rect x="352" y="112" width="60" height="9" rx="4.5" fill="#3F6B4E"/>
+    <path d="M342 110h30" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".35"/>
+  </g>
+
+  <g id="stopwatch">
+    <ellipse cx="572" cy="468" rx="62" ry="8" fill="#3A3024" opacity=".12"/>
+    <rect x="562" y="318" width="20" height="24" rx="4" fill="#A67F38"/>
+    <rect x="552" y="308" width="40" height="14" rx="7" fill="url(#exams-rim)"/>
+    <rect x="612" y="334" width="14" height="20" rx="4" fill="#A67F38" transform="rotate(42 619 344)"/>
+    <circle cx="572" cy="402" r="64" fill="url(#exams-rim)"/>
+    <circle cx="572" cy="402" r="52" fill="url(#exams-face)"/>
+    <path d="M572 360a42 42 0 1 1-39.9 54.9" stroke="#C9A45C" stroke-width="7" stroke-linecap="round"/>
+    <path d="M572 368v6M606 402h-6M572 436v-6M538 402h6" stroke="#D9BE8C" stroke-width="3" stroke-linecap="round"/>
+    <path d="M572 402l20-22" stroke="#3A3024" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="572" cy="402" r="6" fill="#3A3024"/>
+    <path d="M526 378a52 52 0 0 1 30-26" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+  </g>
+
+  <g id="pencil" transform="rotate(-7 260 486)">
+    <ellipse cx="266" cy="501" rx="96" ry="6" fill="#3A3024" opacity=".1"/>
+    <rect x="188" y="476" width="128" height="18" fill="url(#exams-pencil)"/>
+    <rect x="188" y="476" width="128" height="5" fill="#FFFFFF" opacity=".2"/>
+    <rect x="316" y="476" width="16" height="18" fill="#D9BE8C"/>
+    <path d="M320 480h8M320 490h8" stroke="#A67F38" stroke-width="1.5" stroke-linecap="round"/>
+    <rect x="330" y="476" width="20" height="18" rx="7" fill="#E39B7B"/>
+    <path d="M190 476l-38 9h38z" fill="#FFFDF9"/>
+    <path d="M190 485h-38l38 9z" fill="#E3D3B5"/>
+    <path d="M190 476q-7 3 0 6q-7 3 0 6q-7 3 0 6z" fill="#3F6B4E"/>
+    <path d="M164 482.2l-12 2.8 12 2.8z" fill="#3A3024"/>
+  </g>
+
+  <g id="foreground">
+    <ellipse cx="664" cy="492" rx="10" ry="5" fill="#D9BE8C"/>
+    <ellipse cx="682" cy="496" rx="6" ry="3.5" fill="#E3D3B5"/>
+  </g>
+</svg>

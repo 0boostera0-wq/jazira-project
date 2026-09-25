@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="am-disc" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#E8D4A8"/>
+      <stop offset="1" stop-color="#D9BE8C"/>
+    </linearGradient>
+    <linearGradient id="am-cream" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#F1E6D0"/>
+    </linearGradient>
+    <linearGradient id="am-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#DDBB77"/>
+      <stop offset="1" stop-color="#A67F38"/>
+    </linearGradient>
+    <linearGradient id="am-visor" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#9DBEA6"/>
+      <stop offset="1" stop-color="#5E8C6A"/>
+    </linearGradient>
+    <radialGradient id="am-glow">
+      <stop offset="0" stop-color="#F2FBF6" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#F2FBF6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="am-leaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#78A583"/>
+      <stop offset="1" stop-color="#4E7D5B"/>
+    </linearGradient>
+    <clipPath id="am-clip">
+      <circle cx="256" cy="256" r="231"/>
+    </clipPath>
+  </defs>
+
+  <!-- badge -->
+  <circle cx="256" cy="256" r="236" fill="url(#am-disc)"/>
+  <circle cx="256" cy="256" r="236" stroke="#C9A45C" stroke-width="10"/>
+
+  <g clip-path="url(#am-clip)">
+    <circle cx="236" cy="236" r="150" fill="#F4E3B8" opacity="0.55"/>
+    <path d="M128 132 l5 14 14 5 -14 5 -5 14 -5 -14 -14 -5 14 -5z" fill="#FFFDF9" opacity="0.9"/>
+    <circle cx="160" cy="104" r="4" fill="#FFFDF9" opacity="0.8"/>
+    <g transform="translate(248 418) scale(1.55)">
+      <!-- body (bust) -->
+      <rect x="-60" y="-16" width="120" height="110" rx="50" fill="url(#am-cream)" stroke="#E3D3B5" stroke-width="2.5"/>
+      <circle cx="0" cy="22" r="15" fill="url(#am-gold)"/>
+      <circle cx="0" cy="22" r="10" fill="url(#am-visor)"/>
+      <circle cx="-3" cy="19" r="3.5" fill="#F2FBF6"/>
+      <rect x="-36" y="-26" width="72" height="16" rx="8" fill="url(#am-gold)"/>
+      <!-- antenna -->
+      <path d="M0 -150 C0 -166 3 -174 8 -182" stroke="#7A5A2B" stroke-width="5" stroke-linecap="round"/>
+      <path d="M8 -182 C20 -212 54 -222 82 -200 Q74 -196 72 -184 Q68 -193 61 -197 Q55 -190 53 -178 Q49 -189 42 -194 Q36 -184 33 -171 Q29 -184 22 -189 Q14 -184 8 -182Z" fill="url(#am-leaf)"/>
+      <path d="M11 -185 C30 -202 54 -208 78 -200" stroke="#3F6B4E" stroke-width="2" stroke-linecap="round"/>
+      <!-- head -->
+      <circle cx="-80" cy="-86" r="13" fill="url(#am-gold)"/>
+      <circle cx="80" cy="-86" r="13" fill="url(#am-gold)"/>
+      <rect x="-80" y="-150" width="160" height="128" rx="60" fill="url(#am-cream)" stroke="#E3D3B5" stroke-width="2.5"/>
+      <ellipse cx="-46" cy="-132" rx="18" ry="8" transform="rotate(-24 -46 -132)" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="-64" y="-130" width="128" height="88" rx="44" fill="url(#am-gold)"/>
+      <rect x="-58" y="-124" width="116" height="76" rx="38" fill="url(#am-visor)"/>
+      <path d="M-44 -108 C-38 -116 -28 -119 -16 -119" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.35"/>
+      <circle cx="-24" cy="-91" r="22" fill="url(#am-glow)"/>
+      <circle cx="24" cy="-91" r="22" fill="url(#am-glow)"/>
+      <ellipse cx="-24" cy="-91" rx="9.5" ry="11.5" fill="#F2FBF6"/>
+      <ellipse cx="24" cy="-91" rx="9.5" ry="11.5" fill="#F2FBF6"/>
+      <path d="M-13 -67 Q0 -57 13 -67" stroke="#F2FBF6" stroke-width="5" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

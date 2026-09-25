@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/navigation";
 import { useAuthUser } from "@/context/AuthProvider";
 
 // Silently redirects newly-signed-in users (Google OAuth etc.) to profile setup

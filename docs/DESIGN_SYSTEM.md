@@ -95,7 +95,7 @@ Rules: body ≥ 16px on mobile; nothing below 12px; paragraphs ≤ 72ch; heading
 
 | Component | Notes |
 |---|---|
-| `Button` | variants `primary · gold · secondary · soft · ghost · danger · link`; sizes `sm · md · lg · icon · icon-sm`; `href` makes a locale-aware link; `loading`; `iconStart`/`iconEnd` (end icon mirrors in RTL) |
+| `Button` | variants `primary · gold · secondary · soft · ghost · danger · link`; sizes `sm · md · lg · icon · icon-sm`; `href` makes a locale-aware link; `loading`; `iconStart`/`iconEnd` — pass the **LTR-forward** icon (`ArrowRight`, `ChevronRight`) as `iconEnd`; it is mirrored automatically in RTL |
 | `Card`, `CardTitle`, `CardText` | tones `default · flat · tint · gold · green · ink · outline`; `interactive` hover lift |
 | `Badge` | tones `neutral · gold · green · danger · warning · info · ink · outline` |
 | `IconTile` | lucide icon on a tinted tile; `color` for subject colours |
@@ -111,8 +111,10 @@ Rules: body ≥ 16px on mobile; nothing below 12px; paragraphs ≤ 72ch; heading
 | `Illustration` | library art by manifest id |
 | Brand: `Logo`, `IslandMark`, `AssistantAvatar` | src/components/brand |
 
-Icons: `lucide-react`, 18–20px in UI, stroke default. Directional icons
-(arrows/chevrons) get `className="flip-rtl"` (Button does this for `iconEnd`).
+Icons: `lucide-react`, 18–20px in UI, stroke default. Directional icons: always
+use the LTR-forward glyph (`ArrowRight`, `ChevronRight`) with `className="flip-rtl"`
+so it points in the reading direction in both languages (Button does this for
+`iconEnd`). Never hand-pick `ArrowLeft` for "forward" in Arabic.
 
 ## 6. Motion
 

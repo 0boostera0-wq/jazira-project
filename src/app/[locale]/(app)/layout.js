@@ -1,25 +1,17 @@
-import dynamic from "next/dynamic";
-import Sidebar from "@/components/Sidebar";
+import AppShell from "@/components/shell/AppShell";
 import ProfileSetupGuard from "@/components/ProfileSetupGuard";
 import SessionTracker from "@/components/SessionTracker";
-import NotificationBell from "@/components/social/NotificationBell";
+import { setRequestLocale } from "@/i18n/server";
 
-// Lazy-load the AI assistant — it's large and not needed for initial paint
-const AIAssistant = dynamic(() => import("@/components/AIAssistant"), {
-  ssr: false,
-});
-
-export default function AppLayout({ children }) {
+// Authenticated-app frame. The old floating AI widget is intentionally gone —
+// the assistant now lives at /assistant (backend unchanged).
+export default function AppLayout({ children, params }) {
+  setRequestLocale(params.locale);
   return (
-    <div className="min-h-screen">
+    <AppShell>
       <ProfileSetupGuard />
       <SessionTracker />
-      <NotificationBell />
-      <Sidebar />
-      <main className="mx-auto w-full max-w-7xl px-4 pb-24 pt-20 sm:px-6 lg:px-8">
-        {children}
-      </main>
-      <AIAssistant />
-    </div>
+      {children}
+    </AppShell>
   );
 }

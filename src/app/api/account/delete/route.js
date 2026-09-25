@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 export async function POST() {
   // 1) Identify the caller from their session cookie (must be signed in).
   const supabase = await createServerSupabase();
+  if (!supabase) return Response.json({ error: "not_configured" }, { status: 503 });
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return Response.json({ error: "unauthorized" }, { status: 401 });

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-server';
 
 export async function GET(request) {
   const supabase = await createClient();
+  if (!supabase) return Response.json({ error: "not_configured" }, { status: 503 });
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
@@ -23,6 +24,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   const supabase = await createClient();
+  if (!supabase) return Response.json({ error: "not_configured" }, { status: 503 });
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {

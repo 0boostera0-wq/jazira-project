@@ -10,8 +10,9 @@ import { useT } from "@/i18n/client";
  * background and top-layer stacking come for free — no portal, no library.
  *   <Dialog open={open} onClose={() => setOpen(false)} title="…">…</Dialog>
  * variant="sheet" renders a bottom sheet on mobile (centred panel ≥ sm).
+ * bare = no header and no body padding (command palette, media viewers).
  */
-export default function Dialog({ open, onClose, title, description, children, footer, size = "md", variant = "modal", className }) {
+export default function Dialog({ open, onClose, title, description, children, footer, size = "md", variant = "modal", bare = false, className }) {
   const ref = useRef(null);
   const t = useT("common");
 
@@ -49,7 +50,7 @@ export default function Dialog({ open, onClose, title, description, children, fo
           className
         )}
       >
-        {(title || onClose) && (
+        {!bare && (title || onClose) && (
           <div className="flex items-start justify-between gap-4 border-b border-line/10 px-5 py-4 sm:px-6">
             <div className="min-w-0">
               {title && <h2 id="jz-dialog-title" className="t-h4">{title}</h2>}
@@ -62,7 +63,7 @@ export default function Dialog({ open, onClose, title, description, children, fo
             )}
           </div>
         )}
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">{open && children}</div>
+        <div className={cn("min-h-0 flex-1 overflow-y-auto", !bare && "px-5 py-5 sm:px-6")}>{open && children}</div>
         {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-line/10 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6">{footer}</div>}
       </div>
     </dialog>

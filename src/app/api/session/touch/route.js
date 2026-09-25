@@ -19,6 +19,7 @@ export async function POST(request) {
     if (!session_id) return Response.json({ ok: false });
 
     const supabase = await createServerSupabase();
+    if (!supabase) return Response.json({ ok: false });
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return Response.json({ ok: false });
 
