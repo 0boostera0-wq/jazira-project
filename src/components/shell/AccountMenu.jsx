@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { ChevronDown, Crown, LayoutDashboard, LogOut, Settings, UserRound } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useAuthUser } from "@/context/AuthProvider";
@@ -11,7 +11,13 @@ import Skeleton from "@/components/ui/Skeleton";
 import { useDismiss } from "@/components/ui/useDismiss";
 import { cn } from "@/components/ui/cn";
 
-/** Top-bar account control: sign-in CTAs for guests, avatar menu when signed in. */
+/**
+ * Top-bar account control: sign-in CTAs for guests, an account popover when
+ * signed in. The popover is a disclosure (button + aria-expanded/aria-controls
+ * + plain links), not an ARIA menu: it holds a profile summary as well as
+ * links, and Tab moves through it naturally. Escape closes it and returns
+ * focus to the trigger.
+ */
 export default function AccountMenu({ compact = false }) {
   const { isLoaded, isSignedIn, name, email, username, imageUrl, isElite, signOut } = useAuthUser();
   const t = useT("nav");
@@ -19,8 +25,10 @@ export default function AccountMenu({ compact = false }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const triggerRef = useRef(null);
+  const panelId = `jz-account-${useId().replace(/:/g, "")}`;
   const close = useCallback(() => setOpen(false), []);
-  useDismiss(ref, open, close);
+  useDismiss(ref, open, close, triggerRef);
 
   if (!isLoaded) return <Skeleton rounded="full" className="h-9 w-9" />;
 
@@ -28,11 +36,11 @@ export default function AccountMenu({ compact = false }) {
     return (
       <div className="flex items-center gap-1.5">
         {!compact && (
-          <Button href="/sign-in" variant="ghost" size="sm" className="hidden sm:inline-flex">
+          <Button href="/sign-in" variant="ghost" size="sm" prefetch="intent" className="hidden sm:inline-flex">
             {tc("actions.signIn")}
           </Button>
         )}
-        <Button href={compact ? "/sign-in" : "/sign-up"} variant="primary" size="sm">
+        <Button href={compact ? "/sign-in" : "/sign-up"} variant="primary" size="sm" prefetch="intent" className="max-sm:h-11">
           {compact ? tc("actions.signIn") : tc("actions.signUp")}
         </Button>
       </div>
@@ -52,19 +60,20 @@ export default function AccountMenu({ compact = false }) {
   return (
     <div ref={ref} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
         aria-expanded={open}
+        aria-controls={open ? panelId : undefined}
         aria-label={tc("a11y.userMenu")}
-        className="flex items-center gap-1.5 rounded-full p-0.5 pe-1.5 transition-colors hover:bg-surface-2"
+        className="flex min-h-11 items-center gap-1.5 rounded-full p-0.5 pe-1.5 transition-colors hover:bg-surface-2 lg:min-h-0"
       >
         <Avatar src={imageUrl} name={name} size={34} alt="" />
         <ChevronDown size={15} className={cn("hidden text-ink-3 transition-transform sm:block", open && "rotate-180")} aria-hidden="true" />
       </button>
 
       {open && (
-        <div role="menu" className="animate-scale absolute end-0 top-[calc(100%+8px)] z-50 w-72 rounded-lg border border-line/12 bg-surface p-2 shadow-lg">
+        <div id={panelId} className="animate-scale absolute end-0 top-[calc(100%+8px)] z-50 w-72 rounded-lg border border-line/12 bg-surface p-2 shadow-lg">
           <div className="flex items-center gap-3 px-3 pb-3 pt-2">
             <Avatar src={imageUrl} name={name} size={42} alt="" />
             <div className="min-w-0">
@@ -77,14 +86,14 @@ export default function AccountMenu({ compact = false }) {
             </div>
           </div>
           <div className="divider my-1" />
-          <Link role="menuitem" href="/dashboard" className={item} onClick={close}><LayoutDashboard size={17} aria-hidden="true" />{t("items.dashboard")}</Link>
-          <Link role="menuitem" href={profileHref} className={item} onClick={close}><UserRound size={17} aria-hidden="true" />{t("account.viewProfile")}</Link>
-          <Link role="menuitem" href="/settings" className={item} onClick={close}><Settings size={17} aria-hidden="true" />{t("items.settings")}</Link>
+          <Link href="/dashboard" className={item} onClick={close}><LayoutDashboard size={17} aria-hidden="true" />{t("items.dashboard")}</Link>
+          <Link href={profileHref} className={item} onClick={close}><UserRound size={17} aria-hidden="true" />{t("account.viewProfile")}</Link>
+          <Link href="/settings" className={item} onClick={close}><Settings size={17} aria-hidden="true" />{t("items.settings")}</Link>
           {!isElite && (
-            <Link role="menuitem" href="/subscriptions" className={cn(item, "text-gold-700")} onClick={close}><Crown size={17} aria-hidden="true" />{tc("actions.upgrade")}</Link>
+            <Link href="/subscriptions" className={cn(item, "text-gold-700")} onClick={close}><Crown size={17} aria-hidden="true" />{tc("actions.upgrade")}</Link>
           )}
           <div className="divider my-1" />
-          <button role="menuitem" type="button" onClick={onSignOut} className={cn(item, "text-danger hover:text-danger")}>
+          <button type="button" onClick={onSignOut} className={cn(item, "text-danger hover:text-danger")}>
             <LogOut size={17} className="flip-rtl" aria-hidden="true" />
             {tc("actions.signOut")}
           </button>

@@ -10,7 +10,7 @@ export const academicYear = () => String(ACADEMIC_YEAR).replace(/\D/g, "");
 const stageNode = (id) => CURRICULUM.find((n) => n.id === id) || null;
 
 /** Minimal, serialisable subject shape (safe to pass to client components). */
-const slimSubject = (s) => ({ id: s.id, name: s.name, name_en: s.name_en || null, icon: s.icon });
+const slimSubject = (s) => ({ id: s.id, name: s.name, name_en: s.name_en || null, icon: s.icon, color: s.color || null });
 
 /** Grades of a flat stage (elementary / middle): [{ id, n, href, subjects }]. */
 export function flatStageGrades(stageId) {

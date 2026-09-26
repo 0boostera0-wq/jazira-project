@@ -29,10 +29,11 @@ export default async function MarketingFooter() {
           {FOOTER_NAV.map((col) => (
             <div key={col.group}>
               <p className="text-sm font-medium text-ink">{t(`footer.groups.${col.group}`)}</p>
-              <ul className="mt-3 space-y-2.5">
+              {/* 44px-tall targets on phones (design system §4); compact rhythm from sm up */}
+              <ul className="mt-1.5 sm:mt-3 sm:space-y-2.5">
                 {col.links.map(([key, href]) => (
                   <li key={href}>
-                    <Link href={href} className="text-sm text-ink-3 transition-colors hover:text-ink">{t(key)}</Link>
+                    <Link href={href} className="inline-flex min-h-11 items-center text-sm text-ink-3 transition-colors hover:text-ink sm:min-h-0">{t(key)}</Link>
                   </li>
                 ))}
               </ul>

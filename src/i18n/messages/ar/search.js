@@ -49,6 +49,8 @@ const search = {
   },
   results: {
     pending: "قيد التحقق",
+    anonymousYou: "أنت (باسم مجهول)",
+    moreError: "تعذّر تحميل المزيد من النتائج.",
     anonymous: "عضو مجهول",
     practiceCta: "ابنِ اختبارًا",
     likes: { zero: "لا إعجابات", one: "إعجاب واحد", two: "إعجابان", few: "{count} إعجابات", many: "{count} إعجابًا", other: "{count} إعجاب" },

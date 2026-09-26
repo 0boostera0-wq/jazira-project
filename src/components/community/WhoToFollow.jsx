@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Sprout } from "lucide-react";
-import { useLocale, useT } from "@/i18n/client";
+import { useT } from "@/i18n/client";
 import { Link } from "@/i18n/navigation";
-import { formatNumber } from "@/i18n/format";
 import Skeleton from "@/components/ui/Skeleton";
 import EliteBadge from "@/components/subscriptions/EliteBadge";
 import { levelFor } from "@/components/achievements/progress";
@@ -13,6 +12,7 @@ import AuthorAvatar from "./AuthorAvatar";
 import FollowButton from "./FollowButton";
 import { useViewer } from "./useViewer";
 import { useApi } from "./context";
+import { useMediaQuery } from "./useMediaQuery";
 import { textProps } from "./text";
 
 /**
@@ -20,16 +20,20 @@ import { textProps } from "./text";
  * you, people you already follow, blocked members and anyone who posts
  * anonymously. `variant="strip"` is the horizontal phone version shown
  * inside the feed. `exclude` drops one member (the profile being viewed).
+ * `gate` = a media query: where CSS hides this copy (the rail below lg, the
+ * strip above it) it neither mounts its list nor fetches — it keeps showing
+ * its skeleton (card) or nothing (strip) until the query matches.
  */
-export default function WhoToFollow({ source, viewer: viewerOverride, variant = "card", limit = 4, exclude = null, className }) {
+export default function WhoToFollow({ source, viewer: viewerOverride, variant = "card", limit = 4, exclude = null, gate = null, className }) {
   const t = useT("community");
-  const { locale } = useLocale();
   const api = useApi(source);
   const viewer = useViewer(viewerOverride);
   const [state, setState] = useState({ status: "loading", items: [] });
+  const gateMatches = useMediaQuery(gate || "all");
+  const enabled = !gate || gateMatches;
 
   useEffect(() => {
-    if (!viewer.isLoaded) return;
+    if (!viewer.isLoaded || !enabled) return;
     let alive = true;
     api.getSuggestedPeople({ limit: exclude ? limit + 1 : limit })
       .then((res) => alive && setState({
@@ -38,12 +42,13 @@ export default function WhoToFollow({ source, viewer: viewerOverride, variant = 
       }))
       .catch(() => alive && setState({ status: "unavailable", items: [] }));
     return () => { alive = false; };
-  }, [api, limit, exclude, viewer.isLoaded, viewer.userId]);
+  }, [api, limit, exclude, viewer.isLoaded, viewer.userId, enabled]);
 
   const strip = variant === "strip";
   if (strip && (state.status !== "ready" || !state.items.length)) return null;
 
-  const meta = (p) => `${t("rail.people.level", { level: levelFor(p.xp).level })} · ${t("rail.people.xp", { xp: formatNumber(p.xp, locale) })}`;
+  // Plural-aware (Arabic: نقطة / نقطتان / نقاط): pass the number, the translator formats it.
+  const meta = (p) => `${t("rail.people.level", { level: levelFor(p.xp).level })} · ${t("rail.people.xp", { count: Number(p.xp) || 0 })}`;
 
   if (strip) {
     return (

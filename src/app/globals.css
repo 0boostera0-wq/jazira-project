@@ -22,7 +22,8 @@
   --c-ink: 38 31 20;            /* #261F14 headings, primary text            */
   --c-ink-2: 74 64 50;          /* #4A4032 body                               */
   --c-ink-3: 112 100 84;        /* #706454 secondary / captions (AA on canvas)*/
-  --c-ink-4: 150 138 120;       /* #968A78 placeholders, disabled             */
+  --c-ink-4: 150 138 120;       /* #968A78 placeholders, disabled — never text */
+  --c-field: 146 130 104;       /* #928268 form-control borders (≥3:1 on surface/canvas) */
 
   /* brand: champagne → soft gold */
   --c-gold-50: 251 246 234;
@@ -31,7 +32,7 @@
   --c-gold-300: 221 190 124;
   --c-gold-400: 206 166 88;
   --c-gold-500: 184 140 60;     /* #B88C3C accent                             */
-  --c-gold-600: 154 114 44;     /* #9A722C text-on-light accent (AA)          */
+  --c-gold-600: 130 94 32;      /* #825E20 accent text: 5.5:1 canvas, 5.1:1 surface-2 */
   --c-gold-700: 122 89 35;
   --c-gold-800: 92 67 28;
 
@@ -47,7 +48,8 @@
   /* feedback */
   --c-danger: 176 72 62;
   --c-danger-soft: 250 233 229;
-  --c-warning: 176 124 38;
+  --c-on-danger: 255 255 255;   /* text on bg-danger (5.5:1)                   */
+  --c-warning: 143 100 20;      /* #8F6414 text on warning-soft 4.6:1          */
   --c-warning-soft: 250 240 218;
   --c-info: 68 106 138;
   --c-info-soft: 229 238 245;
@@ -62,7 +64,10 @@
   --shadow-md: 0 1px 3px rgb(60 42 15 / 0.05), 0 10px 28px -8px rgb(60 42 15 / 0.12);
   --shadow-lg: 0 2px 6px rgb(60 42 15 / 0.05), 0 28px 56px -18px rgb(60 42 15 / 0.22);
   --shadow-gold: 0 10px 30px -10px rgb(184 140 60 / 0.45);
-  --ring: 0 0 0 3px rgb(184 140 60 / 0.35);
+  /* Focus: a solid gold-700 band 2–4px outside the element (5.98:1 on canvas).
+     Matches the global :focus-visible outline, so components that still draw
+     focus with box-shadow (focus-visible:[box-shadow:var(--ring)]) look the same. */
+  --ring: 0 0 0 2px rgb(var(--c-canvas)), 0 0 0 4px rgb(var(--c-gold-700));
 
   /* radii */
   --radius-xs: 6px;
@@ -104,6 +109,7 @@ html.dark {
   --c-ink-2: 222 211 191;
   --c-ink-3: 176 164 144;
   --c-ink-4: 128 118 102;
+  --c-field: 128 118 102;
 
   --c-gold-50: 45 37 24;
   --c-gold-100: 62 50 30;
@@ -125,6 +131,7 @@ html.dark {
 
   --c-danger: 232 136 122;
   --c-danger-soft: 60 30 26;
+  --c-on-danger: 26 22 16;      /* dark ink on the light salmon danger (7:1)   */
   --c-warning: 226 180 96;
   --c-warning-soft: 58 44 20;
   --c-info: 140 178 210;
@@ -142,18 +149,40 @@ html.dark {
 }
 
 /* ==========================================================================
+   Arabic-metric fallback for IBM Plex Sans Arabic (used until the webfont
+   swaps in). next/font's automatic fallback is Arial size-adjusted from LATIN
+   metrics (101%), so Arabic lines re-wrapped on swap (CLS). Measured in Chrome
+   on an Arabic paragraph: Plex is 12.7% / 16.2% / 18.3% wider than Arial's
+   Arabic at 400 / 500 / 700. Windows ships Arial with Arabic glyphs; where
+   local() finds no Arial (Android) the next family in the stack is used.
+   ========================================================================== */
+/* Arabic ranges: Arabic-measured size-adjust per weight */
+@font-face { font-family: "JaziraArabicFallback"; src: local("Arial"), local("ArialMT"); font-weight: 400; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; size-adjust: 112.7%; ascent-override: 96.7%; descent-override: 37.3%; line-gap-override: 0%; }
+@font-face { font-family: "JaziraArabicFallback"; src: local("Arial"), local("ArialMT"); font-weight: 500; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; size-adjust: 116.2%; ascent-override: 93.8%; descent-override: 36.2%; line-gap-override: 0%; }
+@font-face { font-family: "JaziraArabicFallback"; src: local("Arial Bold"), local("Arial-BoldMT"); font-weight: 700; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF; size-adjust: 118.3%; ascent-override: 92.1%; descent-override: 35.5%; line-gap-override: 0%; }
+/* Everything else (spaces, digits, Latin runs): Latin-measured, as next/font computes it */
+@font-face { font-family: "JaziraArabicFallback"; src: local("Arial"), local("ArialMT"); font-weight: 400 500; unicode-range: U+0000-05FF, U+2000-206F, U+20A0-20CF, U+2100-218F; size-adjust: 101.2%; ascent-override: 107.7%; descent-override: 41.5%; line-gap-override: 0%; }
+@font-face { font-family: "JaziraArabicFallback"; src: local("Arial Bold"), local("Arial-BoldMT"); font-weight: 700; unicode-range: U+0000-05FF, U+2000-206F, U+20A0-20CF, U+2100-218F; size-adjust: 101.2%; ascent-override: 107.7%; descent-override: 41.5%; line-gap-override: 0%; }
+
+/* ==========================================================================
    Base
    ========================================================================== */
 @layer base {
   html {
-    font-family: var(--font-ar), system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+    /* var() fallbacks keep the declaration valid if a document lacks the next/font class */
+    font-family: var(--font-ar, JaziraArabicFallback, Tahoma), system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
     scroll-padding-top: calc(var(--topbar-h) + 16px);
   }
+  /* Keep keyboard focus clear of the fixed mobile tab bar (WCAG 2.4.11): the
+     browser scrolls a focused element just into view, i.e. under the bar. */
+  @media (max-width: 1023px) {
+    html:has([data-bottomnav]) { scroll-padding-bottom: calc(var(--bottomnav-h) + env(safe-area-inset-bottom) + 16px); }
+  }
   html[lang="en"] {
-    font-family: var(--font-en), var(--font-ar), system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-family: var(--font-en, Arial), var(--font-ar, JaziraArabicFallback), system-ui, -apple-system, "Segoe UI", sans-serif;
   }
   body {
     @apply bg-canvas text-ink-2 antialiased;
@@ -166,7 +195,7 @@ html.dark {
   html[lang="en"] body { line-height: 1.6; }
   /* Arabic content inside the English UI (question stems, subject names, posts):
      use the Arabic face — the Latin face's metric fallback (Arial) would win otherwise. */
-  html[lang="en"] :lang(ar) { font-family: var(--font-ar), system-ui, sans-serif; line-height: 1.8; }
+  html[lang="en"] :lang(ar) { font-family: var(--font-ar, JaziraArabicFallback, Tahoma), system-ui, sans-serif; line-height: 1.8; }
 
   h1, h2, h3, h4, h5, h6 {
     @apply text-ink;
@@ -181,8 +210,16 @@ html.dark {
   p { text-wrap: pretty; }
   ::selection { background: rgb(var(--c-gold-200)); color: rgb(var(--c-ink)); }
 
-  a, button, [role="button"], input, select, textarea, summary { outline: none; }
-  :focus-visible { box-shadow: var(--ring); border-radius: var(--radius-xs); }
+  /* Focus indicator: an outline, not a box-shadow — shadow utilities (shadow-sm,
+     ring-1 …) on buttons/switches would otherwise replace it, and outlines
+     survive Windows forced-colors mode. Mouse focus stays quiet. */
+  :focus-visible { outline: 2px solid rgb(var(--c-gold-700)); outline-offset: 2px; }
+  :focus:not(:focus-visible) { outline: none; }
+  /* Components that remove the outline (outline-none / focus:outline-none)
+     still get the same gold-700 band, drawn as a box-shadow. Specificity
+     (0,2,0) beats plain shadow utilities, so it can't be masked by shadow-sm. */
+  [class*="outline-none"]:focus-visible { box-shadow: var(--ring); }
+  @media (forced-colors: active) { :focus-visible { outline-color: Highlight; } }
 
   img, svg, video { max-width: 100%; }
   img { height: auto; }
@@ -226,7 +263,7 @@ html.dark {
   .prose-jz ol { list-style: decimal; padding-inline-start: 1.25em; }
   .prose-jz li + li { margin-top: 0.4em; }
   .prose-jz a { color: rgb(var(--c-gold-600)); text-decoration: underline; text-underline-offset: 3px; }
-  .prose-jz strong { color: rgb(var(--c-ink)); font-weight: 600; }
+  .prose-jz strong { color: rgb(var(--c-ink)); font-weight: 700; }
 }
 
 /* ==========================================================================
@@ -259,9 +296,14 @@ html.dark {
     background-image: radial-gradient(rgb(var(--c-line) / 0.16) 1px, transparent 1px);
     background-size: 22px 22px;
   }
+  /* Gradient accent text. Light theme keeps every stop ≥ 5:1 on canvas
+     (gold-700 → gold-600); the brighter champagne sweep is dark-theme only. */
   .text-gold-grad {
-    background: linear-gradient(120deg, rgb(var(--c-gold-600)), rgb(var(--c-gold-400)) 55%, rgb(var(--c-gold-600)));
+    background: linear-gradient(120deg, rgb(var(--c-gold-700)), rgb(var(--c-gold-600)) 55%, rgb(var(--c-gold-700)));
     -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  html.dark .text-gold-grad {
+    background-image: linear-gradient(120deg, rgb(var(--c-gold-600)), rgb(var(--c-gold-400)) 55%, rgb(var(--c-gold-600)));
   }
   .no-scrollbar { scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -298,6 +340,7 @@ html.dark {
 @keyframes jz-shimmer { to { transform: translateX(100%); } }
 @keyframes jz-shimmer-rtl { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 @keyframes jz-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes jz-rise { from { transform: translateY(12px); } to { transform: none; } }
 @keyframes jz-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes jz-scale-in { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: none; } }
 @keyframes jz-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
@@ -305,7 +348,11 @@ html.dark {
 @keyframes jz-spin { to { transform: rotate(360deg); } }
 @keyframes jz-pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 
-.animate-in { animation: jz-fade-up var(--dur-slow) var(--ease-out) both; }
+/* animate-in = mount motion for headers/heroes. Transform only — never opacity:
+   text at opacity 0 is not an LCP candidate, so a fade on the hero headline
+   delays LCP until the fade has painted. Use animate-fade / reveal for
+   secondary, below-the-fold content. */
+.animate-in { animation: jz-rise var(--dur-slow) var(--ease-out) both; }
 .animate-fade { animation: jz-fade-in var(--dur) var(--ease-out) both; }
 .animate-scale { animation: jz-scale-in var(--dur) var(--ease-out) both; }
 .animate-float { animation: jz-float 7s ease-in-out infinite; }

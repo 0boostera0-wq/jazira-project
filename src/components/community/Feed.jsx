@@ -11,6 +11,7 @@ import { cn } from "@/components/ui/cn";
 import Composer from "./Composer";
 import PostCard from "./PostCard";
 import WhoToFollow from "./WhoToFollow";
+import { BELOW_LG } from "./breakpoints";
 import { PostSkeleton } from "./skeletons";
 import { useSignInPrompt } from "./SignInPrompt";
 import { useViewer } from "./useViewer";
@@ -21,15 +22,20 @@ import { textProps } from "./text";
 
 /**
  * The community feed island: composer · topic filters · posts (keyset pages,
- * infinite scroll with a real "load more" button as fallback) · live "new
- * posts" pill. One component serves /community, /tags/[tag] and the profile
- * tabs through `scope`.
+ * infinite scroll with a real "load more" button as fallback) · "new posts"
+ * pill (polled while the tab is visible — the posts table is no longer in
+ * realtime since 0012). One component serves /community, /tags/[tag] and the
+ * profile tabs through `scope`.
  *
  *   scope: "all" | "tag" | "author" | "liked" | "reposted"
  *   withFilters  topic chips (scope "all")
  *   withComposer composer on top (lockedTag on tag pages)
  *   source       data functions (defaults to src/lib/social.js)
  */
+const POLL_MS = 45000; // "new posts" check + visible counts, while the tab is visible
+const POLL_GAP_MS = 15000; // focus and visibilitychange fire together: one check is enough
+const REFRESH_MAX = 30; // posts whose counts are refreshed per check (the top of the feed)
+
 export default function Feed({
   scope = "all",
   tag = null,
@@ -58,7 +64,6 @@ export default function Feed({
   const reqRef = useRef(0);
   const sentinel = useRef(null);
   const top = useRef(null);
-  const blockedRef = useRef(new Set());
   stateRef.current = state;
 
   // What to ask the data layer for.
@@ -115,27 +120,46 @@ export default function Feed({
     return () => io.disconnect();
   }, [hasMore, state.status, load]);
 
-  // Live updates on the main feed: counts in place, new posts behind a pill
-  // (never counting posts from members you blocked — they would not appear).
+  // Live-ish updates on the main feed, polled while the tab is visible: how
+  // many newer posts exist (behind a pill — the database leaves out your own
+  // and blocked members' posts) and fresh counts for the posts on screen.
   const live = scope === "all" && filter.kind === "all" && state.status === "ready";
+  const loadedAt = useRef(null);
   useEffect(() => {
-    if (!live) return;
-    let off = () => {};
+    if (state.status === "ready" && !state.loadingMore && !loadedAt.current) loadedAt.current = new Date().toISOString();
+    if (state.status === "loading") loadedAt.current = null;
+  }, [state.status, state.loadingMore]);
+  useEffect(() => {
+    if (!live || typeof api.countNewPosts !== "function") return undefined;
     let alive = true;
-    if (viewer.isSignedIn) {
-      Promise.resolve(api.getBlockedIds?.()).then((s) => { if (alive && s) blockedRef.current = s; }).catch(() => {});
-    }
-    Promise.resolve(api.subscribeToPosts?.({
-      onInsert: (row) => {
-        if (row.user_id && row.user_id === viewer.userId) return;
-        if (row.user_id && blockedRef.current.has(row.user_id)) return;
-        if (stateRef.current.items.some((p) => p.id === row.id)) return;
-        setFresh((n) => n + 1);
-      },
-      onUpdate: (row) => dispatch({ type: "row", row }),
-    })).then((fn) => { if (alive) off = fn || off; else fn?.(); });
-    return () => { alive = false; off(); };
-  }, [live, api, viewer.userId, viewer.isSignedIn]);
+    let last = Date.now();
+    const check = async () => {
+      if (document.visibilityState !== "visible" || Date.now() - last < POLL_GAP_MS) return;
+      last = Date.now();
+      const items = stateRef.current.items;
+      const head = items[0];
+      const since = head ? { since: head.created_at, sinceId: head.id } : { since: loadedAt.current };
+      const [n, rows] = await Promise.all([
+        api.countNewPosts(since).catch(() => null),
+        items.length && typeof api.refreshPosts === "function"
+          ? api.refreshPosts(items.slice(0, REFRESH_MAX).map((p) => p.id)).catch(() => [])
+          : Promise.resolve([]),
+      ]);
+      if (!alive) return;
+      if (typeof n === "number") setFresh(n);
+      for (const row of rows || []) dispatch({ type: "row", row });
+    };
+    const id = setInterval(check, POLL_MS);
+    const onVisible = () => { if (document.visibilityState === "visible") check(); };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
+    return () => {
+      alive = false;
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
+    };
+  }, [live, api]);
 
   const onPatch = useCallback((id, patch) => dispatch({ type: "patch", id, patch }), []);
   const onRemove = useCallback((id) => dispatch({ type: "remove", id }), []);
@@ -256,7 +280,8 @@ export default function Feed({
                     showFollow={scope !== "author"}
                   />
                   {peopleStrip && i === 2 && filter.kind === "all" && (
-                    <WhoToFollow variant="strip" source={api} viewer={viewer} limit={6} className="mt-4 lg:hidden" />
+                    // Below lg only: `gate` keeps it from fetching where CSS hides it.
+                    <WhoToFollow variant="strip" gate={BELOW_LG} source={api} viewer={viewer} limit={6} className="mt-4 lg:hidden" />
                   )}
                 </li>
               ))}
@@ -295,7 +320,7 @@ function FilterBar({ chips, filter, onChange, signedIn, t, locale }) {
       aria-pressed={on}
       onClick={onClick}
       className={cn(
-        "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 text-sm transition-colors duration-fast",
+        "inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 text-sm transition-colors duration-fast sm:h-9",
         on ? "border-transparent bg-primary font-medium text-primary-fg" : "border-line/15 bg-surface text-ink-2 hover:border-line/30 hover:text-ink"
       )}
     >
@@ -323,7 +348,7 @@ function FilterBar({ chips, filter, onChange, signedIn, t, locale }) {
               aria-pressed={on}
               onClick={() => toggleTag(c.tag)}
               className={cn(
-                "inline-flex h-8 shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3 text-[0.8125rem] transition-colors duration-fast",
+                "inline-flex h-11 shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3.5 text-[0.8125rem] transition-colors duration-fast sm:h-8 sm:px-3",
                 on ? "bg-gold-100 font-medium text-gold-800 ring-1 ring-inset ring-gold-300" : "bg-surface-2 text-ink-2 hover:bg-surface-3 hover:text-ink"
               )}
             >

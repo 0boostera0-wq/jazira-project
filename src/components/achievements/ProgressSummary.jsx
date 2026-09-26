@@ -71,13 +71,16 @@ export default function ProgressSummary({ className }) {
   if (p.status === "unavailable") {
     return (
       <Alert
-        tone="warning"
-        title={t("states.unavailableTitle")}
+        tone="danger"
+        title={
+          <>
+            <span className="block">{t("states.unavailableTitle")}</span>
+            <span className="mt-0.5 block font-normal">{t("states.unavailableBody")}</span>
+          </>
+        }
         className={className}
         action={<Button size="sm" variant="secondary" iconStart={RotateCcw} onClick={p.retry}>{t("states.retry")}</Button>}
-      >
-        {t("states.unavailableBody")}
-      </Alert>
+      />
     );
   }
 

@@ -1,6 +1,5 @@
-import { ArrowRight } from "lucide-react";
-import { Link } from "@/i18n/navigation";
 import { cn } from "@/components/ui/cn";
+import { ArrowLink } from "@/components/stages/parts";
 
 /**
  * Dashboard card frame (server-safe): a titled surface whose heading paints
@@ -24,18 +23,11 @@ export default function Panel({ id, title, eyebrow, action, tone = "surface", cl
   );
 }
 
-/** Small "view all →" link for a panel header. The arrow follows the reading direction. */
+/** "View all →" for a panel header: the app's one arrow link, header size (the arrow follows the reading direction). */
 export function PanelLink({ href, children, className }) {
   return (
-    <Link
-      href={href}
-      className={cn(
-        "-my-2 -me-1 inline-flex h-10 shrink-0 items-center gap-1 rounded-full px-2.5 text-sm font-medium text-gold-600 transition-colors hover:bg-gold-50",
-        className
-      )}
-    >
+    <ArrowLink href={href} size="sm" className={cn("-my-2 shrink-0", className)}>
       {children}
-      <ArrowRight size={15} aria-hidden="true" className="flip-rtl" />
-    </Link>
+    </ArrowLink>
   );
 }

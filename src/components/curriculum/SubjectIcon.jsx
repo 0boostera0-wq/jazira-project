@@ -1,51 +1,9 @@
-import {
-  Accessibility, Activity, Atom, Award, BadgeDollarSign, BookHeart, BookMarked, BookOpen, BookOpenText,
-  Brain, BrainCircuit, Briefcase, Building2, Calculator, CalendarRange, ChartColumn, ChartPie, ClipboardList,
-  Code, Cpu, Database, DraftingCompass, Dumbbell, Earth, Feather, FileSearch, FlaskConical, Gavel,
-  Globe, GraduationCap, HandCoins, HeartHandshake, HeartPulse, Landmark, Languages, Leaf, Map as MapIcon,
-  Megaphone, Microscope, Mic, Orbit, Palette, PenTool, Quote, Route, Scale, ScrollText, Shapes, ShieldCheck,
-  SpellCheck, Stethoscope, TrendingUp, Users, Wallet, Wifi, Wrench,
-} from "lucide-react";
 import { cn } from "@/components/ui/cn";
+import { subjectGlyph } from "./subjectGlyphs";
 
-// Subject glyphs. Server-safe (no hooks, no motion). The catalog's `icon` field
-// (shared with src/components/stages/icons.js) is the fallback; the id map
-// gives newer secondary subjects a more specific glyph.
-const BY_ID = {
-  islamic: BookOpen, quran: BookMarked, tawhid: BookHeart, hadith: ScrollText, tafsir: BookOpenText,
-  qiraat: Mic, "quran-sciences": BookMarked, fiqh: Scale, "usul-fiqh": Landmark, "hadith-terminology": ScrollText,
-  faraid: HandCoins,
-  arabic: Feather, "linguistic-studies": SpellCheck, rhetoric: Quote,
-  english: Languages,
-  math: Calculator, statistics: ChartPie,
-  physics: Atom, "earth-space": Orbit,
-  chemistry: FlaskConical,
-  science: Microscope, biology: Leaf, environment: Earth, "health-sciences": Stethoscope, healthcare: Stethoscope,
-  "body-systems": HeartPulse,
-  social: Globe, history: Landmark, geography: MapIcon, "psych-social": Users,
-  digital: Cpu, "digital-citizenship": ShieldCheck, "data-science": Database, iot: Wifi, ai: BrainCircuit,
-  cybersecurity: ShieldCheck, "software-engineering": Code, engineering: DraftingCompass, "engineering-design": PenTool,
-  art: Palette, arts: Palette,
-  pe: Dumbbell, fitness: Activity,
-  life: HeartHandshake, critical: Brain, vocational: Wrench, "financial-literacy": Wallet, research: FileSearch,
-  "decision-making": Route, "intro-business": Briefcase, economics: TrendingUp, finance: BadgeDollarSign,
-  management: Building2, events: CalendarRange, marketing: Megaphone, secretarial: ClipboardList,
-  law: Gavel, "law-applications": Gavel,
-  capstone: Award, elective: Shapes,
-};
-
-const BY_ICON = {
-  quran: BookMarked, islamic: BookOpen, arabic: Feather, english: Languages, math: Calculator, science: Microscope,
-  physics: Atom, chemistry: FlaskConical, biology: Leaf, social: Globe, digital: Cpu, cs: Code, art: Palette,
-  pe: Dumbbell, critical: Brain, business: Briefcase, finance: TrendingUp, law: Scale, engineering: DraftingCompass,
-  health: HeartPulse, hadith: ScrollText, tawhid: BookHeart, life: HeartHandshake, teacher: ClipboardList,
-  rehab: Accessibility, grade: GraduationCap, chart: ChartColumn,
-};
-
-/** Lucide glyph for a subject (by id, then by catalog icon id). */
-export function subjectGlyph({ id, icon } = {}) {
-  return BY_ID[id] || BY_ICON[icon] || BookOpen;
-}
+// Subject glyphs and colour tiles. Server-safe (no hooks, no motion). The
+// glyph map itself is ./subjectGlyphs.js — the one map the whole app uses.
+export { subjectGlyph };
 
 /** Bare glyph. */
 export default function SubjectIcon({ id, icon, size = 20, className }) {

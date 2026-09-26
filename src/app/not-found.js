@@ -1,16 +1,42 @@
-// Last-resort 404 for requests that never reach app/[locale] (the middleware
-// rewrites virtually everything into the locale tree, where the branded,
-// localized not-found page lives). Kept dependency-free on purpose.
-export default function GlobalNotFound() {
-  return (
-    <html lang="ar" dir="rtl">
-      <body style={{ margin: 0, minHeight: "100vh", display: "grid", placeItems: "center", background: "#FAF7F0", color: "#2B2418", fontFamily: "system-ui, sans-serif" }}>
-        <main style={{ textAlign: "center", padding: 24 }}>
-          <p style={{ fontSize: 56, fontWeight: 700, margin: 0 }}>404</p>
-          <p style={{ margin: "8px 0 20px" }}>الصفحة غير موجودة · Page not found</p>
-          <a href="/" style={{ color: "#8A6A2E", fontWeight: 600 }}>منصة جزيرة · Jazira</a>
-        </main>
-      </body>
-    </html>
+import { LOCALES } from "@/i18n/config";
+import { getT, loadMessages } from "@/i18n/server";
+import { I18nProvider } from "@/i18n/client";
+import NotFoundView from "@/components/states/NotFoundView";
+import LocaleDocument from "@/components/states/LocaleDocument";
+import { fontVariables, THEME_SCRIPT } from "./fonts";
+
+// The 404 for every unmatched URL — /xyz, /en/xyz, /en/file.pdf. Next renders
+// it through its own not-found route, which (unlike a notFound() thrown from a
+// page) is server-rendered: the response is a real 404 with a complete,
+// branded, localized document before any JS runs. The locale comes from the
+// request URL (LocaleDocument); both localized bodies are prepared here.
+//
+// Rendered per request so the server HTML matches the URL's language (a
+// prerendered copy would always be Arabic and re-render on hydration).
+export const dynamic = "force-dynamic";
+
+// The <title> is rendered by LocaleDocument (it knows the URL's locale; the
+// server metadata API doesn't), so metadata only carries robots.
+export const metadata = { robots: { index: false, follow: false } };
+
+export default async function GlobalNotFound() {
+  const titles = Object.fromEntries(
+    await Promise.all(
+      LOCALES.map(async (locale) => {
+        const t = await getT("meta", locale);
+        return [locale, `${t("pages.notFound.title")} · ${t("site.name")}`];
+      })
+    )
   );
+  const variants = Object.fromEntries(
+    await Promise.all(
+      LOCALES.map(async (locale) => [
+        locale,
+        <I18nProvider key={locale} locale={locale} messages={await loadMessages(locale, ["common", "nav"])}>
+          <NotFoundView locale={locale} />
+        </I18nProvider>,
+      ])
+    )
+  );
+  return <LocaleDocument className={fontVariables} headScript={THEME_SCRIPT} titles={titles} variants={variants} />;
 }

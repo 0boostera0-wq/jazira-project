@@ -3,6 +3,8 @@ import { Link } from "@/i18n/navigation";
 import Button from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
 import { SectionHeader } from "@/components/ui/Layout";
+import { cn } from "@/components/ui/cn";
+import { PLATE, PLATE_RING } from "@/components/stages/parts";
 import { CURRICULUM, YEAR } from "@/lib/curriculum";
 import NodeHeader from "../NodeHeader";
 import OfficialChannels from "../OfficialChannels";
@@ -37,7 +39,7 @@ export default async function PendingView({ slug, node, trail, locale }) {
                 <Button href="/curriculum" variant="primary">{t("pending.back")}</Button>
               </div>
             </div>
-            <div aria-hidden="true" className="hidden overflow-hidden rounded-lg bg-[#F7F0E3] ring-1 ring-inset ring-[#7A623A]/10 dark:bg-surface-2 dark:ring-line/10 sm:block">
+            <div aria-hidden="true" className={cn("hidden overflow-hidden rounded-lg sm:block", PLATE, PLATE_RING)}>
               <Illustration id="support.empty" />
             </div>
           </div>
@@ -56,7 +58,7 @@ export default async function PendingView({ slug, node, trail, locale }) {
                   className="group flex h-full items-center gap-4 rounded-lg border border-line/15 bg-surface p-3 pe-4 shadow-xs transition-[transform,box-shadow,border-color] duration ease-out hover:-translate-y-0.5 hover:border-line/20 hover:shadow-md"
                 >
                   {ART[s.id] && (
-                    <span aria-hidden="true" className="grid h-16 w-20 shrink-0 place-items-center overflow-hidden rounded-md bg-[#F7F0E3] ring-1 ring-inset ring-[#7A623A]/10 dark:bg-surface-2 dark:ring-line/10">
+                    <span aria-hidden="true" className={cn("grid h-16 w-20 shrink-0 place-items-center overflow-hidden rounded-md", PLATE, PLATE_RING)}>
                       <Illustration id={ART[s.id]} className="h-full object-contain p-1" />
                     </span>
                   )}

@@ -9,6 +9,7 @@
 
 import { createContext, useContext, useMemo } from "react";
 import { createTranslator } from "./translator";
+import { mergeMessages } from "./merge";
 import { dirOf, intlLocale } from "./config";
 
 const I18nContext = createContext(null);
@@ -18,11 +19,11 @@ export function I18nProvider({ locale, messages, children }) {
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
-/** Nested provider — merges extra namespaces into the parent tree. */
+/** Nested provider — deep-merges extra namespaces / subtrees into the parent tree. */
 export function MessagesProvider({ messages, children }) {
   const parent = useContext(I18nContext);
   const value = useMemo(
-    () => ({ locale: parent.locale, messages: { ...parent.messages, ...messages } }),
+    () => ({ locale: parent.locale, messages: mergeMessages(parent.messages, messages) }),
     [parent, messages]
   );
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

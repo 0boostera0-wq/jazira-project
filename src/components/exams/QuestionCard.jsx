@@ -13,6 +13,11 @@ import { choiceDir, twoColumnChoices } from "./runner-logic";
  * Question content is Arabic educational content: it keeps lang="ar"
  * dir="rtl" even inside the English UI; each option is isolated (<bdi>) and
  * math-only options ("−11", "−4/5") read left-to-right (runner-logic.choiceDir).
+ *
+ * The choices are a native radio group (fieldset + legend, one visually hidden
+ * radio per option): screen readers announce a single-select group with each
+ * option's position ("3 of 4"), Tab enters the group once and the arrow keys
+ * move between options. The runner's 1–4 and F shortcuts keep working.
  */
 function QuestionCard({ t, question, index, total, answer, onChoose, onClear, onFlag }) {
   const selected = answer?.selected ?? null;
@@ -42,40 +47,48 @@ function QuestionCard({ t, question, index, total, answer, onChoose, onClear, on
         <MixedText text={question.stem} />
       </p>
 
-      <ul lang="ar" dir="rtl" aria-label={t("runner.choicesLabel")} className={cn("font-ar mt-6 grid gap-2.5 sm:gap-3", two && "sm:grid-cols-2")}>
-        {question.choices.map((choice, i) => {
-          const on = selected === i;
-          return (
-            <li key={i}>
-              <button
-                type="button"
-                aria-pressed={on}
-                onClick={() => onChoose(i)}
-                className={cn(
-                  "group flex min-h-[3.5rem] w-full items-center gap-3 rounded-md border px-3.5 py-3 text-start transition-[border-color,background-color,box-shadow] duration-fast ease-out active:scale-[0.99]",
-                  on
-                    ? "border-gold-500 bg-gold-50 shadow-[0_0_0_1px_rgb(var(--c-gold-500))]"
-                    : "border-line/15 bg-surface [@media(hover:hover)]:hover:border-line/30 [@media(hover:hover)]:hover:bg-surface-2/60"
-                )}
-              >
-                <span
-                  aria-hidden="true"
+      <fieldset className="mt-6 min-w-0">
+        <legend className="sr-only">{t("runner.choicesLabel")}</legend>
+        <ul lang="ar" dir="rtl" className={cn("font-ar grid gap-2.5 sm:gap-3", two && "sm:grid-cols-2")}>
+          {question.choices.map((choice, i) => {
+            const on = selected === i;
+            return (
+              <li key={i}>
+                <label
                   className={cn(
-                    "grid h-8 w-8 shrink-0 place-items-center rounded-full border text-sm font-bold transition-colors",
-                    on ? "border-transparent bg-gold-400 text-[#261F14]" : "border-line/20 bg-surface-2 text-ink-2"
+                    "group relative flex min-h-[3.5rem] w-full cursor-pointer items-center gap-3 rounded-md border px-3.5 py-3 text-start transition-[border-color,background-color,box-shadow] duration-fast ease-out active:scale-[0.99] has-[:focus-visible]:shadow-[var(--ring)]",
+                    on
+                      ? "border-gold-500 bg-gold-50 shadow-[0_0_0_1px_rgb(var(--c-gold-500))]"
+                      : "border-line/15 bg-surface [@media(hover:hover)]:hover:border-line/30 [@media(hover:hover)]:hover:bg-surface-2/60"
                   )}
                 >
-                  {choiceLabel(t, i)}
-                </span>
-                <span className="min-w-0 flex-1 text-[1.0625rem] leading-relaxed text-ink"><bdi dir={choiceDir(choice)}>{choice}</bdi></span>
-                <kbd aria-hidden="true" className="hidden h-6 min-w-6 place-items-center rounded-xs border border-line/15 px-1.5 font-sans text-xs text-ink-4 lg:grid">
-                  {i + 1}
-                </kbd>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+                  <input
+                    type="radio"
+                    name={`q-${question.position}-choice`}
+                    value={i}
+                    checked={on}
+                    onChange={() => onChoose(i)}
+                    className="sr-only"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "grid h-8 w-8 shrink-0 place-items-center rounded-full border text-sm font-bold transition-colors",
+                      on ? "border-transparent bg-gold-400 text-[#261F14]" : "border-line/20 bg-surface-2 text-ink-2"
+                    )}
+                  >
+                    {choiceLabel(t, i)}
+                  </span>
+                  <span className="min-w-0 flex-1 text-[1.0625rem] leading-relaxed text-ink"><bdi dir={choiceDir(choice)}>{choice}</bdi></span>
+                  <kbd aria-hidden="true" className="hidden h-6 min-w-6 place-items-center rounded-xs border border-line/15 px-1.5 font-sans text-xs text-ink-4 lg:grid">
+                    {i + 1}
+                  </kbd>
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+      </fieldset>
 
       <div className="mt-4 flex min-h-9 flex-wrap items-center justify-between gap-2">
         <button

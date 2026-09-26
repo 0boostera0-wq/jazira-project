@@ -1,7 +1,7 @@
 import { Mic, Users } from "lucide-react";
 import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
-import { PLATE } from "./parts";
+import { PLATE, PLATE_RING } from "./parts";
 
 /**
  * Side rail for the elementary learning games: how to play · mic note · tip for parents.
@@ -20,7 +20,7 @@ export default function GamesRail({ t }) {
         <ul className="mt-4 space-y-4">
           {games.map((g) => (
             <li key={g.key} className="flex items-start gap-3.5">
-              <span className={cn("block w-20 shrink-0 overflow-hidden rounded-md ring-1 ring-inset ring-[#7A623A]/10 dark:ring-line/10", PLATE)}>
+              <span className={cn("block w-20 shrink-0 overflow-hidden rounded-md", PLATE, PLATE_RING)}>
                 <Illustration id={g.art} />
               </span>
               <div className="min-w-0">

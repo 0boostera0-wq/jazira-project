@@ -43,7 +43,8 @@ const FIXTURE = path.join(REPO_ROOT, "tests", "fixtures", "questions-sample.json
 let h;
 // The generated bank seed (if present) is skipped so every count below is exact.
 // JZ_DB_SKIP=a.sql,b.sql additionally skips migrations (e.g. to prove 0010
-// does not depend on 0009: JZ_DB_SKIP=0009_security_hardening.sql).
+// does not depend on 0009: JZ_DB_SKIP=0009_security_hardening.sql,0012_privacy_topics_analytics_search.sql
+// — 0012 itself builds on 0009's has_block_with() / is_own_storage_url()).
 const EXTRA_SKIP = (process.env.JZ_DB_SKIP || "").split(",").map((s) => s.trim()).filter(Boolean);
 beforeAll(async () => { h = await createDb({ skip: ["0011_seed_questions.sql", ...EXTRA_SKIP] }); });
 afterAll(async () => { await h?.close(); });
@@ -731,6 +732,9 @@ describe("history, stats and relationships", () => {
 
   it("get_exam_stats aggregates graded attempts by section/topic with trends", async () => {
     const u = await newUser();
+    // 0012: topic-level analytics (by_topic / best / weakest) are Elite-only;
+    // the free-plan split is covered in tests/db/learning-0012.test.js.
+    await makePremium(u);
     const a = await start(u, { count: 10 });
     const keys = await correctIndexes(a.questions.map((q) => q.id));
     await submit(u, a.attempt_id, a.questions.map((q, i) => ({ position: q.position, selected_index: i < 7 ? keys[q.id] : (keys[q.id] + 1) % 4 })));
@@ -769,6 +773,8 @@ describe("history, stats and relationships", () => {
 
 // ============================================================================
 describe("contact_messages", () => {
+  // 0013: the inbox is written only by POST /api/contact with the service role
+  // (after a per-IP limit); browsers can no longer insert directly.
   let seq = 0;
   const msg = (over = {}) => ({ name: "Sara Ali", email: `c${++seq}@example.com`, topic: "general",
     message: "Hello, I have a question about Jazira.", locale: "ar", ...over });
@@ -777,28 +783,28 @@ describe("contact_messages", () => {
     [m.user_id ?? null, m.name, m.email, m.topic, m.message, m.locale, m.status ?? null, m.created_at ?? null]));
   const anon = (m) => insertAs((fn) => h.asAnon(fn), m);
   const user = (uid, m) => insertAs((fn) => h.asUser(uid, fn), m);
+  const server = (m) => insertAs((fn) => h.asService(fn), m);
 
-  it("anon and signed-in users can send; signed-in senders are attributed", async () => {
-    await expect(anon(msg())).resolves.toMatchObject({ affectedRows: 1 });
+  it("the server route (service role) writes the inbox; senders are attributed by the route", async () => {
+    await expect(server(msg())).resolves.toMatchObject({ affectedRows: 1 });
     const u = await newUser();
-    const m = msg({ email: `  MiXeD${++seq}@Example.COM ` });
-    await user(u, m);
+    const m = msg({ email: `  MiXeD${++seq}@Example.COM `, user_id: u });
+    await server(m);
     const [row] = await h.sql("select user_id::text uid, email, status from public.contact_messages where email = $1", [m.email.trim().toLowerCase()]);
     expect(row).toEqual({ uid: u, email: m.email.trim().toLowerCase(), status: "new" });
   });
 
-  it("nobody can impersonate, pre-set status, read, edit or delete", async () => {
+  it("browsers cannot insert (no per-IP limit there), read, edit or delete", async () => {
     const a = await newUser();
     const b = await newUser();
+    await expect(anon(msg())).rejects.toMatchObject(DENIED);
+    await expect(user(a, msg())).rejects.toMatchObject(DENIED);
     await expect(user(a, msg({ user_id: b }))).rejects.toMatchObject(DENIED);
-    await expect(anon(msg({ user_id: b }))).rejects.toMatchObject(DENIED);
     await expect(anon(msg({ status: "resolved" }))).rejects.toMatchObject(DENIED);
     await expect(asA("select * from public.contact_messages")).rejects.toMatchObject(DENIED);
     await expect(asU(a, "select * from public.contact_messages")).rejects.toMatchObject(DENIED);
     await expect(asU(a, "update public.contact_messages set status = 'spam'")).rejects.toMatchObject(DENIED);
     await expect(asU(a, "delete from public.contact_messages")).rejects.toMatchObject(DENIED);
-    await expect(h.asAnon((tx) => tx.sql("insert into public.contact_messages (name, email, topic, message) values ('Ab','r@example.com','general','0123456789') returning id")))
-      .rejects.toMatchObject(DENIED);                           // no RETURNING without SELECT
   });
 
   it("validates name, email, topic, message and locale", async () => {
@@ -807,30 +813,39 @@ describe("contact_messages", () => {
       { email: `${"x".repeat(250)}@example.com` }, { topic: "sales" }, { message: "too short" }, { message: "x".repeat(4001) },
       { locale: "fr" },
     ]) {
-      await expect(anon(msg(bad)), JSON.stringify(bad).slice(0, 40)).rejects.toMatchObject(CHECK);
+      await expect(server(msg(bad)), JSON.stringify(bad).slice(0, 40)).rejects.toMatchObject(CHECK);
     }
     // whitespace is normalised rather than rejected
     const email = `norm${++seq}@example.com`;
-    await anon(msg({ name: "  Sara \n  Ali ", email, message: "   Hello there, this is fine.   " }));
+    await server(msg({ name: "  Sara \n  Ali ", email, message: "   Hello there, this is fine.   " }));
     const [row] = await h.sql("select name, message from public.contact_messages where email = $1", [email]);
     expect(row).toEqual({ name: "Sara Ali", message: "Hello there, this is fine." });
   });
 
   it("rate limit: a 4th message within an hour from the same email or account is refused", async () => {
     const email = `limit${++seq}@example.com`;
-    for (let i = 0; i < 3; i++) await anon(msg({ email }));
-    await expect(anon(msg({ email }))).rejects.toThrow(raised("rate_limited"));
-    await expect(anon(msg({ email: email.toUpperCase() }))).rejects.toThrow(raised("rate_limited"));
+    for (let i = 0; i < 3; i++) await server(msg({ email }));
+    await expect(server(msg({ email }))).rejects.toThrow(raised("rate_limited"));
+    await expect(server(msg({ email: email.toUpperCase() }))).rejects.toThrow(raised("rate_limited"));
     // a forged old created_at is ignored (the trigger stamps now())
-    await expect(anon(msg({ email, created_at: "2000-01-01T00:00:00Z" }))).rejects.toThrow(raised("rate_limited"));
+    await expect(server(msg({ email, created_at: "2000-01-01T00:00:00Z" }))).rejects.toThrow(raised("rate_limited"));
     // same account, different emails
     const u = await newUser();
-    for (let i = 0; i < 3; i++) await user(u, msg());
-    await expect(user(u, msg())).rejects.toThrow(raised("rate_limited"));
+    for (let i = 0; i < 3; i++) await server(msg({ user_id: u }));
+    await expect(server(msg({ user_id: u }))).rejects.toThrow(raised("rate_limited"));
     // others are unaffected; an hour later it's allowed again
-    await expect(anon(msg())).resolves.toMatchObject({ affectedRows: 1 });
+    await expect(server(msg())).resolves.toMatchObject({ affectedRows: 1 });
     await h.sql("update public.contact_messages set created_at = now() - interval '61 minutes' where email = $1", [email]);
-    await expect(anon(msg({ email }))).resolves.toMatchObject({ affectedRows: 1 });
+    await expect(server(msg({ email }))).resolves.toMatchObject({ affectedRows: 1 });
+  });
+
+  it("rotating emails no longer floods the inbox: guests share one hourly budget (60)", async () => {
+    // age out what earlier tests sent, so the budget is exact here
+    await h.sql("update public.contact_messages set created_at = now() - interval '2 hours'");
+    for (let i = 0; i < 60; i++) await server(msg({ email: `bot${i}.${++seq}@x.io` }));
+    await expect(server(msg({ email: `bot-last.${++seq}@x.io` }))).rejects.toThrow(raised("rate_limited"));
+    const u = await newUser();
+    await expect(server(msg({ user_id: u }))).resolves.toMatchObject({ affectedRows: 1 });   // members unaffected
   });
 });
 
@@ -1123,6 +1138,17 @@ describe("re-running 0010", () => {
     const before = await h.sql("select (select count(*) from public.questions)::int q, (select count(*) from public.question_keys)::int k, (select count(*) from public.question_sources)::int s, (select count(*) from public.question_bank_counts)::int c");
     await h.exec(readFileSync(path.join(MIGRATIONS_DIR, MIGRATION), "utf8"));
     await h.exec(readFileSync(path.join(MIGRATIONS_DIR, MIGRATION), "utf8"));
+    // Later migrations replace some 0010 signatures (0012: start_exam_attempt,
+    // search_all, _exam_pick). Re-running 0010 alone re-creates the old ones,
+    // so re-apply the rest of the chain in order — it must converge.
+    for (const f of h.migrations.filter((m) => m > MIGRATION)) {
+      await h.exec(readFileSync(path.join(MIGRATIONS_DIR, f), "utf8"));
+    }
+    const overloads = await h.sql(
+      `select proname, count(*)::int n from pg_proc
+        where pronamespace = 'public'::regnamespace and proname in ('start_exam_attempt', 'search_all', '_exam_pick')
+        group by proname order by proname`);
+    expect(overloads.every((r) => r.n === 1)).toBe(true);
     const after = await h.sql("select (select count(*) from public.questions)::int q, (select count(*) from public.question_keys)::int k, (select count(*) from public.question_sources)::int s, (select count(*) from public.question_bank_counts)::int c");
     expect(after).toEqual(before);
     const [{ n: checks }] = await h.sql("select count(*)::int n from pg_constraint where conrelid = 'public.notifications'::regclass and contype = 'c'");
@@ -1361,10 +1387,17 @@ describe("POST /api/chat quota enforcement", () => {
     return {
       inserted,
       auth: { getUser: async () => ({ data: { user: uid ? { id: uid } : null } }) },
-      rpc: async (fn) => {
+      // rpc(name, { p_*: text | uuid }) as the user (ai_consume / ai_finish / ai_quota)
+      rpc: async (fn, args = {}) => {
         if (rpcError) return { data: null, error: rpcError };
-        const [row] = await h.asUser(uid, (tx) => tx.sql(`select public.${fn}() as r`));
-        return { data: row.r, error: null };
+        const keys = Object.keys(args);
+        const call = `public.${fn}(${keys.map((k, i) => `${k} => $${i + 1}${k === "p_ticket" ? "::uuid" : "::text"}`).join(", ")})`;
+        try {
+          const [row] = await h.asUser(uid, (tx) => tx.sql(`select ${call} as r`, keys.map((k) => args[k])));
+          return { data: row.r, error: null };
+        } catch (e) {
+          return { data: null, error: { code: e.code, message: e.message } };
+        }
       },
       from: (table) => ({ insert: async (row) => { inserted.push({ table, row }); return { error: null }; } }),
     };
@@ -1400,18 +1433,21 @@ describe("POST /api/chat quota enforcement", () => {
     expect(client.inserted).toEqual([]);            // nothing stored, model never reached
   });
 
-  it("within quota the request proceeds to the model (after storing the user message)", async () => {
+  it("within quota the request proceeds to the model (after ai_consume stored + charged the message)", async () => {
     const u = await newUser();
     const client = serverClient(u);
     globalThis.__jzFakeServer = client;
     await expect(call()).rejects.toThrow("model_contacted");
-    expect(client.inserted.map((x) => x.table)).toEqual(["chat_history"]);
+    expect(client.inserted).toEqual([]);                                  // no direct table writes (0013)
+    expect(await h.sql("select message_type, session_id from public.chat_history where user_id = $1", [u]))
+      .toEqual([{ message_type: "user", session_id: "s-1" }]);
+    expect((await h.asUser(u, (tx) => tx.sql("select public.ai_quota() as r")))[0].r.used).toBe(1);
   });
 
-  it("quota lookup failures: not deployed → allowed; other errors → 503 (neutral text)", async () => {
+  it("quota lookup failures fail closed: not deployed or other errors → 503 (neutral text), model never reached", async () => {
     const u = await newUser();
     globalThis.__jzFakeServer = serverClient(u, { rpcError: { code: "PGRST202", message: "Could not find the function" } });
-    await expect(call()).rejects.toThrow("model_contacted");
+    expect((await call()).status).toBe(503);
     globalThis.__jzFakeServer = serverClient(u, { rpcError: { code: "XX000", message: "boom" } });
     const res = await call({ cookie: "NEXT_LOCALE=en" });
     expect(res.status).toBe(503);

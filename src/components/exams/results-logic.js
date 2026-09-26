@@ -36,13 +36,24 @@ export function scoreBand(percent) {
   return "low";
 }
 
-/** Bar tone for an accuracy percentage. */
-export function accuracyTone(percent) {
-  if (percent === null || percent === undefined) return "neutral";
-  if (percent >= 75) return "green";
-  if (percent >= 50) return "gold";
+// One colour scale for every score / accuracy in the app (dashboard badges and
+// topics, history rings and bars, results, the hub rail): ≥ 75 green, ≥ 50 gold,
+// below that danger.
+export const STRONG_PERCENT = 75;
+export const PASS_PERCENT = 50;
+
+/** "green" | "gold" | "danger" for a percentage (0–100), "neutral" when there is none. */
+export function scoreTone(percent) {
+  if (percent === null || percent === undefined || percent === "") return "neutral";
+  const p = Number(percent);
+  if (!Number.isFinite(p)) return "neutral";
+  if (p >= STRONG_PERCENT) return "green";
+  if (p >= PASS_PERCENT) return "gold";
   return "danger";
 }
+
+/** ProgressRing has no danger tone: a weak score keeps the neutral gold ring. */
+export const ringTone = (percent) => (scoreTone(percent) === "green" ? "green" : "gold");
 
 const pct = (correct, total) => (total > 0 ? Math.round((1000 * correct) / total) / 10 : null);
 

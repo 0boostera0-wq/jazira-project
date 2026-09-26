@@ -1,4 +1,6 @@
 import Skeleton, { SkeletonText } from "@/components/ui/Skeleton";
+import { cn } from "@/components/ui/cn";
+import { SECTION_GAP } from "@/components/stages/parts";
 
 // Loading shells that mirror the curriculum layouts (header · content · rail).
 
@@ -40,7 +42,7 @@ export function HubSkeleton() {
   return (
     <div aria-busy="true" className="animate-fade">
       <HeaderSkeleton controls />
-      <div className="mt-16 space-y-3">
+      <div className={cn(SECTION_GAP, "space-y-3")}>
         <Skeleton className="h-3.5 w-24" />
         <Skeleton className="h-8 w-72" />
       </div>

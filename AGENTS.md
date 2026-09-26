@@ -39,7 +39,7 @@ public/images             50 text-free SVG illustrations (see src/lib/assets.js)
 ## Commands
 
 ```bash
-npm run dev            # http://localhost:3000
+npm run dev            # http://127.0.0.1:3000 (bound to loopback only)
 npm run build          # production build (runs ESLint)
 npm test               # unit tests (i18n parity, pure logic)
 npm run test:db        # database schema/RLS/RPC tests (no Docker needed)

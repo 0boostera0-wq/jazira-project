@@ -1,6 +1,8 @@
 import { getT } from "@/i18n/server";
 import { formatDate, formatNumber } from "@/i18n/format";
 import { SectionHeader } from "@/components/ui/Layout";
+import { cn } from "@/components/ui/cn";
+import { SECTION_GAP } from "@/components/stages/parts";
 import { SOURCES_CHECKED, YEAR, TERMS } from "@/lib/curriculum";
 import NodeHeader from "../NodeHeader";
 import GradeCards from "../GradeCards";
@@ -62,12 +64,12 @@ export default async function StageView({ slug, node, trail, locale }) {
         art={ART[node.id]}
       />
 
-      <section aria-labelledby="grades-title" className="mt-12 sm:mt-16">
+      <section aria-labelledby="grades-title" className={SECTION_GAP}>
         <SectionHeader id="grades-title" title={t("node.grades.title")} description={t("node.grades.lead")} />
         <GradeCards items={cards} className="mt-7" />
       </section>
 
-      <section aria-labelledby="matrix-title" className="mt-12 grid gap-6 sm:mt-16 xl:grid-cols-12 xl:gap-8">
+      <section aria-labelledby="matrix-title" className={cn(SECTION_GAP, "grid gap-6 xl:grid-cols-12 xl:gap-8")}>
         <div className="min-w-0 xl:col-span-8">
           <SectionHeader id="matrix-title" size="h3" title={t("node.matrix.title")} description={t("node.matrix.lead")} />
           <SubjectMatrix

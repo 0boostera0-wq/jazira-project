@@ -1,9 +1,9 @@
 import { CalendarDays } from "lucide-react";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
-import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
 import { formatNumber } from "@/i18n/format";
-import { PLATE } from "./parts";
+import HeroArt from "./HeroArt";
+import { PLATE, PLATE_RING } from "./parts";
 
 /**
  * Split hero for a school stage.
@@ -12,7 +12,8 @@ import { PLATE } from "./parts";
  *   art column   the stage illustration on a plate
  * Column split: 8/4 from `md` (the content column is only ~690–720px wide
  * between md and xl because of the sidebar), 7/5 from `xl`.
- * Phones: text and the primary action first; the illustration is dropped.
+ * Phones: text and the primary action first; the illustration is dropped
+ * (and only preloaded from md up — see HeroArt).
  *
  * facts: [{ value: number, label: string }] — values come from the catalog.
  */
@@ -51,8 +52,8 @@ export default function StageHero({ crumbs, crumbsLabel, year, eyebrow, title, l
         </div>
 
         <div className="animate-in hidden md:col-span-4 md:block xl:col-span-5">
-          <div className={cn("overflow-hidden rounded-xl ring-1 ring-inset ring-[#7A623A]/10 dark:ring-line/10", PLATE)}>
-            <Illustration id={illustration} priority />
+          <div className={cn("overflow-hidden rounded-xl", PLATE, PLATE_RING)}>
+            <HeroArt id={illustration} from="md" />
           </div>
         </div>
       </div>

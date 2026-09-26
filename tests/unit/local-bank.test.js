@@ -232,17 +232,38 @@ describe("route handlers (real bundled bank)", () => {
     expect(s.json).toMatchObject({ mode: "local", exam: "aptitude", limited: true, max_questions: LIMITS.guestMaxQuestions });
     expect(s.json.questions.length).toBeLessThanOrEqual(LIMITS.guestMaxQuestions);
     expect(JSON.stringify(s.json)).not.toMatch(/"answer"|explanation|correct_index/);
+    expect(typeof s.json.token).toBe("string");
     const answers = s.json.questions.map((q) => ({ key: q.key, selected_index: real.byKey.get(q.key).answer }));
-    const g = await post("grade", { answers });
+    const g = await post("grade", { answers, token: s.json.token });
     expect(g.status).toBe(200);
     expect(g.json.summary).toMatchObject({ correct: answers.length, total: answers.length, score_percent: 100 });
+  });
+
+  it("grades only a set /start handed out (no answer-key oracle)", async () => {
+    const real = await loadLocalBank();
+    const free = real.list.filter((q) => q.exam === "aptitude" && !q.premium);
+    if (free.length < 12) return;                                                  // bank not bundled yet
+    const s = await post("start", { exam: "aptitude", count: 5 });
+    const mine = s.json.questions.map((q) => ({ key: q.key, selected_index: null }));
+    // no token, a forged token, a token for another set
+    expect((await post("grade", { answers: mine })).json).toEqual({ error: "invalid_token" });
+    const [payload, sig] = s.json.token.split(".");
+    const forged = Buffer.from(JSON.stringify({ v: 1, k: free.map((q) => q.key), e: Date.now() + 1e6 })).toString("base64url");
+    expect((await post("grade", { answers: mine, token: `${forged}.${sig}` })).json).toEqual({ error: "invalid_token" });
+    expect((await post("grade", { answers: mine, token: `${payload}.${sig.slice(0, -2)}AA` })).json).toEqual({ error: "invalid_token" });
+    const other = free.find((q) => !mine.some((m) => m.key === q.key));
+    const g = await post("grade", { answers: [...mine, { key: other.key, selected_index: null }], token: s.json.token });
+    expect(g.status).toBe(400);
+    expect(g.json).toMatchObject({ error: "unknown_key" });
+    // a subset of the set is fine (e.g. the answered ones)
+    expect((await post("grade", { answers: mine.slice(0, 2), token: s.json.token })).status).toBe(200);
   });
 
   it("rejects cross-site, malformed and oversized requests", async () => {
     expect((await post("start", { exam: "aptitude", count: 5 }, { origin: "https://evil.example" })).status).toBe(403);
     expect((await post("start", "{nope")).json).toEqual({ error: "invalid_json" });
     expect((await post("start", { exam: "x", count: 5 })).json).toEqual({ error: "invalid_argument", field: "exam" });
-    expect((await post("grade", "x".repeat(20 * 1024))).status).toBe(413);
+    expect((await post("grade", "x".repeat(30 * 1024))).status).toBe(413);
     expect((await post("grade", { answers: [{ key: "zz-999", selected_index: 0 }] })).json).toMatchObject({ error: "unknown_key" });
   });
 });

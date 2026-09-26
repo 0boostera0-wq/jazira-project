@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
+import { PLATE, PLATE_RING } from "@/components/stages/parts";
 import { subjectGlyph } from "./SubjectIcon";
 import { Chevron } from "./parts";
 
@@ -12,7 +13,7 @@ const chip =
 
 function ArtBand({ art, className }) {
   return (
-    <div aria-hidden="true" className={cn("flex items-end justify-center overflow-hidden bg-[#F7F0E3] px-6 pt-5 ring-1 ring-inset ring-[#7A623A]/10 dark:bg-surface-2 dark:ring-line/10", className)}>
+    <div aria-hidden="true" className={cn("flex items-end justify-center overflow-hidden px-6 pt-5", PLATE, PLATE_RING, className)}>
       <Illustration id={art} className="h-full max-w-full object-contain" />
     </div>
   );
@@ -119,7 +120,7 @@ export function HighSchoolCard({ href, art, name, range, body, meta, common, yea
                           {c.label}
                         </Link>
                       ) : (
-                        <span className="text-ink-4">—</span>
+                        <span className="text-ink-3">—</span>
                       )}
                     </td>
                   ))}

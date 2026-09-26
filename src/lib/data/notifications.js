@@ -19,12 +19,6 @@ export const DEFAULT_NOTIFICATION_PREFERENCES = Object.freeze({
   likes: true, comments: true, follows: true, mentions: true, messages: true,
   exam_results: true, product_updates: true, email_digest: false,
 });
-/** Which preference switch controls each notification type. */
-export const NOTIFICATION_TYPE_PREFERENCE = Object.freeze({
-  like: "likes", repost: "likes", comment: "comments", follow: "follows", mention: "mentions",
-  message: "messages", message_request: "messages", request_accepted: "messages",
-  exam_result: "exam_results", achievement: "exam_results", system: "product_updates",
-});
 
 const MISSING = new Set(["PGRST202", "PGRST204", "PGRST205", "42P01", "42883", "42703"]);
 const SERVER_CODES = new Set(["not_authenticated", "invalid_argument", "forbidden"]);
@@ -63,8 +57,15 @@ async function context() {
   }
 }
 
+/**
+ * RPC / table row → UI notification. `actor` is null only for system
+ * notifications (no person behind them). An anonymous actor — content posted
+ * anonymously (0012: actor_id is null, data.anonymous) or a member in
+ * anonymous mode — comes back as { anonymous: true } with no id, name, handle
+ * or avatar, so the UI says "an anonymous member" instead of "someone".
+ */
 function normalize(row) {
-  const anonymous = Boolean(row.actor_anonymous);
+  const anonymous = Boolean(row.actor_anonymous) || row.data?.anonymous === true;
   return {
     id: row.id,
     type: row.type,
@@ -74,13 +75,13 @@ function normalize(row) {
     comment_id: row.comment_id ?? null,
     conversation_id: row.conversation_id ?? null,
     data: row.data || {},
-    actor: row.actor_id
+    actor: row.actor_id || anonymous
       ? {
-          id: row.actor_id,
+          id: anonymous ? null : row.actor_id,
           full_name: anonymous ? null : row.actor_full_name ?? null,
           username: anonymous ? null : row.actor_username ?? null,
           avatar_url: anonymous ? null : row.actor_avatar_url ?? null,
-          is_elite: Boolean(row.actor_is_elite),
+          is_elite: !anonymous && Boolean(row.actor_is_elite),
           show_elite_badge: row.actor_show_elite_badge !== false,
           anonymous,
         }
@@ -89,22 +90,44 @@ function normalize(row) {
   };
 }
 
+const ISO_RE = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}(:?\d{2})?)?$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * PostgREST `or` filter for the keyset (created_at, id) < (before, beforeId):
+ * rows sharing the cursor's timestamp (one trigger fan-out) are not skipped.
+ * Values are validated, so a tampered cursor cannot inject filter syntax.
+ */
+function keysetFilter(before, beforeId) {
+  if (typeof before !== "string" || !ISO_RE.test(before)) return null;
+  if (typeof beforeId !== "string" || !UUID_RE.test(beforeId)) return `created_at.lt."${before}"`;
+  return `created_at.lt."${before}",and(created_at.eq."${before}",id.lt.${beforeId})`;
+}
+
 const cursorOf = (items, limit) => {
   const last = items[items.length - 1];
   return items.length === limit && last ? { before: last.created_at, beforeId: last.id } : null;
 };
 
 // Pre-0010 fallback: plain reads (RLS: own rows; public actor columns).
-async function listFromTables(supabase, userId, { limit, before }) {
-  let q = supabase
-    .from("notifications")
-    .select("id, type, read, created_at, post_id, comment_id, conversation_id, actor_id")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-    .order("id", { ascending: false })
-    .limit(limit);
-  if (before) q = q.lt("created_at", before);
-  const { data, error } = await q;
+const TABLE_COLUMNS = "id, type, read, created_at, post_id, comment_id, conversation_id, actor_id";
+
+async function listFromTables(supabase, userId, { limit, before, beforeId }) {
+  const keyset = keysetFilter(before, beforeId);
+  const page = (columns) => {
+    let q = supabase
+      .from("notifications")
+      .select(columns)
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
+      .limit(limit);
+    if (keyset) q = q.or(keyset);
+    return q;
+  };
+  // `data` (0010) carries { anonymous: true } for anonymous content (0012).
+  let { data, error } = await page(`${TABLE_COLUMNS}, data`);
+  if (error?.code === "42703" || error?.code === "PGRST204") ({ data, error } = await page(TABLE_COLUMNS));
   if (error) {
     if (isMissing(error)) return { items: [], nextCursor: null, available: false };
     throw toError(error);
@@ -125,7 +148,7 @@ async function listFromTables(supabase, userId, { limit, before }) {
       actor_avatar_url: p?.avatar_url,
       actor_is_elite: p?.is_elite,
       actor_show_elite_badge: p?.show_elite_badge,
-      actor_anonymous: p?.anonymous_community,
+      actor_anonymous: Boolean(p?.anonymous_community) || r.data?.anonymous === true,
     });
   });
   return { items, nextCursor: cursorOf(items, limit), available: true };
@@ -141,7 +164,7 @@ export async function listNotifications({ limit = 20, before = null, beforeId = 
   if (!supabase || !userId) return { items: [], nextCursor: null, available: Boolean(supabase) };
   const { data, error } = await supabase.rpc("get_notifications", { p_limit: limit, p_before: before, p_before_id: beforeId });
   if (error) {
-    if (isMissing(error)) return listFromTables(supabase, userId, { limit, before });
+    if (isMissing(error)) return listFromTables(supabase, userId, { limit, before, beforeId });
     throw toError(error);
   }
   const items = (data || []).map(normalize);

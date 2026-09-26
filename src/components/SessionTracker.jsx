@@ -12,9 +12,15 @@ import { parseDevice } from "@/lib/device";
 //
 // Honest limitation: a browser refresh token cannot be revoked remotely from the
 // client. So remote sign-out is enforced here by detecting `revoked_at` and
-// calling signOut() locally (within ~60s or on tab focus). On revoke we also
-// rotate the local session id, so the next login is a clean, non-revoked session
-// and the logout survives reloads.
+// calling signOut() locally (within ~60s while the tab is visible, or as soon
+// as it becomes visible again). On revoke we also rotate the local session id,
+// so the next login is a clean, non-revoked session and the logout survives
+// reloads. This is cooperative: it is NOT a security control against a device
+// that doesn't run this code — server-side revocation of the auth session is
+// required for that (see docs/SECURITY.md).
+//
+// Background tabs make no requests: the heartbeat skips while
+// document.visibilityState !== "visible".
 const SID_KEY = "jazira_session_id_v1";
 
 function getSid() {
@@ -109,11 +115,12 @@ export default function SessionTracker() {
       } catch {}
     };
 
+    const visible = () => document.visibilityState === "visible";
     register();
-    timer = setInterval(() => check(false), 60000);
-    const onFocus = () => check(false);
-    window.addEventListener("focus", onFocus);
-    return () => { cancelled = true; clearInterval(timer); window.removeEventListener("focus", onFocus); };
+    timer = setInterval(() => { if (visible()) check(false); }, 60000);
+    const onVisible = () => { if (visible()) check(false); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => { cancelled = true; clearInterval(timer); document.removeEventListener("visibilitychange", onVisible); };
   }, [isSignedIn, userId, locale]);
 
   return null;

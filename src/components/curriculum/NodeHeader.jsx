@@ -1,6 +1,8 @@
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
+import HeroArt from "@/components/stages/HeroArt";
+import { PLATE, PLATE_RING } from "@/components/stages/parts";
 import { Facts, YearChip } from "./parts";
 
 /** Breadcrumbs · school-year chip (full width). */
@@ -17,7 +19,8 @@ export function HeaderTopRow({ crumbs, crumbsLabel, year, className }) {
  * Header for every curriculum page (server-safe; all copy arrives as props).
  *   top row     breadcrumbs · school-year chip
  *   text        eyebrow · h1 · lead · children (search, switchers) · facts
- *   art         optional stage illustration on a cream plate (md+ only)
+ *   art         optional stage illustration on a cream plate (md+ only; with
+ *               artPriority it is preloaded for md+ screens only, see HeroArt)
  * The content column is ~690px at 1024 (the app sidebar), so the split is
  * 8/4 from md and 7/5 from xl. Phones get the text and controls only.
  */
@@ -52,8 +55,8 @@ export default function NodeHeader({
 
         {art && (
           <div aria-hidden="true" className="animate-in hidden md:col-span-4 md:block xl:col-span-5">
-            <div className="overflow-hidden rounded-xl bg-[#F7F0E3] ring-1 ring-inset ring-[#7A623A]/10 dark:bg-surface-2 dark:ring-line/10">
-              <Illustration id={art} priority={artPriority} />
+            <div className={cn("overflow-hidden rounded-xl", PLATE, PLATE_RING)}>
+              {artPriority ? <HeroArt id={art} from="md" /> : <Illustration id={art} />}
             </div>
           </div>
         )}

@@ -7,6 +7,7 @@ import { useLocale, useT } from "@/i18n/client";
 import { formatClock, formatDate, formatNumber, formatPercent } from "@/i18n/format";
 import { getExamStats, listAttempts } from "@/lib/data/exams";
 import { SECTIONS } from "@/lib/exams/catalog";
+import Alert from "@/components/ui/Alert";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import EmptyState from "@/components/ui/EmptyState";
@@ -17,42 +18,29 @@ import Tabs from "@/components/ui/Tabs";
 import { cn } from "@/components/ui/cn";
 import { builderHref } from "./builder-logic";
 import { sectionLabel, signInHref, topicLabel } from "./labels";
-import { accuracyTone } from "./results-logic";
+import { ringTone, scoreTone } from "./results-logic";
 import Sparkline from "./Sparkline";
 import { HistoryBodySkeleton } from "./skeletons";
-import { dailySeries, hasStats, rankTopics, sortSections, windowDelta } from "./stats-logic";
+import { dailySeries, hasStats, rankTopics, sortSections, topicAnalyticsLocked, windowDelta } from "./stats-logic";
 import { useTier } from "./useTier";
 
-/**
- * Product decision (aligned with the Elite plan copy on /subscriptions, which
- * lists "advanced performance analytics" as Elite-only): skill-level accuracy
- * and strengths / weak spots are shown to Elite members; everyone signed in
- * gets the KPIs, the accuracy trend and per-section accuracy. The database
- * does not gate get_exam_stats(), so flip this to false to open it to all.
- */
-export const ADVANCED_ANALYTICS_ELITE_ONLY = true;
-
 const PAGE = 20;
+const TREND_SIZE = { width: 600, height: 170, pad: 10 };
 const BAR = { green: "green", gold: "gold", danger: "danger", neutral: "ink" };
 const pctOrDash = (v, locale) => (v === null || v === undefined ? "—" : formatPercent(Number(v) / 100, locale, Number(v) % 1 ? 1 : 0));
 
-/**
- * `preview` ({ tier, stats, items }) injects data instead of loading it — for
- * visual QA of signed-in states only; production pages never pass it.
- */
-export default function HistoryView({ preview = null }) {
+export default function HistoryView() {
   const t = useT("exams");
   const path = usePathname();
-  const auth = useTier();
-  const { isLoaded, isSignedIn, tier } = preview ? { isLoaded: true, isSignedIn: true, tier: preview.tier } : auth;
-  const [stats, setStats] = useState(() => (preview ? { status: "ready", data: preview.stats } : { status: "loading" }));
-  const [list, setList] = useState(() => (preview ? { status: "ready", items: preview.items, nextCursor: null, more: "idle" } : { status: "loading", items: [], nextCursor: null, more: "idle" }));
+  const { isLoaded, isSignedIn, tier } = useTier();
+  const [stats, setStats] = useState({ status: "loading" });
+  const [list, setList] = useState({ status: "loading", items: [], nextCursor: null, more: "idle" });
   const [nonce, setNonce] = useState(0);
   const [tab, setTab] = useState("analytics");
 
   // Stats and the first page load independently: neither waits for the other.
   useEffect(() => {
-    if (!isSignedIn || preview) return;
+    if (!isSignedIn) return;
     let alive = true;
     setStats({ status: "loading" });
     getExamStats()
@@ -61,10 +49,10 @@ export default function HistoryView({ preview = null }) {
     return () => {
       alive = false;
     };
-  }, [isSignedIn, nonce, preview]);
+  }, [isSignedIn, nonce]);
 
   useEffect(() => {
-    if (!isSignedIn || preview) return;
+    if (!isSignedIn) return;
     let alive = true;
     setList({ status: "loading", items: [], nextCursor: null, more: "idle" });
     listAttempts({ limit: PAGE })
@@ -73,7 +61,7 @@ export default function HistoryView({ preview = null }) {
     return () => {
       alive = false;
     };
-  }, [isSignedIn, nonce, preview]);
+  }, [isSignedIn, nonce]);
 
   const loadMore = useCallback(async () => {
     if (!list.nextCursor || list.more === "loading") return;
@@ -100,17 +88,18 @@ export default function HistoryView({ preview = null }) {
     );
   }
 
+  const retry = () => setNonce((n) => n + 1);
   const unavailable = (stats.status === "unavailable" || stats.status === "error") && (list.status === "unavailable" || list.status === "error");
   if (unavailable) {
+    // Nothing could be loaded: a request failure (danger + retry); history not deployed yet: info.
+    const failed = stats.status === "error" || list.status === "error";
     return (
-      <div className="surface-flat mt-8">
-        <EmptyState
-          image="system.offline"
-          title={t("history.unavailable.title")}
-          description={t("history.unavailable.body")}
-          action={<Button onClick={() => setNonce((n) => n + 1)} iconStart={RotateCcw}>{t("history.unavailable.retry")}</Button>}
-        />
-      </div>
+      <Alert
+        tone={failed ? "danger" : "info"}
+        title={<AlertText title={t("history.unavailable.title")} body={t("history.unavailable.body")} />}
+        className="mt-8"
+        action={failed ? <Button size="sm" variant="secondary" onClick={retry} iconStart={RotateCcw}>{t("history.unavailable.retry")}</Button> : null}
+      />
     );
   }
 
@@ -128,7 +117,9 @@ export default function HistoryView({ preview = null }) {
     );
   }
 
-  const advancedLocked = ADVANCED_ANALYTICS_ELITE_ONLY && tier !== "elite";
+  // Everyone signed in gets the KPIs, the trend and per-section accuracy; skill
+  // accuracy and strengths / weak spots are Elite analytics (see topicAnalyticsLocked).
+  const locked = topicAnalyticsLocked(stats.status === "ready" ? stats.data : null, tier === "elite");
 
   return (
     <div className="mt-8">
@@ -152,12 +143,12 @@ export default function HistoryView({ preview = null }) {
         <div className="flex min-w-0 flex-col gap-6 xl:col-span-7">
           <div className={cn(tab === "attempts" && "max-lg:hidden")}><Trend t={t} stats={stats} /></div>
           <div className={cn(tab === "analytics" && "max-lg:hidden")}>
-            <AttemptsList t={t} list={list} onMore={loadMore} onRetry={() => setNonce((n) => n + 1)} />
+            <AttemptsList t={t} list={list} onMore={loadMore} onRetry={retry} />
           </div>
         </div>
         <div className={cn("flex min-w-0 flex-col gap-6 xl:col-span-5", tab === "attempts" && "max-lg:hidden")}>
           <SectionAccuracy t={t} stats={stats} />
-          {advancedLocked ? (
+          {locked ? (
             <PremiumLock
               title={t("history.advanced.title")}
               body={t("history.advanced.body")}
@@ -173,6 +164,16 @@ export default function HistoryView({ preview = null }) {
         </div>
       </div>
     </div>
+  );
+}
+
+/** Title + body in the Alert's full-opacity title line (ui/Alert dims children below AA for danger). */
+function AlertText({ title, body }) {
+  return (
+    <>
+      <span className="block">{title}</span>
+      <span className="mt-0.5 block font-normal">{body}</span>
+    </>
   );
 }
 
@@ -262,7 +263,7 @@ function Trend({ t, stats }) {
       </div>
       {hasData ? (
         <figure className="mt-5">
-          <Sparkline values={series.map((d) => d.accuracy)} label={t("history.trend.chart", { days: daysText })} className="flip-rtl h-auto w-full" connectGaps />
+          <Sparkline values={series.map((d) => d.accuracy)} label={t("history.trend.chart", { days: daysText })} size={TREND_SIZE} connectGaps />
           <figcaption className="t-caption mt-1.5 flex justify-between">
             <span>{t("history.trend.axisStart", { days: daysText })}</span>
             <span>{t("history.trend.axisEnd")}</span>
@@ -287,7 +288,7 @@ function Bars({ rows, label, value, locale }) {
               <span className="t-caption"> · {value(r)}</span>
             </span>
           </div>
-          <ProgressBar value={r.accuracy ?? 0} tone={BAR[accuracyTone(r.accuracy)]} size="sm" className="mt-1.5" label={`${label(r)} ${pctOrDash(r.accuracy, locale)}`} />
+          <ProgressBar value={r.accuracy ?? 0} tone={BAR[scoreTone(r.accuracy)]} size="sm" className="mt-1.5" label={`${label(r)} ${pctOrDash(r.accuracy, locale)}`} />
         </li>
       ))}
     </ul>
@@ -408,10 +409,15 @@ function AttemptsList({ t, list, onMore, onRetry }) {
     );
   }
   if (list.status !== "ready") {
+    const failed = list.status === "error";
     return (
       <Card id="attempts-title" title={t("history.list.title")}>
-        <p className="t-small mt-3 text-ink-3">{t("history.unavailable.body")}</p>
-        <Button size="sm" variant="secondary" className="mt-4" iconStart={RotateCcw} onClick={onRetry}>{t("history.unavailable.retry")}</Button>
+        <Alert
+          tone={failed ? "danger" : "info"}
+          className="mt-3"
+          title={<span className="font-normal">{t("history.unavailable.body")}</span>}
+          action={failed ? <Button size="sm" variant="secondary" iconStart={RotateCcw} onClick={onRetry}>{t("history.unavailable.retry")}</Button> : null}
+        />
       </Card>
     );
   }
@@ -422,7 +428,6 @@ function AttemptsList({ t, list, onMore, onRetry }) {
         {list.items.map((it) => {
           const pct = it.score_percent === null || it.score_percent === undefined ? null : Number(it.score_percent);
           const open = it.status === "in_progress" && Date.parse(it.expires_at) > now;
-          const tone = accuracyTone(pct);
           return (
             <li key={it.id} style={{ contentVisibility: "auto", containIntrinsicSize: "auto 76px" }}>
               <Link href={`/exams/attempt/${it.id}`} className="group flex items-center gap-3.5 rounded-md px-2 py-3 transition-colors hover:bg-surface-2">
@@ -431,7 +436,7 @@ function AttemptsList({ t, list, onMore, onRetry }) {
                     <Clock size={18} aria-hidden="true" />
                   </span>
                 ) : (
-                  <ProgressRing value={pct} size={48} stroke={4} tone={tone === "green" ? "green" : "gold"} className="shrink-0">
+                  <ProgressRing value={pct} size={48} stroke={4} tone={ringTone(pct)} className="shrink-0">
                     <span className="text-[0.75rem] font-bold text-ink tabular">{Math.round(pct)}</span>
                   </ProgressRing>
                 )}

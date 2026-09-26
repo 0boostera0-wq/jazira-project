@@ -16,7 +16,7 @@ const settings = {
   sections: {
     profile: { title: "Profile", desc: "Your name, photo, bio and private details." },
     account: { title: "Account & security", desc: "Sign-in method, password and connected devices." },
-    preferences: { title: "Preferences", desc: "Language, appearance, sounds and assistant suggestions." },
+    preferences: { title: "Preferences", desc: "Language, appearance and assistant suggestions." },
     notifications: { title: "Notifications", desc: "Choose which alerts reach you." },
     privacy: { title: "Privacy", desc: "How you appear in the community and who can message you." },
     subscription: { title: "Subscription", desc: "Your current plan and Elite benefits." },
@@ -191,7 +191,6 @@ const settings = {
     language: { title: "Interface language", desc: "The interface switches instantly; learning content stays in its original language." },
     theme: { title: "Appearance", desc: "Saved on this device.", light: "Light", dark: "Dark" },
     experience: { title: "Experience", desc: "Saved to your account and applied on your devices." },
-    sound: { title: "Sound effects", desc: "Short sounds in interactive activities. Turn them off to browse quietly." },
     suggestions: { title: "Jazira Assistant suggestions", desc: "Suggested questions to start a conversation with the assistant and on your dashboard." },
   },
 
@@ -204,7 +203,7 @@ const settings = {
     identity: { title: "Your community identity", desc: "How your name and photo appear next to what you post." },
     anonymous: {
       title: "Post as “Anonymous”",
-      desc: "Your posts and comments show as “Anonymous” with your photo hidden, and you won't appear in people search.",
+      desc: "New posts and comments show as “Anonymous” with your photo hidden, and you won't appear in people search or suggestions. It applies to what you post from now on: earlier posts keep how they were published, and you can still choose per post.",
     },
     eliteBadge: {
       title: "Show the Elite badge",

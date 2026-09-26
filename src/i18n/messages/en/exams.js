@@ -91,7 +91,7 @@ const exams = {
 
   // ── hub (/exams) ───────────────────────────────────────────────────────────
   hub: {
-    eyebrow: "Exam center",
+    eyebrow: "Exam centre",
     title: "Practise Aptitude and Achievement as if it were test day",
     lead: "Build a timed test from an original question bank, get your score instantly with an explanation for every answer, and see exactly where you're improving and what to review.",
     primary: "Choose your exam",
@@ -292,7 +292,8 @@ const exams = {
       fewer: "Only {questions} match these settings — your test will include what's available.",
       none: "No questions match these settings yet. Try another level or a mixed selection.",
     },
-    topicNote: "You picked “{topic}”. Practising a single skill isn't available yet, so questions will come from every {section} skill.",
+    topicNote: "Every question will come from “{topic}”, one skill of {section}.",
+    topicAll: "All {section} skills",
     start: "Start the test",
     starting: "Preparing your questions…",
     locks: {
@@ -420,13 +421,13 @@ const exams = {
     states: {
       noLocal: {
         title: "No practice test in this tab",
-        body: "Practice tests stay in the tab where you started them. Start a new one from the exam center.",
+        body: "Practice tests stay in the tab where you started them. Start a new one from the exam centre.",
         cta: "Start a test",
       },
       notFound: {
         title: "We couldn't find this exam",
         body: "The link may be wrong, or the exam belongs to another account.",
-        cta: "Back to the exam center",
+        cta: "Back to the exam centre",
       },
       signIn: {
         title: "Sign in to continue this exam",
@@ -437,7 +438,7 @@ const exams = {
         title: "We couldn't load the exam",
         body: "We can't reach the exam right now. Your saved answers won't be lost — please try again shortly.",
         retry: "Try again",
-        hub: "Exam center",
+        hub: "Exam centre",
       },
     },
   },
@@ -476,7 +477,7 @@ const exams = {
       retryHint: "A new test focused on {section}",
       retryMixed: "A new test in the sections you missed",
       newExam: "New test",
-      hub: "Exam center",
+      hub: "Exam centre",
       history: "My exam history",
     },
     topics: {

@@ -1,15 +1,16 @@
-import { ArrowLeft, Hash } from "lucide-react";
+import { Hash } from "lucide-react";
 import { getT } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
-import { Link } from "@/i18n/navigation";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import IconTile from "@/components/ui/IconTile";
 import Feed from "./Feed";
 import GuidelinesCard from "./GuidelinesCard";
 import PopularTags from "./PopularTags";
 import TagCount from "./TagCount";
 import WhoToFollow from "./WhoToFollow";
-import { POST_KINDS, curatedFor } from "./topics";
+import { POST_KINDS, curatedFor, tagInline } from "./topics";
 import { textProps } from "./text";
+import { LG_UP } from "./breakpoints";
 
 /** /tags/[tag] — topic header with the real post count · feed for the tag (composer locked to it) · rail. */
 export default async function TagView({ tag, locale }) {
@@ -17,16 +18,20 @@ export default async function TagView({ tag, locale }) {
   const curated = curatedFor(tag);
   const kind = curated && POST_KINDS.includes(curated);
   const name = curated && locale !== "ar" ? t(kind ? `filters.kinds.${curated.id}` : `topics.${curated.id}`) : null;
-  const lead = curated ? t(`tag.about.${curated.id}`) : t("tag.lead", { tag: `#${tag}` });
+  // The tag sits inside the sentence bidi-isolated (tagInline → FSI…PDI), so
+  // "#math" in Arabic copy and "#لفظي" in English keep the "#" on the right side.
+  const lead = curated ? t(`tag.about.${curated.id}`) : t("tag.lead", { tag: tagInline(t, tag, locale) });
 
   return (
     <Messages ns={["community"]}>
-      <nav aria-label={t("tag.breadcrumb")} className="mb-4">
-        <Link href="/community" className="t-small inline-flex items-center gap-1.5 text-ink-3 hover:text-ink">
-          <ArrowLeft size={15} aria-hidden="true" className="flip-rtl" />
-          {t("page.name")}
-        </Link>
-      </nav>
+      <Breadcrumbs
+        label={t("tag.breadcrumb")}
+        className="mb-4"
+        items={[
+          { label: t("page.name"), href: "/community" },
+          { label: <bdi {...textProps(tag)}>#{tag}</bdi> },
+        ]}
+      />
       <header className="surface animate-in flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-7">
         <IconTile icon={Hash} size="lg" />
         <div className="min-w-0 flex-1">
@@ -47,10 +52,10 @@ export default async function TagView({ tag, locale }) {
         <aside aria-label={t("rail.label")} className="hidden lg:col-span-4 lg:block">
           <div className="space-y-5">
             <GuidelinesCard />
-            <WhoToFollow />
+            <WhoToFollow gate={LG_UP} />
           </div>
           <div className="sticky top-[calc(var(--topbar-h)+1.5rem)] mt-5">
-            <PopularTags current={tag} limit={7} />
+            <PopularTags current={tag} limit={7} gate={LG_UP} />
           </div>
         </aside>
       </div>

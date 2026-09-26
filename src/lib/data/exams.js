@@ -109,8 +109,11 @@ function loadLocal(id) {
   return null;
 }
 
-const HTTP_CODES = { 400: "invalid_argument", 401: "not_authenticated", 403: "forbidden", 413: "invalid_argument",
+// 409 from /start: the database answers again → the caller retries in DB mode.
+const HTTP_CODES = { 400: "invalid_argument", 401: "not_authenticated", 403: "forbidden", 409: "unavailable", 413: "invalid_argument",
   422: "not_enough_questions", 429: "rate_limited", 503: "unavailable" };
+// /grade: a set older than a day after its deadline → closed; a missing / forged set → invalid.
+const BODY_CODES = { unknown_key: "invalid_argument", invalid_token: "invalid_argument", expired: "attempt_closed" };
 
 async function postLocal(path, body) {
   let res;
@@ -131,7 +134,7 @@ async function postLocal(path, body) {
     json = null;
   }
   if (!res.ok) {
-    const code = json?.error === "unknown_key" ? "invalid_argument" : HTTP_CODES[res.status] || "unknown";
+    const code = BODY_CODES[json?.error] || HTTP_CODES[res.status] || "unknown";
     throw dataError(code, json && json.field ? { field: json.field } : null);
   }
   return json;
@@ -148,6 +151,7 @@ function localAttemptSummary(att) {
     id: att.id,
     exam: att.exam,
     section: att.section,
+    topic: att.topic ?? null,
     difficulty: att.difficulty,
     status: att.status,
     question_count: att.questions.length,
@@ -164,10 +168,11 @@ function localAttemptSummary(att) {
   };
 }
 
-async function startLocal({ exam, section, difficulty, count, timeLimitSeconds }) {
+async function startLocal({ exam, section, topic, difficulty, count, timeLimitSeconds }) {
   const res = await postLocal("/api/exams/local/start", {
     exam,
     section: section ?? null,
+    ...(topic !== null && topic !== undefined ? { topic } : {}),
     difficulty: difficulty ?? null,
     count,
     ...(timeLimitSeconds ? { time_limit_seconds: timeLimitSeconds } : {}),
@@ -176,6 +181,7 @@ async function startLocal({ exam, section, difficulty, count, timeLimitSeconds }
     id: newLocalId(),
     exam: res.exam,
     section: res.section,
+    topic: res.topic ?? null,
     difficulty: res.difficulty,
     status: "in_progress",
     started_at: res.started_at,
@@ -184,6 +190,11 @@ async function startLocal({ exam, section, difficulty, count, timeLimitSeconds }
     questions: res.questions,
     answers: {},
     result: null,
+    // the signed question set: /grade only grades what /start handed out
+    token: typeof res.token === "string" ? res.token : null,
+    // server clock − device clock: every deadline below is judged in server
+    // time (DATA_API.md: trust expires_at vs server_now, not the device clock)
+    offset: clockOffset(res.started_at),
   };
   storeLocal(att);
   return {
@@ -192,6 +203,7 @@ async function startLocal({ exam, section, difficulty, count, timeLimitSeconds }
     status: "in_progress",
     exam: res.exam,
     section: res.section,
+    topic: res.topic ?? null,
     difficulty: res.difficulty,
     question_count: res.question_count,
     requested_count: res.requested_count,
@@ -205,8 +217,14 @@ async function startLocal({ exam, section, difficulty, count, timeLimitSeconds }
   };
 }
 
-const secondsLeft = (expiresAt) => Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 1000));
-const isPastGrace = (att) => Date.now() > new Date(att.expires_at).getTime() + GRACE_MS;
+function clockOffset(serverIso) {
+  const t = Date.parse(serverIso);
+  return Number.isFinite(t) ? t - Date.now() : 0;
+}
+/** "Now" for a local attempt, in the server's clock (a skewed device clock never closes or stretches it). */
+export const localNow = (att) => Date.now() + (Number.isFinite(att?.offset) ? att.offset : 0);
+const secondsLeft = (att) => Math.max(0, Math.ceil((new Date(att.expires_at).getTime() - localNow(att)) / 1000));
+const isPastGrace = (att) => localNow(att) > new Date(att.expires_at).getTime() + GRACE_MS;
 
 function applyLocalAnswer(att, position, sel, timeSpent, flagged, { keepSelection = false } = {}) {
   const q = att.questions.find((x) => x.position === position);
@@ -237,8 +255,9 @@ async function submitLocal(att, answers) {
   }
   const graded = await postLocal("/api/exams/local/grade", {
     answers: att.questions.map((q) => ({ key: q.key, selected_index: att.answers[q.position]?.selected_index ?? null })),
+    ...(att.token ? { token: att.token } : {}),
   });
-  const now = new Date();
+  const now = new Date(localNow(att));
   const items = graded.items.map((it, i) => {
     const q = att.questions[i];
     const a = att.answers[q.position] || { flagged: false, time_spent_seconds: 0 };
@@ -272,26 +291,33 @@ async function submitLocal(att, answers) {
 
 /**
  * Start an attempt.
- * @param {{ exam: "aptitude"|"achievement", section?: string|null, difficulty?: 1|2|3|null,
- *           count?: number, timeLimitSeconds?: number|null }} config
- * @returns {Promise<object>} { mode, attempt_id, status, exam, section, difficulty, question_count,
- *   requested_count, started_at, expires_at, time_limit_seconds, server_now, questions[] }
+ * @param {{ exam: "aptitude"|"achievement", section?: string|null, topic?: string|null,
+ *           difficulty?: 1|2|3|null, count?: number, timeLimitSeconds?: number|null }} config
+ *   topic: a topic slug of the section (catalog SECTIONS[section].topics). Without a
+ *   section the database / local API infer the one section of the exam that has it;
+ *   an unknown topic → DataError invalid_argument { field: "topic" }.
+ * @returns {Promise<object>} { mode, attempt_id, status, exam, section, topic, difficulty,
+ *   question_count, requested_count, started_at, expires_at, time_limit_seconds, server_now, questions[] }
  */
-export async function startExam({ exam, section = null, difficulty = null, count = 10, timeLimitSeconds = null } = {}) {
+export async function startExam({ exam, section = null, topic = null, difficulty = null, count = 10, timeLimitSeconds = null } = {}) {
   const { supabase, signedIn } = await dbContext();
   if (supabase && signedIn) {
-    const { data, error } = await supabase.rpc("start_exam_attempt", {
+    const args = {
       p_exam: exam,
       p_section: section,
       p_difficulty: difficulty,
       p_count: count,
       p_time_limit_seconds: timeLimitSeconds,
-    });
-    if (!error) return { ...data, mode: "db", limited: false };
+    };
+    // Sent only when set, so an unfiltered start also works against a
+    // database that predates 0012 (no p_topic parameter yet).
+    if (topic !== null && topic !== undefined) args.p_topic = topic;
+    const { data, error } = await supabase.rpc("start_exam_attempt", args);
+    if (!error) return { topic: null, ...data, mode: "db", limited: false };
     if (!isMissing(error) && !isDown(error)) throw toExamError(error);
     // RPCs not deployed / database unreachable → honest local practice
   }
-  return startLocal({ exam, section, difficulty, count, timeLimitSeconds });
+  return startLocal({ exam, section, topic, difficulty, count, timeLimitSeconds });
 }
 
 /**
@@ -308,7 +334,7 @@ export async function saveAnswer(attemptId, position, selectedIndex, { timeSpent
     if (att.status !== "in_progress" || isPastGrace(att)) throw dataError("attempt_closed", { status: att.status });
     const a = applyLocalAnswer(att, position, selectedIndex, timeSpentSeconds, flagged);
     storeLocal(att);
-    return { mode: "local", attempt_id: attemptId, position, ...a, saved_at: new Date().toISOString(), seconds_remaining: secondsLeft(att.expires_at) };
+    return { mode: "local", attempt_id: attemptId, position, ...a, saved_at: new Date(localNow(att)).toISOString(), seconds_remaining: secondsLeft(att) };
   }
   const { supabase } = await dbContext();
   if (!supabase) throw dataError("unavailable");
@@ -365,8 +391,8 @@ export async function getAttempt(attemptId) {
         flagged: att.answers[q.position]?.flagged ?? false,
         time_spent_seconds: att.answers[q.position]?.time_spent_seconds ?? 0,
       })),
-      seconds_remaining: secondsLeft(att.expires_at),
-      server_now: new Date().toISOString(),
+      seconds_remaining: secondsLeft(att),
+      server_now: new Date(localNow(att)).toISOString(),
     };
   }
   const { supabase } = await dbContext();
@@ -395,7 +421,12 @@ export async function listAttempts({ before = null, beforeId = null, limit = 20 
   return { mode: "db", items, nextCursor: items.length === limit && last ? { before: last.started_at, beforeId: last.id } : null };
 }
 
-/** Own analytics (see DATA_API.md). Local mode → { mode: "local" } (no stats are kept). */
+/**
+ * Own analytics (see DATA_API.md). Local mode → { mode: "local" } (no stats are kept).
+ * Non-premium members get the basic block; the advanced keys (by_topic,
+ * best_topics, weakest_topics) come back empty and are listed in `locked`
+ * (always an array: [] for premium members and for pre-0012 databases).
+ */
 export async function getExamStats() {
   const { supabase, signedIn } = await dbContext();
   if (!supabase || !signedIn) return { mode: "local" };
@@ -404,7 +435,7 @@ export async function getExamStats() {
     if (isMissing(error)) return { mode: "local" };
     throw toExamError(error);
   }
-  return { ...data, mode: "db" };
+  return { ...data, locked: Array.isArray(data?.locked) ? data.locked : [], mode: "db" };
 }
 
 /** Public question-bank counts (works signed out). Unavailable → { mode: "local", available: false }. */

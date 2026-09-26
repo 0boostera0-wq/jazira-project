@@ -2,21 +2,31 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useRef, useState } from "react";
-import { Maximize2, X } from "lucide-react";
+import { ImageOff, Maximize2, X } from "lucide-react";
 import { useT } from "@/i18n/client";
 import Dialog from "@/components/ui/Dialog";
 import { cn } from "@/components/ui/cn";
 import { mediaAspect } from "./model";
+import { isTrustedMediaUrl } from "./mediaUrl";
 
 /**
  * Post media in a box sized from the dimensions encoded at upload time, so
  * nothing jumps while it loads. Images lazy-load and open full size; videos
- * only fetch metadata once they are near the viewport.
+ * only fetch metadata once they are near the viewport. Only this project's
+ * public Storage objects are loaded (isTrustedMediaUrl), never with a Referer.
  */
 export default function MediaView({ media, label, className }) {
   const t = useT("community");
   const [open, setOpen] = useState(false);
   if (!media?.url) return null;
+  if (!isTrustedMediaUrl(media.url)) {
+    return (
+      <p className={cn("t-small flex items-center gap-2 rounded-md bg-surface-2 px-3.5 py-3 text-ink-3", className)}>
+        <ImageOff size={16} aria-hidden="true" className="shrink-0" />
+        {t("post.mediaBlocked")}
+      </p>
+    );
+  }
   const ratio = mediaAspect(media.dims, media.type);
   const w = media.dims?.width || (media.type === "video" ? 1280 : 1200);
   const h = media.dims?.height || Math.round(w / ratio);
@@ -45,6 +55,7 @@ export default function MediaView({ media, label, className }) {
           height={h}
           loading="lazy"
           decoding="async"
+          referrerPolicy="no-referrer"
           className="h-full w-full object-contain"
         />
         <span aria-hidden="true" className="absolute bottom-2.5 end-2.5 grid h-8 w-8 place-items-center rounded-full bg-[rgb(20_15_8/0.55)] text-white opacity-0 transition-opacity duration-fast group-hover:opacity-100 group-focus-visible:opacity-100">
@@ -54,7 +65,7 @@ export default function MediaView({ media, label, className }) {
       {open && (
         <Dialog open bare size="xl" onClose={() => setOpen(false)}>
           <div className="relative flex items-center justify-center p-2 sm:p-4">
-            <img src={media.url} alt={label || ""} width={w} height={h} className="max-h-[82dvh] w-auto rounded-md object-contain" />
+            <img src={media.url} alt={label || ""} width={w} height={h} referrerPolicy="no-referrer" className="max-h-[82dvh] w-auto rounded-md object-contain" />
             <button
               type="button"
               onClick={() => setOpen(false)}

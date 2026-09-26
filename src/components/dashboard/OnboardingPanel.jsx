@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import Illustration from "@/components/ui/Illustration";
 import { ProgressBar } from "@/components/ui/Progress";
 import { cn } from "@/components/ui/cn";
+import { PLATE } from "@/components/stages/parts";
 import { useDashboard, useResource } from "./DashboardProvider";
 import { QUICK_PRACTICE_QUESTIONS, onboardingSteps } from "./model";
 
@@ -88,7 +89,7 @@ export default function OnboardingPanel() {
         </ol>
       </div>
       {/* Phones: a compact row (art beside the text); md+: a centred column beside the checklist. */}
-      <div className="flex items-center gap-4 rounded-md bg-[#F7F0E3] p-4 dark:bg-surface-2 md:flex-col md:justify-center md:gap-0 md:px-5 md:py-6 md:text-center">
+      <div className={cn("flex items-center gap-4 rounded-md p-4 md:flex-col md:justify-center md:gap-0 md:px-5 md:py-6 md:text-center", PLATE)}>
         <div className="w-28 shrink-0 xs:w-32 md:w-full md:max-w-[15rem]">
           <Illustration id="landing.progress" />
         </div>

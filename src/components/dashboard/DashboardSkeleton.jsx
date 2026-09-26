@@ -1,4 +1,6 @@
 import Skeleton, { SkeletonText } from "@/components/ui/Skeleton";
+import { cn } from "@/components/ui/cn";
+import { PLATE } from "@/components/stages/parts";
 
 function PanelSkeleton({ children, className = "" }) {
   return (
@@ -25,7 +27,7 @@ export default function DashboardSkeleton() {
                 <Skeleton rounded="full" className="h-11 w-36" />
               </div>
             </div>
-            <div className="hidden bg-[#F7F0E3] sm:block dark:bg-surface-2" />
+            <div className={cn("hidden sm:block", PLATE)} />
           </div>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-line/10 bg-surface-2/40 px-5 py-4 sm:px-7">
             <div className="flex items-center gap-3.5">

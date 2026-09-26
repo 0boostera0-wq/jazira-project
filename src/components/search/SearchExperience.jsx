@@ -28,7 +28,7 @@ import {
 } from "./results";
 import {
   ALL_TAB_LIMITS, CURRICULUM_PAGE, REMOTE_LIMIT, TABS, buildPagesIndex, buildPracticeIndex, cleanQuery, clusterCurriculum, countLabel, groupByStage,
-  linkablePeople, parseTab, searchHref, searchKey, searchLocal, tabCounts,
+  hasMoreRows, linkablePeople, parseTab, searchHref, searchKey, searchLocal, tabCounts,
 } from "./model";
 
 // Pages beyond the sidebar that are worth jumping to (labels: nav.items.*).
@@ -46,6 +46,23 @@ const GROUP_ICONS = {
 };
 
 const IDLE_REMOTE = { status: "idle", data: null, query: "", code: null };
+const IDLE_MORE = { key: "", rows: [], loaded: 0, loading: false, error: false };
+
+// A query inside a sentence ("No results for “…”"): bidi-isolated (FSI … PDI)
+// so an Arabic query in English copy (or the reverse) keeps its punctuation.
+const isolate = (text) => `⁨${text}⁩`;
+
+/** Unique rows by key (a later page can repeat a row when results shift). */
+const uniqueBy = (rows, key) => {
+  const seen = new Set();
+  return rows.filter((r) => {
+    const k = r && key(r);
+    if (!k || seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+};
+const ROW_KEY = { people: (p) => p.id, posts: (p) => p.id, tags: (x) => x.tag, questions: (x) => x.id };
 
 /**
  * Warning with a retry. ui/Alert keeps its action in a side column, which
@@ -98,6 +115,7 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
   const [remote, setRemote] = useState(IDLE_REMOTE);
   const [retry, setRetry] = useState(0);
   const [currLimit, setCurrLimit] = useState(CURRICULUM_PAGE);
+  const [more, setMore] = useState(IDLE_MORE); // "show more" pages of one remote tab
   const recent = useRecentSearches();
 
   const inputRef = useRef(null);
@@ -246,16 +264,19 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
   const stale = loading && Boolean(remote.data);
   const shown = active && (fresh || stale) ? remote.data : null;
   const shownQuery = fresh ? q : remote.query;
-  const people = linkablePeople(shown?.people);
-  const posts = shown?.posts || [];
-  const tags = shown?.tags || [];
-  const questions = shown?.questions || [];
+  // Extra pages ("show more") belong to the query + tab they were loaded for.
+  const moreKey = `${q}|${tab}`;
+  const extra = (g) => (fresh && tab === g && more.key === moreKey ? more.rows : []);
+  const people = uniqueBy(linkablePeople([...(shown?.people || []), ...extra("people")]), ROW_KEY.people);
+  const posts = uniqueBy([...(shown?.posts || []), ...extra("posts")], ROW_KEY.posts);
+  const tags = uniqueBy([...(shown?.tags || []), ...extra("tags")], ROW_KEY.tags);
+  const questions = uniqueBy([...(shown?.questions || []), ...extra("questions")], ROW_KEY.questions);
   const counts = tabCounts({ curriculum: curriculumHits, practice: practiceHits }, fresh ? remote.data : null);
   // What is on screen (fresh or the previous query's rows while loading) — for "view all (n)".
   const shownCounts = tabCounts({ curriculum: curriculumHits, practice: practiceHits }, shown);
   const remoteSettled = !active || ((remote.status === "done" || remote.status === "unavailable" || remote.status === "error") && remote.query === q);
   const localSettled = curr.status !== "loading" && dq === q;
-  const remoteTotal = fresh ? counts.people.n + counts.posts.n + counts.tags.n + (remote.data?.questions?.length || 0) : 0;
+  const remoteTotal = fresh ? counts.people.n + counts.posts.n + counts.tags.n + (counts.questions.n - practiceHits.length) : 0;
   const localTotal = curriculumHits.length + practiceHits.length;
   const total = localTotal + remoteTotal;
   const currFailed = curr.status === "error";
@@ -534,7 +555,7 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
         icon={GROUP_ICONS.people}
         title={t("groups.people")}
         stale={stale}
-        {...(withViewAll && people.length > rows.length ? viewAll("people", countLabel(formatNumber(people.length, locale), shownCounts.people.capped)) : {})}
+        {...(withViewAll && people.length > rows.length ? viewAll("people", countLabel(formatNumber(shownCounts.people.n, locale), shownCounts.people.capped)) : {})}
       >
         <RowList className={cn(rows.length > 1 && "sm:grid sm:grid-cols-2 sm:gap-x-1 sm:divide-y-0")}>
           {rows.map((p) => (
@@ -555,7 +576,7 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
         icon={GROUP_ICONS.posts}
         title={t("groups.posts")}
         stale={stale}
-        {...(withViewAll && posts.length > rows.length ? viewAll("posts", countLabel(formatNumber(posts.length, locale), shownCounts.posts.capped)) : {})}
+        {...(withViewAll && posts.length > rows.length ? viewAll("posts", countLabel(formatNumber(shownCounts.posts.n, locale), shownCounts.posts.capped)) : {})}
       >
         <RowList>
           {rows.map((post) => (
@@ -577,7 +598,7 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
         title={t("groups.tags")}
         stale={stale}
         bare
-        {...(withViewAll && tags.length > rows.length ? viewAll("tags", countLabel(formatNumber(tags.length, locale), shownCounts.tags.capped)) : {})}
+        {...(withViewAll && tags.length > rows.length ? viewAll("tags", countLabel(formatNumber(shownCounts.tags.n, locale), shownCounts.tags.capped)) : {})}
       >
         <ul className="flex flex-wrap gap-2">
           {rows.map((tg) => (
@@ -600,8 +621,38 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
       </RetryAlert>
     ));
 
+  // Without the 0012 totals a tab can't page: say that only the first rows are shown.
   const cappedNote = (groups) =>
-    fresh && groups.some((g) => counts[g]?.capped) ? <p className="t-caption px-1">{t("results.capped", { count: REMOTE_LIMIT })}</p> : null;
+    fresh && !remote.data?.totals && groups.some((g) => counts[g]?.capped) ? <p className="t-caption px-1">{t("results.capped", { count: REMOTE_LIMIT })}</p> : null;
+
+  // "Show more" in a remote tab: the next page of that group only (search_all
+  // p_types + p_offset), appended below. Needs the per-group totals of 0012.
+  const moreGroup = tab === "people" || tab === "posts" || tab === "tags" || tab === "questions" ? tab : null;
+  const loadedRows = moreGroup && fresh ? (remote.data?.[moreGroup]?.length || 0) + (more.key === moreKey ? more.loaded : 0) : 0;
+  const canMore = Boolean(moreGroup && fresh && typeof api.searchAll === "function" && hasMoreRows(remote.data, moreGroup, loadedRows));
+  const loadMore = async () => {
+    if (!canMore || more.loading) return;
+    const key = moreKey;
+    const group = moreGroup;
+    const offset = loadedRows;
+    setMore((m) => (m.key === key ? { ...m, loading: true, error: false } : { ...IDLE_MORE, key, loading: true }));
+    try {
+      const page = await api.searchAll(q, { types: [group], limit: REMOTE_LIMIT, offset });
+      const rows = Array.isArray(page?.[group]) ? page[group] : [];
+      setMore((m) => (m.key !== key ? m : { key, rows: [...m.rows, ...rows], loaded: m.loaded + rows.length, loading: false, error: false }));
+    } catch (e) {
+      if (e?.code === "aborted") return;
+      setMore((m) => (m.key !== key ? m : { ...m, loading: false, error: true }));
+    }
+  };
+  const moreButton = canMore ? (
+    <div key="more" className="space-y-2">
+      {more.key === moreKey && more.error && <p role="alert" className="t-small px-1 text-danger">{t("results.moreError")}</p>}
+      <Button variant="secondary" block loading={more.key === moreKey && more.loading} onClick={loadMore}>
+        {t("results.remaining", { count: Math.max(1, Math.min(REMOTE_LIMIT, remote.data?.totalsCapped?.[moreGroup] ? REMOTE_LIMIT : (Number(remote.data?.totals?.[moreGroup]) || 0) - loadedRows)) })}
+      </Button>
+    </div>
+  ) : null;
 
   // ── zero states ────────────────────────────────────────────────────────────
   const suggestions = t.raw("idle.suggestions");
@@ -631,7 +682,7 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
   const zeroAll = (
     <div className="surface animate-fade px-5 py-8 text-center sm:px-8 sm:py-10">
       <Illustration id="system.not-found" className="mx-auto w-full max-w-[180px]" />
-      <h2 className="t-h3 mx-auto mt-4 max-w-md break-words">{t(remoteBlocked ? "empty.titleLocal" : "empty.title", { query: q })}</h2>
+      <h2 className="t-h3 mx-auto mt-4 max-w-md break-words">{t(remoteBlocked ? "empty.titleLocal" : "empty.title", { query: isolate(q) })}</h2>
       <p className="t-body mx-auto mt-2 max-w-md text-ink-3">{t("empty.body")}</p>
       {remoteBlocked && <div className="mx-auto mt-5 max-w-lg text-start">{remoteNotice}</div>}
       <div className="mx-auto mt-8 max-w-2xl space-y-7 border-t border-line/10 pt-7 text-start">
@@ -645,7 +696,7 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
     const elsewhere = TABS.filter((x) => x !== "all" && x !== name && counts[x]?.n > 0);
     return (
       <div className="surface animate-fade px-5 py-8 text-center sm:py-10">
-        <h2 className="t-h4 mx-auto max-w-md break-words">{t("empty.tabTitle", { group: t(`tabs.${name}`), query: q })}</h2>
+        <h2 className="t-h4 mx-auto max-w-md break-words">{t("empty.tabTitle", { group: t(`tabs.${name}`), query: isolate(q) })}</h2>
         <p className="t-small mx-auto mt-1.5 max-w-md text-ink-3">{elsewhere.length || pageHits.length ? t("empty.tabElsewhere") : t("empty.tabNone")}</p>
         <div className="mt-5 flex flex-wrap justify-center gap-2">
           {elsewhere.map((x) => (
@@ -707,6 +758,7 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
     panel = (
       <div className="space-y-7">
         {!remoteSettled || has ? body : remoteBlocked ? null : zeroTab(tab)}
+        {has && moreButton}
         {remoteNotice}
         {cappedNote(tab === "questions" ? ["questions"] : [tab])}
       </div>

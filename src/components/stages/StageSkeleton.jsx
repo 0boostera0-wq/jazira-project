@@ -1,4 +1,6 @@
 import Skeleton, { SkeletonText } from "@/components/ui/Skeleton";
+import { cn } from "@/components/ui/cn";
+import { SECTION_GAP } from "./parts";
 
 /**
  * Loading body for the stage pages — mirrors the real layout: breadcrumb row,
@@ -39,7 +41,7 @@ export default function StageSkeleton({ grades = 3 }) {
       </div>
 
       {/* grades */}
-      <div className="mt-16 sm:mt-24">
+      <div className={SECTION_GAP}>
         <Skeleton className="h-3.5 w-20" />
         <Skeleton className="mt-3 h-8 w-56" />
         <Skeleton className="mt-3 h-4 w-full max-w-lg" />
@@ -51,7 +53,7 @@ export default function StageSkeleton({ grades = 3 }) {
       </div>
 
       {/* subjects bento */}
-      <div className="mt-16 grid gap-4 sm:mt-24 xl:grid-cols-12 xl:gap-5">
+      <div className={cn(SECTION_GAP, "grid gap-4 xl:grid-cols-12 xl:gap-5")}>
         <Skeleton rounded="lg" className="h-64 xl:col-span-7 xl:h-80" />
         <Skeleton rounded="lg" className="h-64 xl:col-span-5 xl:h-80" />
       </div>

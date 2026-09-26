@@ -78,7 +78,11 @@ export function middleware(req) {
 }
 
 export const config = {
-  // Everything except API routes, the OAuth callback, Next internals and files
-  // with an extension (images, fonts, robots.txt, sitemap.xml, manifest…).
-  matcher: ["/((?!api|auth/callback|_next|_vercel|.*\\..*).*)"],
+  // Everything except API routes, the OAuth callback, Next internals and REAL
+  // static files (by extension: images, fonts, robots.txt, sitemap.xml, the
+  // manifest, PDFs…). A dot elsewhere in a path is not a file: excluding any
+  // path with a "." used to skip the auth gate for e.g. /en/exams/attempt/a.b.
+  matcher: [
+    "/((?!api|auth/callback|_next|_vercel|.*\\.(?:png|jpe?g|gif|webp|avif|svg|ico|txt|xml|json|webmanifest|pdf|js|mjs|css|map|woff2?|ttf|otf|mp4|webm|mp3)$).*)",
+  ],
 };

@@ -1,4 +1,6 @@
 import Skeleton, { SkeletonText } from "@/components/ui/Skeleton";
+import { cn } from "@/components/ui/cn";
+import { SECTION_GAP } from "@/components/stages/parts";
 
 // Loading bodies that mirror each exam route's final layout (no spinner-only
 // screens). Server-safe: no hooks.
@@ -31,7 +33,7 @@ export function HubSkeleton() {
   return (
     <div aria-busy="true" className="animate-fade">
       <HeroSkeleton />
-      <div className="mt-14 sm:mt-20">
+      <div className={SECTION_GAP}>
         <Skeleton className="h-3.5 w-36" />
         <Skeleton className="mt-3 h-8 w-64" />
         <div className="mt-7 grid gap-5 xl:grid-cols-2 xl:gap-6">
@@ -49,7 +51,7 @@ export function HubSkeleton() {
           ))}
         </div>
       </div>
-      <div className="mt-14 grid gap-8 sm:mt-20 xl:grid-cols-12 xl:gap-6">
+      <div className={cn(SECTION_GAP, "grid gap-8 xl:grid-cols-12 xl:gap-6")}>
         <Skeleton rounded="lg" className="h-56 xl:order-last xl:col-span-4 xl:h-72" />
         <div className="grid gap-4 sm:grid-cols-2 xl:col-span-8">
           {[0, 1, 2, 3].map((i) => <Skeleton key={i} rounded="lg" className="h-32" />)}
@@ -84,11 +86,11 @@ export function SectionPageSkeleton({ cards = 2 }) {
   return (
     <div aria-busy="true" className="animate-fade">
       <HeroSkeleton crumbs />
-      <div className="mt-12 grid gap-6 sm:mt-16 xl:grid-cols-12">
+      <div className={cn(SECTION_GAP, "grid gap-6 xl:grid-cols-12")}>
         <div className="xl:col-span-8"><BuilderSkeleton /></div>
         <Skeleton rounded="lg" className="h-64 xl:col-span-4 xl:h-96" />
       </div>
-      <div className="mt-14 grid gap-5 sm:mt-20 md:grid-cols-2">
+      <div className={cn(SECTION_GAP, "grid gap-5 md:grid-cols-2")}>
         {Array.from({ length: cards }, (_, i) => <Skeleton key={i} rounded="lg" className="h-80" />)}
       </div>
     </div>
@@ -120,6 +122,33 @@ export function RunnerSkeleton() {
         <div className="hidden lg:block">
           <Skeleton rounded="lg" className="h-96" />
         </div>
+      </div>
+    </div>
+  );
+}
+
+/** Mirrors ExamResults (score header · actions · review + rail) while its chunk loads. */
+export function ResultsSkeleton() {
+  return (
+    <div aria-busy="true" className="animate-fade">
+      <div className="surface overflow-hidden">
+        <div className="grid gap-6 p-5 sm:p-8 xl:grid-cols-12 xl:items-center xl:gap-8">
+          <div className="flex items-center gap-5 sm:gap-7 xl:col-span-7">
+            <Skeleton rounded="full" className="h-[116px] w-[116px] shrink-0" />
+            <div className="flex-1 space-y-2.5"><Skeleton className="h-3.5 w-24" /><Skeleton className="h-7 w-48" /><Skeleton className="h-3 w-40" /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:col-span-5 xl:grid-cols-2">
+            {[0, 1, 2, 3].map((i) => <Skeleton key={i} rounded="md" className="h-[68px]" />)}
+          </div>
+        </div>
+        <div className="flex gap-2 border-t border-line/10 px-5 py-4 sm:px-8">
+          <Skeleton rounded="full" className="h-11 w-40" />
+          <Skeleton rounded="full" className="h-11 w-32" />
+        </div>
+      </div>
+      <div className="mt-8 grid gap-6 xl:grid-cols-12 xl:gap-8">
+        <Skeleton rounded="lg" className="h-64 xl:order-2 xl:col-span-4" />
+        <Skeleton rounded="lg" className="h-96 xl:order-1 xl:col-span-8" />
       </div>
     </div>
   );

@@ -1,18 +1,19 @@
 'use client';
 
 // Auth ACTIONS (sign in / up / out, reset password, profile update) layered on
-// the single app-wide session owned by context/AuthProvider. There is no second
-// provider or auth subscription any more — `AuthProvider` below is kept only as
-// a pass-through so older imports keep working.
+// the single app-wide session owned by context/AuthProvider (the only auth
+// subscription).
+//
+// E-mail language: sign-up stores the page's locale in the user's metadata
+// (`locale`), and PreferencesProvider updates it when the language changes,
+// so the auth e-mail templates (supabase/templates) answer in Arabic or
+// English via {{ .Data.locale }}.
 
 import { useCallback } from 'react';
 import { getSupabase } from '@/lib/supabase-lazy';
 import { useAuthUser } from '@/context/AuthProvider';
+import { useLocale } from '@/i18n/client';
 import { genHandle } from '@/lib/profile';
-
-export function AuthProvider({ children }) {
-  return children;
-}
 
 // Where Supabase email links (confirm sign-up, reset password) land. The OAuth
 // callback exchanges the PKCE code for a session, then forwards to `next`.
@@ -23,6 +24,7 @@ function callbackUrl(nextPath) {
 export function useAuth() {
   const ctx = useAuthUser();
   const { user, profile, isLoaded, isSignedIn, refreshUser, signOut: ctxSignOut } = ctx;
+  const { locale } = useLocale();
 
   const signIn = useCallback(async (email, password) => {
     try {
@@ -50,7 +52,7 @@ export function useAuth() {
         password,
         options: {
           emailRedirectTo: callbackUrl(nextPath),
-          data: { full_name: fullName, username: handle, phone: phone || null },
+          data: { full_name: fullName, username: handle, phone: phone || null, locale: locale === 'en' ? 'en' : 'ar' },
         },
       });
       if (error) throw error;
@@ -64,7 +66,7 @@ export function useAuth() {
     } catch (err) {
       return { success: false, error: err.message, code: err.code };
     }
-  }, []);
+  }, [locale]);
 
   const signOut = useCallback(async () => {
     try {

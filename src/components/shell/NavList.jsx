@@ -24,7 +24,7 @@ export default function NavList({ onNavigate, dense = false, className }) {
         if (!items.length) return null;
         return (
           <div key={section.section} className={dense ? "mb-3" : "mb-5"}>
-            <p className="mb-1.5 px-3 text-xs font-medium text-ink-4">{t(`sections.${section.section}`)}</p>
+            <p className="mb-1.5 px-3 text-xs font-medium text-ink-3">{t(`sections.${section.section}`)}</p>
             <ul className="space-y-0.5">
               {items.map((it) => {
                 const Icon = NAV_ICONS[it.icon];
@@ -33,6 +33,7 @@ export default function NavList({ onNavigate, dense = false, className }) {
                   <li key={it.key}>
                     <Link
                       href={it.href}
+                      prefetch="intent"
                       onClick={onNavigate}
                       aria-current={active ? "page" : undefined}
                       className={cn(

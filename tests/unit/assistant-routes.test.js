@@ -166,29 +166,64 @@ describe("POST /api/chat input validation", () => {
   });
 });
 
-describe("POST /api/chat retries", () => {
-  const post = (body) =>
+
+// Migration 0013: the quota decision, the stored user message and the charge
+// are ONE database call (ai_consume); retries of an undelivered reply are
+// decided by the server's ledger (tests/db/hardening-0013.test.js), never by
+// chat rows the client could delete.
+describe("POST /api/chat quota contract (ai_consume / ai_finish)", () => {
+  const post = (body = { messages: [{ role: "user", content: "hi" }], sessionId: "s-1" }) =>
     chatPost(new Request("http://localhost/api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }));
   const saved = process.env.GEMINI_API_KEY;
   afterEach(() => {
     if (saved === undefined) delete process.env.GEMINI_API_KEY;
     else process.env.GEMINI_API_KEY = saved;
   });
-
-  it("re-asking the unanswered last message is neither charged nor stored again; a new message is", async () => {
-    process.env.GEMINI_API_KEY = "placeholder-not-a-real-key"; // the SDK is mocked and throws "model_contacted"
-    let last = { message_type: "user", content: "hi", created_at: new Date().toISOString() };
-    const sb = fakeClient({ respond: (calls) => (calls.some(([n]) => n === "maybeSingle") ? { data: last, error: null } : { data: [], error: null }) });
-    sb.rpc = vi.fn(async () => ({ data: { unlimited: false, limit: 5, used: 5, remaining: 0, resets_at: null }, error: null }));
+  const withRpc = (impl) => {
+    const sb = fakeClient();
+    sb.rpc = vi.fn(impl);
     globalThis.__jzAsstSb = sb;
+    return sb;
+  };
+  const inserts = (sb) => sb.log.filter((calls) => calls.some(([n]) => n === "insert"));
 
-    await expect(post({ messages: [{ role: "user", content: "hi" }], sessionId: "s-1" })).rejects.toThrow("model_contacted");
-    expect(sb.rpc).not.toHaveBeenCalled();
-    expect(sb.log.some((calls) => calls.some(([n]) => n === "insert"))).toBe(false);
+  it("a granted request (new or retry) reaches the model; the route never writes chat_history itself", async () => {
+    process.env.GEMINI_API_KEY = "placeholder-not-a-real-key"; // the SDK is mocked and throws "model_contacted"
+    for (const retry of [false, true]) {
+      const sb = withRpc(async () => ({ data: { ok: true, retry, ticket: "7b0e3f8c-1b1d-4c55-9a51-0e8f2b9b6f10" }, error: null }));
+      await expect(post()).rejects.toThrow("model_contacted");
+      expect(sb.rpc).toHaveBeenCalledWith("ai_consume", { p_session: "s-1", p_content: "hi" });
+      expect(inserts(sb)).toEqual([]);
+    }
+  });
 
-    last = { message_type: "assistant", content: "answer", created_at: new Date().toISOString() };
-    const res = await post({ messages: [{ role: "user", content: "hi" }], sessionId: "s-1" });
+  it("an exhausted quota → 429 with the quota headers, model never reached", async () => {
+    process.env.GEMINI_API_KEY = "placeholder-not-a-real-key";
+    const resets = new Date(Date.now() + 3600_000).toISOString();
+    withRpc(async () => ({ data: { ok: false, reason: "quota", quota: { unlimited: false, limit: 5, used: 5, remaining: 0, resets_at: resets } }, error: null }));
+    const res = await post();
     expect([res.status, res.headers.get("x-error-code")]).toEqual([429, "ai_quota_exhausted"]);
-    expect(sb.rpc).toHaveBeenCalledWith("ai_quota");
+    expect(res.headers.get("x-quota-limit")).toBe("5");
+    expect(res.headers.get("x-quota-remaining")).toBe("0");
+    expect(res.headers.get("x-quota-reset")).toBe(resets);
+  });
+
+  it("fails closed: no ai_consume() (not migrated) or a database error → 503; bad input → 400", async () => {
+    process.env.GEMINI_API_KEY = "placeholder-not-a-real-key";
+    const warn = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      for (const error of [{ code: "PGRST202", message: "Could not find the function" }, { code: "42883", message: "x" }, { code: "XX000", message: "boom" }]) {
+        const sb = withRpc(async () => ({ data: null, error }));
+        const res = await post();
+        expect([res.status, res.headers.get("x-error-code")]).toEqual([503, "ai_unavailable"]);
+        expect(inserts(sb)).toEqual([]);
+      }
+      withRpc(async () => ({ data: null, error: { code: "P0001", message: "invalid_argument" } }));
+      expect((await post()).status).toBe(400);
+      withRpc(async () => ({ data: { unexpected: true }, error: null }));
+      expect((await post()).status).toBe(503);
+    } finally {
+      warn.mockRestore();
+    }
   });
 });

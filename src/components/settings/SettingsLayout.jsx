@@ -44,14 +44,15 @@ const preload = (id) => { try { PRELOAD[id]?.(); } catch { /* offline */ } };
  *   desktop  split header · sticky section rail (start) · active section (end)
  *   phones   header + account + grouped section list; a section opens full
  *            width with a back link. The open section lives in ?section=…
- *            (history entries, deep links, back button).
+ *            (history entries, deep links, back button), read on the client
+ *            so the route itself prerenders (the page wraps this in Suspense).
  * `header` is the server-rendered title block.
  */
-export default function SettingsLayout({ header, initialSection = null }) {
+export default function SettingsLayout({ header }) {
   const t = useT("settings");
   const auth = useSettingsAuth();
   const params = useSearchParams();
-  const fromUrl = params ? sectionFrom(params.get("section")) : initialSection;
+  const fromUrl = params ? sectionFrom(params.get("section")) : null;
   const [section, setSection] = useState(fromUrl);
   const headingRef = useRef(null);
   const moved = useRef(false);
@@ -129,6 +130,19 @@ export default function SettingsLayout({ header, initialSection = null }) {
           </section>
         </div>
       )}
+    </div>
+  );
+}
+
+/** Suspense fallback of the page (prerendered HTML until ?section= is known). */
+export function SettingsFallback({ header }) {
+  return (
+    <div>
+      <div className="mb-6 flex flex-col gap-5 sm:mb-8 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
+        <div className="min-w-0 max-w-2xl">{header}</div>
+        <Skeleton rounded="lg" className="hidden h-[84px] w-[340px] shrink-0 lg:block" />
+      </div>
+      <LayoutSkeleton />
     </div>
   );
 }

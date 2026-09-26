@@ -4,6 +4,7 @@ import { cn } from "@/components/ui/cn";
 import { Link } from "@/i18n/navigation";
 import Button from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/Layout";
+import { SECTION_GAP } from "@/components/stages/parts";
 import { SOURCES_CHECKED, YEAR } from "@/lib/curriculum";
 import NodeHeader from "../NodeHeader";
 import OfficialChannels from "../OfficialChannels";
@@ -57,7 +58,7 @@ export default async function HighSchoolView({ slug, node, trail, locale }) {
       />
 
       {common && (
-        <section aria-labelledby="year-one-title" className="mt-12 sm:mt-16">
+        <section aria-labelledby="year-one-title" className={SECTION_GAP}>
           <div className="rounded-xl border border-line/15 bg-surface p-5 shadow-sm sm:p-7">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div className="max-w-2xl">
@@ -83,7 +84,7 @@ export default async function HighSchoolView({ slug, node, trail, locale }) {
       )}
 
       {tracks.length > 0 && (
-        <section aria-labelledby="tracks-title" className="mt-12 sm:mt-16">
+        <section aria-labelledby="tracks-title" className={SECTION_GAP}>
           <SectionHeader id="tracks-title" title={t("node.hs.tracks.title")} description={t("node.hs.tracks.lead")} />
           <ul className="mt-7 grid gap-4 md:grid-cols-2">
             {tracks.map((tr, i) => (
@@ -134,7 +135,7 @@ export default async function HighSchoolView({ slug, node, trail, locale }) {
         </section>
       )}
 
-      <section aria-labelledby="shared-title" className="mt-12 sm:mt-16">
+      <section aria-labelledby="shared-title" className={SECTION_GAP}>
         <SectionHeader id="shared-title" size="h3" title={t("node.hs.shared.title")} />
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:gap-5">
           {trackYears.map((g) => {

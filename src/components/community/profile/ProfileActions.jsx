@@ -22,7 +22,9 @@ const ReportDialog = dynamic(() => import("../dialogs").then((m) => m.ReportDial
 /**
  * Header actions. Yourself: edit profile (→ /settings) + copy link.
  * Others: follow (with notification prefs) · message (→ /chat?to=<id>, only
- * when they accept messages) · more (copy link, report, block / unblock).
+ * when they accept messages; /chat opens an existing conversation or asks
+ * before starting one — the link itself writes nothing) · more (copy link,
+ * report, block / unblock).
  */
 export default function ProfileActions({ profile, allowMessages = true, source, viewer: viewerOverride }) {
   const t = useT("profile");

@@ -1,8 +1,8 @@
+import { Suspense } from "react";
 import { setRequestLocale, getT } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
 import { buildMetadata } from "@/lib/seo";
-import SettingsLayout from "@/components/settings/SettingsLayout";
-import { sectionFrom } from "@/components/settings/model";
+import SettingsLayout, { SettingsFallback } from "@/components/settings/SettingsLayout";
 
 export async function generateMetadata({ params }) {
   return buildMetadata({ locale: params.locale, key: "settings", path: "/settings", noindex: true });
@@ -11,9 +11,11 @@ export async function generateMetadata({ params }) {
 // Private, auth-gated page. The title block renders on the server; the section
 // rail and each section are client islands that load their own data (profile
 // private columns via get_my_private_profile, set_avatar(null) to clear the
-// photo, sessions, social + notification switches, subscription). ?section=
-// selects the open section so deep links render the right panel immediately.
-export default async function SettingsPage({ params, searchParams }) {
+// photo, sessions, social + notification switches, subscription).
+// The open section (?section=) is read on the client (useSearchParams inside
+// this Suspense boundary), so the route prerenders instead of rendering per
+// request just to read the query string.
+export default async function SettingsPage({ params }) {
   setRequestLocale(params.locale);
   const t = await getT("settings");
   const header = (
@@ -26,7 +28,9 @@ export default async function SettingsPage({ params, searchParams }) {
 
   return (
     <Messages ns={["settings"]}>
-      <SettingsLayout header={header} initialSection={sectionFrom(searchParams?.section)} />
+      <Suspense fallback={<SettingsFallback header={header} />}>
+        <SettingsLayout header={header} />
+      </Suspense>
     </Messages>
   );
 }

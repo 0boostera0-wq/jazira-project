@@ -133,20 +133,44 @@ export function loadLocalBank() {
 const fail = (error, field, extra = {}) => ({ ok: false, error, field, ...extra });
 
 /**
+ * The section of `exam` that owns `topic` — a topic slug belongs to exactly one
+ * section per exam (same inference as start_exam_attempt). null when none or
+ * ambiguous.
+ */
+export function sectionOfTopic(exam, topic) {
+  if (typeof topic !== "string" || !hasOwn(EXAMS, exam)) return null;
+  const matches = EXAMS[exam].sections.filter((s) => hasOwn(SECTIONS, s) && SECTIONS[s].topics.includes(topic));
+  return matches.length === 1 ? matches[0] : null;
+}
+
+/**
  * Validate POST /api/exams/local/start.
- * body: { exam, section?, difficulty?, count, time_limit_seconds? }
- * `count` must be LIMITS.minQuestions..LIMITS.maxQuestions; it is then capped
- * at `maxQuestions` (guests: LIMITS.guestMaxQuestions) and `limited` says so.
+ * body: { exam, section?, topic?, difficulty?, count, time_limit_seconds? }
+ * `topic` must be one of the section's topics; without a section, the one
+ * section of the exam that has it is used. `count` must be
+ * LIMITS.minQuestions..LIMITS.maxQuestions; it is then capped at
+ * `maxQuestions` (guests: LIMITS.guestMaxQuestions) and `limited` says so.
+ * The parsed value carries `topic` only when one was requested.
  */
 export function parseStartBody(body, { maxQuestions = LIMITS.guestMaxQuestions } = {}) {
   if (!isPlainObject(body)) return fail("invalid_argument", "body");
-  const allowed = new Set(["exam", "section", "difficulty", "count", "time_limit_seconds"]);
+  const allowed = new Set(["exam", "section", "topic", "difficulty", "count", "time_limit_seconds"]);
   for (const k of Object.keys(body)) if (!allowed.has(k)) return fail("invalid_argument", k);
   const { exam } = body;
   if (typeof exam !== "string" || !hasOwn(EXAMS, exam)) return fail("invalid_argument", "exam");
-  const section = body.section ?? null;
+  let section = body.section ?? null;
   if (section !== null && (typeof section !== "string" || !hasOwn(SECTIONS, section) || SECTIONS[section].exam !== exam)) {
     return fail("invalid_argument", "section");
+  }
+  const topic = body.topic ?? null;
+  if (topic !== null) {
+    if (typeof topic !== "string") return fail("invalid_argument", "topic");
+    if (section === null) {
+      section = sectionOfTopic(exam, topic);
+      if (section === null) return fail("invalid_argument", "topic");
+    } else if (!SECTIONS[section].topics.includes(topic)) {
+      return fail("invalid_argument", "topic");
+    }
   }
   const difficulty = body.difficulty ?? null;
   if (difficulty !== null && !DIFFICULTIES.includes(difficulty)) return fail("invalid_argument", "difficulty");
@@ -157,20 +181,25 @@ export function parseStartBody(body, { maxQuestions = LIMITS.guestMaxQuestions }
   const capped = Math.min(count, maxQuestions);
   return {
     ok: true,
-    value: { exam, section, difficulty, count: capped, requested: count, time_limit_seconds: time, limited: capped < count },
+    value: {
+      exam, section, ...(topic !== null ? { topic } : {}), difficulty,
+      count: capped, requested: count, time_limit_seconds: time, limited: capped < count,
+    },
   };
 }
 
 /**
  * Validate POST /api/exams/local/grade.
- * body: { answers: [{ key, selected_index }] } — 1..100 unique keys that exist
- * in the bank (never premium); selected_index null (unanswered) or a valid
- * choice index.
+ * body: { answers: [{ key, selected_index }], token } — 1..100 unique keys that
+ * exist in the bank (never premium); selected_index null (unanswered) or a
+ * valid choice index. `token` (the signed set from /start) is verified by the
+ * route (src/lib/exams/local-token.js); only its shape is checked here.
  */
 export function parseGradeBody(body, bank) {
   if (!isPlainObject(body)) return fail("invalid_argument", "body");
-  for (const k of Object.keys(body)) if (k !== "answers") return fail("invalid_argument", k);
-  const { answers } = body;
+  for (const k of Object.keys(body)) if (k !== "answers" && k !== "token") return fail("invalid_argument", k);
+  const { answers, token = null } = body;
+  if (token !== null && (typeof token !== "string" || token.length > 8192)) return fail("invalid_argument", "token");
   if (!Array.isArray(answers) || answers.length === 0 || answers.length > LOCAL_MAX_ANSWERS) {
     return fail("invalid_argument", "answers");
   }
@@ -189,7 +218,7 @@ export function parseGradeBody(body, bank) {
     if (sel !== null && (!isInt(sel) || sel < 0 || sel >= q.choices.length)) return fail("invalid_argument", `answers[${i}].selected_index`);
     out.push({ key: a.key, selected_index: sel });
   }
-  return { ok: true, value: out };
+  return { ok: true, value: out, token };
 }
 
 // ── practice ────────────────────────────────────────────────────────────────
@@ -218,11 +247,12 @@ function cryptoRandom() {
 
 /**
  * Random practice set (without answers). Premium items are never served.
- * @returns {{ exam, section, difficulty, question_count, time_limit_seconds, questions }}
+ * @returns {{ exam, section, topic, difficulty, question_count, time_limit_seconds, questions }}
  */
-export function pickLocalQuestions(bank, { exam, section = null, difficulty = null, count, time_limit_seconds = null }, rng = cryptoRandom) {
+export function pickLocalQuestions(bank, { exam, section = null, topic = null, difficulty = null, count, time_limit_seconds = null }, rng = cryptoRandom) {
   const pool = bank.list.filter((q) => !q.premium && q.exam === exam
     && (section === null || q.section === section)
+    && (topic === null || q.topic === topic)
     && (difficulty === null || q.difficulty === difficulty));
   // partial Fisher–Yates: only the first `count` slots are shuffled
   const n = Math.min(count, pool.length);
@@ -235,6 +265,7 @@ export function pickLocalQuestions(bank, { exam, section = null, difficulty = nu
   return {
     exam,
     section,
+    topic,
     difficulty,
     question_count: picked.length,
     time_limit_seconds: time_limit_seconds ?? Math.min(Math.max(sum, MIN_TIME), MAX_TIME),
@@ -300,59 +331,8 @@ export function localBankCounts(bank) {
   return out;
 }
 
-// ── shared route helpers ────────────────────────────────────────────────────
-
-/** Mutating route guard: same-origin browser requests only. */
-export function isSameOrigin(req) {
-  const site = req.headers.get("sec-fetch-site");
-  if (site && site !== "same-origin" && site !== "none") return false;
-  const origin = req.headers.get("origin");
-  if (!origin) return true; // same-origin requests may omit Origin
-  try {
-    const host = new URL(origin).host;
-    return host === req.headers.get("host") || host === new URL(req.url).host;
-  } catch {
-    return false;
-  }
-}
-
-/** Read a JSON body with a size cap. → { ok, value } | { ok: false, status, error } */
-export async function readJsonBody(req, maxBytes = 32 * 1024) {
-  const declared = Number(req.headers.get("content-length") || 0);
-  if (declared > maxBytes) return { ok: false, status: 413, error: "payload_too_large" };
-  let text;
-  try {
-    text = await req.text();
-  } catch {
-    return { ok: false, status: 400, error: "invalid_json" };
-  }
-  if (text.length > maxBytes) return { ok: false, status: 413, error: "payload_too_large" };
-  try {
-    return { ok: true, value: JSON.parse(text) };
-  } catch {
-    return { ok: false, status: 400, error: "invalid_json" };
-  }
-}
-
-/**
- * Best-effort per-instance limiter (serverless instances don't share it —
- * it only blunts bursts). Returns true when the caller is over the limit.
- */
-export function createRateLimiter({ windowMs = 5 * 60_000, max = 60 } = {}) {
-  const hits = new Map();
-  return function limited(id) {
-    const now = Date.now();
-    const recent = (hits.get(id) || []).filter((t) => now - t < windowMs);
-    recent.push(now);
-    hits.set(id, recent);
-    if (hits.size > 5000) {
-      for (const [k, v] of hits) if (!v.length || now - v[v.length - 1] > windowMs) hits.delete(k);
-    }
-    return recent.length > max;
-  };
-}
-
-export function clientId(req) {
-  const fwd = req.headers.get("x-forwarded-for");
-  return (fwd && fwd.split(",")[0].trim()) || req.headers.get("x-real-ip") || "unknown";
-}
+// ── shared route helpers (kept here for existing imports) ─────────────────────
+// Same-origin guard and JSON body reader: src/lib/http-guards.js. Limiter:
+// src/lib/rate-limit.js (shared across instances via isRateLimited()).
+export { isSameOrigin, readJsonBody, clientIp as clientId } from "@/lib/http-guards";
+export { createRateLimiter } from "@/lib/rate-limit";

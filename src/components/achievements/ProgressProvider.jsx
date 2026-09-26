@@ -14,17 +14,14 @@ const ProgressContext = createContext(null);
  * (summary, streak, badges, next badges) and derives levels / badges from it.
  *
  * status: "loading" | "guest" | "ready" | "unavailable"
- * `preview` (optional) injects a raw progress object instead of loading —
- * used for visual QA of signed-in states; never fed with invented data in
- * production pages.
  */
-export default function ProgressProvider({ children, preview = null }) {
+export default function ProgressProvider({ children }) {
   const { isLoaded, isSignedIn, userId } = useAuthUser();
-  const [state, setState] = useState(() => (preview ? { status: "ready", raw: preview } : { status: "loading" }));
+  const [state, setState] = useState({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (preview || !isLoaded) return;
+    if (!isLoaded) return;
     if (!isSignedIn || !userId) {
       setState({ status: "guest" });
       return;
@@ -46,7 +43,7 @@ export default function ProgressProvider({ children, preview = null }) {
       }
     })();
     return () => { alive = false; };
-  }, [preview, isLoaded, isSignedIn, userId, attempt]);
+  }, [isLoaded, isSignedIn, userId, attempt]);
 
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { ArrowRight, Clock, LifeBuoy, Lock, RotateCcw, ShieldCheck, TriangleAlert, WifiOff } from "lucide-react";
 import { useT, useLocale } from "@/i18n/client";
 import { Link } from "@/i18n/navigation";
@@ -12,6 +12,17 @@ import { PAYMENT_PROVIDER } from "./plan";
 
 // Panel actions: 44px tap targets on phones, compact from sm up.
 const ACTION = "max-sm:h-11";
+const LINK = "text-gold-600 underline underline-offset-2";
+
+/**
+ * Render one translated sentence whose {slot} placeholders are React nodes, so
+ * each language keeps its own word order: "… agree to the {terms} and the {refund}."
+ */
+function withLinks(message, slots) {
+  return String(message || "").split(/\{(\w+)\}/).map((part, i) =>
+    i % 2 === 1 ? <Fragment key={i}>{slots[part] ?? `{${part}}`}</Fragment> : part
+  );
+}
 
 // Only ever navigate to an https URL returned by our own API.
 const isSafeCheckoutUrl = (u) => {
@@ -149,11 +160,10 @@ export function CheckoutPayView({ view, onPay }) {
       </p>
 
       <p className="t-caption mt-3.5 text-center">
-        {t("checkout.pay.agreeBefore")}
-        <Link href="/terms" className="text-gold-600 underline underline-offset-2">{t("checkout.pay.agreeTerms")}</Link>
-        {t("checkout.pay.agreeBetween")}
-        <Link href="/refund" className="text-gold-600 underline underline-offset-2">{t("checkout.pay.agreeRefund")}</Link>
-        {t("checkout.pay.agreeAfter")}
+        {withLinks(t("checkout.pay.agree"), {
+          terms: <Link href="/terms" className={LINK}>{t("checkout.pay.agreeTerms")}</Link>,
+          refund: <Link href="/refund" className={LINK}>{t("checkout.pay.agreeRefund")}</Link>,
+        })}
       </p>
       <p className="t-caption mt-2 flex items-center justify-center gap-1.5">
         <Lock size={13} aria-hidden="true" />

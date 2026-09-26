@@ -11,8 +11,10 @@ import {
 import {
   toRunnerSession, runnerReducer, summarize, answersPayload, keyAction, timerTone, mergeDrafts, twoColumnChoices, choiceDir, ltrRuns,
 } from "@/components/exams/runner-logic";
-import { itemStatus, reviewCounts, filterReview, scoreBand, accuracyTone, sortTopics, retryPlan, usedSeconds } from "@/components/exams/results-logic";
-import { riyadhDay, attemptsToday, lastNDays, dailySeries, sparkline, windowDelta, sortSections, rankTopics, hasStats } from "@/components/exams/stats-logic";
+import { itemStatus, reviewCounts, filterReview, scoreBand, scoreTone, ringTone, sortTopics, retryPlan, usedSeconds } from "@/components/exams/results-logic";
+import {
+  riyadhDay, attemptsToday, lastNDays, dailySeries, sparkline, windowDelta, sortSections, rankTopics, hasStats, topicAnalyticsLocked,
+} from "@/components/exams/stats-logic";
 import { createAutosave } from "@/components/exams/autosave";
 
 // ── bank ────────────────────────────────────────────────────────────────────
@@ -52,6 +54,11 @@ describe("bank counts", () => {
     expect(availableCount(b, { exam: "aptitude", difficulty: 1 })).toBe(9);
     expect(availableCount(b, { exam: "achievement" })).toBe(0);
     expect(availableCount(null, { exam: "aptitude" })).toBeNull();
+    // one skill (0012 topic practice); topic × difficulty isn't counted, so it stays unknown
+    expect(availableCount(b, { exam: "aptitude", section: "verbal", topic: "analogy" })).toBe(4);
+    expect(availableCount(b, { exam: "aptitude", section: "verbal", topic: "analogy", premium: true })).toBe(6);
+    expect(availableCount(b, { exam: "aptitude", section: "verbal", topic: "analogy", difficulty: 1 })).toBeNull();
+    expect(availableCount(b, { exam: "aptitude", section: "verbal", topic: "sentence-completion" })).toBe(0);
   });
 
   it("summarises bundled questions without premium items", () => {
@@ -141,7 +148,12 @@ describe("builder", () => {
 
   it("produces the startExam() config", () => {
     const s = initialBuilderState("achievement", params({ section: "physics", difficulty: "2" }));
-    expect(toStartConfig(s)).toEqual({ exam: "achievement", section: "physics", difficulty: 2, count: 10, timeLimitSeconds: 600 });
+    expect(toStartConfig(s)).toEqual({ exam: "achievement", section: "physics", topic: null, difficulty: 2, count: 10, timeLimitSeconds: 600 });
+    // a deep-linked skill is sent to startExam (topic practice, 0012) and can be cleared
+    const withTopic = initialBuilderState("achievement", params({ section: "physics", topic: "optics" }));
+    expect(toStartConfig(withTopic)).toMatchObject({ section: "physics", topic: "optics" });
+    expect(toStartConfig(builderReducer(withTopic, { type: "topic", value: null })).topic).toBeNull();
+    expect(builderReducer(withTopic, { type: "topic", value: "algebra" }).topic).toBeNull(); // not a physics skill
     const auto = builderReducer(s, { type: "timeMode", value: "auto" });
     expect(toStartConfig(auto).timeLimitSeconds).toBeNull();
     expect(estimateMinutes(25)).toBe(25);
@@ -178,6 +190,8 @@ describe("runner session", () => {
     expect(s.spent[1]).toBe(30);
     expect(s.current).toBe(2); // first unanswered
     expect(s.section).toBe("verbal");
+    expect(s.topic).toBeNull();
+    expect(toRunnerSession({ mode: "db", attempt_id: "T", exam: "aptitude", section: "verbal", topic: "analogy", questions: [q(1)], seconds_remaining: 60 }).topic).toBe("analogy");
   });
 
   it("rejects unusable payloads", () => {
@@ -361,6 +375,77 @@ describe("autosave queue", () => {
     await vi.advanceTimersByTimeAsync(50);
     expect(closed).toHaveBeenCalledTimes(1);
   });
+
+  it("drain() sends every pending answer on unmount, even after cancel()", async () => {
+    vi.useFakeTimers();
+    const sent = [];
+    const q2 = createAutosave({
+      save: (p) => new Promise((resolve) => setTimeout(() => resolve(sent.push(p)), 20)),
+      getPayload: (p) => ({ p }),
+      delay: 700,
+      isOnline: () => true,
+    });
+    q2.queue(1);
+    q2.queue(2);
+    q2.queue(3);
+    q2.drain(); // runner cleanup: drain, then cancel
+    q2.cancel();
+    await vi.advanceTimersByTimeAsync(100);
+    expect(sent.sort()).toEqual([1, 2, 3]);
+    expect(q2.pending()).toEqual([]);
+  });
+
+  it("drain() waits for the save in flight and never sends a position twice", async () => {
+    vi.useFakeTimers();
+    const sent = [];
+    const q2 = createAutosave({
+      save: (p) => new Promise((resolve) => setTimeout(() => resolve(sent.push(p)), 20)),
+      getPayload: (p) => ({ p }),
+      delay: 10,
+      isOnline: () => true,
+    });
+    q2.queue(1);
+    q2.queue(2);
+    q2.queue(3);
+    await vi.advanceTimersByTimeAsync(11); // the sequential flush has sent 1
+    q2.drain(); // "Leave": the loop is still running
+    await vi.advanceTimersByTimeAsync(200);
+    expect(sent.sort()).toEqual([1, 2, 3]);
+  });
+
+  it("drain() keeps failed answers pending", async () => {
+    vi.useFakeTimers();
+    const q2 = createAutosave({
+      save: async (p) => {
+        if (p === 2) throw Object.assign(new Error("x"), { code: "network" });
+      },
+      getPayload: () => null,
+      isOnline: () => true,
+    });
+    q2.queue(1);
+    q2.queue(2);
+    await q2.drain();
+    expect(q2.pending()).toEqual([2]);
+  });
+
+  it("hands the saved payload to onSaved (drafts keep newer answers)", async () => {
+    vi.useFakeTimers();
+    let value = "a";
+    const seen = [];
+    const q2 = createAutosave({
+      save: () => new Promise((resolve) => setTimeout(resolve, 20)),
+      getPayload: () => ({ selected: value }),
+      delay: 10,
+      isOnline: () => true,
+      onSaved: (p, payload) => seen.push([p, payload.selected]),
+    });
+    q2.queue(5);
+    await vi.advanceTimersByTimeAsync(15); // "a" in flight
+    value = "b";
+    q2.queue(5);
+    await vi.advanceTimersByTimeAsync(100);
+    expect(seen).toEqual([[5, "a"], [5, "b"]]);
+  });
 });
 
 // ── results ─────────────────────────────────────────────────────────────────
@@ -383,7 +468,9 @@ describe("results", () => {
 
   it("bands scores and accuracy", () => {
     expect([90, 70, 45, 10].map(scoreBand)).toEqual(["excellent", "good", "fair", "low"]);
-    expect([80, 60, 20, null].map(accuracyTone)).toEqual(["green", "gold", "danger", "neutral"]);
+    // one colour scale for scores and accuracy everywhere (dashboard, history, results)
+    expect([80, 75, 74.9, 60, 50, 49.9, 20, null, "", "x"].map(scoreTone)).toEqual(["green", "green", "gold", "gold", "gold", "danger", "danger", "neutral", "neutral", "neutral"]);
+    expect([90, 70, 10].map(ringTone)).toEqual(["green", "gold", "gold"]);
   });
 
   it("sorts topics weakest first", () => {
@@ -431,6 +518,16 @@ describe("analytics", () => {
     const s = dailySeries([{ day: "2026-09-24", attempts: 1, total: 10, correct: 7, accuracy: 70 }, { day: "2026-09-22", attempts: 1, total: 4, correct: 1 }], 4, "2026-09-25");
     expect(s.map((d) => d.accuracy)).toEqual([25, null, 70, null]);
     expect(s[2].attempts).toBe(1);
+    expect(s.map((d) => d.index)).toEqual([0, 1, 2, 3]);
+  });
+
+  it("locks topic analytics as the database says (0012), else by plan", () => {
+    expect(topicAnalyticsLocked({ premium: false, locked: ["by_topic", "best_topics", "weakest_topics"] }, true)).toBe(true);
+    expect(topicAnalyticsLocked({ premium: true, locked: [] }, false)).toBe(false);
+    // pre-0012 database: no premium / locked keys → the member's plan decides
+    expect(topicAnalyticsLocked({ locked: [] }, false)).toBe(true);
+    expect(topicAnalyticsLocked({ locked: [] }, true)).toBe(false);
+    expect(topicAnalyticsLocked(null, false)).toBe(true);
   });
 
   it("draws sparkline segments, areas and dots", () => {
@@ -443,6 +540,9 @@ describe("analytics", () => {
     const joined = sparkline([0, null, 100], { width: 100, height: 50, pad: 0, connectGaps: true });
     expect(joined.segments).toEqual(["M0 50 L100 0"]);
     expect(joined.dots).toEqual([]);
+    // scale positions on the same grid (dashboard labels)
+    const grid = sparkline([], { width: 320, height: 96, pad: 8 });
+    expect([grid.topY, grid.midY, grid.baseY, grid.yAt(25)]).toEqual([8, 48, 88, 68]);
   });
 
   it("computes window deltas", () => {

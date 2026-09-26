@@ -3,7 +3,7 @@ const common = {
     name: "جزيرة",
     full: "منصة جزيرة",
     tagline: "منصة تعليمية عربية لكل المراحل",
-    assistant: "مساعد الجزيرة",
+    assistant: "مساعد جزيرة",
     elite: "النخبة",
   },
   actions: {
@@ -21,6 +21,8 @@ const common = {
     edit: "تعديل",
     retry: "إعادة المحاولة",
     search: "بحث",
+    // query is wrapped in bidi isolates by the caller
+    searchFor: "بحث: «{q}»",
     seeAll: "عرض الكل",
     learnMore: "اعرف المزيد",
     startNow: "ابدأ الآن",
@@ -85,8 +87,12 @@ const common = {
     closeMenu: "إغلاق القائمة",
     toggleTheme: "تبديل المظهر",
     switchLanguage: "تغيير اللغة",
+    // fully localized accessible name for the language toggle (target is always the other language)
+    switchLanguageTo: "التبديل إلى الإنجليزية",
     notifications: "الإشعارات",
     search: "البحث",
+    searchResults: "نتائج البحث",
+    resultsCount: { zero: "لا توجد نتائج", one: "نتيجة واحدة", two: "نتيجتان", few: "{count} نتائج", many: "{count} نتيجة", other: "{count} نتيجة" },
     userMenu: "قائمة الحساب",
     close: "إغلاق",
     loading: "جارٍ التحميل",
@@ -100,7 +106,13 @@ const common = {
     decorative: "",
   },
   theme: { light: "فاتح", dark: "داكن", label: "المظهر" },
-  languages: { ar: "العربية", en: "English", label: "اللغة" },
+  // keyboard key names shown in <kbd>
+  keys: { esc: "Esc", enter: "Enter" },
+  languages: {
+    ar: "العربية", en: "English", label: "اللغة",
+    // each in its own language/script (render with lang={locale})
+    home: { ar: "منصة جزيرة بالعربية", en: "Jazira in English" },
+  },
   units: {
     questions: { zero: "لا توجد أسئلة", one: "سؤال واحد", two: "سؤالان", few: "{count} أسئلة", many: "{count} سؤالًا", other: "{count} سؤال" },
     minutes: { zero: "0 دقيقة", one: "دقيقة واحدة", two: "دقيقتان", few: "{count} دقائق", many: "{count} دقيقة", other: "{count} دقيقة" },

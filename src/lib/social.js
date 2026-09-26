@@ -8,17 +8,24 @@
 //     return { items: [], available: false }. Mutations throw a DataError
 //     (err.name === "DataError", err.code) — see CODES below.
 //   • Never select("*") on profiles; author columns come from lib/profile.js.
-//   • Anonymous members (profiles.anonymous_community) are never linkable:
-//     normalizePost()/publicIdentity() strip id, handle, name and avatar.
+//   • Posts and comments are READ only through the definer RPCs
+//     community_feed() / community_comments() (migration 0012). They mask the
+//     author of anonymous content server-side, so the browser never receives
+//     who wrote an anonymous post or comment (not even in the network tab).
+//     Never render other members' content from table reads plus a profile
+//     lookup by user_id — see docs/SECURITY.md §7.
+//   • community_posts / post_comments are not in supabase_realtime: the feed
+//     polls countNewPosts() / refreshPosts() instead of subscribing.
 //
-// Pure logic (tokenizer, reducers, cursors, media paths) lives in
-// src/components/community/model.js and is unit-tested.
+// Pure logic (tokenizer, reducers, cursors, media paths, RPC rows → UI
+// objects) lives in src/components/community/model.js and is unit-tested.
 // ============================================================================
 import { getSupabase } from "@/lib/supabase-lazy";
 import { BASIC_PROFILE_COLUMNS } from "@/lib/profile";
+import { IMAGE_PRESETS, downscaleImage } from "@/lib/image-resize";
 import {
-  POST_MAX, COMMENT_MAX, REPORT_MAX, REPORT_REASONS, buildMediaPath, cursorOf, isUuid, keysetFilter,
-  mediaKindOf, normalizePost, normalizeTag, publicIdentity,
+  POST_MAX, COMMENT_MAX, REPORT_MAX, REPORT_REASONS, buildMediaPath, cursorOf, feedCursorOf, isUuid, keysetFilter,
+  mediaKindOf, normalizeComment, normalizePost, normalizeTag, publicIdentity,
 } from "@/components/community/model";
 
 export { parseEntities, REPORT_REASONS } from "@/components/community/model";
@@ -26,9 +33,11 @@ export { parseEntities, REPORT_REASONS } from "@/components/community/model";
 const BUCKET = "post-media";
 const AUTHOR_COLUMNS = `${BASIC_PROFILE_COLUMNS}, show_elite_badge, anonymous_community`;
 const SUGGEST_COLUMNS = `${AUTHOR_COLUMNS}, xp`;
-const POST_COLUMNS =
-  "id, user_id, content, media_url, media_type, media_path, likes_count, dislikes_count, comments_count, reposts_count, created_at";
-const COMMENT_COLUMNS = "id, post_id, user_id, content, created_at";
+// The author's own freshly inserted row (own rows are readable under RLS).
+const OWN_POST_COLUMNS =
+  "id, content, media_url, media_type, media_path, likes_count, dislikes_count, comments_count, reposts_count, created_at, is_anonymous";
+const OWN_COMMENT_COLUMNS = "id, post_id, content, created_at, is_anonymous";
+const FEED_SCOPES = new Set(["all", "following", "tag", "author", "liked", "reposted"]);
 
 // ── errors ──────────────────────────────────────────────────────────────────
 // not_authenticated · invalid_argument · forbidden (RLS/privilege, incl. blocks)
@@ -54,7 +63,9 @@ function toError(err) {
   if (err.message === "not_authenticated" || err.code === "PGRST301" || /jwt/i.test(err.message || "")) return dataError("not_authenticated", null, err);
   if (err.code === "42501") return dataError("forbidden", null, err);
   if (/invalid_media_url/.test(msg)) return dataError("invalid_media", null, err);
-  if (err.code === "23514" || err.code === "22001" || err.code === "22P02") return dataError("invalid_argument", null, err);
+  if (err.message === "invalid_argument" || err.code === "23514" || err.code === "22001" || err.code === "22P02" || err.code === "22007") {
+    return dataError("invalid_argument", null, err);
+  }
   if (err.name === "AbortError" || /abort/i.test(err.message || "")) return dataError("aborted", null, err);
   if (!err.code && /fetch|network|load failed/i.test(msg)) return dataError("network", null, err);
   return dataError("unknown", null, err);
@@ -135,14 +146,13 @@ async function patchFollowing(id, pref) {
   else map.delete(id);
 }
 
-// ── hydration: rows → UI posts ──────────────────────────────────────────────
-// Every author read carries `anonymous_community`: an identity is never
-// rendered without knowing whether its owner posts anonymously. If even the
-// minimal column set fails, authors come back unknown ("Jazira member", no
-// link) rather than named.
+// ── profiles (follow lists, suggestions, the viewer's own identity) ──────────
+// Every read carries `anonymous_community`: a member identity is never
+// rendered without knowing whether its owner is in anonymous mode. If even
+// the minimal column set fails, members come back unknown (no link).
 const AUTHOR_FALLBACK_COLUMNS = `${BASIC_PROFILE_COLUMNS}, anonymous_community`;
 
-async function fetchAuthors(supabase, ids) {
+async function fetchProfiles(supabase, ids) {
   const list = [...new Set((ids || []).filter(Boolean))];
   if (!list.length) return new Map();
   try {
@@ -155,54 +165,60 @@ async function fetchAuthors(supabase, ids) {
   }
 }
 
-async function fetchViewerReactions(supabase, userId, postIds) {
-  const empty = { liked: new Set(), disliked: new Set(), reposted: new Set() };
-  if (!userId || !postIds.length) return empty;
-  const pick = (table) =>
-    supabase.from(table).select("post_id").eq("user_id", userId).in("post_id", postIds)
-      .then(({ data }) => new Set((data || []).map((r) => r.post_id)))
-      .catch(() => new Set());
-  const [liked, disliked, reposted] = await Promise.all([pick("post_likes"), pick("post_dislikes"), pick("post_reposts")]);
-  return { liked, disliked, reposted };
+/** The viewer's own author columns, shaped like a reader-RPC row. */
+async function ownAuthorFields(supabase, userId) {
+  const profile = (await fetchProfiles(supabase, [userId])).get(userId) || null;
+  if (!profile) return { author_id: userId };
+  return {
+    author_id: profile.id,
+    author_username: profile.username ?? null,
+    author_full_name: profile.full_name ?? null,
+    author_avatar_url: profile.avatar_url ?? null,
+    author_is_elite: Boolean(profile.is_elite),
+    author_show_elite_badge: profile.show_elite_badge !== false,
+  };
 }
 
-async function hydrate(supabase, rows, userId, { dropAnonymous = false } = {}) {
-  if (!rows.length) return [];
-  const [authors, reactions, blocked] = await Promise.all([
-    fetchAuthors(supabase, rows.map((r) => r.user_id)),
-    fetchViewerReactions(supabase, userId, rows.map((r) => r.id)),
-    userId ? getBlockedIds() : Promise.resolve(new Set()),
-  ]);
-  const out = [];
-  for (const row of rows) {
-    if (blocked.has(row.user_id)) continue;
-    const profile = authors.get(row.user_id) || null;
-    if (dropAnonymous && profile?.anonymous_community) continue;
-    out.push(normalizePost(row, profile, {
-      viewerId: userId,
-      liked: reactions.liked.has(row.id),
-      disliked: reactions.disliked.has(row.id),
-      reposted: reactions.reposted.has(row.id),
-    }));
-  }
-  return out;
+/** Is the viewer currently in anonymous mode? (own profile row). */
+async function ownAnonymousMode(supabase, userId) {
+  const { data, error } = await supabase.from("profiles").select("anonymous_community").eq("id", userId).maybeSingle();
+  if (error) throw toError(error);
+  return Boolean(data?.anonymous_community);
 }
 
-const withSignal = (q, signal) => (signal && typeof q.abortSignal === "function" ? q.abortSignal(signal) : q);
+// ── reader RPCs ─────────────────────────────────────────────────────────────
+const withSignal = (q, signal) => (signal && typeof q?.abortSignal === "function" ? q.abortSignal(signal) : q);
 
-async function postsByIds(supabase, ids, signal) {
-  if (!ids.length) return [];
-  const { data, error } = await withSignal(supabase.from("community_posts").select(POST_COLUMNS).in("id", ids), signal);
+/** community_feed(…) → raw rows. Throws the PostgREST error. */
+async function feedRows(supabase, args, signal) {
+  const { data, error } = await withSignal(supabase.rpc("community_feed", args), signal);
   if (error) throw error;
-  const byId = new Map((data || []).map((p) => [p.id, p]));
-  return ids.map((id) => byId.get(id)).filter(Boolean);
+  return Array.isArray(data) ? data : [];
+}
+
+const idsOf = (ids) => [...new Set((ids || []).filter(isUuid))].slice(0, 100);
+
+// Reader-RPC rows → UI objects (normalizePost / normalizeComment read the
+// masked author_* / is_mine / viewer_* columns of 0012 rows).
+const postFromRow = (row) => normalizePost(row, null);
+const commentFromRow = (row) => normalizeComment(row);
+const mediaFromRow = (m) => normalizePost({ id: null, ...m }, null).media;
+
+const ISO_RE = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}(:?\d{2})?)?$/;
+/**
+ * RPC keyset arguments from a cursor. A malformed or tampered cursor means
+ * "first page" (never an error, never unchecked input in a query).
+ */
+function cursorParams(cursor) {
+  const before = typeof cursor?.before === "string" && ISO_RE.test(cursor.before) ? cursor.before : null;
+  return { p_before: before, p_before_id: before && isUuid(cursor.beforeId) ? cursor.beforeId : null };
 }
 
 // ── feed ────────────────────────────────────────────────────────────────────
 export const FEED_PAGE_SIZE = 12;
 
 /**
- * One page of posts, newest first (keyset).
+ * One page of posts, newest first (keyset), through community_feed().
  * @param {object} o
  * @param {"all"|"following"|"tag"|"author"|"liked"|"reposted"} [o.scope]
  * @param {string} [o.tag]       scope "tag"
@@ -210,114 +226,123 @@ export const FEED_PAGE_SIZE = 12;
  * @param {{before:string, beforeId:string}|null} [o.cursor]  the previous nextCursor
  * @returns {Promise<{ items, nextCursor, available, reason? }>}
  *   reason: "not_configured" | "not_deployed" | "no_following" | "signed_out" | "no_tag"
+ *   Each item has `anonymous` (posted anonymously) and `mine`; an anonymous
+ *   post's `author` is { anonymous: true } for every reader, its author included.
  */
 export async function listPosts({ scope = "all", tag = null, userId: target = null, cursor = null, limit = FEED_PAGE_SIZE, signal } = {}) {
   const { supabase, userId } = await context();
   if (!supabase) return { items: [], nextCursor: null, available: false, reason: "not_configured" };
-  const size = Math.min(Math.max(1, limit), 50);
-  const keyset = (col, idCol) => keysetFilter(cursor?.before, cursor?.beforeId, col, idCol);
+  const size = Math.min(Math.max(1, Number(limit) || FEED_PAGE_SIZE), 50);
+  const kind = FEED_SCOPES.has(scope) ? scope : "all";
+  const empty = (reason) => ({ items: [], nextCursor: null, available: true, ...(reason ? { reason } : {}) });
+
+  const args = { p_scope: kind, p_limit: size, ...cursorParams(cursor) };
+  if (kind === "following") {
+    if (!userId) return empty("signed_out");
+    const following = await getFollowing();
+    if (!following.size) return empty("no_following");
+  } else if (kind === "author" || kind === "liked" || kind === "reposted") {
+    if (!isUuid(target)) return empty();
+    args.p_user = target;
+  } else if (kind === "tag") {
+    const norm = normalizeTag(tag);
+    if (!norm) return empty("no_tag");
+    args.p_tag = norm;
+  }
 
   try {
-    // ── interaction lists (likes / reposts on a profile) ──
-    if (scope === "liked" || scope === "reposted") {
-      if (!isUuid(target)) return { items: [], nextCursor: null, available: true };
-      const table = scope === "liked" ? "post_likes" : "post_reposts";
-      let q = supabase.from(table).select("id, post_id, created_at").eq("user_id", target)
-        .order("created_at", { ascending: false }).order("id", { ascending: false }).limit(size);
-      const f = keyset("created_at", "id");
-      if (f) q = q.or(f);
-      const { data, error } = await withSignal(q, signal);
-      if (error) throw error;
-      const links = data || [];
-      const rows = await postsByIds(supabase, links.map((l) => l.post_id), signal);
-      return { items: await hydrate(supabase, rows, userId), nextCursor: cursorOf(links, size), available: true };
-    }
-
-    // ── tag feed: post_hashtags (indexed by trigger) → posts ──
-    if (scope === "tag") {
-      const norm = normalizeTag(tag);
-      if (!norm) return { items: [], nextCursor: null, available: true, reason: "no_tag" };
-      const { data: h, error: hErr } = await supabase.from("hashtags").select("id").eq("tag", norm).maybeSingle();
-      if (hErr) throw hErr;
-      if (!h) return { items: [], nextCursor: null, available: true, reason: "no_tag" };
-      let q = supabase.from("post_hashtags").select("post_id, created_at").eq("hashtag_id", h.id)
-        .order("created_at", { ascending: false }).order("post_id", { ascending: false }).limit(size);
-      const f = keyset("created_at", "post_id");
-      if (f) q = q.or(f);
-      const { data, error } = await withSignal(q, signal);
-      if (error) throw error;
-      const links = data || [];
-      const rows = await postsByIds(supabase, links.map((l) => l.post_id), signal);
-      return { items: await hydrate(supabase, rows, userId), nextCursor: cursorOf(links, size, "created_at", "post_id"), available: true };
-    }
-
-    // ── posts table scopes ──
-    let q = supabase.from("community_posts").select(POST_COLUMNS)
-      .order("created_at", { ascending: false }).order("id", { ascending: false }).limit(size);
-    let dropAnonymous = false;
-    if (scope === "following") {
-      if (!userId) return { items: [], nextCursor: null, available: true, reason: "signed_out" };
-      const following = await getFollowing();
-      if (!following.size) return { items: [], nextCursor: null, available: true, reason: "no_following" };
-      q = q.in("user_id", [...following.keys()].slice(0, 150)); // keeps the request URL short
-      // A follow list must never reveal which anonymous post belongs to whom.
-      dropAnonymous = true;
-    } else if (scope === "author") {
-      if (!isUuid(target)) return { items: [], nextCursor: null, available: true };
-      q = q.eq("user_id", target);
-    }
-    const f = keyset("created_at", "id");
-    if (f) q = q.or(f);
-    const { data, error } = await withSignal(q, signal);
-    if (error) throw error;
-    const rows = data || [];
-    return { items: await hydrate(supabase, rows, userId, { dropAnonymous }), nextCursor: cursorOf(rows, size), available: true };
+    const rows = await feedRows(supabase, args, signal);
+    return { items: rows.map(postFromRow), nextCursor: feedCursorOf(rows, size), available: true };
   } catch (err) {
     if (isMissing(err)) return { items: [], nextCursor: null, available: false, reason: "not_deployed" };
     throw toError(err);
   }
 }
 
-/** A single post (permalink page). → { post | null, available } */
-export async function getPost(id) {
-  const { supabase, userId } = await context();
-  if (!supabase) return { post: null, available: false };
-  if (!isUuid(id)) return { post: null, available: true };
-  const { data, error } = await supabase.from("community_posts").select(POST_COLUMNS).eq("id", id).maybeSingle();
-  if (error) {
-    if (isMissing(error)) return { post: null, available: false };
-    throw toError(error);
-  }
-  if (!data) return { post: null, available: true };
-  const [post] = await hydrate(supabase, [data], userId);
-  return { post: post || null, available: true };
+async function fetchPost(supabase, id) {
+  const [row] = await feedRows(supabase, { p_scope: "ids", p_ids: [id], p_limit: 1 });
+  return row ? postFromRow(row) : null;
 }
 
-/** Rows for realtime-delivered posts (profile + reactions attached). */
-export async function hydratePostRows(rows) {
-  const { supabase, userId } = await context();
-  if (!supabase) return [];
-  return hydrate(supabase, rows, userId);
+/** A single post (permalink page). → { post | null, available } */
+export async function getPost(id) {
+  const { supabase } = await context();
+  if (!supabase) return { post: null, available: false };
+  if (!isUuid(id)) return { post: null, available: true };
+  try {
+    return { post: await fetchPost(supabase, id), available: true };
+  } catch (err) {
+    if (isMissing(err)) return { post: null, available: false };
+    throw toError(err);
+  }
 }
 
 /**
- * Live feed updates. Returns an unsubscribe function (no-op when unavailable).
- * onInsert(row) gets the raw row: call hydratePostRows() before rendering it.
+ * Posts for rows or ids (e.g. a freshly inserted post), ready to render, in
+ * the feed's order. Posts that disappeared (deleted, or by a member you
+ * blocked) are absent.
  */
-export async function subscribeToPosts({ onInsert, onUpdate }) {
+export async function hydratePostRows(rowsOrIds) {
   const { supabase } = await context();
-  if (!supabase || typeof supabase.channel !== "function") return () => {};
+  const ids = idsOf((rowsOrIds || []).map((r) => (typeof r === "string" ? r : r?.id)));
+  if (!supabase || !ids.length) return [];
   try {
-    const channel = supabase
-      .channel(`community-feed-${Math.random().toString(36).slice(2, 8)}`)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "community_posts" }, (p) => p?.new && onInsert?.(p.new))
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "community_posts" }, (p) => p?.new && onUpdate?.(p.new))
-      .subscribe();
-    return () => { try { supabase.removeChannel(channel); } catch {} };
-  } catch {
-    return () => {};
+    return (await feedRows(supabase, { p_scope: "ids", p_ids: ids, p_limit: 1 })).map(postFromRow);
+  } catch (err) {
+    if (isMissing(err)) return [];
+    throw toError(err);
   }
 }
+
+/**
+ * Fresh counts and text of up to 100 posts already on screen (the feed's
+ * poll) → raw community_feed rows ({ id, content, likes_count, … }) for the
+ * feed reducer's "row" action; [] when unavailable or offline.
+ */
+export async function refreshPosts(ids) {
+  const { supabase } = await context();
+  const list = idsOf(ids);
+  if (!supabase || !list.length) return [];
+  try {
+    return await feedRows(supabase, { p_scope: "ids", p_ids: list, p_limit: 1 });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * How many posts newer than the feed's first row ({ since: its created_at,
+ * sinceId: its id }) the viewer would see in "all", their own excluded
+ * (capped at 100). Server-side comparison: the device clock never matters.
+ * → number, or null when it can't tell (not deployed, offline).
+ */
+export async function countNewPosts({ since, sinceId = null } = {}) {
+  const { p_before, p_before_id } = cursorParams({ before: since, beforeId: sinceId });
+  if (!p_before) return null;
+  const { supabase } = await context();
+  if (!supabase) return null;
+  try {
+    const args = { p_since: p_before };
+    if (p_before_id) args.p_since_id = p_before_id;
+    const { data, error } = await supabase.rpc("community_new_posts_count", args);
+    if (error) return null;
+    const n = Number(data);
+    return Number.isFinite(n) && n >= 0 ? Math.min(n, 100) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * @deprecated Realtime is gone for posts (0012: community_posts is not in
+ * supabase_realtime — its rows carry user_id, which would name the author of
+ * anonymous posts). Feeds poll countNewPosts() / refreshPosts() while the tab
+ * is visible. Kept as a no-op so older callers keep working.
+ */
+export async function subscribeToPosts() {
+  return () => {};
+}
+
 
 // ── reactions ───────────────────────────────────────────────────────────────
 /** Apply the writes from applyReaction(): deletes first, then inserts. Throws DataError. */
@@ -333,13 +358,36 @@ export async function runReactionOps(postId, ops) {
 }
 
 // ── posts (author) ──────────────────────────────────────────────────────────
-async function uploadMedia(supabase, userId, file, dims) {
-  const kind = mediaKindOf(file?.type);
-  const path = kind && buildMediaPath(userId, file.type, dims);
+const NO_MEDIA = Object.freeze({ media_url: null, media_type: null, media_path: null });
+
+/**
+ * Storage path for a new upload. Public posts: `<uid>/<ms>-<w>x<h>.<ext>`.
+ * Anonymous posts: `anon/<random uuid>/<ms>-<w>x<h>.<ext>` — nothing in the
+ * path or public URL points at the author (docs/SECURITY.md §6).
+ */
+function uploadPath(userId, mime, dims, anonymous) {
+  if (!anonymous) return buildMediaPath(userId, mime, dims);
+  const folder = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : null;
+  return folder ? buildMediaPath(null, mime, dims, Date.now(), { anonymous: true, folder }) : null;
+}
+
+async function uploadMedia(supabase, userId, file, dims, { anonymous = false } = {}) {
+  let body = file;
+  let size = dims;
+  // Images are downscaled (≤ 1600 px, WebP) before upload; EXIF goes with it.
+  if (mediaKindOf(file?.type) === "image") {
+    const small = await downscaleImage(file, IMAGE_PRESETS.post).catch(() => null);
+    if (small) {
+      body = small.file;
+      size = { width: small.width, height: small.height };
+    }
+  }
+  const kind = mediaKindOf(body?.type);
+  const path = kind && uploadPath(userId, body.type, size, anonymous);
   if (!path) throw dataError("invalid_media");
-  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+  const { error } = await supabase.storage.from(BUCKET).upload(path, body, {
     cacheControl: "31536000",
-    contentType: file.type,
+    contentType: body.type,
     upsert: false,
   });
   if (error) throw dataError("upload_failed", null, error);
@@ -355,25 +403,32 @@ async function removeObject(supabase, path) {
 /**
  * Publish a post (text and/or one image or ≤ 30 s video). `dims` = the media's
  * pixel size (encoded in the object name for layout-stable rendering).
- * → the new post, ready to render.
+ * `anonymous` (optional) = post this one anonymously or not; omitted, the
+ * database uses your current "post anonymously" setting. Anonymity is fixed
+ * once the post exists. → the new post, ready to render.
  */
-export async function publishPost({ content, file = null, dims = null }) {
+export async function publishPost({ content, file = null, dims = null, anonymous } = {}) {
   const { supabase, userId } = await requireUser();
   const text = typeof content === "string" ? content.trim() : "";
   if (text.length > POST_MAX) throw dataError("invalid_argument", { field: "content", max: POST_MAX });
   if (!text && !file) throw dataError("empty_post");
-  const media = file ? await uploadMedia(supabase, userId, file, dims) : { media_url: null, media_type: null, media_path: null };
-  const { data, error } = await supabase
-    .from("community_posts")
-    .insert({ user_id: userId, content: text || null, ...media })
-    .select(POST_COLUMNS)
-    .single();
+  // Media must be stored where the post's anonymity requires, so an implicit
+  // choice is resolved (and then sent explicitly) before uploading.
+  let anon = typeof anonymous === "boolean" ? anonymous : null;
+  if (anon === null && file) anon = await ownAnonymousMode(supabase, userId);
+  const media = file ? await uploadMedia(supabase, userId, file, dims, { anonymous: anon === true }) : NO_MEDIA;
+  const insert = { user_id: userId, content: text || null, ...media };
+  if (anon !== null) insert.is_anonymous = anon;
+  const { data, error } = await supabase.from("community_posts").insert(insert).select(OWN_POST_COLUMNS).single();
   if (error) {
     await removeObject(supabase, media.media_path);
     throw toError(error);
   }
-  const [post] = await hydrate(supabase, [data], userId);
-  return post;
+  // Same shape as the feed (through the reader RPC); the inserted row is the fallback.
+  const post = await fetchPost(supabase, data.id).catch(() => null);
+  if (post) return post;
+  const author = data.is_anonymous ? {} : await ownAuthorFields(supabase, userId);
+  return postFromRow({ ...data, ...author, is_mine: true });
 }
 
 /** Edit a post's text. Empty text is allowed only when the post has media. */
@@ -391,14 +446,18 @@ export async function updatePostContent(post, content) {
 /** Swap the attached media (upload new → update row → remove the old object). */
 export async function replacePostMedia(post, file, dims = null) {
   const { supabase, userId } = await requireUser();
-  const media = await uploadMedia(supabase, userId, file, dims);
-  const { data, error } = await supabase.from("community_posts").update(media).eq("id", post.id).select("id").maybeSingle();
+  // Own row (RLS): tells whether the new file belongs under anon/.
+  const { data: own, error: ownError } = await supabase.from("community_posts").select("id, is_anonymous").eq("id", post?.id).maybeSingle();
+  if (ownError) throw toError(ownError);
+  if (!own) throw dataError("forbidden");
+  const media = await uploadMedia(supabase, userId, file, dims, { anonymous: own.is_anonymous === true });
+  const { data, error } = await supabase.from("community_posts").update(media).eq("id", own.id).select("id").maybeSingle();
   if (error || !data) {
     await removeObject(supabase, media.media_path);
     throw error ? toError(error) : dataError("forbidden");
   }
   await removeObject(supabase, post.media?.path);
-  return normalizePost({ id: post.id, ...media }, null).media;
+  return mediaFromRow(media);
 }
 
 /** Remove the attached media (the post must keep some text). */
@@ -406,7 +465,7 @@ export async function removePostMedia(post) {
   const { supabase } = await requireUser();
   if (!post.content?.trim()) throw dataError("empty_post");
   const { data, error } = await supabase.from("community_posts")
-    .update({ media_url: null, media_type: null, media_path: null }).eq("id", post.id).select("id").maybeSingle();
+    .update({ ...NO_MEDIA }).eq("id", post.id).select("id").maybeSingle();
   if (error) throw toError(error);
   if (!data) throw dataError("forbidden");
   await removeObject(supabase, post.media?.path);
@@ -421,47 +480,39 @@ export async function deletePost(post) {
 }
 
 // ── comments ────────────────────────────────────────────────────────────────
-function normalizeComment(row, profile, viewerId) {
-  return {
-    id: row.id,
-    post_id: row.post_id,
-    content: row.content || "",
-    created_at: row.created_at,
-    mine: Boolean(viewerId) && row.user_id === viewerId,
-    author: publicIdentity(profile),
-  };
-}
-
 /**
- * Comments newest first (keyset) — the UI shows them oldest → newest and
- * loads earlier ones on demand. → { items, nextCursor, available }
+ * Comments newest first (keyset), through community_comments() — the UI shows
+ * them oldest → newest and loads earlier ones on demand.
+ * → { items, nextCursor, available }
  */
 export async function listComments(postId, { cursor = null, limit = 20 } = {}) {
-  const { supabase, userId } = await context();
+  const { supabase } = await context();
   if (!supabase) return { items: [], nextCursor: null, available: false };
-  let q = supabase.from("post_comments").select(COMMENT_COLUMNS).eq("post_id", postId)
-    .order("created_at", { ascending: false }).order("id", { ascending: false }).limit(limit);
-  const f = keysetFilter(cursor?.before, cursor?.beforeId);
-  if (f) q = q.or(f);
-  const { data, error } = await q;
+  if (!isUuid(postId)) return { items: [], nextCursor: null, available: true };
+  const size = Math.min(Math.max(1, Number(limit) || 20), 50);
+  const { data, error } = await supabase.rpc("community_comments", { p_post: postId, p_limit: size, ...cursorParams(cursor) });
   if (error) {
     if (isMissing(error)) return { items: [], nextCursor: null, available: false };
     throw toError(error);
   }
-  const rows = data || [];
-  const [authors, blocked] = await Promise.all([fetchAuthors(supabase, rows.map((r) => r.user_id)), getBlockedIds()]);
-  const items = rows.filter((r) => !blocked.has(r.user_id)).map((r) => normalizeComment(r, authors.get(r.user_id) || null, userId));
-  return { items, nextCursor: cursorOf(rows, limit), available: true };
+  const rows = Array.isArray(data) ? data : [];
+  return { items: rows.map(commentFromRow), nextCursor: cursorOf(rows, size), available: true };
 }
 
-export async function addComment(postId, content) {
+/**
+ * Comment on a post. `anonymous` (optional): as for publishPost — omitted,
+ * your current "post anonymously" setting applies. → the saved comment.
+ */
+export async function addComment(postId, content, { anonymous } = {}) {
   const { supabase, userId } = await requireUser();
   const text = typeof content === "string" ? content.trim() : "";
   if (!text || text.length > COMMENT_MAX) throw dataError("invalid_argument", { field: "content", max: COMMENT_MAX });
-  const { data, error } = await supabase.from("post_comments").insert({ post_id: postId, user_id: userId, content: text }).select(COMMENT_COLUMNS).single();
+  const insert = { post_id: postId, user_id: userId, content: text };
+  if (typeof anonymous === "boolean") insert.is_anonymous = anonymous;
+  const { data, error } = await supabase.from("post_comments").insert(insert).select(OWN_COMMENT_COLUMNS).single();
   if (error) throw toError(error);
-  const authors = await fetchAuthors(supabase, [userId]);
-  return normalizeComment(data, authors.get(userId) || null, userId);
+  const author = data.is_anonymous ? {} : await ownAuthorFields(supabase, userId);
+  return commentFromRow({ ...data, ...author, is_mine: true });
 }
 
 export async function deleteComment(id) {
@@ -570,20 +621,12 @@ export async function listFollows(userId, direction = "followers", { cursor = nu
     throw toError(error);
   }
   const rows = data || [];
-  const authors = await fetchAuthors(supabase, rows.map((r) => r[other]));
+  const authors = await fetchProfiles(supabase, rows.map((r) => r[other]));
   const items = rows.map((r) => ({ key: r.id, ...publicIdentity(authors.get(r[other]) || null) }));
   return { items, nextCursor: cursorOf(rows, limit), available: true };
 }
 
 // ── follows ─────────────────────────────────────────────────────────────────
-/** → { following, pref } | null (signed out / self). */
-export async function isFollowing(followeeId) {
-  const { supabase, userId } = await context();
-  if (!supabase || !userId || userId === followeeId) return null;
-  const map = await getFollowing();
-  return map.has(followeeId) ? { following: true, pref: map.get(followeeId) } : { following: false, pref: null };
-}
-
 export async function followUser(followeeId) {
   try {
     const { supabase, userId } = await requireUser();
@@ -623,8 +666,9 @@ export async function setFollowPref(followeeId, pref) {
 }
 
 // ============================================================================
-// Below: social settings, notifications and direct messages (used by the
-// settings, notification bell, sidebar and chat features — keep the API).
+// Below: social settings and direct messages (used by the settings,
+// notifications and chat features — keep the API). Notifications themselves
+// live in src/lib/data/notifications.js.
 // ============================================================================
 const sb = async () => (await context()).supabase;
 
@@ -667,47 +711,6 @@ export async function updateSocialSettings(patch) {
     return { ok: !error, error };
   } catch (e) {
     return { ok: false, error: e };
-  }
-}
-
-// ── notifications (legacy bell; new code uses src/lib/data/notifications.js) ─
-export async function listNotifications({ type } = {}) {
-  try {
-    const { supabase: client, userId } = await context();
-    if (!client || !userId) return [];
-    let q = client.from("notifications")
-      .select("id, user_id, actor_id, type, post_id, comment_id, conversation_id, read, created_at")
-      .eq("user_id", userId).order("created_at", { ascending: false }).limit(60);
-    if (type && type !== "all") q = q.eq("type", type);
-    const { data } = await q;
-    return data || [];
-  } catch {
-    return [];
-  }
-}
-
-export async function unreadNotificationCount() {
-  try {
-    const { supabase: client, userId } = await context();
-    if (!client || !userId) return 0;
-    const { count } = await client.from("notifications")
-      .select("id", { count: "exact", head: true }).eq("user_id", userId).eq("read", false);
-    return count || 0;
-  } catch {
-    return 0;
-  }
-}
-
-export async function markNotificationsRead(ids) {
-  try {
-    const { supabase: client, userId } = await context();
-    if (!client || !userId) return { ok: false };
-    let q = client.from("notifications").update({ read: true }).eq("user_id", userId).eq("read", false);
-    if (Array.isArray(ids) && ids.length) q = q.in("id", ids);
-    const { error } = await q;
-    return { ok: !error };
-  } catch {
-    return { ok: false };
   }
 }
 
@@ -771,28 +774,5 @@ export async function markConversationRead(conversationId) {
     return { ok: !res.error };
   } catch {
     return { ok: false };
-  }
-}
-
-// ── unread DM count (best-effort) ────────────────────────────────────────────
-export async function unreadMessageCount() {
-  try {
-    const { supabase: client, userId } = await context();
-    if (!client || !userId) return 0;
-    // conversations I'm in, with messages newer than my last_read_at
-    const { data: parts } = await client.from("conversation_participants")
-      .select("conversation_id, last_read_at").eq("user_id", userId);
-    if (!parts?.length) return 0;
-    const counts = await Promise.all(parts.map((p) =>
-      client.from("messages")
-        .select("id", { count: "exact", head: true })
-        .eq("conversation_id", p.conversation_id)
-        .neq("sender_id", userId)
-        .gt("created_at", p.last_read_at || "1970-01-01")
-        .then(({ count }) => count || 0, () => 0)
-    ));
-    return counts.reduce((a, b) => a + b, 0);
-  } catch {
-    return 0;
   }
 }

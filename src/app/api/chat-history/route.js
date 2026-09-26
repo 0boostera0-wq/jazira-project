@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import { groupSessions, isValidSessionId, deriveTitle } from "@/lib/chatStore";
+import { isSameOrigin } from "@/lib/http-guards";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,19 +29,6 @@ const NO_STORE = { "Cache-Control": "no-store" };
 const json = (body, status = 200) => Response.json(body, { status, headers: NO_STORE });
 const MISSING = new Set(["PGRST205", "PGRST202", "42P01", "42883"]);
 const SESSION_MESSAGES = 200;
-
-function isSameOrigin(req) {
-  const site = req.headers.get("sec-fetch-site");
-  if (site && site !== "same-origin" && site !== "none") return false;
-  const origin = req.headers.get("origin");
-  if (!origin) return true;
-  try {
-    const host = new URL(origin).host;
-    return host === req.headers.get("host") || host === new URL(req.url).host;
-  } catch {
-    return false;
-  }
-}
 
 async function authed() {
   const supabase = await createClient();

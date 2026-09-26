@@ -11,7 +11,9 @@
 
 import { SECTIONS, PRESETS, LIMITS } from "@/lib/exams/catalog";
 import { builderHref } from "@/components/exams/builder-logic";
-import { addDays, dayValue, riyadhToday } from "@/components/achievements/progress";
+import { STRONG_PERCENT } from "@/components/exams/results-logic";
+import { dailySeries } from "@/components/exams/stats-logic";
+import { dayValue, riyadhToday } from "@/components/achievements/progress";
 import { notificationHref as notificationTarget } from "@/components/notifications/model";
 
 export const RECENT_LIMIT = 5;
@@ -144,29 +146,6 @@ export function minutesLeft(attempt, now = Date.now()) {
   return Math.max(0, Math.ceil((exp - now) / 60000));
 }
 
-/**
- * Attempts started on the current Saudi day. The free daily limit counts
- * attempts *started* (any status) per Asia/Riyadh day; with `limit` ≥ the free
- * cap, the newest page of list_exam_attempts is enough to count it exactly.
- */
-export function attemptsStartedToday(items, today = riyadhToday()) {
-  let n = 0;
-  for (const a of Array.isArray(items) ? items : []) {
-    const t = timeOf(a?.started_at);
-    if (Number.isFinite(t) && riyadhToday(new Date(t)) === today) n += 1;
-  }
-  return n;
-}
-
-/** Score band → badge tone. */
-export function scoreTone(pct) {
-  const v = num(pct);
-  if (v === null) return "neutral";
-  if (v >= 80) return "green";
-  if (v >= 50) return "gold";
-  return "warning";
-}
-
 /** Normalised row for the recent-attempts list. */
 export function attemptRow(a) {
   const graded = a?.status === "submitted" || a?.status === "expired";
@@ -185,6 +164,9 @@ export function attemptRow(a) {
 }
 
 // ── Stats (get_exam_stats) ──────────────────────────────────────────────────
+// Riyadh days, the 30-day series, today's attempt count, the sparkline and the
+// score colours come from the exams helpers (exams/stats-logic.js,
+// exams/results-logic.js) — the same ones /exams/history uses.
 
 /**
  * Strongest / focus topics without overlap. get_exam_stats() returns the top
@@ -205,35 +187,19 @@ export function splitTopics(best, weakest) {
   const all = [...map.values()].sort((a, b) => b.accuracy - a.accuracy || a.topic.localeCompare(b.topic));
   const n = all.length;
   if (n === 0) return { strongest: [], focus: [] };
-  if (n === 1) return all[0].accuracy >= 70 ? { strongest: all, focus: [] } : { strongest: [], focus: all };
+  if (n === 1) return all[0].accuracy >= STRONG_PERCENT ? { strongest: all, focus: [] } : { strongest: [], focus: all };
   const strong = Math.min(3, Math.ceil(n / 2));
   const focus = Math.min(3, n - strong);
   return { strongest: all.slice(0, strong), focus: all.slice(n - focus).reverse() };
 }
 
 /**
- * Last `days` Saudi days (oldest → today) with the day's accuracy, or null on
- * days without a graded attempt.
+ * get_exam_stats() payload → what the performance card renders, or null for an
+ * unusable payload. `premium` / `locked` come from the database (0012): for a
+ * non-premium member the topic keys are withheld and listed in `locked`, so the
+ * card shows the Elite teaser (topicAnalyticsLocked) instead of "not enough
+ * data". A pre-0012 database sends neither (premium: null, locked: []).
  */
-export function dailySeries(daily, today = riyadhToday(), days = TREND_DAYS) {
-  const byDay = new Map();
-  for (const d of Array.isArray(daily) ? daily : []) {
-    const iso = typeof d?.day === "string" ? d.day.slice(0, 10) : "";
-    const accuracy = num(d?.accuracy);
-    const attempts = num(d?.attempts) ?? 0;
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso) || accuracy === null || attempts <= 0) continue;
-    byDay.set(iso, { accuracy: clamp(accuracy, 0, 100), attempts });
-  }
-  const out = [];
-  for (let i = days - 1; i >= 0; i -= 1) {
-    const iso = addDays(today, -i);
-    const v = byDay.get(iso);
-    out.push({ day: iso, index: days - 1 - i, accuracy: v ? v.accuracy : null, attempts: v ? v.attempts : 0 });
-  }
-  return out;
-}
-
-/** get_exam_stats() payload → what the performance card renders, or null for an unusable payload. */
 export function normalizeStats(raw, today = riyadhToday()) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
   const t = raw.totals && typeof raw.totals === "object" ? raw.totals : {};
@@ -251,8 +217,11 @@ export function normalizeStats(raw, today = riyadhToday()) {
       accuracy: num(s.accuracy) === null ? null : clamp(num(s.accuracy), 0, 100),
     }));
   const { strongest, focus } = splitTopics(raw.best_topics, raw.weakest_topics);
+  const locked = Array.isArray(raw.locked) ? raw.locked.filter((k) => typeof k === "string") : [];
   return {
     completed,
+    premium: typeof raw.premium === "boolean" ? raw.premium : null,
+    locked,
     inProgress: Math.max(0, num(raw.in_progress) ?? 0),
     totals: {
       questions: num(t.questions) ?? 0,
@@ -272,29 +241,8 @@ export function normalizeStats(raw, today = riyadhToday()) {
     sections,
     strongest,
     focus,
-    daily: dailySeries(raw.trend?.daily, today),
+    daily: dailySeries(raw.trend?.daily, TREND_DAYS, today),
   };
-}
-
-/**
- * Sparkline geometry in viewBox units. Only days with data become points;
- * consecutive points are joined (the line shows the trend across practice days).
- */
-export function sparklineGeometry(series, { width = 320, height = 96, pad = 8 } = {}) {
-  const list = Array.isArray(series) ? series : [];
-  const n = list.length;
-  const x = (i) => (n <= 1 ? width / 2 : pad + (i * (width - 2 * pad)) / (n - 1));
-  const y = (a) => pad + ((100 - a) * (height - 2 * pad)) / 100;
-  const points = [];
-  list.forEach((p, i) => {
-    if (p && p.accuracy !== null && p.accuracy !== undefined) {
-      points.push({ ...p, x: round(x(i), 2), y: round(y(clamp(p.accuracy, 0, 100)), 2) });
-    }
-  });
-  const path = points.map((p, i) => `${i ? "L" : "M"}${p.x} ${p.y}`).join(" ");
-  const base = round(height - pad, 2);
-  const area = points.length > 1 ? `${path} L${points[points.length - 1].x} ${base} L${points[0].x} ${base} Z` : "";
-  return { width, height, pad, points, path, area, midY: round(y(50), 2), topY: round(y(100), 2), baseY: base };
 }
 
 // ── Daily tip ───────────────────────────────────────────────────────────────

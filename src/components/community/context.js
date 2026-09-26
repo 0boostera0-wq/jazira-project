@@ -5,9 +5,11 @@ import * as social from "@/lib/social";
 
 /**
  * Optional overrides for the community islands: `source` (data functions,
- * defaults to src/lib/social.js) and `viewer` (a signed-in member). Nothing
- * in the app sets it; it exists so a harness can render signed-in states
- * with fixture data during visual QA without a database.
+ * defaults to src/lib/social.js — since 0012 it reads posts and comments
+ * through the masking RPCs and the feed polls countNewPosts() /
+ * refreshPosts()) and `viewer` (a signed-in member). Nothing in the app sets
+ * it; it exists so a harness can render signed-in states with fixture data
+ * during visual QA without a database.
  */
 const CommunityContext = createContext(null);
 

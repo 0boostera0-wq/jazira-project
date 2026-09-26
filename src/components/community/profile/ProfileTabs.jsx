@@ -54,7 +54,7 @@ export default function ProfileTabs({ profile, settings, source, viewer: viewerO
 
   return (
     <div>
-      <Tabs items={items} value={current.value} onChange={setTab} variant="underline" label={t("tabs.label")} className="mb-4" />
+      <Tabs items={items} value={current.value} onChange={setTab} variant="underline" label={t("tabs.label")} className="mb-4 [&>button]:min-h-11 sm:[&>button]:min-h-0" />
       {current.onlyYou && (
         <p className="t-caption -mt-1 mb-4 flex items-center gap-1.5">
           <EyeOff size={14} aria-hidden="true" />

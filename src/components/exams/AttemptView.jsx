@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { ClipboardCheck, LogIn, RotateCcw } from "lucide-react";
 import { usePathname } from "@/i18n/navigation";
 import { useT } from "@/i18n/client";
@@ -8,12 +9,18 @@ import { useAuthUser } from "@/context/AuthProvider";
 import { getAttempt, isLocalAttemptId } from "@/lib/data/exams";
 import Button from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
-import ExamResults from "./ExamResults";
 import ExamRunner from "./ExamRunner";
 import { getLocalPointer, readDraft, takeAttempt } from "./handoff";
 import { mergeDrafts, toRunnerSession } from "./runner-logic";
-import { RunnerSkeleton } from "./skeletons";
+import { ResultsSkeleton, RunnerSkeleton } from "./skeletons";
 import { signInHref } from "./labels";
+
+// The results (score, per-skill bars, answer review) only appear after a
+// submit or when opening a graded attempt, so they are their own chunk. While
+// an exam runs, the chunk is fetched in idle time so the results appear
+// without a wait once the exam is submitted.
+const loadResults = () => import("./ExamResults");
+const ExamResults = dynamic(loadResults, { ssr: false, loading: () => <ResultsSkeleton /> });
 
 /**
  * /exams/attempt/[id] — one route for the whole attempt lifecycle:
@@ -77,6 +84,21 @@ export default function AttemptView({ id }) {
       alive = false;
     };
   }, [id, view.phase, isLoaded, isSignedIn, nonce, withDrafts]);
+
+  // Warm the results chunk while the member works through the questions.
+  const running = view.phase === "running";
+  useEffect(() => {
+    if (!running) return undefined;
+    const warm = () => {
+      loadResults().catch(() => {});
+    };
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(warm, { timeout: 5000 });
+      return () => window.cancelIdleCallback?.(id);
+    }
+    const id = setTimeout(warm, 2000);
+    return () => clearTimeout(id);
+  }, [running]);
 
   const onResult = useCallback((result) => setView({ phase: "results", result }), []);
   const reload = useCallback(() => {

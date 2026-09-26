@@ -27,6 +27,7 @@ const SearchField = forwardRef(function SearchField(
         autoCapitalize="off"
         spellCheck={false}
         maxLength={100}
+        dir="auto"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}

@@ -45,7 +45,7 @@ export function Group({ id, icon: Icon, title, count, onViewAll, viewAllLabel, s
           <button
             type="button"
             onClick={onViewAll}
-            className="inline-flex h-8 shrink-0 items-center gap-1 rounded-full px-2 text-sm font-medium text-gold-600 transition-colors hover:bg-gold-50"
+            className="inline-flex h-11 shrink-0 items-center gap-1 rounded-full px-3 text-sm font-medium text-gold-600 transition-colors hover:bg-gold-50 sm:h-8 sm:px-2"
           >
             {viewAllLabel}
             <ChevronRight size={15} aria-hidden="true" className="flip-rtl" />
@@ -247,7 +247,7 @@ export function PersonRow({ p, q }) {
 
 export function PostRow({ post, q, locale, t }) {
   const a = postAuthor(post);
-  const name = a.anonymous ? t("results.anonymous") : a.name;
+  const name = a.anonymous ? t(a.mine ? "results.anonymousYou" : "results.anonymous") : a.name;
   return (
     <li>
       <Link href={`/community/post/${encodeURIComponent(post.id)}`} data-result className={ROW_TOP}>

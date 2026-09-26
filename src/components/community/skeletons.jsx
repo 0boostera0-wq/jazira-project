@@ -40,10 +40,10 @@ export function FeedColumnSkeleton({ composer = true, filters = true }) {
       {filters && (
         <div className="space-y-2.5">
           <div className="flex gap-2 overflow-hidden">
-            {[52, 96, 88, 76, 92, 72].map((w, i) => <Skeleton key={i} rounded="full" className="h-9 shrink-0" style={{ width: w }} />)}
+            {[52, 96, 88, 76, 92, 72].map((w, i) => <Skeleton key={i} rounded="full" className="h-11 shrink-0 sm:h-9" style={{ width: w }} />)}
           </div>
           <div className="flex gap-1.5 overflow-hidden">
-            {[72, 64, 68, 70, 74, 62, 70, 76].map((w, i) => <Skeleton key={i} rounded="full" className="h-8 shrink-0" style={{ width: w }} />)}
+            {[72, 64, 68, 70, 74, 62, 70, 76].map((w, i) => <Skeleton key={i} rounded="full" className="h-11 shrink-0 sm:h-8" style={{ width: w }} />)}
           </div>
         </div>
       )}

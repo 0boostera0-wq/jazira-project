@@ -69,7 +69,7 @@ export default function Welcome({ name, showSuggestions = true, disabled = false
                   disabled={disabled}
                   onClick={() => onAsk(s)}
                   dir="auto"
-                  className="min-h-[38px] whitespace-nowrap rounded-full border border-line/15 bg-surface-2/60 px-3.5 py-1.5 text-sm text-ink-2 transition-colors enabled:hover:border-gold-300/70 enabled:hover:bg-gold-50 enabled:hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
+                  className="min-h-11 whitespace-nowrap rounded-full border border-line/15 bg-surface-2/60 px-3.5 py-1.5 text-sm text-ink-2 transition-colors enabled:hover:border-gold-300/70 enabled:hover:bg-gold-50 enabled:hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {s}
                 </button>

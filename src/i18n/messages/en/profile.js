@@ -32,9 +32,9 @@ const profile = {
   },
   level: {
     title: "Learning level",
-    xp: "{xp} XP",
+    xp: { zero: "0 XP", one: "1 XP", other: "{count} XP" },
     progressLabel: "Progress to level {level}",
-    toNext: "{xp} XP to reach level {level}",
+    toNext: { zero: "You've reached level {level}", one: "1 XP to reach level {level}", other: "{count} XP to reach level {level}" },
     how: "Experience points come from practice tests: 2 XP for every correct answer.",
   },
   follows: {
@@ -53,7 +53,7 @@ const profile = {
     body: "This member takes part in the community anonymously, so their profile and activity aren't shown.",
     community: "Back to the community",
     ownerTitle: "Your profile is hidden from others",
-    ownerBody: "Because anonymous posting is on, visitors see this page instead of your profile. Turn it off in Settings to show your profile and posts.",
+    ownerBody: "Because anonymous posting is on, visitors see this page instead of your profile. Turn it off in Settings to show your profile and the posts you published under your name — anonymous posts stay anonymous.",
     settings: "Settings",
   },
   unavailable: {

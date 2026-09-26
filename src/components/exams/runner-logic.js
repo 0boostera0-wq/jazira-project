@@ -54,6 +54,7 @@ export function toRunnerSession(payload, { now = Date.now() } = {}) {
     mode: payload.mode === "db" ? "db" : "local",
     exam: payload.exam ?? a.exam,
     section: payload.section ?? a.section ?? null,
+    topic: payload.topic ?? a.topic ?? null,
     difficulty: payload.difficulty ?? a.difficulty ?? null,
     timeLimitSeconds: timeLimitSeconds || Math.round(remainingMs / 1000),
     limited: Boolean(payload.limited),

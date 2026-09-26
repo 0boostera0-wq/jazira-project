@@ -212,6 +212,41 @@ export async function getConversation(me, id) {
 }
 
 /**
+ * My existing 1:1 conversation with `otherId`, READ-ONLY (for ?to= links):
+ * never creates a conversation and never touches a message request — that is
+ * start_conversation()'s job, and it only runs from an explicit click.
+ * RLS (cp_read) returns participant rows of my own conversations only.
+ *   → the conversation (shaped like getConversation) | null
+ */
+export async function findConversationWith(me, otherId) {
+  if (!me || !otherId || me === otherId) return null;
+  const sb = await client();
+  const { data, error } = await sb.from("conversation_participants").select("conversation_id").eq("user_id", otherId).limit(50);
+  if (error) throw toError(error);
+  const ids = [...new Set((data || []).map((r) => r.conversation_id).filter(Boolean))];
+  if (!ids.length) return null;
+  const { data: rows, error: convError } = await sb
+    .from("conversations")
+    .select(CONVERSATION_COLUMNS)
+    .in("id", ids)
+    .order("created_at", { ascending: true })
+    .limit(50);
+  if (convError) throw toError(convError);
+  // Same pick as start_conversation(): the oldest conversation with exactly the two of us.
+  const pair = (rows || []).find((r) => {
+    const users = (r.conversation_participants || []).map((p) => p.user_id);
+    return users.length === 2 && users.includes(me) && users.includes(otherId);
+  });
+  return pair ? getConversation(me, pair.id) : null;
+}
+
+/** Public profile of one member (the "start a conversation" panel), or null. */
+export async function getMember(id) {
+  const profiles = await fetchProfiles([id]);
+  return profiles.get(id) || null;
+}
+
+/**
  * Messages of a conversation, newest page first (keyset on created_at, id),
  * returned oldest → newest for rendering. → { items, nextCursor }
  */
@@ -312,7 +347,9 @@ export async function subscribeInbox(me, { onMessage, onMessageUpdate, onRequest
 // Request / receipt RPCs live in src/lib/social.js (security-reviewed
 // wrappers → { ok, reason }). Loaded lazily so the Supabase client stays out
 // of the route's first-load bundle, and re-exported so the messenger has a
-// single data entry point.
+// single data entry point. startConversation() writes (it may create a
+// conversation or a request): call it only from an explicit user action,
+// never from a URL — ?to= links resolve with findConversationWith().
 const social = () => import("@/lib/social");
 export const startConversation = async (otherId) => (await social()).startConversation(otherId);
 export const respondMessageRequest = async (requestId, accept) => (await social()).respondMessageRequest(requestId, accept);

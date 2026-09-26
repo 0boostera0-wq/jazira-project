@@ -17,6 +17,8 @@ module.exports = {
         canvas: v("c-canvas"),
         surface: { DEFAULT: v("c-surface"), 2: v("c-surface-2"), 3: v("c-surface-3") },
         line: v("c-line"),
+        // form-control boundaries (inputs, selects, switch track): ≥3:1 on surface & canvas
+        field: v("c-field"),
         ink: {
           DEFAULT: v("c-ink"),
           2: v("c-ink-2"),
@@ -32,15 +34,16 @@ module.exports = {
           50: v("c-green-50"), 100: v("c-green-100"), 200: v("c-green-200"), 400: v("c-green-400"),
           500: v("c-green-500"), 600: v("c-green-600"), 700: v("c-green-700"),
         },
-        danger: { DEFAULT: v("c-danger"), soft: v("c-danger-soft") },
+        danger: { DEFAULT: v("c-danger"), soft: v("c-danger-soft"), fg: v("c-on-danger") },
         warning: { DEFAULT: v("c-warning"), soft: v("c-warning-soft") },
         info: { DEFAULT: v("c-info"), soft: v("c-info-soft") },
         primary: { DEFAULT: v("c-primary"), fg: v("c-on-primary") },
       },
       fontFamily: {
-        sans: ["var(--font-ar)", "system-ui", "sans-serif"],
-        ar: ["var(--font-ar)", "system-ui", "sans-serif"],
-        en: ["var(--font-en)", "var(--font-ar)", "system-ui", "sans-serif"],
+        // var() fallbacks keep these valid where the next/font variable class is absent
+        sans: ["var(--font-ar, JaziraArabicFallback, Tahoma)", "system-ui", "sans-serif"],
+        ar: ["var(--font-ar, JaziraArabicFallback, Tahoma)", "system-ui", "sans-serif"],
+        en: ["var(--font-en, Arial)", "var(--font-ar, JaziraArabicFallback)", "system-ui", "sans-serif"],
       },
       borderRadius: {
         xs: "var(--radius-xs)",

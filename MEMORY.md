@@ -1,3 +1,3 @@
 # Project Memory Index
 
-- [Jazira Edu Platform](AGENTS.md) — Next.js 14 Arabic RTL edu platform with luxury beige theme, Clerk auth (optional), Gemini AI, localStorage state
+- Start with [AGENTS.md](AGENTS.md) — the current map of the codebase (Next.js 14 App Router, Supabase with RLS, Arabic-first i18n) and links to docs/.

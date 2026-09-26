@@ -7,7 +7,14 @@ import { getPublicProfile, getPublicSettings } from "@/components/community/prof
 import { normalizeUsername } from "@/components/community/model";
 
 // Public data only (no visitor cookies) → cacheable; refreshed every 30 s.
+// generateStaticParams makes that real: without it the segment rendered on
+// every request (no-store). No handle is prerendered at build; each renders on
+// its first request, then revalidates every 30 s (dynamicParams stays true).
 export const revalidate = 30;
+
+export function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({ params }) {
   const handle = normalizeUsername(params.username) || "";
@@ -21,7 +28,9 @@ export async function generateMetadata({ params }) {
     }
     return buildMetadata({ locale: params.locale, key: "user", vars: { name: p.full_name || `@${p.username}` }, path });
   }
-  if (res.status === "not_found") return buildMetadata({ locale: params.locale, key: "notFound", path, noindex: true });
+  // notFound() here as well as in the page: with the static render above an
+  // unknown or malformed handle answers HTTP 404 (not a 200 "soft 404").
+  if (res.status === "not_found") notFound();
   // Unavailable right now: name the page by its handle, never index it.
   return buildMetadata({ locale: params.locale, key: "user", vars: { name: handle ? `@${handle}` : "" }, path, noindex: true });
 }

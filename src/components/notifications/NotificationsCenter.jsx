@@ -146,14 +146,17 @@ export default function NotificationsCenter({ header }) {
   const markAll = async () => {
     setMarkError(false);
     setMarkingAll(true);
-    const before = state.items;
+    // Remember WHICH rows were unread (loaded + "new" ones): a failure turns
+    // exactly those back, on the current lists — pages loaded meanwhile stay.
+    const wasUnread = [...state.items, ...fresh].filter((n) => !n.read).map((n) => n.id);
     setState((s) => ({ ...s, items: setRead(s.items, null, true) }));
     setFresh((f) => setRead(f, null, true)); // the server marks those too
     setUnread(0);
     try {
       await api.markAllNotificationsRead();
     } catch {
-      setState((s) => ({ ...s, items: before }));
+      setState((s) => ({ ...s, items: setRead(s.items, wasUnread, false) })); // "new" rows may have moved in
+      setFresh((f) => setRead(f, wasUnread, false));
       setMarkError(true);
       refreshUnread();
     }
@@ -220,7 +223,7 @@ export default function NotificationsCenter({ header }) {
               label={t("filters.label")}
               value={filter}
               onChange={setFilter}
-              className="mb-5 w-fit max-w-full"
+              className="mb-5 w-fit max-w-full [&>button]:h-11 sm:[&>button]:h-9" /* 44px targets on touch widths */
               items={FILTERS.map((f) => ({ value: f, label: t(`filters.${f}`), count: f === "unread" && unread > 0 ? unread : undefined }))}
             />
           )}

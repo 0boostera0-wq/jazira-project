@@ -1,92 +1,53 @@
-# 🏝️ منصة جزيرة التعليمية — Jazira Edu Platform
+# Jazira — منصة جزيرة
 
-منصة تعليمية تفاعلية فاخرة بالكامل باللغة العربية (RTL) بثيم "البيج الراقي"
-(خلفيات كريمية، لمسات ذهبية شامبانية، ومكوّنات زجاجية شفافة).
+Arabic-first learning platform for Saudi students: school curriculum resources
+(elementary → high school), Qudurat / Tahsili practice with an explanation for
+every question, a learning community, and the Jazira Assistant. Arabic is the
+default locale (unprefixed URLs); English lives under `/en`.
 
-A production-ready prototype built with **Next.js 14 (App Router)**, **Tailwind CSS**,
-**Framer Motion**, **Clerk** (auth), and **Google Gemini** (AI assistant).
+**Stack:** Next.js 14 (App Router, JavaScript) · Tailwind CSS · Supabase
+(Postgres + Auth + Storage, RLS everywhere) · Lemon Squeezy (payments, optional)
+· Vercel.
 
----
+## Getting started
 
-## ✨ الميزات / Features
-
-- **مصادقة Clerk** — تسجيل عبر Google وApple ورقم الجوال (يعمل تلقائيًا في وضع تجريبي إن لم تُضبط المفاتيح).
-- **قائمة جانبية زجاجية (RTL)** — بطاقة مستخدم ديناميكية، أقسام بقوائم منسدلة، وحالة زائر/مسجّل.
-- **المرحلة الابتدائية** — لوحة رسم تفاعلية لتدريب الكتابة + تحدّي قراءة صوتي مع تغذية بصرية فورية.
-- **القدرات والتحصيلي** — محرّك اختبارات بأسئلة عشوائية، مؤقّت صارم (40 ثانية/سؤال) مع إرسال تلقائي.
-- **التجربة المجانية** — اختبار واحد مجاني ثم جدار دفع.
-- **المسابقات** — لوحة متصدرين حسب نقاط XP + جوائز (PS5 / 500 ريال / iPad).
-- **المجتمع التعليمي** — خلاصة اجتماعية بأسلوب Binance Square مع إعجاب وتعليق ووسام ذهبي للنخبة.
-- **الاشتراكات** — باقة النخبة (19 ريال) بواجهة دفع (Apple Pay / مدى) + نظام دعوات (افتح بـ 5 دعوات).
-- **المساعد الذكي (Gemini)** — ودجة عائمة، روبوت متحرك (سكون/تفكير)، بث نصي مباشر، حدود استخدام (3 رسائل/8 ساعات للمجاني)، وروابط تفاعلية حسب السياق.
-
----
-
-## 🚀 التشغيل / Getting Started
-
-> **متطلّب:** Node.js 18.18+ مثبّت على جهازك. (لم يكن مثبّتًا أثناء توليد المشروع.)
+Requires Node.js 20+.
 
 ```bash
-# 1) ثبّت الحزم
 npm install
-
-# 2) شغّل بيئة التطوير
-npm run dev
-
-# 3) افتح المتصفح
-# http://localhost:3000
+cp .env.example .env.local   # fill in the values you have; everything is optional locally
+npm run dev                  # http://127.0.0.1:3000 (bound to loopback)
 ```
 
-التطبيق **يعمل مباشرةً** حتى بدون مفاتيح Clerk (وضع زائر تجريبي). المساعد الذكي
-يحتاج مفتاح `GEMINI_API_KEY` الموجود في `.env.local`.
+Without Supabase variables the app runs in a signed-out state and shows honest
+"not available" states — nothing is faked. See `.env.example` for every
+variable and which features it enables.
 
----
+## Commands
 
-## 🔑 المتغيّرات البيئية / Environment Variables
-
-انسخ `.env.example` إلى `.env.local` واملأ القيم. الملف `.env.local` **مُتجاهَل من Git**.
-
-| المتغيّر | الوصف |
+| Command | What it does |
 |---|---|
-| `GEMINI_API_KEY` | مفتاح Google Gemini (مطلوب للمساعد الذكي) |
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | مفتاح Clerk العام (اختياري) |
-| `CLERK_SECRET_KEY` | مفتاح Clerk السرّي (اختياري) |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | مفتاح Stripe (واجهة فقط في هذا النموذج) |
+| `npm run dev` | development server |
+| `npm run build` | production build (runs ESLint) |
+| `npm test` | unit tests — i18n key parity, pure logic |
+| `npm run test:db` | database tests — migrations, RLS, RPCs on PGlite (no Docker) |
+| `npm run assets:check` | illustration manifest ↔ files ↔ usages |
+| `node scripts/shot.mjs /en/exams out.png --w=390 --axe` | screenshot + accessibility check |
 
-### ⚠️ تنبيه أمني مهم
-مفتاح `GEMINI_API_KEY` الذي زوّدتنا به مكتوب الآن في `.env.local` (وهو مُتجاهَل من Git).
-بما أنه شُورك كنص صريح، **يُنصح بشدّة بإلغائه وإنشاء مفتاح جديد** من Google AI Studio
-قبل النشر للإنتاج. لا تضع أي مفتاح سرّي في كود الواجهة (client) أبدًا.
+## Database
 
----
+Apply `supabase/migrations/` in filename order (0000 → latest) to a fresh
+Supabase project. That folder is the only schema source; the security model is
+documented in [docs/SECURITY.md](docs/SECURITY.md).
 
-## 🗂️ هيكل المشروع / Structure
+## Read before changing anything
 
-```
-src/
-├─ app/
-│  ├─ layout.js                 # الجذر: RTL + خط Tajawal + Clerk/Providers
-│  ├─ globals.css               # ثيم البيج + الزجاج
-│  ├─ page.js                   # الصفحة الترحيبية
-│  ├─ not-found.js
-│  ├─ sign-in / sign-up         # صفحات Clerk
-│  ├─ api/chat/route.js         # واجهة Gemini مع البث المباشر
-│  └─ (app)/                    # القسم الأساسي (قائمة + مساعد ذكي)
-│     ├─ layout.js
-│     ├─ dashboard / elementary / middle / high-school
-│     ├─ community / competitions / subscriptions
-│     ├─ achievements / settings / about / feedback / support
-├─ components/                  # Sidebar, AIAssistant, RobotMascot, QuduratTest, ...
-├─ context/                     # AppContext (اشتراك/XP/دعوات) + AuthProvider
-├─ hooks/                       # useAiUsage (حدود الاستخدام)
-└─ lib/                         # constants, questions (بنك الأسئلة), authConfig
-```
+- [AGENTS.md](AGENTS.md) — map of the codebase and non-negotiables
+- [docs/CONVENTIONS.md](docs/CONVENTIONS.md) — routing, i18n, server/client split, quality gates
+- [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) — tokens, typography, components, accessibility
+- [docs/DATA_API.md](docs/DATA_API.md) — tables, RPCs and client data functions
+- [docs/SECURITY.md](docs/SECURITY.md) — RLS, grants, definer functions, known limits
+- [docs/CURRICULUM.md](docs/CURRICULUM.md) — curriculum structure and sources
 
----
-
-## 🧪 ملاحظات النموذج / Prototype Notes
-
-- الاشتراك، XP، الدعوات، وحدود المساعد الذكي تُحفظ في **localStorage** (لا حاجة لقاعدة بيانات للتجربة).
-- بنك الأسئلة مُحاكى في `src/lib/questions.js` — استبدله بنداء API آمن للإنتاج.
-- واجهة الدفع تجريبية (لا تتم معاملة فعلية) — اربطها بـ Stripe/Tap للإنتاج.
-- زر "محاكاة دعوة ناجحة" في صفحة الاشتراكات لأغراض العرض فقط.
+Old prototype reports live in [docs/archive/](docs/archive/README.md) and do
+not describe the current system.

@@ -105,10 +105,16 @@ export const totalOf = (node) => (node ? node.free + node.premium : 0);
  * Questions a viewer can draw with the given filters.
  * @returns {number|null} null when the bank is unknown
  */
-export function availableCount(bank, { exam, section = null, difficulty = null, premium = false }) {
+export function availableCount(bank, { exam, section = null, topic = null, difficulty = null, premium = false }) {
   const e = bank?.exams?.[exam];
   if (!bank) return null;
   if (!e) return 0;
+  if (topic && section) {
+    // Counts exist per topic and per difficulty, not per (topic, difficulty):
+    // that pair is unknown, so say nothing rather than guess.
+    if (difficulty) return null;
+    return countOf(e.sections[section]?.topics?.[topic], premium);
+  }
   if (!section && !difficulty) return countOf(e, premium);
   if (section && !difficulty) return countOf(e.sections[section], premium);
   if (section) return countOf(e.sections[section]?.difficulties?.[difficulty], premium);

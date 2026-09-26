@@ -16,7 +16,7 @@ const nav = {
     aptitude: "القدرات",
     achievement: "التحصيلي",
     examHistory: "سجل الاختبارات",
-    assistant: "مساعد الجزيرة",
+    assistant: "مساعد جزيرة",
     community: "المجتمع التعليمي",
     messages: "الرسائل",
     achievements: "الإنجازات",

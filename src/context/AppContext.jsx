@@ -1,149 +1,84 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { STORAGE, REFERRAL_TARGET } from "@/lib/constants";
-import { useAuthUser } from "@/context/AuthProvider";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { STORAGE } from "@/lib/constants";
 
-const AppContext = createContext(null);
+// Theme (light / dark) for the whole app — the only state this provider owns.
+//
+// Earlier versions also kept XP, a "free trial" flag, a random referral code
+// and a referral counter in localStorage for every visitor, and derived
+// "premium access" from them. None of that was real: XP, referrals and Elite
+// live in the database (profiles.xp, referrals, has_premium()). Those keys are
+// removed from the browser on first load.
+const LEGACY_KEYS = [
+  "jazira_xp_v1", "jazira_free_trial_used_v1", "jazira_referrals_v1", "jazira_referral_code_v1",
+  "jazira_ai_usage_v1", "jazira_subscription_v1",
+];
 
-function readJSON(key, fallback) {
-  if (typeof window === "undefined") return fallback;
+const ThemeContext = createContext(null);
+
+function readTheme() {
   try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
+    return JSON.parse(window.localStorage.getItem(STORAGE.theme) || "null") === "dark" ? "dark" : "light";
   } catch {
-    return fallback;
+    return "light";
   }
 }
 
-function makeReferralCode() {
-  return "JZR-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+function saveTheme(value) {
+  try {
+    window.localStorage.setItem(STORAGE.theme, JSON.stringify(value));
+  } catch {
+    /* storage blocked — the choice still applies to this page */
+  }
 }
 
-export function AppProvider({ children }) {
-  // Elite is DB-verified (profiles.is_elite, set only by the payment webhook).
-  // It is NEVER toggled from the client.
-  const { isElite: dbElite } = useAuthUser();
-  const isElite = !!dbElite;
-
-  const [xp, setXp] = useState(0);
-  const [freeTrialUsed, setFreeTrialUsed] = useState(false);
-  const [referrals, setReferrals] = useState(0);
-  const [referralCode, setReferralCode] = useState("");
+export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState("light");
   const [hydrated, setHydrated] = useState(false);
 
-  // Hydrate from localStorage on mount.
   useEffect(() => {
-    setXp(readJSON(STORAGE.xp, 0));
-    setFreeTrialUsed(readJSON(STORAGE.freeTrialUsed, false));
-    setReferrals(readJSON(STORAGE.referrals, 0));
-
-    let code = readJSON(STORAGE.referralCode, "");
-    if (!code) {
-      code = makeReferralCode();
-      window.localStorage.setItem(STORAGE.referralCode, JSON.stringify(code));
+    setThemeState(readTheme());
+    try {
+      for (const key of LEGACY_KEYS) window.localStorage.removeItem(key);
+    } catch {
+      /* storage blocked */
     }
-    setReferralCode(code);
-
-    // Theme: read saved preference (falls back to light)
-    const savedTheme = readJSON(STORAGE.theme, "light");
-    setThemeState(savedTheme === "dark" ? "dark" : "light");
-
     setHydrated(true);
   }, []);
 
   // Keep <html class="dark"> in sync with the theme state.
   useEffect(() => {
-    if (typeof document === "undefined") return;
-    const root = document.documentElement;
-    if (theme === "dark") root.classList.add("dark");
-    else root.classList.remove("dark");
+    document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
   const setTheme = useCallback((next) => {
     const value = next === "dark" ? "dark" : "light";
     setThemeState(value);
-    window.localStorage.setItem(STORAGE.theme, JSON.stringify(value));
+    saveTheme(value);
   }, []);
 
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => {
       const next = prev === "dark" ? "light" : "dark";
-      window.localStorage.setItem(STORAGE.theme, JSON.stringify(next));
+      saveTheme(next);
       return next;
     });
   }, []);
 
-  const persist = (key, value) =>
-    window.localStorage.setItem(key, JSON.stringify(value));
-
-  const addXp = useCallback((amount) => {
-    setXp((prev) => {
-      const next = prev + amount;
-      persist(STORAGE.xp, next);
-      return next;
-    });
-  }, []);
-
-  const markFreeTrialUsed = useCallback(() => {
-    setFreeTrialUsed(true);
-    persist(STORAGE.freeTrialUsed, true);
-  }, []);
-
-  // Invitations are UNLIMITED — there is no cap on how many friends a user invites.
-  const addReferral = useCallback(() => {
-    setReferrals((prev) => {
-      const next = prev + 1;
-      persist(STORAGE.referrals, next);
-      return next;
-    });
-  }, []);
-
-  // Set the count from an authoritative source (Supabase count of successful invites).
-  const syncReferrals = useCallback((n) => {
-    const next = Math.max(0, Number(n) || 0);
-    setReferrals(next);
-    persist(STORAGE.referrals, next);
-  }, []);
-
-  const resetReferrals = useCallback(() => {
-    setReferrals(0);
-    persist(STORAGE.referrals, 0);
-  }, []);
-
-  // Referral REWARD (limited bonus features) unlocks at REFERRAL_TARGET invites.
-  const referralRewardUnlocked = referrals >= REFERRAL_TARGET;
-
-  // Premium access: real subscription OR the referral reward threshold.
-  const hasPremiumAccess = isElite || referralRewardUnlocked;
-
-  const value = {
-    hydrated,
-    isElite,
-    hasPremiumAccess,
-    xp,
-    freeTrialUsed,
-    referrals,
-    referralTarget: REFERRAL_TARGET,
-    referralRewardUnlocked,
-    referralCode,
-    theme,
-    isDark: theme === "dark",
-    setTheme,
-    toggleTheme,
-    addXp,
-    markFreeTrialUsed,
-    addReferral,
-    syncReferrals,
-    resetReferrals,
-  };
-
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  const value = useMemo(
+    () => ({ hydrated, theme, isDark: theme === "dark", setTheme, toggleTheme }),
+    [hydrated, theme, setTheme, toggleTheme]
+  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
-export function useApp() {
-  const ctx = useContext(AppContext);
-  if (!ctx) throw new Error("useApp must be used within <AppProvider>");
+export function useTheme() {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error("useTheme must be used within <ThemeProvider>");
   return ctx;
 }
+
+// Names kept for existing imports (Providers.jsx, ThemeToggle, PreferencesSection).
+export const AppProvider = ThemeProvider;
+export const useApp = useTheme;

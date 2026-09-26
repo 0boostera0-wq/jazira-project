@@ -156,7 +156,7 @@ export default function FeedbackForm() {
         <fieldset>
           <legend className="mb-2.5 flex w-full items-baseline justify-between gap-2 text-sm font-medium text-ink">
             <span>{t("feedback.area.legend")}</span>
-            <span className="text-xs font-normal text-ink-4">{t("feedback.area.optional")}</span>
+            <span className="text-xs font-normal text-ink-3">{t("feedback.area.optional")}</span>
           </legend>
           <div className="flex flex-wrap gap-2">
             {AREAS.map((k) => {

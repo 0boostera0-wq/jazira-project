@@ -16,6 +16,7 @@ import IconTile from "@/components/ui/IconTile";
 import { cn } from "@/components/ui/cn";
 import EliteBadge from "@/components/subscriptions/EliteBadge";
 import UpgradeDialog from "@/components/subscriptions/UpgradeDialog";
+import { toLatinDigits } from "@/components/auth/authUtils";
 import { useBank } from "./BankProvider";
 import { availableCount, totalOf } from "./bank";
 import {
@@ -30,7 +31,8 @@ import { useTier } from "./useTier";
 const optionBase =
   "relative flex cursor-pointer select-none rounded-md border border-line/15 bg-surface text-start transition-[border-color,background-color,box-shadow] duration-fast ease-out hover:border-line/30 has-[:checked]:border-gold-500 has-[:checked]:bg-gold-50 has-[:checked]:shadow-[0_0_0_1px_rgb(var(--c-gold-500))] has-[:focus-visible]:shadow-[var(--ring)]";
 
-const ALERT_STACKED = "mt-4 flex-wrap sm:flex-nowrap [&>div:last-child]:basis-full [&>div:last-child]:ps-[1.875rem] sm:[&>div:last-child]:basis-auto sm:[&>div:last-child]:ps-0";
+// An Alert whose action drops below the text on phones (no margin: callers add it).
+const ALERT_STACKED = "flex-wrap sm:flex-nowrap [&>div:last-child]:basis-full [&>div:last-child]:ps-[1.875rem] sm:[&>div:last-child]:basis-auto sm:[&>div:last-child]:ps-0";
 
 /**
  * The exam builder (client island). Exam type is fixed by the page; section,
@@ -39,23 +41,21 @@ const ALERT_STACKED = "mt-4 flex-wrap sm:flex-nowrap [&>div:last-child]:basis-fu
  * payload handed over in memory so the exam shell renders without a second
  * request.
  */
-export default function ExamBuilder({ exam, preview = null }) {
+export default function ExamBuilder({ exam }) {
   const t = useT("exams");
   const tc = useT("common");
   const { locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
   const bank = useBank();
-  const auth = useTier();
-  // `preview` ({ tier, recent }) is for visual QA of signed-in tiers only.
-  const { isLoaded, isSignedIn, tier } = preview ? { isLoaded: true, isSignedIn: preview.tier !== "guest", tier: preview.tier } : auth;
+  const { isLoaded, isSignedIn, tier } = useTier();
   const uid = useId();
 
   const [state, dispatch] = useReducer(builderReducer, null, () => initialBuilderState(exam, params));
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState(null);
   const [dialog, setDialog] = useState(null); // { kind: "signIn" } | { kind: "upgrade", feature }
-  const [recent, setRecent] = useState(preview?.recent || null);
+  const [recent, setRecent] = useState(null);
 
   // Deep links clicked while on the page (section cards, "retry weakest").
   const paramsKey = params?.toString() || "";
@@ -76,7 +76,6 @@ export default function ExamBuilder({ exam, preview = null }) {
 
   // Signed in: today's attempts (free daily limit) and an unfinished exam.
   useEffect(() => {
-    if (preview) return;
     if (!isSignedIn) {
       setRecent(null);
       return;
@@ -88,7 +87,7 @@ export default function ExamBuilder({ exam, preview = null }) {
     return () => {
       alive = false;
     };
-  }, [isSignedIn, preview]);
+  }, [isSignedIn]);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) router.prefetch("/exams/attempt/local");
@@ -104,7 +103,7 @@ export default function ExamBuilder({ exam, preview = null }) {
   // What this viewer can actually draw: guests (and anyone when the database
   // is unreachable) practise from the bundled bank.
   const source = isSignedIn && bank.db ? bank.db : bank.local;
-  const available = bank.status === "loading" ? undefined : source ? availableCount(source, { exam, section: state.section, difficulty: state.difficulty, premium: effTier === "elite" }) : null;
+  const available = bank.status === "loading" ? undefined : source ? availableCount(source, { exam, section: state.section, topic: state.topic, difficulty: state.difficulty, premium: effTier === "elite" }) : null;
   const sectionTotal = (s) => (bank.status === "loading" || !source ? null : totalOf(s ? source.exams?.[exam]?.sections?.[s] : source.exams?.[exam]));
 
   const usedToday = effTier === "free" && recent ? attemptsToday(recent) : null;
@@ -333,7 +332,15 @@ export default function ExamBuilder({ exam, preview = null }) {
       </div>
 
       {state.topic && (
-        <Alert tone="info" className="mt-6">
+        <Alert
+          tone="info"
+          className={cn("mt-6", ALERT_STACKED)}
+          action={
+            <Button size="sm" variant="secondary" onClick={() => dispatch({ type: "topic", value: null })}>
+              {t("builder.topicAll", { section: sectionName })}
+            </Button>
+          }
+        >
           {t("builder.topicNote", { topic: topicLabel(t, state.topic), section: sectionName })}
         </Alert>
       )}
@@ -345,6 +352,7 @@ export default function ExamBuilder({ exam, preview = null }) {
             <p className="sr-only">{t("builder.summary.label")}</p>
             <ul className="flex flex-wrap gap-1.5" aria-label={t("builder.summary.label")}>
               <li><Badge tone="outline">{sectionName}</Badge></li>
+              {state.topic && <li><Badge tone="outline">{topicLabel(t, state.topic)}</Badge></li>}
               <li><Badge tone="outline">{t(`difficulty.${state.difficulty || "any"}`)}</Badge></li>
               <li><Badge tone="gold">{q(state.count)}</Badge></li>
               <li><Badge tone="gold">{minutes ? m(shownMinutes) : t("builder.summary.autoMinutes", { minutes: m(shownMinutes) })}</Badge></li>
@@ -364,7 +372,7 @@ export default function ExamBuilder({ exam, preview = null }) {
         </div>
 
         {leftToday === 0 && !error && (
-          <Alert tone="warning" className={ALERT_STACKED} action={<Button href="/subscriptions" size="sm" variant="gold" iconStart={Crown}>{t("errors.upgrade")}</Button>}>
+          <Alert tone="warning" className={cn("mt-4", ALERT_STACKED)} action={<Button href="/subscriptions" size="sm" variant="gold" iconStart={Crown}>{t("errors.upgrade")}</Button>}>
             {t("builder.tier.free.none", { attempts: t("units.attempts", { count: LIMITS.freeDailyAttempts }) })}
           </Alert>
         )}
@@ -452,18 +460,18 @@ function StartError({ t, q, locale, error, exam }) {
   }
   const tone = code === "premium_required" || code === "daily_limit_reached" ? "warning" : "danger";
   return (
-    <Alert tone={tone} className={action ? ALERT_STACKED : "mt-4"} action={action}>
+    <Alert tone={tone} className={cn("mt-4", action && ALERT_STACKED)} action={action}>
       {text}
     </Alert>
   );
 }
 
-/** − [ n ] + control (44px targets). Commits typed values on blur / Enter. */
+/** − [ n ] + control (44px targets). Commits typed values on blur / Enter; Arabic-Indic and Persian digits count. */
 function Stepper({ id, value, min, max, step = 1, onChange, onOverflow, decLabel, incLabel, hint }) {
   const [draft, setDraft] = useState(String(value));
   useEffect(() => setDraft(String(value)), [value]);
   const commit = () => {
-    const n = parseInt(draft.replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d)), 10);
+    const n = parseInt(toLatinDigits(draft), 10);
     if (!Number.isFinite(n)) return setDraft(String(value));
     if (n > max && onOverflow) onOverflow();
     onChange(Math.min(max, Math.max(min, n)));

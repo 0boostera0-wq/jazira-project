@@ -1,4 +1,7 @@
 import { forwardRef } from "react";
+import {
+  ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, LogIn, LogOut, Reply, Send, SendHorizontal, TrendingDown, TrendingUp,
+} from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import Spinner from "./Spinner";
 import { cn } from "./cn";
@@ -11,7 +14,7 @@ const VARIANTS = {
   secondary: "bg-surface text-ink border border-line/20 shadow-xs hover:bg-surface-2 hover:border-line/30",
   soft: "bg-gold-50 text-gold-700 hover:bg-gold-100",
   ghost: "text-ink-2 hover:bg-surface-2 hover:text-ink",
-  danger: "bg-danger text-white shadow-sm hover:bg-danger/90",
+  danger: "bg-danger text-danger-fg shadow-sm hover:bg-danger/90",
   link: "text-gold-600 hover:underline underline-offset-4 !h-auto !px-0 !rounded-none",
 };
 
@@ -22,6 +25,11 @@ const SIZES = {
   icon: "h-10 w-10 p-0",
   "icon-sm": "h-8 w-8 p-0",
 };
+
+// Glyphs that encode reading direction. Whether passed as iconStart or iconEnd
+// they are mirrored in RTL (a paper plane, a door arrow or a trend line must
+// point the way the text flows). Pass flipStart={false} to opt out.
+const DIRECTIONAL = new Set([ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, LogIn, LogOut, Reply, Send, SendHorizontal, TrendingDown, TrendingUp]);
 
 export function buttonClasses({ variant = "primary", size = "md", block = false, className } = {}) {
   return cn(
@@ -41,16 +49,19 @@ export function buttonClasses({ variant = "primary", size = "md", block = false,
  * <Button href="https://…" external>           — external link (new tab, noopener)
  * <Button loading>…</Button>                   — spinner + aria-busy, blocks clicks
  * Props: variant, size, block, iconStart, iconEnd (lucide components)
- * `iconEnd` is mirrored in RTL (arrows point the reading direction).
+ * `iconEnd` is mirrored in RTL (arrows point the reading direction); so is a
+ * directional `iconStart` (Send, LogIn/LogOut, Trending*, arrows) — override
+ * with `flipStart`.
  */
 const Button = forwardRef(function Button(
-  { href, external, variant, size, block, loading, iconStart: IconStart, iconEnd: IconEnd, className, children, disabled, type = "button", ...rest },
+  { href, external, variant, size, block, loading, iconStart: IconStart, iconEnd: IconEnd, flipStart, className, children, disabled, type = "button", ...rest },
   ref
 ) {
   const iconSize = size === "sm" || size === "icon-sm" ? 16 : 18;
+  const mirrorStart = flipStart ?? DIRECTIONAL.has(IconStart);
   const content = (
     <>
-      {loading ? <Spinner size={iconSize} /> : IconStart && <IconStart size={iconSize} aria-hidden="true" />}
+      {loading ? <Spinner size={iconSize} /> : IconStart && <IconStart size={iconSize} aria-hidden="true" className={mirrorStart ? "flip-rtl" : undefined} />}
       {children}
       {IconEnd && !loading && <IconEnd size={iconSize} aria-hidden="true" className="flip-rtl" />}
     </>

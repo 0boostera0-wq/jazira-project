@@ -15,6 +15,9 @@ import { listAttempts, getExamStats, getAttempt } from "@/lib/data/exams";
 import { listNotifications } from "@/lib/data/notifications";
 import { getAiQuota } from "@/lib/data/ai";
 import { normalizeStats, resumeSummary, NOTIFICATION_LIMIT, RECENT_LIMIT } from "./model";
+import { recordActivityOnce } from "./activity";
+
+export { recordActivityOnce, resetActivityCache } from "./activity";
 
 const MISSING = new Set(["PGRST202", "PGRST204", "PGRST205", "42P01", "42883", "42703"]);
 
@@ -40,29 +43,8 @@ export function errorCode(err) {
 }
 
 // ── Welcome: XP + streak ────────────────────────────────────────────────────
-
-// record_daily_activity() is idempotent per Saudi day; call it once per visit
-// and share the promise (React strict mode mounts effects twice in dev).
-let activity = null;
-
-export function recordActivityOnce(supabase, userId, today = riyadhToday()) {
-  const key = `${userId}:${today}`;
-  if (!activity || activity.key !== key) {
-    activity = {
-      key,
-      promise: Promise.resolve()
-        .then(() => supabase.rpc("record_daily_activity"))
-        .then((res) => (res && !res.error && typeof res.data === "number" ? res.data : null))
-        .catch(() => null),
-    };
-  }
-  return activity.promise;
-}
-
-/** Forget the shared activity call (tests, sign-out). */
-export function resetActivityCache() {
-  activity = null;
-}
+// record_daily_activity() has one owner (./activity.js): shared per member and
+// day with the layout's session tracker, skipped when already recorded today.
 
 /**
  * → { xp, level, streak } where xp is null when it can't be read and streak is

@@ -1,29 +1,14 @@
-import { IBM_Plex_Sans_Arabic, IBM_Plex_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import { LOCALES, isLocale, dirOf } from "@/i18n/config";
 import { setRequestLocale, loadMessages, getT } from "@/i18n/server";
 import { I18nProvider } from "@/i18n/client";
+import { manifestHref } from "@/i18n/manifest";
 import Providers from "@/components/providers/Providers";
 import { SITE_URL, OG_IMAGE, organizationJsonLd, jsonLd } from "@/lib/seo";
+import { fontVariables, THEME_SCRIPT } from "../fonts";
 
-// Typography: IBM Plex Sans Arabic for Arabic (and Latin runs inside Arabic
-// text) — a humanist sans with excellent long-form readability — paired with
-// its designed sibling IBM Plex Sans for the English interface. Three weights
-// keep the font payload small; only the Arabic face is preloaded.
-const plexArabic = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "500", "700"],
-  variable: "--font-ar",
-  display: "swap",
-  preload: true,
-});
-const plexLatin = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-en",
-  display: "swap",
-  preload: false,
-});
+// Fonts (IBM Plex Sans Arabic + IBM Plex Sans, no preload, Arabic-metric
+// fallback) are configured in app/fonts.js, shared with app/not-found.js.
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -37,6 +22,8 @@ export async function generateMetadata({ params }) {
     title: { default: t("site.title"), template: `%s · ${t("site.name")}` },
     description: t("site.description"),
     applicationName: t("site.name"),
+    // per-locale manifest: English installs get an English name and start at /en
+    manifest: manifestHref(params.locale),
     openGraph: { images: [{ url: OG_IMAGE, width: 1200, height: 630 }] },
     formatDetection: { telephone: false },
   };
@@ -52,9 +39,6 @@ export const viewport = {
   ],
 };
 
-// Apply the saved theme before first paint (no light→dark flash).
-const themeScript = `(function(){try{var t=JSON.parse(localStorage.getItem("jazira_theme_v1"));if(t==="dark")document.documentElement.classList.add("dark")}catch(e){}})();`;
-
 export default async function LocaleLayout({ children, params }) {
   const { locale } = params;
   if (!isLocale(locale)) notFound();
@@ -63,9 +47,10 @@ export default async function LocaleLayout({ children, params }) {
   const [messages, meta] = await Promise.all([loadMessages(locale, ["common", "nav"]), getT("meta", locale)]);
 
   return (
-    <html lang={locale} dir={dirOf(locale)} className={`${plexArabic.variable} ${plexLatin.variable}`} suppressHydrationWarning>
+    <html lang={locale} dir={dirOf(locale)} className={fontVariables} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Apply the saved theme before first paint (no light→dark flash). */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

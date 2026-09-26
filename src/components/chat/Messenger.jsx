@@ -13,9 +13,11 @@ import { cn } from "@/components/ui/cn";
 import { ConversationRow, RequestRow } from "./ConversationRow";
 import Thread from "./ThreadPane";
 import NoSelection from "./NoSelection";
+import StartPanel from "./StartPanel";
 import { applyIncoming, isUnread, sortConversations } from "./messaging";
 import {
-  getConversation, listConversations, listRequests, subscribeInbox, markConversationRead, respondMessageRequest, startConversation,
+  findConversationWith, getConversation, getMember, listConversations, listRequests, subscribeInbox, markConversationRead,
+  respondMessageRequest, startConversation,
 } from "./data";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -38,8 +40,11 @@ const setUrl = (id, mode = "replace") => {
 /**
  * /chat — two-pane messenger (list + thread on md+, list → thread on phones).
  * Conversations and requests load independently; realtime keeps the list,
- * previews and the open thread current. ?to=<member id> opens (or starts) a
- * conversation through start_conversation(); ?c=<conversation id> deep-links.
+ * previews and the open thread current. ?c=<conversation id> deep-links.
+ * ?to=<member id> (profile "Message" button) is resolved READ-ONLY: an
+ * existing conversation opens; otherwise the member is shown with a "Start
+ * conversation" button. start_conversation() runs only from that click — a
+ * link must never create a conversation or accept a message request.
  */
 export default function Messenger() {
   const t = useT("chat");
@@ -53,6 +58,7 @@ export default function Messenger() {
   const [respond, setRespond] = useState(null); // { id, kind }
   const [notice, setNotice] = useState(null); // { tone, text }
   const [opening, setOpening] = useState(false);
+  const [draft, setDraft] = useState(null); // ?to= with no conversation yet: { otherId, other, busy, error }
 
   const activeRef = useRef(null);
   activeRef.current = active;
@@ -185,6 +191,7 @@ export default function Messenger() {
   // ── navigation between list and thread ─────────────────────────────────
   const open = useCallback((conv, { history = "auto" } = {}) => {
     setNotice(null);
+    setDraft(null);
     const mode = history === "auto" ? (activeRef.current ? "replace" : "push") : history;
     if (mode === "push") pushed.current = true;
     setUrl(conv.id, mode);
@@ -230,7 +237,8 @@ export default function Messenger() {
     return () => window.removeEventListener("popstate", onPop);
   }, [me]);
 
-  // ?to=<member> (profile "Message" button) · ?c=<conversation> (deep link)
+  // ?to=<member> (profile "Message" button) · ?c=<conversation> (deep link).
+  // Both only READ: ?to= opens an existing conversation or shows StartPanel.
   useEffect(() => {
     if (!me) return;
     let alive = true;
@@ -240,24 +248,28 @@ export default function Messenger() {
     (async () => {
       if (to && UUID_RE.test(to) && to !== me) {
         setOpening(true);
-        const res = await startConversation(to);
-        if (!alive) return;
-        if (!res.ok) {
+        let conv = null;
+        let other = null;
+        try {
+          conv = await findConversationWith(me, to);
+          if (!conv) other = await getMember(to);
+        } catch (err) {
+          if (!alive) return;
           setOpening(false);
           setUrl(null);
-          const key = `start.errors.${res.reason}`;
-          setNotice({ tone: "warning", text: t(t.has(key) ? key : "start.errors.error") });
+          setNotice({ tone: "warning", text: t(err?.code === "unavailable" ? "start.errors.unavailable" : "start.errors.error") });
           return;
         }
-        const conv = await getConversation(me, res.conversationId).catch(() => null);
         if (!alive) return;
         setOpening(false);
         if (conv) {
           open(conv, { history: "replace" });
           setConvs((s) => (s.items.some((x) => x.id === conv.id) || (conv.isRequest && conv.request?.recipientId === me) ? s : { ...s, items: sortConversations([conv, ...s.items]) }));
+        } else if (other) {
+          setDraft({ otherId: to, other, busy: false, error: null });
         } else {
           setUrl(null);
-          setNotice({ tone: "warning", text: t("start.errors.error") });
+          setNotice({ tone: "warning", text: t("start.errors.invalid_recipient") });
         }
       } else if (c && UUID_RE.test(c)) {
         const conv = await getConversation(me, c).catch(() => null);
@@ -271,6 +283,31 @@ export default function Messenger() {
     // run once per signed-in member
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [me]);
+
+  // The explicit "Start conversation" click — the only caller of start_conversation().
+  const startDraft = useCallback(async () => {
+    const d = draft;
+    if (!d || d.busy) return;
+    setDraft({ ...d, busy: true, error: null });
+    const res = await startConversation(d.otherId);
+    if (!res.ok) {
+      const key = `start.errors.${res.reason}`;
+      setDraft((cur) => (cur && cur.otherId === d.otherId ? { ...cur, busy: false, error: t(t.has(key) ? key : "start.errors.error") } : cur));
+      return;
+    }
+    const conv = await getConversation(me, res.conversationId).catch(() => null);
+    if (!conv) {
+      setDraft((cur) => (cur && cur.otherId === d.otherId ? { ...cur, busy: false, error: t("start.errors.error") } : cur));
+      return;
+    }
+    open(conv, { history: "replace" });
+    setConvs((s) => (s.items.some((x) => x.id === conv.id) ? s : { ...s, items: sortConversations([conv, ...s.items]) }));
+  }, [draft, me, open, t]);
+
+  const cancelDraft = useCallback(() => {
+    setDraft(null);
+    setUrl(null);
+  }, []);
 
   // ── requests ───────────────────────────────────────────────────────────
   const onRespond = useCallback(async (target, accept) => {
@@ -386,11 +423,11 @@ export default function Messenger() {
 
   return (
     <div className={cn("surface grid grid-cols-[minmax(0,1fr)] overflow-hidden lg:-mb-10 md:grid-cols-[300px_minmax(0,1fr)] lg:grid-cols-[340px_minmax(0,1fr)]", PANE_H)}>
-      <div className={cn("min-h-0 min-w-0 flex-col border-line/10 md:flex md:border-e", active || opening ? "hidden" : "flex")}>
+      <div className={cn("min-h-0 min-w-0 flex-col border-line/10 md:flex md:border-e", active || opening || draft ? "hidden" : "flex")}>
         <div className="px-4 pb-3 pt-4 sm:px-5">
           <h1 className="t-h3">{t("page.title")}</h1>
           <p className="t-caption mt-0.5">{t("page.lead")}</p>
-          <Tabs items={tabs} value={tab} onChange={setTab} label={t("tabs.label")} className="mt-4 w-full [&>button]:flex-1 [&>button]:justify-center" />
+          <Tabs items={tabs} value={tab} onChange={setTab} label={t("tabs.label")} className="mt-4 w-full [&>button]:h-11 [&>button]:flex-1 [&>button]:justify-center sm:[&>button]:h-9" />
         </div>
         {notice && (
           <div className="px-4 pb-3 sm:px-5">
@@ -409,7 +446,7 @@ export default function Messenger() {
         <div role="tabpanel" aria-label={tab === "chats" ? t("tabs.chats") : t("tabs.requests")} className="min-h-0 flex-1 overflow-y-auto overscroll-contain border-t border-line/10">{listBody}</div>
       </div>
 
-      <div className={cn("min-h-0 min-w-0 flex-col", active || opening ? "flex" : "hidden md:flex")}>
+      <div className={cn("min-h-0 min-w-0 flex-col", active || opening || draft ? "flex" : "hidden md:flex")}>
         {opening ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 text-ink-3">
             <Skeleton rounded="full" className="h-14 w-14" />
@@ -427,6 +464,8 @@ export default function Messenger() {
             onRespond={onRespond}
             respondBusy={active.request && respond?.id === active.request.id ? respond.kind : null}
           />
+        ) : draft ? (
+          <StartPanel other={draft.other} busy={draft.busy} error={draft.error} onStart={startDraft} onCancel={cancelDraft} />
         ) : (
           <NoSelection about={convs.status === "error" || convs.status === "unavailable" || (convs.status === "ready" && !convs.items.length)} />
         )}

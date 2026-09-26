@@ -3,6 +3,7 @@
 import { ArrowRight, EyeOff, Gauge, Hash, LogIn, Medal, RotateCcw, TrendingUp, Trophy } from "lucide-react";
 import { useT } from "@/i18n/client";
 import { Link } from "@/i18n/navigation";
+import Alert from "@/components/ui/Alert";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import { cn } from "@/components/ui/cn";
@@ -85,8 +86,12 @@ export default function StandingCard({ className }) {
     return (
       <Frame className={className}>
         {title}
-        <p className="t-small mt-3 text-ink-3">{t("states.unavailableBody")}</p>
-        <Button size="sm" variant="secondary" iconStart={RotateCcw} onClick={b.retry} className="mt-4">{t("states.retry")}</Button>
+        <Alert
+          tone="danger"
+          className="mt-3"
+          title={<span className="font-normal">{t("states.unavailableBody")}</span>}
+          action={<Button size="sm" variant="secondary" iconStart={RotateCcw} onClick={b.retry}>{t("states.retry")}</Button>}
+        />
       </Frame>
     );
   }

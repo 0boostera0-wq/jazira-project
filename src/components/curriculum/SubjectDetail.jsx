@@ -10,6 +10,7 @@ import Badge from "@/components/ui/Badge";
 import Button, { buttonClasses } from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
+import { PLATE, PLATE_RING } from "@/components/stages/parts";
 import { SubjectTile } from "./SubjectIcon";
 import { ArabicName, ExternalLink } from "./parts";
 import { resourcesForTerm } from "./model";
@@ -88,7 +89,7 @@ export default function SubjectDetail({ subject: s, term, context, links, onView
           </dl>
         </div>
         {s.art && (
-          <div aria-hidden="true" className="hidden w-32 shrink-0 overflow-hidden rounded-md bg-[#F7F0E3] ring-1 ring-inset ring-[#7A623A]/10 dark:bg-surface-2 sm:block">
+          <div aria-hidden="true" className={cn("hidden w-32 shrink-0 overflow-hidden rounded-md sm:block", PLATE, PLATE_RING)}>
             <Illustration id={s.art} />
           </div>
         )}

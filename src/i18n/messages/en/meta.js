@@ -2,6 +2,7 @@
 const meta = {
   site: {
     name: "Jazira",
+    shortName: "Jazira",
     title: "Jazira — smarter learning for every school stage",
     description:
       "An Arabic-first learning platform with school curriculum resources from elementary to high school, Qudurat and Tahsili practice with an explanation for every question, a learning community and a smart assistant.",

@@ -8,26 +8,31 @@ import Skeleton from "@/components/ui/Skeleton";
 import { cn } from "@/components/ui/cn";
 import { STARTER_TOPICS, tagLabel } from "./topics";
 import { useApi } from "./context";
+import { useMediaQuery } from "./useMediaQuery";
 
 /**
  * Most-used hashtags with their real post counts. `current` highlights the
  * tag page you're on. With no active tags yet (or counts unavailable) it
  * becomes "Start with a subject": the curated starter topics as plain links,
- * never with invented numbers.
+ * never with invented numbers. `gate` (a media query) keeps a copy that CSS
+ * hides from fetching until the query matches (see WhoToFollow).
  */
-export default function PopularTags({ source, current = null, limit = 8, className }) {
+export default function PopularTags({ source, current = null, limit = 8, gate = null, className }) {
   const t = useT("community");
   const { locale } = useLocale();
   const api = useApi(source);
   const [state, setState] = useState({ status: "loading", items: [] });
+  const gateMatches = useMediaQuery(gate || "all");
+  const enabled = !gate || gateMatches;
 
   useEffect(() => {
+    if (!enabled) return undefined;
     let alive = true;
     api.getPopularTags({ limit })
       .then((res) => alive && setState({ status: res.available ? "ready" : "unavailable", items: res.items || [] }))
       .catch(() => alive && setState({ status: "unavailable", items: [] }));
     return () => { alive = false; };
-  }, [api, limit]);
+  }, [api, limit, enabled]);
 
   const max = Math.max(1, ...state.items.map((x) => x.post_count || 0));
   const starters = state.status !== "loading" && !state.items.length;

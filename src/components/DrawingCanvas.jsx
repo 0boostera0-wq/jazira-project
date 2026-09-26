@@ -1,13 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Check, Download, Eraser, PencilLine, Trash2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
 import { useT } from "@/i18n/client";
+import { withArabic } from "@/components/stages/withArabic";
 
 // Handwriting practice for Arabic letters (elementary "learning games").
-// The letters are educational content, so they stay Arabic in both locales.
+// The letters are educational content, so they stay Arabic in both locales —
+// and every glyph shown or announced inside the UI copy is its own lang="ar"
+// run (letter buttons, the prompt, the success line), never part of an
+// English accessible name.
 const LETTERS = ["أ", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي"];
 
 // Pen inks. The pad is always cream paper (like the illustration plates), so
@@ -23,6 +27,7 @@ const INKS = [
 
 export default function DrawingCanvas() {
   const t = useT("stages");
+  const uid = useId();
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const drawingRef = useRef(false);
@@ -186,7 +191,7 @@ export default function DrawingCanvas() {
         <div className="min-w-0" aria-live="polite">
           <p className="t-caption tabular">{t("games.writing.position", { current: index + 1, total: LETTERS.length })}</p>
           <p className="t-h4 mt-0.5">{t("games.writing.prompt")}</p>
-          <p className="sr-only">{t("games.writing.letter", { letter: target })}</p>
+          <p id={`${uid}-letter`} className="sr-only">{withArabic(t, "games.writing.letter", {}, "letter", target)}</p>
         </div>
       </div>
 
@@ -205,7 +210,6 @@ export default function DrawingCanvas() {
             lang="ar"
             onClick={() => pick(i)}
             aria-pressed={i === index}
-            aria-label={t("games.writing.letter", { letter: l })}
             className={cn(
               "grid h-11 w-11 shrink-0 snap-start place-items-center rounded-md font-ar text-xl font-bold transition-colors duration-fast",
               i === index ? "bg-primary text-primary-fg shadow-sm" : "bg-surface-2 text-ink hover:bg-surface-3"
@@ -228,7 +232,8 @@ export default function DrawingCanvas() {
         <canvas
           ref={canvasRef}
           role="img"
-          aria-label={t("games.writing.pad", { letter: target })}
+          aria-label={t("games.writing.pad")}
+          aria-describedby={`${uid}-letter`}
           className="relative block h-64 w-full cursor-crosshair touch-none sm:h-80"
           onPointerDown={onDown}
           onPointerMove={onMove}
@@ -241,33 +246,37 @@ export default function DrawingCanvas() {
       {/* Toolbar */}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <div role="radiogroup" aria-label={t("games.writing.colorsLabel")} className="flex items-center">
+          {/* Native radios: one tab stop, arrow keys move between inks. */}
+          <fieldset className="flex min-w-0 items-center">
+            <legend className="sr-only">{t("games.writing.colorsLabel")}</legend>
             {INKS.map((ink) => {
               const active = !erasing && color === ink.hex;
               return (
-                <button
-                  key={ink.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  aria-label={t(`games.writing.colors.${ink.id}`)}
-                  onClick={() => {
-                    setErasing(false);
-                    setColor(ink.hex);
-                  }}
-                  className="grid h-11 w-9 place-items-center rounded-full"
-                >
+                <label key={ink.id} className="relative grid h-11 w-9 cursor-pointer place-items-center rounded-full has-[:focus-visible]:shadow-[var(--ring)]">
+                  <input
+                    type="radio"
+                    name={`${uid}-ink`}
+                    value={ink.id}
+                    checked={active}
+                    onChange={() => {
+                      setErasing(false);
+                      setColor(ink.hex);
+                    }}
+                    className="sr-only"
+                  />
+                  <span className="sr-only">{t(`games.writing.colors.${ink.id}`)}</span>
                   <span
+                    aria-hidden="true"
                     className={cn(
                       "block h-6 w-6 rounded-full ring-offset-2 ring-offset-surface transition-transform duration-fast",
                       active ? "scale-110 ring-2 ring-gold-400" : "ring-1 ring-line/15"
                     )}
                     style={{ backgroundColor: ink.hex }}
                   />
-                </button>
+                </label>
               );
             })}
-          </div>
+          </fieldset>
           <label className="flex h-11 items-center gap-2 text-ink-3">
             <PencilLine size={16} aria-hidden="true" />
             <span className="sr-only">{t("games.writing.size")}</span>
@@ -309,7 +318,7 @@ export default function DrawingCanvas() {
       <div aria-live="polite">
         {done && (
           <div className="animate-scale mt-4 flex flex-wrap items-center justify-between gap-3 rounded-md border border-green-100 bg-green-50 p-3.5 ps-4 text-green-700">
-            <p className="font-medium">{t("games.writing.success", { letter: target })}</p>
+            <p className="font-medium">{withArabic(t, "games.writing.success", {}, "letter", target)}</p>
             <Button variant="secondary" size="sm" onClick={nextLetter}>
               {t("games.writing.next")}
             </Button>

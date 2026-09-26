@@ -206,12 +206,18 @@ export function questionHref(q) {
   return builderHref(exam, { section: q.section, topic });
 }
 
-/** Author identity of a post result; null author = posted anonymously. */
+/**
+ * Author identity of a post result. Anonymous = `is_anonymous` (0012) or no
+ * author: shown as anonymous even to its author — who does get the author
+ * back for their own posts (`is_mine` → "You (anonymous)").
+ */
 export function postAuthor(post) {
   const a = post?.author;
-  if (!a) return { anonymous: true, name: null, username: null, avatar: null, elite: false };
+  const mine = Boolean(post?.is_mine);
+  if (!a || post?.is_anonymous) return { anonymous: true, mine, name: null, username: null, avatar: null, elite: false };
   return {
     anonymous: false,
+    mine,
     name: a.full_name || a.username || null,
     username: a.username || null,
     avatar: a.avatar_url || null,
@@ -227,21 +233,37 @@ export const countLabel = (n, capped) => (capped ? `${n}+` : String(n));
 
 /**
  * Counts per tab. local = { curriculum, practice } (arrays), remote = the
- * search_all payload or null. `capped` marks groups that hit REMOTE_LIMIT.
+ * search_all payload or null. With the per-group totals of 0012 (`totals`,
+ * `totalsCapped`: "more than 100") those are the counts; against an older
+ * database, the rows received, `capped` when a group hit REMOTE_LIMIT.
  */
 export function tabCounts(local, remote) {
-  const people = linkablePeople(remote?.people).length;
-  const posts = remote?.posts?.length || 0;
-  const tags = remote?.tags?.length || 0;
-  const qs = remote?.questions?.length || 0;
+  const totals = remote?.totals && typeof remote.totals === "object" ? remote.totals : null;
   const cap = (arr) => (arr?.length || 0) >= REMOTE_LIMIT;
+  const group = (g, rows) => {
+    const n = totals ? Number(totals[g]) : NaN;
+    return Number.isFinite(n) && n >= 0
+      ? { n, capped: Boolean(remote?.totalsCapped?.[g]) }
+      : { n: rows?.length || 0, capped: cap(remote?.[g]) };
+  };
+  const questions = group("questions", remote?.questions);
   return {
     curriculum: { n: local.curriculum.length, capped: false },
-    questions: { n: local.practice.length + qs, capped: cap(remote?.questions) },
-    people: { n: people, capped: cap(remote?.people) },
-    posts: { n: posts, capped: cap(remote?.posts) },
-    tags: { n: tags, capped: cap(remote?.tags) },
+    questions: { n: local.practice.length + questions.n, capped: questions.capped },
+    people: group("people", linkablePeople(remote?.people)),
+    posts: group("posts", remote?.posts),
+    tags: group("tags", remote?.tags),
   };
+}
+
+/**
+ * Can a remote group page further? `loaded` = rows received so far (the next
+ * p_offset). Needs the 0012 totals; search_all accepts offsets up to 100.
+ */
+export function hasMoreRows(remote, groupName, loaded, maxOffset = 100) {
+  const n = Number(remote?.totals?.[groupName]);
+  if (!Number.isFinite(n) || loaded > maxOffset) return false;
+  return remote?.totalsCapped?.[groupName] ? true : loaded < n;
 }
 
 /** Total results across every group (the "all" tab; pages excluded). */

@@ -21,6 +21,8 @@ const common = {
     edit: "Edit",
     retry: "Try again",
     search: "Search",
+    // query is wrapped in bidi isolates by the caller
+    searchFor: "Search: “{q}”",
     seeAll: "See all",
     learnMore: "Learn more",
     startNow: "Start now",
@@ -85,8 +87,12 @@ const common = {
     closeMenu: "Close menu",
     toggleTheme: "Toggle theme",
     switchLanguage: "Change language",
+    // fully localized accessible name for the language toggle (target is always the other language)
+    switchLanguageTo: "Switch to Arabic",
     notifications: "Notifications",
     search: "Search",
+    searchResults: "Search results",
+    resultsCount: { zero: "No results", one: "{count} result", other: "{count} results" },
     userMenu: "Account menu",
     close: "Close",
     loading: "Loading",
@@ -100,7 +106,13 @@ const common = {
     decorative: "",
   },
   theme: { light: "Light", dark: "Dark", label: "Appearance" },
-  languages: { ar: "العربية", en: "English", label: "Language" },
+  // keyboard key names shown in <kbd>
+  keys: { esc: "Esc", enter: "Enter" },
+  languages: {
+    ar: "العربية", en: "English", label: "Language",
+    // each in its own language/script (render with lang={locale})
+    home: { ar: "منصة جزيرة بالعربية", en: "Jazira in English" },
+  },
   units: {
     questions: { zero: "No questions", one: "{count} question", other: "{count} questions" },
     minutes: { zero: "0 minutes", one: "{count} minute", other: "{count} minutes" },

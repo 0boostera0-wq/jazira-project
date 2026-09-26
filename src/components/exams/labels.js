@@ -1,11 +1,13 @@
 // Label + icon helpers shared by the exam components (server and client).
-import { Atom, BookOpenText, Brain, Dna, FlaskConical, Pi, Sigma } from "lucide-react";
+import { Brain, FlaskConical } from "lucide-react";
 import { EXAMS, SECTIONS } from "@/lib/exams/catalog";
+import { subjectGlyph } from "@/components/curriculum/subjectGlyphs";
 
-const ICONS = { Atom, BookOpenText, Brain, Dna, FlaskConical, Pi, Sigma };
+const EXAM_ICONS = { Brain, FlaskConical };
 
-export const examIcon = (exam) => ICONS[EXAMS[exam]?.icon] || Brain;
-export const sectionIcon = (section) => ICONS[SECTIONS[section]?.icon] || Brain;
+export const examIcon = (exam) => EXAM_ICONS[EXAMS[exam]?.icon] || Brain;
+/** A section's glyph comes from the app's one subject map (Tahsili sections are school subjects). */
+export const sectionIcon = (section) => (SECTIONS[section] ? subjectGlyph({ id: section }) : Brain);
 export const sectionColor = (section) => SECTIONS[section]?.color;
 
 /** "القسم الكمي" / mixed label of the exam when section is null. */

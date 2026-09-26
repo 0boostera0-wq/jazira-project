@@ -1,5 +1,13 @@
 # 📋 FINAL IMPLEMENTATION REPORT — PART 8
 
+> **ARCHIVED — superseded, do not follow.** This is a report from an early
+> prototype. It describes files, providers and a schema that no longer exist
+> (e.g. src/lib/auth.js, supabase.js, questions.js, ProtectedRoute, Clerk
+> middleware, the `posts`/`comments`/`likes` tables). Current sources of
+> truth: [AGENTS.md](../../AGENTS.md), [CONVENTIONS](../CONVENTIONS.md),
+> [SECURITY](../SECURITY.md), [DATA_API](../DATA_API.md) and
+> `supabase/migrations/` (apply 0000 → latest to a fresh project).
+
 ## ✅ COMPLETION STATUS: 7 of 8 Parts Complete
 
 **Reason for memory limit**: Your system needs more RAM to build/run Next.js with all dependencies. This is NOT a code error. The app code is syntactically correct and compiles successfully until resource exhaustion.

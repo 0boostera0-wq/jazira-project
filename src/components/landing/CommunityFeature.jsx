@@ -18,7 +18,8 @@ export default async function CommunityFeature() {
   const t = await getT("landing");
   return (
     <Section id="community" aria-labelledby="community-title" className="!pt-8 sm:!pt-12">
-      <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
+      {/* [&>*]:min-w-0 — grid items may shrink below their min-content, so the page reflows at 320px */}
+      <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14 [&>*]:min-w-0">
         <div className="lg:order-2 lg:col-span-6">
           <Intro id="community-title" eyebrow={t("community.eyebrow")} title={t("community.title")} lead={t("community.lead")} />
           <ul className="mt-8 grid gap-5 sm:grid-cols-2">
@@ -52,9 +53,9 @@ function PostMock({ t }) {
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gold-100 text-gold-700">
             <UserRound size={18} />
           </span>
-          <div className="flex-1 space-y-1.5">
-            <span className="block h-2.5 w-24 rounded-full bg-surface-3" />
-            <span className="block h-2 w-14 rounded-full bg-surface-3/60" />
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <span className="block h-2.5 w-24 max-w-full rounded-full bg-surface-3" />
+            <span className="block h-2 w-14 max-w-full rounded-full bg-surface-3/60" />
           </div>
           <MockTag>{t("community.mock.label")}</MockTag>
         </div>

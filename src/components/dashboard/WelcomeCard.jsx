@@ -1,11 +1,13 @@
-import Illustration from "@/components/ui/Illustration";
+import { cn } from "@/components/ui/cn";
+import HeroArt from "@/components/stages/HeroArt";
+import { PLATE } from "@/components/stages/parts";
 import { WelcomeActions, WelcomeHeading, WelcomeProgress } from "./WelcomeLive";
 
 /**
  * Split header + stats strip:
  *   ┌ date · greeting (h1) · context · primary action ┬ study-nook art (sm+) ┐
  *   └ level ring + XP to next level │ streak │ achievements link ────────────┘
- * Phones drop the art and keep the content order.
+ * Phones drop the art (and never download it: HeroArt preloads it from sm up only).
  */
 export default function WelcomeCard() {
   return (
@@ -15,8 +17,8 @@ export default function WelcomeCard() {
           <WelcomeHeading />
           <WelcomeActions className="mt-5" />
         </div>
-        <div aria-hidden="true" className="relative hidden items-center justify-center bg-[#F7F0E3] px-4 py-3 sm:flex dark:bg-surface-2">
-          <Illustration id="brand.island-study" priority className="w-full max-w-[16rem]" />
+        <div aria-hidden="true" className={cn("relative hidden items-center justify-center px-4 py-3 sm:flex", PLATE)}>
+          <HeroArt id="brand.island-study" from="sm" className="w-full max-w-[16rem]" />
         </div>
       </div>
       <WelcomeProgress className="border-t border-line/10 bg-surface-2/40 px-5 py-4 sm:px-7" />

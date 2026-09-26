@@ -1,6 +1,7 @@
 import { ArrowRight, BadgeCheck, CalendarClock, Check, Crown, LockKeyhole } from "lucide-react";
 import { getLocale, getT } from "@/i18n/server";
 import { intlLocale } from "@/i18n/config";
+import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { Container, Section } from "@/components/ui/Layout";
 import { cn } from "@/components/ui/cn";
@@ -75,9 +76,7 @@ export default async function PlansTeaser() {
                 <Crown size={20} className="text-gold-500" aria-hidden="true" />
                 {t("plans.elite.name")}
               </h3>
-              <span className="inline-flex h-6 shrink-0 items-center rounded-full bg-gold-50 px-2.5 text-[0.75rem] font-medium text-gold-700 ring-1 ring-inset ring-gold-200/70">
-                {t("plans.elite.badge")}
-              </span>
+              <Badge tone="gold" size="sm" className="shrink-0">{t("plans.elite.badge")}</Badge>
             </div>
             <p className="t-small mt-1 text-ink-3">{t("plans.elite.tagline")}</p>
             <Price parts={priceParts(ELITE.priceSAR, locale)} note={t("plans.elite.period")} />

@@ -127,12 +127,15 @@ export function initialBuilderState(exam, params, tier = "elite") {
 
 /**
  * Builder state reducer.
- * actions: section | difficulty | preset | count | timeMode | minutes | tier | params
+ * actions: section | topic | difficulty | preset | count | timeMode | minutes | tier | params
  */
 export function builderReducer(state, action) {
   switch (action.type) {
     case "section":
       return { ...state, section: action.value, topic: action.value === state.section ? state.topic : null };
+    case "topic":
+      // a topic of the chosen section, or null for the whole section
+      return { ...state, topic: action.value && SECTIONS[state.section]?.topics.includes(action.value) ? action.value : null };
     case "difficulty":
       return { ...state, difficulty: action.value };
     case "preset": {
@@ -172,12 +175,13 @@ export function effectiveMinutes(state) {
   return clampMinutes(state.minutes);
 }
 
-/** Arguments for startExam(). */
+/** Arguments for startExam() (`topic` narrows the draw to one skill of the section — 0012). */
 export function toStartConfig(state) {
   const minutes = effectiveMinutes(state);
   return {
     exam: state.exam,
     section: state.section || null,
+    topic: state.topic || null,
     difficulty: state.difficulty || null,
     count: state.count,
     timeLimitSeconds: minutes ? minutes * 60 : null,

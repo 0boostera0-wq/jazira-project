@@ -2,6 +2,8 @@ import { Library } from "lucide-react";
 import Button from "@/components/ui/Button";
 import EmptyState from "@/components/ui/EmptyState";
 import { breadcrumbJsonLd, jsonLd } from "@/lib/seo";
+import { cn } from "@/components/ui/cn";
+import { SECTION_GAP } from "./parts";
 
 /** BreadcrumbList JSON-LD: Curriculum › <stage>. */
 export function StageJsonLd({ items, locale }) {
@@ -26,10 +28,10 @@ export function StageEmpty({ t }) {
   );
 }
 
-/** Vertical rhythm between the sections of a stage page. */
+/** A top-level section of a stage page (the app-wide section rhythm, SECTION_GAP). */
 export function StageSection({ id, labelledBy, className, children }) {
   return (
-    <section id={id} aria-labelledby={labelledBy} className={["mt-16 scroll-mt-24 sm:mt-24", className].filter(Boolean).join(" ")}>
+    <section id={id} aria-labelledby={labelledBy} className={cn(SECTION_GAP, "scroll-mt-24", className)}>
       {children}
     </section>
   );

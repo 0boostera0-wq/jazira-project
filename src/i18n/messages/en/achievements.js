@@ -207,7 +207,7 @@ const achievements = {
   related: {
     title: "Related",
     competitions: { title: "Leaderboard", body: "Where you rank on the all-time XP board." },
-    community: { title: "Jazira community", body: "Your posts and comments count toward community badges." },
+    community: { title: "Jazira community", body: "Your posts and comments count towards community badges." },
     achievements: { title: "Your achievements", body: "Level, daily streak and badges." },
     privacy: { title: "How others see you", body: "Appear by name or anonymously in the community and the ranking." },
   },

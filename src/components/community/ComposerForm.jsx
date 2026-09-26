@@ -7,6 +7,7 @@ import { useT } from "@/i18n/client";
 import { Link } from "@/i18n/navigation";
 import Button from "@/components/ui/Button";
 import Alert from "@/components/ui/Alert";
+import { Checkbox } from "@/components/ui/Field";
 import { cn } from "@/components/ui/cn";
 import AuthorAvatar from "./AuthorAvatar";
 import { POST_KINDS, STARTER_TOPICS } from "./topics";
@@ -33,6 +34,8 @@ export default function ComposerForm({ api, viewer, initialKind = null, lockedTa
   const [text, setText] = useState(readDraft);
   const [media, setMedia] = useState(null); // { file, kind, dims, url, duration }
   const [status, setStatus] = useState("idle"); // idle | uploading | publishing
+  // Per-post anonymity (stored on the post, immutable); the profile setting is the default.
+  const [anonymous, setAnonymous] = useState(Boolean(viewer.anonymous));
   const [error, setError] = useState(null);
   const area = useRef(null);
   const imgInput = useRef(null);
@@ -77,7 +80,7 @@ export default function ComposerForm({ api, viewer, initialKind = null, lockedTa
     setError(null);
     setStatus(media ? "uploading" : "publishing");
     try {
-      const post = await api.publishPost({ content, file: media?.file || null, dims: media?.dims || null });
+      const post = await api.publishPost({ content, file: media?.file || null, dims: media?.dims || null, anonymous });
       writeDraft("");
       onPublished(post);
     } catch (err) {
@@ -94,7 +97,7 @@ export default function ComposerForm({ api, viewer, initialKind = null, lockedTa
         ? t("composer.errors.empty")
         : t(`errors.${error.code && error.code !== "aborted" ? error.code : "unknown"}`);
 
-  const self = viewer.anonymous ? { anonymous: true } : { anonymous: false, name: viewer.name, avatar: viewer.avatar };
+  const self = anonymous ? { anonymous: true } : { anonymous: false, name: viewer.name, avatar: viewer.avatar };
 
   return (
     <form onSubmit={submit} aria-labelledby={`${ids}-title`} className="surface animate-fade p-4 sm:p-5">
@@ -102,11 +105,11 @@ export default function ComposerForm({ api, viewer, initialKind = null, lockedTa
         <AuthorAvatar author={self} size={42} />
         <div className="min-w-0 flex-1">
           <h2 id={`${ids}-title`} className="flex items-center gap-1.5 text-[0.9375rem] font-medium text-ink">
-            {viewer.anonymous && <EyeOff size={15} aria-hidden="true" className="text-ink-3" />}
-            <span className="truncate">{viewer.anonymous ? t("composer.anonymous.badge") : viewer.name || t("composer.label")}</span>
+            {anonymous && <EyeOff size={15} aria-hidden="true" className="text-ink-3" />}
+            <span className="truncate">{anonymous ? t("composer.anonymous.badge") : viewer.name || t("composer.label")}</span>
           </h2>
           <p className="t-caption truncate">
-            {viewer.anonymous ? t("composer.anonymous.hint") : t("composer.audience")}
+            {anonymous ? t("composer.anonymous.hint") : t("composer.audience")}
           </p>
         </div>
       </div>
@@ -123,7 +126,7 @@ export default function ComposerForm({ api, viewer, initialKind = null, lockedTa
               aria-pressed={on}
               onClick={() => setKind(on ? null : k.id)}
               className={cn(
-                "inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-sm transition-colors duration-fast",
+                "inline-flex h-11 items-center gap-1.5 rounded-full border px-3 text-sm transition-colors duration-fast sm:h-9",
                 on ? "border-gold-400 bg-gold-50 font-medium text-gold-800" : "border-line/12 text-ink-2 hover:border-line/25 hover:text-ink"
               )}
             >
@@ -170,7 +173,7 @@ export default function ComposerForm({ api, viewer, initialKind = null, lockedTa
                 disabled={disabled}
                 onClick={() => toggleTopic(s.tag)}
                 className={cn(
-                  "inline-flex h-8 items-center gap-1 rounded-full px-2.5 text-[0.8125rem] transition-colors duration-fast disabled:opacity-40",
+                  "inline-flex h-11 items-center gap-1 rounded-full px-3 text-[0.8125rem] transition-colors duration-fast disabled:opacity-40 sm:h-8 sm:px-2.5",
                   on ? "bg-primary text-primary-fg" : "bg-surface-2 text-ink-2 hover:bg-surface-3 hover:text-ink"
                 )}
               >
@@ -201,7 +204,7 @@ export default function ComposerForm({ api, viewer, initialKind = null, lockedTa
           </button>
         </div>
       )}
-      {media && viewer.anonymous && (
+      {media && anonymous && (
         <p className="t-caption mt-2 flex items-start gap-1.5 text-warning">
           <Info size={14} aria-hidden="true" className="mt-[3px] shrink-0" />
           {t("composer.anonymous.mediaWarning")}
@@ -216,6 +219,15 @@ export default function ComposerForm({ api, viewer, initialKind = null, lockedTa
           ))}
         </div>
       )}
+
+      <Checkbox
+        checked={anonymous}
+        disabled={busy}
+        onChange={(e) => setAnonymous(e.target.checked)}
+        label={t("composer.anonymous.toggle")}
+        description={t("composer.anonymous.toggleHint")}
+        className="mt-4 rounded-md bg-surface-2/70 px-3.5 py-3"
+      />
 
       {errorText && <Alert tone="danger" className="mt-4">{errorText}</Alert>}
 

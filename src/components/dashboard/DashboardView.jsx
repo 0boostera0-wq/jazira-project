@@ -27,17 +27,15 @@ import { tipIndex } from "./model";
  *
  * Brand-new members (no attempt, no curriculum visit): the continue panel
  * steps aside and the performance slot becomes the first-steps checklist.
- *
- * `preview` is for visual QA of signed-in states only.
  */
-export default async function DashboardView({ preview = null }) {
+export default async function DashboardView() {
   const t = await getT("dashboard");
   const tips = t.raw("tip.items");
   const initialTip = tipIndex(riyadhToday(), Array.isArray(tips) ? tips.length : 1);
 
   return (
     <Messages ns={["dashboard"]}>
-      <DashboardProvider preview={preview}>
+      <DashboardProvider>
         <div className="grid gap-5 lg:gap-6 xl:grid-cols-12 xl:gap-8">
           <div className="min-w-0 space-y-5 lg:space-y-6 xl:col-span-8">
             <WelcomeCard />

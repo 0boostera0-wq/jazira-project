@@ -1,12 +1,31 @@
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import IconTile from "@/components/ui/IconTile";
 import { cn } from "@/components/ui/cn";
-import { subjectIcon } from "./icons";
+import { Chevron, SubjectChip as SubjectPill } from "@/components/curriculum/parts";
 import { catalogLabel } from "./names";
 
-// Small server-safe building blocks shared by the stage pages (no hooks, so
-// the client islands can use them too).
+// Small server-safe building blocks shared by the learning pages — stages,
+// curriculum, exams, dashboard, achievements (no hooks, so the client islands
+// can use them too). One implementation each: Chevron and the subject pill
+// live in curriculum/parts.jsx and are re-exported here.
+// (Candidates for src/components/ui: ArrowLink, Chevron, SubjectChip, and the
+// PLATE / SECTION_GAP tokens as globals.css utilities.)
+
+export { Chevron };
+
+/**
+ * Vertical rhythm between the top-level sections of an app page (stages,
+ * curriculum, exams): 48px on phones growing to 80px on wide screens.
+ */
+export const SECTION_GAP = "mt-[clamp(3rem,2rem_+_3vw,5rem)]";
+
+/**
+ * Cream "plate" behind library illustrations; a quiet surface in dark mode —
+ * the one rule for every plate in the app (see PLATE_RING for the hairline).
+ */
+export const PLATE = "bg-[#F7F0E3] dark:bg-surface-2";
+export const PLATE_RING = "ring-1 ring-inset ring-[#7A623A]/10 dark:ring-line/10";
 
 /** Catalog name, marked lang="ar" when English mode falls back to Arabic. */
 export function CatalogName({ node, locale, className }) {
@@ -18,54 +37,38 @@ export function CatalogName({ node, locale, className }) {
   );
 }
 
-/** Subject pill: icon + catalog name. */
+/** Subject pill (the curriculum look: colour tile + name) with the catalog name in the active language. */
 export function SubjectChip({ subject, locale, className }) {
-  const Icon = subjectIcon(subject.icon);
-  return (
-    <span
-      className={cn(
-        "inline-flex h-8 max-w-full items-center gap-1.5 rounded-full border border-line/12 bg-surface px-3 text-[0.8125rem] font-medium text-ink-2",
-        className
-      )}
-    >
-      <Icon size={14} aria-hidden="true" className="shrink-0 text-ink-3" />
-      <CatalogName node={subject} locale={locale} className="truncate" />
-    </span>
-  );
+  const { text, lang } = catalogLabel(subject, locale);
+  return <SubjectPill subject={subject} name={text} lang={lang || undefined} className={className} />;
 }
 
-/** Text link with an arrow that points in the reading direction (44px tall). */
-export function ArrowLink({ href, children, className }) {
+const ARROW_LINK = {
+  md: "min-h-11 gap-1.5 text-[0.9375rem]",
+  sm: "h-10 gap-1 text-sm", // panel headers
+};
+
+/**
+ * Text link with an arrow that points in the reading direction (44px tall; the
+ * "sm" size fits a card header). The one "see more →" link of the app pages.
+ */
+export function ArrowLink({ href, size = "md", children, className }) {
   return (
     <Link
       href={href}
       className={cn(
-        "group inline-flex min-h-11 items-center gap-1.5 rounded-xs text-[0.9375rem] font-medium text-gold-600 transition-colors hover:text-gold-700",
+        "group/arrow inline-flex items-center rounded-xs font-medium text-gold-600 transition-colors hover:text-gold-700",
+        ARROW_LINK[size] || ARROW_LINK.md,
         className
       )}
     >
       {children}
       <ArrowRight
-        size={16}
+        size={size === "sm" ? 15 : 16}
         aria-hidden="true"
-        className="flip-rtl transition-transform duration-fast ease-out group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5"
+        className="flip-rtl shrink-0 transition-transform duration-fast ease-out group-hover/arrow:translate-x-0.5 rtl:group-hover/arrow:-translate-x-0.5"
       />
     </Link>
-  );
-}
-
-/** Round chevron affordance used at the end of link cards. */
-export function Chevron({ className }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "grid h-9 w-9 shrink-0 place-items-center rounded-full border border-line/15 bg-surface text-ink-3 transition-colors group-hover:border-line/25 group-hover:text-ink",
-        className
-      )}
-    >
-      <ChevronRight size={18} className="flip-rtl" />
-    </span>
   );
 }
 
@@ -97,9 +100,6 @@ export function LinkCard({ href, icon, tone = "gold", title, body, badge, classN
     </Link>
   );
 }
-
-/** Cream "plate" behind library illustrations; a quiet surface in dark mode. */
-export const PLATE = "bg-[#F7F0E3] dark:bg-surface-2";
 
 /**
  * Numbered tips list on a tinted card. A narrow rail at xl; below xl the card

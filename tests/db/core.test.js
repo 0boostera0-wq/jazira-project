@@ -164,9 +164,16 @@ describe("migration chain on a fresh project", () => {
   it("publishes the realtime tables the app subscribes to", async () => {
     const rows = await h.sql("select tablename from pg_publication_tables where pubname = 'supabase_realtime'");
     const t = rows.map((r) => r.tablename);
-    for (const name of ["community_posts", "notifications", "messages", "post_likes", "post_comments", "follows"]) {
+    for (const name of ["notifications", "messages", "follows"]) {
       expect(t).toContain(name);
     }
+    // 0012: rows of these tables carry the author of possibly anonymous
+    // content, so they are no longer published (the feed polls instead).
+    expect(t).not.toContain("community_posts");
+    expect(t).not.toContain("post_comments");
+    // 0013: nothing subscribes to reactions (each one used to fan out to
+    // every open feed); their rows are also no longer public.
+    for (const name of ["post_likes", "post_dislikes", "post_reposts"]) expect(t).not.toContain(name);
   });
 });
 

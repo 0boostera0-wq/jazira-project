@@ -12,6 +12,9 @@ export const REPORT_MAX = 1000;
 export const MAX_TAGS_PER_POST = 10;
 export const REPORT_REASONS = ["spam", "harassment", "inappropriate", "misinformation", "privacy", "other"];
 
+// Enforced in the browser only (UX): the post-media bucket itself accepts up to
+// 50 MB for every allowed type and cannot check a video's length — see
+// docs/SECURITY.md §6. Server-side limits belong to the storage configuration.
 export const MEDIA_LIMITS = Object.freeze({
   imageBytes: 5 * 1024 * 1024,
   videoBytes: 50 * 1024 * 1024,
@@ -160,14 +163,20 @@ export const mediaKindOf = (mime) => (IMAGE_TYPES[mime] ? "image" : VIDEO_TYPES[
  * dimensions in the file name let every reader reserve the exact box before
  * the media loads (no layout shift) without an extra column. Matches the
  * URL-safe single-segment rule of `is_own_storage_url()`.
+ *
+ * Anonymous posts (0012) must NOT name their author: `{ anonymous: true,
+ * folder }` → `anon/<folder>/<ms>-<w>x<h>.<ext>`, where `folder` is a fresh
+ * crypto.randomUUID() (lower-case) and `uid` is ignored.
  */
-export function buildMediaPath(uid, mime, dims, now = Date.now()) {
+export function buildMediaPath(uid, mime, dims, now = Date.now(), { anonymous = false, folder = null } = {}) {
   const ext = IMAGE_TYPES[mime] || VIDEO_TYPES[mime];
-  if (!isUuid(uid) || !ext) return null;
+  if (!ext) return null;
+  if (anonymous ? !isUuid(folder) : !isUuid(uid)) return null;
   const w = Math.round(Number(dims?.width) || 0);
   const h = Math.round(Number(dims?.height) || 0);
   const size = w > 0 && h > 0 && w <= 20000 && h <= 20000 ? `-${w}x${h}` : "";
-  return `${uid}/${Math.floor(now)}${size}.${ext}`;
+  const file = `${Math.floor(now)}${size}.${ext}`;
+  return anonymous ? `anon/${folder.toLowerCase()}/${file}` : `${uid}/${file}`;
 }
 
 /** Dimensions encoded by buildMediaPath (null for older uploads). */
@@ -267,26 +276,84 @@ export function publicIdentity(profile) {
   };
 }
 
-/** DB row + author profile + viewer's reactions → the post object the UI renders. */
+/**
+ * Is this a row of the masking RPCs (community_feed / community_comments,
+ * migration 0012)? They carry `is_mine` + `author_*` and never `user_id`.
+ */
+export const isMaskedRow = (row) => Boolean(row) && typeof row === "object" && "is_mine" in row;
+
+/**
+ * Author of an RPC row. Anonymous content shows nothing linkable — not even
+ * to its author (the UI says "You (anonymous)" from `mine`), so a screenshot
+ * or a shared screen never ties it to a name.
+ */
+export function rowIdentity(row) {
+  if (row?.is_anonymous) return { anonymous: true };
+  if (!row?.author_id) return { anonymous: false, id: null, username: null, name: null, avatar: null, elite: false };
+  return {
+    anonymous: false,
+    id: row.author_id,
+    username: row.author_username || null,
+    name: row.author_full_name || null,
+    avatar: row.author_avatar_url || null,
+    elite: Boolean(row.author_is_elite) && row.author_show_elite_badge !== false,
+  };
+}
+
+/**
+ * Row → the post object the UI renders. Two shapes are accepted:
+ *   • a community_feed() row (0012): author, ownership and the viewer's
+ *     reactions come from the row itself (`profile` / options are ignored);
+ *   • a plain table row + the author's profile + the viewer's reactions
+ *     (pre-0012 databases, optimistic inserts).
+ * `anonymous` is a property of the post (0012), not of the author's current setting.
+ */
 export function normalizePost(row, profile, { viewerId = null, liked = false, disliked = false, reposted = false } = {}) {
   const media = row.media_url && (row.media_type === "image" || row.media_type === "video")
     ? { url: row.media_url, type: row.media_type, path: row.media_path || null, dims: parseMediaDims(row.media_path || row.media_url) }
     : null;
+  const masked = isMaskedRow(row);
+  const author = masked ? rowIdentity(row) : publicIdentity(profile);
   return {
     id: row.id,
     content: row.content || "",
     media,
     created_at: row.created_at,
-    mine: Boolean(viewerId) && row.user_id === viewerId,
-    author: publicIdentity(profile),
+    mine: masked ? Boolean(row.is_mine) : Boolean(viewerId) && row.user_id === viewerId,
+    anonymous: typeof row.is_anonymous === "boolean" ? row.is_anonymous : Boolean(author.anonymous),
+    author,
     counts: {
       likes: Math.max(0, row.likes_count ?? 0),
       dislikes: Math.max(0, row.dislikes_count ?? 0),
       comments: Math.max(0, row.comments_count ?? 0),
       reposts: Math.max(0, row.reposts_count ?? 0),
     },
-    viewer: { liked: Boolean(liked), disliked: Boolean(disliked), reposted: Boolean(reposted) },
+    viewer: masked
+      ? { liked: Boolean(row.viewer_liked), disliked: Boolean(row.viewer_disliked), reposted: Boolean(row.viewer_reposted) }
+      : { liked: Boolean(liked), disliked: Boolean(disliked), reposted: Boolean(reposted) },
   };
+}
+
+/** Comment row (community_comments() row, or table row + author profile) → UI comment. */
+export function normalizeComment(row, profile = null, viewerId = null) {
+  const masked = isMaskedRow(row);
+  const author = masked ? rowIdentity(row) : publicIdentity(profile);
+  return {
+    id: row.id,
+    post_id: row.post_id,
+    content: row.content || "",
+    created_at: row.created_at,
+    mine: masked ? Boolean(row.is_mine) : Boolean(viewerId) && row.user_id === viewerId,
+    anonymous: typeof row.is_anonymous === "boolean" ? row.is_anonymous : Boolean(author.anonymous),
+    author,
+  };
+}
+
+/** Keyset cursor of the next community_feed() page (null when the page wasn't full). */
+export function feedCursorOf(rows, limit) {
+  if (!Array.isArray(rows) || rows.length < limit) return null;
+  const last = rows[rows.length - 1];
+  return last?.cursor_at ? { before: last.cursor_at, beforeId: last.cursor_id ?? null } : null;
 }
 
 /** Topic chips: curated starters first, then popular real tags not already listed. */
@@ -323,7 +390,8 @@ const patchOf = (post, patch) => (typeof patch === "function" ? patch(post) : pa
  * Actions: reset · page { items, nextCursor, available, reason, append } ·
  * loadingMore · error { code, append } · prepend { post } · patch { id, patch }
  * (object or post => object, shallow-merged) · remove { id } ·
- * removeAuthor { userId } · row { row } (realtime counts / text).
+ * removeAuthor { userId } · row { row } (refreshed counts / text from a
+ * community_feed('ids') poll).
  */
 export function feedReducer(state, action) {
   switch (action.type) {

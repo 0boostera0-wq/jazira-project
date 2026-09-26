@@ -7,6 +7,7 @@ import { formatDate } from "@/i18n/format";
 import Button from "@/components/ui/Button";
 import AssistantAvatar from "@/components/brand/AssistantAvatar";
 import { cn } from "@/components/ui/cn";
+import { textProps } from "@/components/community/text";
 import Markdown from "./Markdown";
 
 /** One turn of the conversation. Mine = end side; the assistant = start side. */
@@ -23,7 +24,7 @@ function UserMessage({ text }) {
     <div className="flex justify-end">
       <div className="max-w-[88%] sm:max-w-[80%]">
         <p className="sr-only">{t("message.you")}:</p>
-        <div dir="auto" className="whitespace-pre-wrap break-words rounded-lg rounded-se-xs border border-gold-200/60 bg-gold-50 px-4 py-2.5 text-[0.98rem] leading-[1.75] text-ink">
+        <div {...textProps(text, "whitespace-pre-wrap break-words rounded-lg rounded-se-xs border border-gold-200/60 bg-gold-50 px-4 py-2.5 text-[0.98rem] leading-[1.75] text-ink")}>
           {text}
         </div>
       </div>

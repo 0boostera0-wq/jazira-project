@@ -12,6 +12,7 @@ import Button from "@/components/ui/Button";
 import Dialog from "@/components/ui/Dialog";
 import Alert from "@/components/ui/Alert";
 import { cn } from "@/components/ui/cn";
+import { textProps } from "@/components/community/text";
 import { useAssistantChat } from "./useAssistantChat";
 import { useQuota, useSessions } from "./hooks";
 import Conversation from "./Conversation";
@@ -274,7 +275,7 @@ export default function AssistantWorkspace() {
           </>
         }
       >
-        {toDelete && <p dir="auto" className="mb-3 truncate font-medium text-ink">{toDelete.title || t("history.untitled")}</p>}
+        {toDelete && <p {...textProps(toDelete.title || t("history.untitled"), "mb-3 truncate font-medium text-ink")}>{toDelete.title || t("history.untitled")}</p>}
         <p className="t-small text-ink-3">{t("history.deleteBody")}</p>
         {deleteError && <Alert tone="danger" className="mt-4">{t("history.deleteError")}</Alert>}
       </Dialog>

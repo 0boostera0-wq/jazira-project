@@ -6,12 +6,13 @@ import { SubjectTile } from "./SubjectIcon";
  * Subject × grade table of annual periods (the plan's maximum), server-safe.
  *   columns: [{ key, label, href }] · rows: [{ key, name, subject, cells: [number|null] }]
  *   totals: [number] (optional footer) · copy: { caption, subject, notTaught, total }
- * On narrow screens the table scrolls inside its own frame (the page never does).
+ * On narrow screens the table scrolls inside its own frame (the page never does);
+ * the frame is a named, focusable region so keyboard users can scroll it too.
  */
 export default function SubjectMatrix({ columns, rows, totals, copy, locale, className }) {
   return (
     <div className={cn("overflow-hidden rounded-lg border border-line/15 bg-surface", className)}>
-      <div className="overflow-x-auto [scrollbar-width:thin]">
+      <div role="region" aria-label={copy.caption} tabIndex={0} className="overflow-x-auto rounded-lg [scrollbar-width:thin] focus-visible:[outline-offset:-2px]">
         <table className="w-full border-collapse text-start" style={{ minWidth: `calc(10rem + ${columns.length} * 4rem)` }}>
           <caption className="sr-only">{copy.caption}</caption>
           <thead>
@@ -38,7 +39,7 @@ export default function SubjectMatrix({ columns, rows, totals, copy, locale, cla
                 {r.cells.map((v, i) => (
                   <td key={columns[i].key} className="px-2 py-2.5 text-center">
                     {v == null ? (
-                      <span className="text-ink-4" aria-label={copy.notTaught} title={copy.notTaught}>
+                      <span className="text-ink-3" aria-label={copy.notTaught} title={copy.notTaught}>
                         —
                       </span>
                     ) : (

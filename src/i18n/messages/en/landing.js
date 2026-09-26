@@ -17,7 +17,7 @@ const landing = {
     eyebrowShort: "Curriculum · Qudurat & Tahsili · Assistant",
     title: "Everything you need to study,",
     titleAccent: "on one island.",
-    lead: "An organised curriculum for every grade, timed Qudurat and Tahsili practice, an assistant that explains in Arabic, and a community of students working toward the same goals.",
+    lead: "An organised curriculum for every grade, timed Qudurat and Tahsili practice, an assistant that explains in Arabic or English, and a community of students working toward the same goals.",
     primary: "Get started free",
     secondary: "Explore the curriculum",
     trustLabel: "Why Jazira",
@@ -109,7 +109,7 @@ const landing = {
   assistant: {
     eyebrow: "Jazira Assistant",
     title: "Ask whenever you're stuck, and get an explanation at your level",
-    lead: "Jazira Assistant walks you through a lesson step by step in Arabic, and helps you understand how to solve a problem rather than copy the answer.",
+    lead: "Jazira Assistant walks you through a lesson step by step, in Arabic or English, and helps you understand how to solve a problem rather than copy the answer.",
     points: {
       explain: { title: "Step-by-step explanations", body: "It breaks a problem into clear steps, in simple language." },
       understand: { title: "Understanding, not copying", body: "It guides your thinking and won't help you cheat." },

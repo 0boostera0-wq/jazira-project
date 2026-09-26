@@ -23,7 +23,9 @@ export default function Switch({ checked, onChange, label, description, disabled
         onClick={() => onChange?.(!checked)}
         className={cn(
           "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors duration ease-out disabled:opacity-50",
-          checked ? "bg-green-500" : "bg-surface-3 ring-1 ring-inset ring-line/25"
+          // off track: field-token ring (≥3:1) so the control is identifiable (WCAG 1.4.11);
+          // focus is the global :focus-visible outline, which ring/shadow utilities can't override
+          checked ? "bg-green-500" : "bg-surface-3 ring-1 ring-inset ring-field"
         )}
       >
         <span

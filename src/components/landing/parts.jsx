@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import Badge from "@/components/ui/Badge";
 import IconTile from "@/components/ui/IconTile";
 import { cn } from "@/components/ui/cn";
 
@@ -49,16 +50,11 @@ export function Point({ icon, title, body, tone = "gold" }) {
   );
 }
 
-/** "Illustrative example" pill that marks product mocks as non-real data. */
+/** "Illustrative example" pill that marks product mocks as non-real data (a design-system Badge). */
 export function MockTag({ children, className }) {
   return (
-    <span
-      className={cn(
-        "inline-flex h-6 shrink-0 items-center whitespace-nowrap rounded-full border border-line/15 bg-surface px-2.5 text-[0.75rem] font-medium leading-none text-ink-3",
-        className
-      )}
-    >
+    <Badge tone="outline" size="sm" className={cn("shrink-0", className)}>
       {children}
-    </span>
+    </Badge>
   );
 }

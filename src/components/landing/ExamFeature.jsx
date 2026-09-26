@@ -19,7 +19,8 @@ export default async function ExamFeature() {
   const t = await getT("landing");
   return (
     <Section id="exams" tone="tint" aria-labelledby="exams-title">
-      <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
+      {/* [&>*]:min-w-0 — grid items may shrink below their min-content, so the page reflows at 320px */}
+      <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-14 [&>*]:min-w-0">
         <div className="lg:order-2 lg:col-span-5">
           <Intro id="exams-title" eyebrow={t("exams.eyebrow")} title={t("exams.title")} lead={t("exams.lead")} />
           <ul className="mt-8 space-y-5">
@@ -27,17 +28,20 @@ export default async function ExamFeature() {
             <Point icon={SlidersHorizontal} title={t("exams.points.sections.title")} body={t("exams.points.sections.body")} />
             <Point icon={ListChecks} title={t("exams.points.review.title")} body={t("exams.points.review.body")} />
           </ul>
-          {/* try-it module: the exam art sits inside the card, next to the action it illustrates */}
-          <div className="mt-9 flex gap-4 rounded-lg border border-line/12 bg-surface p-3 pe-4 shadow-xs sm:gap-5 sm:pe-6">
-            <div aria-hidden="true" className="grid w-24 shrink-0 place-items-center rounded-md bg-gold-50/70 ring-1 ring-inset ring-gold-200/50 sm:w-32">
+          {/* try-it module: the exam art sits inside the card, next to the action it illustrates.
+              Below 360px there's no room beside the art for the button, so it takes its own full-width row. */}
+          <div className="mt-9 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 rounded-lg border border-line/12 bg-surface p-3 pe-4 shadow-xs sm:gap-x-5 sm:pe-6 max-[359px]:gap-x-3 max-[359px]:pe-3">
+            <div aria-hidden="true" className="row-span-2 grid w-24 place-items-center rounded-md bg-gold-50/70 ring-1 ring-inset ring-gold-200/50 sm:w-32 max-[359px]:row-span-1 max-[359px]:w-20">
               <Illustration id="landing.exams" />
             </div>
-            <div className="min-w-0 py-1.5">
+            <div className="min-w-0 pt-1.5">
               <p className="font-medium leading-snug text-ink">{t("exams.try")}</p>
               <p className="t-small mt-1 text-ink-3">
                 {t("exams.guest", { questions: t("units.questions", { count: LIMITS.guestMaxQuestions }) })}
               </p>
-              <Button href="/exams" variant="secondary" iconEnd={ArrowRight} className="mt-3.5">{t("exams.cta")}</Button>
+            </div>
+            <div className="min-w-0 pb-1.5 max-[359px]:col-span-2 max-[359px]:pb-0">
+              <Button href="/exams" variant="secondary" iconEnd={ArrowRight} className="mt-3.5 max-[359px]:w-full">{t("exams.cta")}</Button>
             </div>
           </div>
         </div>
@@ -62,10 +66,10 @@ function ExamMock({ t }) {
             <IconTile icon={Brain} tone="gold" size="sm" />
             <p className="truncate text-sm font-medium text-ink">{t("exams.mock.exam")}</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             <MockTag className="hidden sm:inline-flex">{t("exams.mock.label")}</MockTag>
             <span className="inline-flex h-9 items-center gap-1.5 rounded-full bg-surface-2 px-3 text-sm font-medium text-ink">
-              <Timer size={15} className="text-gold-600" />
+              <Timer size={15} className="shrink-0 text-gold-600" />
               <span className="num tabular">{formatClock(secondsLeft)}</span>
             </span>
           </div>

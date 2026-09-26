@@ -30,7 +30,7 @@ const stages = {
     },
     tools: {
       curriculum: { title: "Curriculum library", body: "Every stage, grade and track as the official study plan sets them out, with how to reach each subject's books." },
-      exams: { title: "Exam center", body: "Timed Qudurat and Tahsili practice tests, with an answer review after you submit." },
+      exams: { title: "Exam centre", body: "Timed Qudurat and Tahsili practice tests, with an answer review after you submit." },
       assistant: { title: "Jazira Assistant", body: "Ask for a clear explanation of a lesson you're stuck on, or a revision plan that fits your time." },
       community: { title: "Learning community", body: "Ask classmates, share what you've learned and follow discussions by subject." },
       achievements: { title: "Achievements", body: "Your study streak and the badges you earn by keeping at it." },
@@ -119,7 +119,7 @@ const stages = {
       title: "Organised study that paves the way to high school",
       lead: "All three grades as the official study plan sets them out, a clear way to organise your week, and practice that gets you used to exam-style questions before you need it.",
       primary: "Choose a grade",
-      secondary: "Exam center",
+      secondary: "Exam centre",
     },
     grades: {
       eyebrow: "Grades",
@@ -177,7 +177,7 @@ const stages = {
       title: "A common first year, then a track that fits your goals",
       lead: "You start with a common first year, then choose one of five tracks for years 2 and 3. This is also where you prepare for the Qudurat and Tahsili exams.",
       primary: "Explore the tracks",
-      secondary: "Exam center",
+      secondary: "Exam centre",
     },
     journey: {
       eyebrow: "Your high-school journey",
@@ -210,7 +210,7 @@ const stages = {
     tahsili: {
       eyebrow: "Tahsili subjects",
       title: "The science subjects Tahsili covers",
-      lead: "Tahsili tests what you've learned in high-school maths, physics, chemistry and biology. Review each subject as you study it, then practise it in the exam center.",
+      lead: "Tahsili tests what you've learned in high-school maths, physics, chemistry and biology. Review each subject as you study it, then practise it in the exam centre.",
       cta: "Practise for Tahsili",
       items: {
         math: { title: "Mathematics", body: "Functions, geometry and statistics, plus differential and integral calculus." },
@@ -223,7 +223,7 @@ const stages = {
       eyebrow: "Exam preparation",
       title: "Qudurat and Tahsili in one place",
       lead: "Timed practice tests where you choose the sections and number of questions, then review your answers after submitting to see where to focus.",
-      all: "Open the exam center",
+      all: "Open the exam centre",
       aptitude: { title: "Qudurat (General Aptitude)", body: "The verbal and quantitative sections, in timed practice sessions.", cta: "Start Qudurat practice" },
       achievement: { title: "Tahsili (Achievement)", body: "Maths, physics, chemistry and biology, with explanations that help you understand your mistakes.", cta: "Start Tahsili practice" },
     },
@@ -249,7 +249,7 @@ const stages = {
       position: "Letter {current} of {total}",
       pickLetter: "Choose a letter",
       letter: "Letter {letter}",
-      pad: "Writing pad: write the letter {letter}",
+      pad: "Writing pad",
       colorsLabel: "Pen colour",
       colors: {
         ink: "Dark brown",

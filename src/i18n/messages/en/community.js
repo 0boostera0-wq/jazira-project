@@ -124,7 +124,9 @@ const community = {
     audience: "Visible to everyone in the community",
     anonymous: {
       badge: "Posting anonymously",
-      hint: "Your name and photo won't appear on your posts",
+      hint: "Your name and photo won't appear on this post",
+      toggle: "Post anonymously",
+      toggleHint: "Others see “Anonymous member” with no photo or link. On your profile, only you can see that it's yours.",
       mediaWarning: "Photos and videos can reveal who you are — skip them if you want to stay anonymous.",
     },
     image: "Photo",
@@ -160,6 +162,8 @@ const community = {
   post: {
     anonymous: "Anonymous member",
     anonymousYou: "You (anonymous)",
+    onlyYou: "Only you can see this is yours",
+    mediaBlocked: "This attachment can't be shown.",
     unknown: "Jazira member",
     readMore: "Read more",
     readLess: "Show less",
@@ -320,7 +324,7 @@ const community = {
       title: "Active learners",
       subtitle: "Most experience points earned",
       level: "Level {level}",
-      xp: "{xp} XP",
+      xp: { zero: "0 XP", one: "1 XP", other: "{count} XP" },
       empty: "Suggestions will appear here as more learners join.",
       unavailable: "Suggestions couldn't be loaded right now.",
     },

@@ -185,7 +185,7 @@ const subscriptions = {
     share: "Share",
     shareTitle: "Jazira",
     shareText: "Join me on Jazira and let's practise for Qudurat and Tahsili together.",
-    countError: "We couldn't refresh your invite count right now. We'll try again on your next visit.",
+    countError: "We couldn't load your invite count right now. Try again in a moment.",
     signedOutTitle: "Sign in to get your invite link",
     signedOutBody: "Your link is personal and tied to your account, so invites are credited to you.",
     signIn: "Sign in",
@@ -227,11 +227,10 @@ const subscriptions = {
       cta: "Continue to secure payment",
       preparing: "Preparing your checkout…",
       redirecting: "Taking you to the checkout page…",
-      agreeBefore: "By continuing you agree to the ",
+      // One sentence; {terms} and {refund} become links labelled agreeTerms / agreeRefund.
+      agree: "By continuing you agree to the {terms} and the {refund}.",
       agreeTerms: "Terms of service",
-      agreeBetween: " and the ",
       agreeRefund: "Refund policy",
-      agreeAfter: ".",
       secure: "Checkout page hosted by {provider}",
     },
     states: {

@@ -15,25 +15,21 @@ import Skeleton from "@/components/ui/Skeleton";
 import { cn } from "@/components/ui/cn";
 import { builderHref } from "./builder-logic";
 import { examIcon, sectionLabel, signInHref } from "./labels";
-import { accuracyTone } from "./results-logic";
+import { scoreTone } from "./results-logic";
 
 const TONE_TEXT = { green: "text-green-700", gold: "text-gold-700", danger: "text-danger", neutral: "text-ink-3" };
 
-/**
- * Hub rail: the viewer's exam activity (guest pitch / empty / stats + recent).
- * `preview` ({ stats, items }) is for visual QA of signed-in states only.
- */
-export default function ExamActivity({ preview = null }) {
+/** Hub rail: the viewer's exam activity (guest pitch / empty / stats + recent). */
+export default function ExamActivity() {
   const t = useT("exams");
   const tc = useT("common");
   const { locale } = useLocale();
-  const auth = useAuthUser();
-  const { isLoaded, isSignedIn } = preview ? { isLoaded: true, isSignedIn: true } : auth;
-  const [state, setState] = useState(() => (preview ? { status: "ready", ...preview } : { status: "loading" }));
+  const { isLoaded, isSignedIn } = useAuthUser();
+  const [state, setState] = useState({ status: "loading" });
   const [nonce, setNonce] = useState(0);
 
   useEffect(() => {
-    if (!isLoaded || !isSignedIn || preview) return;
+    if (!isLoaded || !isSignedIn) return;
     let alive = true;
     setState({ status: "loading" });
     Promise.allSettled([getExamStats(), listAttempts({ limit: 4 })]).then(([s, l]) => {
@@ -47,7 +43,7 @@ export default function ExamActivity({ preview = null }) {
     return () => {
       alive = false;
     };
-  }, [isLoaded, isSignedIn, nonce, preview]);
+  }, [isLoaded, isSignedIn, nonce]);
 
   const header = <h2 id="activity-title" className="t-h4">{t("hub.activity.title")}</h2>;
 
@@ -79,7 +75,7 @@ export default function ExamActivity({ preview = null }) {
           </div>
         </div>
         <div className="mt-5 flex flex-wrap gap-2">
-          <Button href={signInHref("/exams", "/sign-up")} size="sm">{t("hub.activity.guest.cta")}</Button>
+          <Button href={signInHref("/exams", "/sign-up")} size="sm" variant="secondary">{t("hub.activity.guest.cta")}</Button>
           <Button href={signInHref("/exams")} size="sm" variant="ghost">{t("hub.activity.guest.signIn")}</Button>
         </div>
       </div>
@@ -87,13 +83,18 @@ export default function ExamActivity({ preview = null }) {
   } else if (state.status === "local") {
     body = <Alert tone="info" className="mt-4">{t("hub.activity.practiceOnly")}</Alert>;
   } else if (state.status === "error") {
+    // A failed request: the app-wide danger alert with a retry.
     body = (
-      <div className="mt-4">
-        <p className="t-small text-ink-3">{t("hub.activity.unavailable")}</p>
-        <Button size="sm" variant="secondary" iconStart={RotateCcw} className="mt-3" onClick={() => setNonce((n) => n + 1)}>
-          {tc("actions.retry")}
-        </Button>
-      </div>
+      <Alert
+        tone="danger"
+        className="mt-4"
+        title={t("hub.activity.unavailable")}
+        action={
+          <Button size="sm" variant="secondary" iconStart={RotateCcw} onClick={() => setNonce((n) => n + 1)}>
+            {tc("actions.retry")}
+          </Button>
+        }
+      />
     );
   } else {
     const { stats, items } = state;
@@ -108,7 +109,7 @@ export default function ExamActivity({ preview = null }) {
         <div className="mt-4">
           <p className="font-medium text-ink">{t("hub.activity.empty.title")}</p>
           <p className="t-small mt-1 text-ink-3">{t("hub.activity.empty.body")}</p>
-          <Button href={builderHref("aptitude")} size="sm" className="mt-4" iconEnd={ArrowRight}>{t("hub.activity.empty.cta")}</Button>
+          <Button href={builderHref("aptitude")} size="sm" variant="secondary" className="mt-4" iconEnd={ArrowRight}>{t("hub.activity.empty.cta")}</Button>
         </div>
       );
     } else {
@@ -126,7 +127,7 @@ export default function ExamActivity({ preview = null }) {
                 <p className="text-sm font-medium text-ink">{t("hub.activity.resume.title")}</p>
                 <p className="t-caption truncate">{t(`types.${open.exam}`)} · {sectionLabel(t, open.exam, open.section)}</p>
               </div>
-              <Button href={`/exams/attempt/${open.id}`} size="sm">{t("hub.activity.resume.cta")}</Button>
+              <Button href={`/exams/attempt/${open.id}`} size="sm" variant="secondary">{t("hub.activity.resume.cta")}</Button>
             </div>
           )}
           <dl className="grid grid-cols-3 gap-2">
@@ -157,7 +158,7 @@ export default function ExamActivity({ preview = null }) {
                         {pct === null ? (
                           <span className="t-caption">{t(`history.list.status.${it.status}`)}</span>
                         ) : (
-                          <span className={cn("text-sm font-bold tabular", TONE_TEXT[accuracyTone(pct)])}>{formatPercent(pct / 100, locale)}</span>
+                          <span className={cn("text-sm font-bold tabular", TONE_TEXT[scoreTone(pct)])}>{formatPercent(pct / 100, locale)}</span>
                         )}
                       </Link>
                     </li>

@@ -1,3 +1,13 @@
+-- =============================================================================
+-- ARCHIVED — DO NOT RUN. Superseded by supabase/migrations (0000 → latest).
+-- This legacy prototype schema defines tables that the real schema does not
+-- have (posts, comments, likes, achievements, payments) and divergent versions
+-- of profiles, notifications, subscriptions, chat_history and streaks. Its
+-- IF NOT EXISTS DDL would silently skip existing tables and add orphan tables
+-- and policies. Kept only because supabase/migrations/0000_core.sql cleans up
+-- objects it may have created on old projects. See docs/SECURITY.md.
+-- =============================================================================
+
 -- ============================================================
 --  منصة جزيرة — Supabase SQL Schema
 --  Jazira Educational Platform — Complete Database Schema

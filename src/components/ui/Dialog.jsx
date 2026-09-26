@@ -60,8 +60,8 @@ export default function Dialog({ open, onClose, title, description, children, fo
               {description && <p className="t-small mt-1 text-ink-3">{description}</p>}
             </div>
             {onClose && (
-              <button type="button" onClick={onClose} className="-m-1.5 grid h-9 w-9 shrink-0 place-items-center rounded-full text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label={t("a11y.close")}>
-                <X size={18} />
+              <button type="button" onClick={onClose} className="-m-2.5 grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink-3 hover:bg-surface-2 hover:text-ink" aria-label={t("a11y.close")}>
+                <X size={18} aria-hidden="true" />
               </button>
             )}
           </div>

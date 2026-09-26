@@ -5,6 +5,7 @@ import { AlertTriangle, ArrowLeft, ArrowRight, Check, CloudOff, Flag, Info, Keyb
 import { useLocale, useT } from "@/i18n/client";
 import { formatNumber } from "@/i18n/format";
 import { saveAnswer, submitExam } from "@/lib/data/exams";
+import { localizeHref } from "@/i18n/config";
 import Alert from "@/components/ui/Alert";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
@@ -15,7 +16,8 @@ import Spinner from "@/components/ui/Spinner";
 import { cn } from "@/components/ui/cn";
 import { createAutosave } from "./autosave";
 import { clearDraft, writeDraft } from "./handoff";
-import { examIcon, sectionLabel } from "./labels";
+import { examIcon, sectionLabel, topicLabel } from "./labels";
+import { BEFORE_NAVIGATE_EVENT, RUNNER_FLAG } from "./leaveGuard";
 import QuestionCard from "./QuestionCard";
 import QuestionNavigator, { NavigatorLegend } from "./QuestionNavigator";
 import RunnerTimer from "./RunnerTimer";
@@ -24,10 +26,37 @@ import { answersPayload, keyAction, runnerReducer, summarize } from "./runner-lo
 const MAX_SPENT = 14400;
 
 /**
+ * Browser Back past the runner: history.back() until the URL changes — it
+ * skips our same-URL sentinel entries (a runner that mounted twice on one entry
+ * may have left two). With nothing to go back to, fall back to the exam hub.
+ */
+function backToPreviousPage(fallbackHref) {
+  const here = window.location.pathname + window.location.search;
+  let steps = 0;
+  const done = () => window.removeEventListener("popstate", onPop);
+  function onPop() {
+    if (window.location.pathname + window.location.search !== here) return done();
+    if (steps++ < 4) window.history.back();
+    else done();
+  }
+  window.addEventListener("popstate", onPop);
+  setTimeout(() => {
+    done();
+    if (window.location.pathname + window.location.search === here) window.location.assign(fallbackHref);
+  }, 2500);
+  window.history.back();
+}
+
+/** Does the offline draft of a question hold exactly what was just saved? */
+const sameAnswer = (draft, saved) =>
+  Boolean(draft && saved) && (draft.selected ?? null) === (saved.selected ?? null) && Boolean(draft.flagged) === Boolean(saved.flagged);
+
+/**
  * The exam runner. Renders immediately from a normalised session
  * (runner-logic.toRunnerSession), tracks answers / flags / per-question time,
  * autosaves (debounced, retried, offline-tolerant, mirrored to a local draft),
- * guards against leaving, and submits — manually or at 0:00.
+ * guards against leaving (links, browser Back, code-driven navigation via
+ * leaveGuard.confirmNavigation, reload/close), and submits — manually or at 0:00.
  *
  * props: session, isSignedIn, onResult(result), onReload() (attempt closed elsewhere)
  */
@@ -47,13 +76,18 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
   const autosaveRef = useRef(null);
   const submittingRef = useRef(false);
   const leavingRef = useRef(false);
+  // Is the current history entry our same-URL Back sentinel? Tracked here, not
+  // only in history.state: Next's router rewrites the entry's state on later
+  // router updates, which drops custom keys.
+  const onSentinelRef = useRef(false);
 
   const [saveStatus, setSaveStatus] = useState("idle");
   const [navOpen, setNavOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [submit, setSubmit] = useState({ status: "idle", auto: false, code: null });
-  const [leaveHref, setLeaveHref] = useState(null);
-  const leaveLinkRef = useRef(null);
+  // What the member asked to do while the exam runs:
+  //   { kind: "link", href, link } | { kind: "back" } | { kind: "nav", proceed }
+  const [leaveTarget, setLeaveTarget] = useState(null);
 
   const summary = summarize(state.answers, positions);
   const index = positions.indexOf(state.current);
@@ -71,8 +105,11 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
       }),
       delay: isLocal ? 120 : 700,
       onStatus: setSaveStatus,
-      onSaved: (pos) => {
-        if (isLocal || !draftRef.current[pos]) return;
+      onSaved: (pos, saved) => {
+        // Forget the device copy only when it holds exactly what the server now
+        // has: a newer change made while this save was in flight stays in the
+        // draft (and in the queue) until it is sent.
+        if (isLocal || !sameAnswer(draftRef.current[pos], saved)) return;
         delete draftRef.current[pos];
         writeDraft(session.id, draftRef.current);
       },
@@ -86,7 +123,10 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
       q.queue(p);
     }
     return () => {
-      q.flush(); // hand pending answers to the data layer (local mode writes synchronously)
+      // Leaving the runner (Leave, language switch, any navigation): send EVERY
+      // pending answer now, in parallel — not just the first one. Unsent ones
+      // also stay in the offline draft (DB mode) for the next visit.
+      q.drain();
       q.cancel();
       if (autosaveRef.current === q) autosaveRef.current = null;
     };
@@ -164,6 +204,11 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
         const result = await submitExam(session.id, answersPayload(positions, stateRef.current.answers, spentRef.current));
         autosaveRef.current?.cancel();
         clearDraft(session.id);
+        // Drop the Back sentinel (same URL) so Back from the results leaves the page at once.
+        if (onSentinelRef.current) {
+          onSentinelRef.current = false;
+          window.history.back();
+        }
         onResult(result);
       } catch (e) {
         submittingRef.current = false;
@@ -181,7 +226,7 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
   const onExpire = useCallback(() => {
     setConfirmOpen(false);
     setNavOpen(false);
-    setLeaveHref(null);
+    setLeaveTarget(null);
     doSubmit(true);
   }, [doSubmit]);
 
@@ -197,11 +242,15 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
   useEffect(() => {
     const onKey = (e) => {
       if (e.defaultPrevented || submittingRef.current) return;
-      if (e.target?.closest?.("input, textarea, select, [contenteditable='true'], dialog")) return;
+      // The answer choices are radios: their shortcuts (1–4, F) still apply,
+      // but the arrow keys belong to the radio group (move between options).
+      const onChoice = e.target?.type === "radio";
+      if (!onChoice && e.target?.closest?.("input, textarea, select, [contenteditable='true'], dialog")) return;
       if (document.querySelector("dialog[open]")) return;
       const q = byPos[stateRef.current.current];
       const a = keyAction(e, { rtl: isRTL, choices: q?.choices.length || 4 });
       if (!a) return;
+      if (onChoice && (a.type === "next" || a.type === "prev")) return;
       e.preventDefault();
       if (a.type === "choose") change({ type: "select", position: stateRef.current.current, index: a.index });
       else if (a.type === "flag") change({ type: "flag", position: stateRef.current.current });
@@ -211,6 +260,52 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [byPos, isRTL, change]);
+
+  // ── while the runner is mounted: flag for the shell (the mobile tab bar
+  // sits under the runner's action bar and must leave the tab order) ──
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset[RUNNER_FLAG] = "running";
+    return () => {
+      delete root.dataset[RUNNER_FLAG];
+    };
+  }, []);
+
+  // ── leave guard: browser / Android Back ──
+  // A same-URL sentinel entry turns the first Back into the "leave?" question
+  // (Next's router restores the same page for it, so nothing re-renders).
+  const pushSentinel = useCallback(() => {
+    window.history.pushState({ jzExamGuard: session.id }, "");
+    onSentinelRef.current = true;
+  }, [session.id]);
+  useEffect(() => {
+    // Once per runner (StrictMode re-runs effects with the same refs); none
+    // when we arrived on an existing sentinel (Back then Forward).
+    if (window.history.state?.jzExamGuard === session.id) onSentinelRef.current = true;
+    else if (!onSentinelRef.current) pushSentinel();
+    const onPop = (e) => {
+      if (e.state?.jzExamGuard === session.id) {
+        onSentinelRef.current = true; // moved forward onto the sentinel
+        return;
+      }
+      onSentinelRef.current = false;
+      if (submittingRef.current || leavingRef.current) return;
+      setLeaveTarget({ kind: "back" });
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [session.id, pushSentinel]);
+
+  // ── leave guard: code-driven navigation (language switch, command palette) ──
+  useEffect(() => {
+    const onNavigate = (e) => {
+      if (submittingRef.current || leavingRef.current || typeof e.detail?.proceed !== "function") return;
+      e.preventDefault();
+      setLeaveTarget({ kind: "nav", proceed: e.detail.proceed });
+    };
+    window.addEventListener(BEFORE_NAVIGATE_EVENT, onNavigate);
+    return () => window.removeEventListener(BEFORE_NAVIGATE_EVENT, onNavigate);
+  }, []);
 
   // ── leave guard: reload/close + in-app links ──
   useEffect(() => {
@@ -229,8 +324,7 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
       if (url.pathname === window.location.pathname) return;
       e.preventDefault();
       e.stopPropagation();
-      leaveLinkRef.current = a;
-      setLeaveHref(url.pathname + url.search + url.hash);
+      setLeaveTarget({ kind: "link", href: url.pathname + url.search + url.hash, link: a });
     };
     window.addEventListener("beforeunload", beforeUnload);
     window.addEventListener("click", onClick, true);
@@ -241,28 +335,31 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
   }, []);
 
   const leave = () => {
+    const target = leaveTarget;
     leavingRef.current = true;
-    autosaveRef.current?.flush();
-    const href = leaveHref;
-    const link = leaveLinkRef.current;
-    leaveLinkRef.current = null;
-    setLeaveHref(null);
-    // Replay the original click once the modal has closed, so the app's own
-    // <Link> navigates client-side (no full reload). The captured href is
-    // already localized; it is only the fallback for a link that has left
+    autosaveRef.current?.drain(); // every pending answer, not just the first
+    setLeaveTarget(null);
+    // Continue once the modal has closed. A link replays the original click, so
+    // the app's own <Link> navigates client-side (no full reload); its captured
+    // href is already localized and only the fallback for a link that has left
     // the DOM in the meantime.
     requestAnimationFrame(() => {
-      if (link?.isConnected) link.click();
-      else window.location.assign(href);
+      if (target?.kind === "back") backToPreviousPage(localizeHref("/exams", locale));
+      else if (target?.kind === "nav") target.proceed();
+      else if (target?.link?.isConnected) target.link.click();
+      else if (target?.href) window.location.assign(target.href);
     });
   };
   const stay = () => {
-    leaveLinkRef.current = null;
-    setLeaveHref(null);
+    // Back already left the sentinel entry: put it back for the next Back.
+    if (leaveTarget?.kind === "back") pushSentinel();
+    setLeaveTarget(null);
   };
 
   const Icon = examIcon(session.exam);
-  const title = `${t(`types.${session.exam}`)} · ${sectionLabel(t, session.exam, session.section)}`;
+  const title = [t(`types.${session.exam}`), sectionLabel(t, session.exam, session.section), session.topic ? topicLabel(t, session.topic) : null]
+    .filter(Boolean)
+    .join(" · ");
   const progress = (summary.answered / summary.total) * 100;
   const submitting = submit.status === "submitting";
 
@@ -456,7 +553,7 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
 
       {/* leave guard */}
       <Dialog
-        open={Boolean(leaveHref)}
+        open={Boolean(leaveTarget)}
         onClose={stay}
         size="sm"
         variant="sheet"

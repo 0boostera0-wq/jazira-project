@@ -249,7 +249,7 @@ const stages = {
       position: "الحرف {current} من {total}",
       pickLetter: "اختر حرفًا",
       letter: "الحرف {letter}",
-      pad: "لوح الكتابة: اكتب الحرف {letter}",
+      pad: "لوح الكتابة",
       colorsLabel: "لون القلم",
       colors: {
         ink: "بنّي داكن",

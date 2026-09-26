@@ -1,9 +1,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import {
-  greetingPeriod, firstName, practiceHref, attemptHref, findResumable, lastGraded, minutesLeft, attemptsStartedToday,
-  scoreTone, attemptRow, splitTopics, dailySeries, normalizeStats, sparklineGeometry, tipIndex, notificationHref,
+  greetingPeriod, firstName, practiceHref, attemptHref, findResumable, lastGraded, minutesLeft,
+  attemptRow, splitTopics, normalizeStats, tipIndex, notificationHref,
   onboardingSteps, resumeSummary, minutesFromCountdown, streakStatus, isolate, TREND_DAYS,
 } from "@/components/dashboard/model";
+// The dashboard uses the exams helpers for days, series, sparkline and score colours (one implementation).
+import { attemptsToday, dailySeries, sparkline } from "@/components/exams/stats-logic";
+import { scoreTone } from "@/components/exams/results-logic";
 import { notificationHref as centerHref } from "@/components/notifications/model";
 import { parseBuilderParams } from "@/components/exams/builder-logic";
 import { parseLastVisit, serializeLastVisit } from "@/components/dashboard/lastVisit";
@@ -99,15 +102,17 @@ describe("dashboard: attempts", () => {
     expect(minutesFromCountdown(60, NaN, readAt)).toBeNull();
   });
   it("counts attempts started on the Saudi day", () => {
-    expect(attemptsStartedToday(items, TODAY)).toBe(3);
-    expect(attemptsStartedToday(items, "2026-09-24")).toBe(1);
-    expect(attemptsStartedToday(null, TODAY)).toBe(0);
+    expect(attemptsToday(items, now)).toBe(3);
+    expect(attemptsToday(items, TODAY)).toBe(3);
+    expect(attemptsToday(items, "2026-09-24")).toBe(1);
+    expect(attemptsToday(null, now)).toBe(0);
   });
-  it("bands scores", () => {
+  it("bands scores on the app-wide scale (≥75 green, ≥50 gold, else danger)", () => {
     expect(scoreTone(92)).toBe("green");
-    expect(scoreTone(80)).toBe("green");
+    expect(scoreTone(75)).toBe("green");
+    expect(scoreTone(74.9)).toBe("gold");
     expect(scoreTone(50)).toBe("gold");
-    expect(scoreTone(49.9)).toBe("warning");
+    expect(scoreTone(49.9)).toBe("danger");
     expect(scoreTone(null)).toBe("neutral");
   });
   it("normalises list rows", () => {
@@ -149,7 +154,7 @@ describe("dashboard: stats", () => {
       { day: "bad", attempts: 1, accuracy: 10 },
       { day: "2026-09-20", attempts: 0, accuracy: 10 },
       { day: "2026-09-21", attempts: 1, accuracy: 140 },
-    ], TODAY);
+    ], TREND_DAYS, TODAY);
     expect(s).toHaveLength(TREND_DAYS);
     expect(s[0]).toMatchObject({ day: "2026-08-27", accuracy: 55, index: 0 });
     expect(s[29]).toMatchObject({ day: TODAY, accuracy: 70, index: 29 });
@@ -175,20 +180,26 @@ describe("dashboard: stats", () => {
     expect(s.totals).toMatchObject({ questions: 180, answered: 171, accuracy: 67.2, averageScore: 66.1, bestScore: 92 });
     expect(s.trend.delta).toBe(7.1);
     expect(s.sections).toEqual([{ exam: "aptitude", section: "verbal", total: 60, correct: 44, accuracy: 73.3 }]);
+    // pre-0012 payload: no plan information
+    expect(s).toMatchObject({ premium: null, locked: [] });
+    // 0012: a free member's topic analytics are withheld and listed in `locked`
+    const free = normalizeStats({ completed_attempts: 2, best_topics: [], weakest_topics: [], premium: false, locked: ["by_topic", "best_topics", "weakest_topics"] }, TODAY);
+    expect(free).toMatchObject({ premium: false, locked: ["by_topic", "best_topics", "weakest_topics"], strongest: [], focus: [] });
   });
 
-  it("computes sparkline geometry in viewBox units", () => {
-    const series = dailySeries([{ day: TODAY, attempts: 1, accuracy: 100 }, { day: "2026-08-27", attempts: 1, accuracy: 0 }], TODAY);
-    const g = sparklineGeometry(series, { width: 320, height: 96, pad: 8 });
+  it("computes the card's sparkline geometry in viewBox units (shared exams sparkline)", () => {
+    const series = dailySeries([{ day: TODAY, attempts: 1, accuracy: 100 }, { day: "2026-08-27", attempts: 1, accuracy: 0 }], TREND_DAYS, TODAY);
+    const size = { width: 320, height: 96, pad: 8, connectGaps: true };
+    const g = sparkline(series.map((d) => d.accuracy), size);
     expect(g.points).toHaveLength(2);
     expect(g.points[0]).toMatchObject({ x: 8, y: 88 }); // oldest, 0 %
     expect(g.points[1]).toMatchObject({ x: 312, y: 8 }); // today, 100 %
-    expect(g.path).toBe("M8 88 L312 8");
-    expect(g.area).toMatch(/Z$/);
-    const one = sparklineGeometry(dailySeries([{ day: TODAY, attempts: 1, accuracy: 50 }], TODAY));
+    expect(g.segments).toEqual(["M8 88 L312 8"]);
+    expect(g.area[0]).toMatch(/Z$/);
+    const one = sparkline(dailySeries([{ day: TODAY, attempts: 1, accuracy: 50 }], TREND_DAYS, TODAY).map((d) => d.accuracy), size);
     expect(one.points).toHaveLength(1);
-    expect(one.area).toBe("");
-    expect(sparklineGeometry([]).points).toEqual([]);
+    expect(one.area).toEqual([]);
+    expect(sparkline([], size).points).toEqual([]);
   });
 });
 
@@ -327,6 +338,27 @@ describe("dashboard: data loaders", () => {
     expect(sb.calls.rpc.filter((n) => n === "record_daily_activity")).toHaveLength(1);
     await recordActivityOnce(sb, "u1", "2026-09-26");
     expect(sb.calls.rpc.filter((n) => n === "record_daily_activity")).toHaveLength(2);
+  });
+
+  it("shares record_daily_activity with the session tracker: skipped once the day is recorded on this device", async () => {
+    const store = new Map();
+    globalThis.localStorage = { getItem: (k) => store.get(k) ?? null, setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) };
+    try {
+      const sb = fakeSupabase({ rpc: { record_daily_activity: { data: 4, error: null } } });
+      expect(await recordActivityOnce(sb, "u9", TODAY)).toBe(4);
+      expect(store.get("jazira_active_day_v1:u9")).toBe(TODAY);
+      resetActivityCache(); // e.g. a new page load later that day
+      expect(await recordActivityOnce(sb, "u9", TODAY)).toBeNull();
+      expect(sb.calls.rpc.filter((n) => n === "record_daily_activity")).toHaveLength(1);
+      // a failed call is not remembered: the next caller tries again
+      const failing = fakeSupabase({ rpc: { record_daily_activity: { data: null, error: { code: "500" } } } });
+      expect(await recordActivityOnce(failing, "u8", TODAY)).toBeNull();
+      expect(store.has("jazira_active_day_v1:u8")).toBe(false);
+      await recordActivityOnce(failing, "u8", TODAY);
+      expect(failing.calls.rpc).toHaveLength(2);
+    } finally {
+      delete globalThis.localStorage;
+    }
   });
 
   it("degrades per metric and only fails when nothing is readable", async () => {

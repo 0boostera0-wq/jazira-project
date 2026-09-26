@@ -58,7 +58,7 @@ const curriculum = {
       eyebrow: "What Jazira adds",
       title: "From the textbook to mastery",
       lead: "The books live on their official platform; we help you understand and revise them.",
-      practice: { title: "Practise in the exam center", body: "Timed Qudurat and Tahsili practice with an explanation for every question." },
+      practice: { title: "Practise in the exam centre", body: "Timed Qudurat and Tahsili practice with an explanation for every question." },
       assistant: { title: "Ask the Jazira Assistant", body: "Get a lesson explained, a summary, or review questions for any subject." },
       community: { title: "Study with others", body: "Ask questions and share notes with students taking the same subjects." },
     },
@@ -239,7 +239,7 @@ const curriculum = {
   },
 
   practice: {
-    title: "Practise in the exam center",
+    title: "Practise in the exam centre",
     sub: "{exam} · {section}",
     exams: { aptitude: "Qudurat", achievement: "Tahsili" },
     sections: {

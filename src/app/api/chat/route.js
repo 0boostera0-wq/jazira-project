@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createClient } from "@/lib/supabase-server";
 import { CHAT_LIMITS, isValidSessionId, newSessionId, prepareChatInput } from "@/lib/chatStore";
+import { isSameOrigin } from "@/lib/http-guards";
+import { isRateLimited } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,6 +21,14 @@ export const dynamic = "force-dynamic";
 //   A reply that fails mid-stream aborts the response (the client shows
 //   "interrupted"); a reply the user stops is stored as far as it got.
 //
+// Quota (migration 0013): public.ai_consume() checks the quota, stores the
+// user message and charges it in ONE locked transaction per member, so
+// parallel requests cannot all pass. Re-sending the same message is free only
+// while the server's own ledger says its reply was never delivered
+// (ai_usage.replied_at) — deleting chat rows changes nothing. The reply is
+// stored (or the claim released) with public.ai_finish(ticket); the ticket
+// never leaves this process. No ai_consume() → 503 (never an unmetered model).
+//
 // The API key is read ONLY here. Provider and model names appear only in
 // server logs — never in anything sent to the browser.
 // ---------------------------------------------------------------------------
@@ -34,7 +44,7 @@ const LINKS = [
   ["/middle", "المرحلة المتوسطة", "Middle school"],
   ["/high-school", "المرحلة الثانوية", "High school"],
   ["/community", "المجتمع", "Community"],
-  ["/competitions", "المسابقات", "Competitions"],
+  ["/competitions", "المنافسات", "Competitions"],
   ["/subscriptions", "باقة النخبة والاشتراك", "The Elite plan and subscription"],
   ["/settings", "الإعدادات", "Settings"],
   ["/assistant", "مساعد الجزيرة", "Jazira Assistant"],
@@ -131,59 +141,67 @@ function riyadhTime(iso, locale) {
 }
 
 // ---------------------------------------------------------------------------
-// Server-side quota (public.ai_quota(): Elite unlimited; free = 5 user messages
-// per rolling 8 h, +5 with 5 referrals — see docs/DATA_API.md). Checked BEFORE
-// anything is stored or the model is contacted.
+// Server-side quota (public.ai_consume(): Elite unlimited; free = 5 user
+// messages per rolling 8 h, +5 with 5 referrals — see docs/DATA_API.md).
+// Decided and charged BEFORE the model is contacted.
 // ---------------------------------------------------------------------------
-async function checkQuota(supabase, locale) {
-  const { data: q, error } = await supabase.rpc("ai_quota");
-  if (error) {
-    if (error.code === "PGRST202" || error.code === "42883") {
-      console.warn("[AI] ai_quota() is not deployed yet — server-side quota not enforced");
-      return { ok: true };
-    }
-    console.error("[AI] ai_quota() failed:", error.code, error.message);
-    return { ok: false, response: notice(NOTICES[locale].unavailable, 503, "ai_unavailable") };
-  }
-  if (!q || q.unlimited || (typeof q.remaining === "number" && q.remaining > 0)) return { ok: true };
+const MISSING_RPC = new Set(["PGRST202", "42883"]);
 
-  const retryAfter = q.resets_at ? Math.max(1, Math.ceil((new Date(q.resets_at).getTime() - Date.now()) / 1000)) : 3600;
+function quotaResponse(q, locale) {
+  const retryAfter = q?.resets_at ? Math.max(1, Math.ceil((new Date(q.resets_at).getTime() - Date.now()) / 1000)) : 3600;
   const headers = {
     "Retry-After": String(retryAfter),
-    "X-Quota-Limit": String(q.limit ?? ""),
+    "X-Quota-Limit": String(q?.limit ?? ""),
     "X-Quota-Remaining": "0",
   };
-  if (q.resets_at) headers["X-Quota-Reset"] = new Date(q.resets_at).toISOString();
-  const text = NOTICES[locale].quota({ limit: q.limit, time: riyadhTime(q.resets_at, locale) });
-  return { ok: false, response: notice(text, 429, "ai_quota_exhausted", headers) };
+  if (q?.resets_at) headers["X-Quota-Reset"] = new Date(q.resets_at).toISOString();
+  const text = NOTICES[locale].quota({ limit: q?.limit, time: riyadhTime(q?.resets_at, locale) });
+  return notice(text, 429, "ai_quota_exhausted", headers);
 }
 
-// Same-origin only (blocks cross-site use of a signed-in browser session).
-function isSameOrigin(req) {
-  const site = req.headers.get("sec-fetch-site");
-  if (site && site !== "same-origin" && site !== "none") return false;
-  const origin = req.headers.get("origin");
-  if (!origin) return true; // same-origin fetches may omit Origin
+/** → { ok: true, ticket } | { ok: false, response } */
+async function consume(supabase, sessionId, text, locale) {
+  const N = NOTICES[locale];
+  let res;
   try {
-    const host = new URL(origin).host;
-    return host === req.headers.get("host") || host === new URL(req.url).host;
-  } catch {
-    return false;
+    res = await supabase.rpc("ai_consume", { p_session: sessionId, p_content: text });
+  } catch (err) {
+    console.error("[AI] ai_consume() failed:", String(err?.message || err).slice(0, 200));
+    return { ok: false, response: notice(N.unavailable, 503, "ai_unavailable") };
+  }
+  const { data, error } = res || {};
+  if (error) {
+    if (MISSING_RPC.has(error.code)) {
+      console.error("[AI] ai_consume() is not deployed (apply migration 0013) — refusing unmetered requests");
+    } else if (error.message === "invalid_argument") {
+      return { ok: false, response: notice(N.invalid, 400, "invalid_request") };
+    } else {
+      console.error("[AI] ai_consume() failed:", error.code, error.message);
+    }
+    return { ok: false, response: notice(N.unavailable, 503, "ai_unavailable") };
+  }
+  if (data?.ok && data.ticket) return { ok: true, ticket: data.ticket };
+  if (data?.reason === "quota") return { ok: false, response: quotaResponse(data.quota, locale) };
+  console.error("[AI] ai_consume() returned an unexpected payload");
+  return { ok: false, response: notice(N.unavailable, 503, "ai_unavailable") };
+}
+
+/** Store the delivered reply (or release the claim when nothing was delivered). Never throws. */
+async function finish(supabase, ticket, reply) {
+  try {
+    const { error } = await supabase.rpc("ai_finish", {
+      p_ticket: ticket,
+      p_reply: typeof reply === "string" && reply.trim() ? reply.slice(0, 20000) : null,
+    });
+    if (error) console.warn("[AI] could not finish the reply:", error.code, error.message);
+  } catch (err) {
+    console.warn("[AI] could not finish the reply:", String(err?.message || err).slice(0, 200));
   }
 }
 
-// Best-effort burst limiter per user and server instance (Elite is unlimited
-// by quota; this only blunts scripted floods).
-const BURST = { windowMs: 60_000, max: 20 };
-const hits = new Map();
-function burstLimited(userId) {
-  const now = Date.now();
-  const recent = (hits.get(userId) || []).filter((t) => now - t < BURST.windowMs);
-  recent.push(now);
-  hits.set(userId, recent);
-  if (hits.size > 5000) for (const [k, v] of hits) if (!v.length || now - v[v.length - 1] > BURST.windowMs) hits.delete(k);
-  return recent.length > BURST.max;
-}
+// Burst limit per member, shared by every server instance (Elite is
+// unlimited by quota; this only blunts scripted floods).
+const BURST = { max: 20, windowSeconds: 60 };
 
 async function readBody(req) {
   const declared = Number(req.headers.get("content-length") || 0);
@@ -195,28 +213,6 @@ async function readBody(req) {
     return { ok: true, value: JSON.parse(text) };
   } catch {
     return { ok: false };
-  }
-}
-
-// A retry after a failed reply re-sends the same user message: it was already
-// stored and counted, so it is neither stored nor charged again. Only a user
-// message with no reply after it qualifies (a delivered or stopped reply is
-// stored as the next row), so one paid message yields at most one reply.
-// Best effort — any lookup problem treats it as a new message.
-async function alreadyStored(supabase, userId, sessionId, text) {
-  try {
-    const { data } = await supabase
-      .from("chat_history")
-      .select("message_type, content, created_at")
-      .eq("user_id", userId)
-      .eq("session_id", sessionId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    return Boolean(data && data.message_type === "user" && data.content === text &&
-      Date.now() - new Date(data.created_at).getTime() < 30 * 60_000);
-  } catch {
-    return false;
   }
 }
 
@@ -248,7 +244,9 @@ export async function POST(req) {
   }
   const sessionId = isValidSessionId(body?.sessionId) ? body.sessionId : newSessionId();
 
-  if (burstLimited(user.id)) return notice(N.rateLimited, 429, "rate_limited", { "Retry-After": "60" });
+  if (await isRateLimited({ bucket: "chat", key: user.id, ...BURST })) {
+    return notice(N.rateLimited, 429, "rate_limited", { "Retry-After": "60" });
+  }
 
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
   // Key missing entirely — neutral notice for the user, setup hint in the logs only.
@@ -257,20 +255,10 @@ export async function POST(req) {
     return notice(N.unavailable, 503, "ai_unavailable");
   }
 
-  if (!(await alreadyStored(supabase, user.id, sessionId, input.text))) {
-    // Server-side quota — before anything is stored or sent to the model.
-    const quota = await checkQuota(supabase, locale);
-    if (!quota.ok) return quota.response;
-
-    // Store the user message (feeds the ai_usage ledger through a trigger).
-    const { error: saveError } = await supabase.from("chat_history").insert({
-      user_id: user.id,
-      session_id: sessionId,
-      message_type: "user",
-      content: input.text,
-    });
-    if (saveError) console.warn("[AI] could not store the user message:", saveError.code, saveError.message);
-  }
+  // Quota + store + charge, atomically (a retry of an undelivered reply is free).
+  const charge = await consume(supabase, sessionId, input.text, locale);
+  if (!charge.ok) return charge.response;
+  const { ticket } = charge;
 
   // Ordered fallback list (server-only) — first available model wins.
   const MODEL_FALLBACKS = [
@@ -317,17 +305,10 @@ export async function POST(req) {
               console.error("[AI] stream interrupted:", String(err?.message || err).slice(0, 200));
             }
           }
-          // Keep complete replies and replies the user stopped; a failed one is
-          // dropped so a retry doesn't leave a broken half answer in history.
-          if (!failed && full.trim()) {
-            const { error } = await supabase.from("chat_history").insert({
-              user_id: user.id,
-              session_id: sessionId,
-              message_type: "assistant",
-              content: full.slice(0, 20000),
-            });
-            if (error) console.warn("[AI] could not store the reply:", error.code, error.message);
-          }
+          // Keep complete replies and replies the user stopped (the charge is
+          // spent); a failed one is dropped and the claim released, so a
+          // retry neither leaves a broken half answer nor costs again.
+          await finish(supabase, ticket, failed ? null : full);
           if (cancelled) return;
           if (failed) controller.error(new Error("stream_interrupted"));
           else controller.close();
@@ -358,6 +339,8 @@ export async function POST(req) {
   }
 
   // All models exhausted or a non-model error occurred (details → logs only).
+  // Nothing was delivered: release the claim so a retry is not charged again.
+  await finish(supabase, ticket, null);
   const errMsg = String(lastErr?.message || lastErr || "");
   if (/API key not valid|API_KEY_INVALID|invalid api key/i.test(errMsg)) {
     console.error("[AI] provider rejected the API key (check GEMINI_API_KEY)");

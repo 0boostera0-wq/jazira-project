@@ -26,13 +26,18 @@ export default function LanguageSwitch({ variant = "icon", className }) {
       </button>
     );
   }
+  // Accessible name fully in the page language ("Switch to Arabic" /
+  // "التبديل إلى الإنجليزية"): attributes can't carry a second lang, and a
+  // mixed-script name is mispronounced by single-voice screen readers. The
+  // visible glyph keeps its own lang.
+  const name = t("a11y.switchLanguageTo");
   return (
     <button
       type="button"
       onClick={() => setLanguage(target)}
-      aria-label={`${t("a11y.switchLanguage")}: ${label}`}
-      title={label}
-      className={cn("inline-flex h-10 min-w-10 items-center justify-center gap-1 rounded-full px-2.5 text-[0.8125rem] font-semibold text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink", className)}
+      aria-label={name}
+      title={name}
+      className={cn("inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-full px-2.5 text-[0.8125rem] font-medium text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink lg:h-10 lg:min-w-10", className)}
     >
       <Languages size={17} aria-hidden="true" />
       <span lang={target}>{target === "en" ? "EN" : "ع"}</span>

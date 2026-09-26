@@ -9,6 +9,7 @@ import { textDirection } from "./markdown-parser";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import { cn } from "@/components/ui/cn";
+import { textProps } from "@/components/community/text";
 
 function timeLabel(iso, bucket, locale) {
   if (bucket === "today" || bucket === "yesterday") return formatDate(iso, locale, { hour: "numeric", minute: "2-digit" });
@@ -72,7 +73,7 @@ export default function HistoryPanel({ sessions, activeId, onOpen, onNew, onDele
                         active ? "bg-gold-50 text-ink ring-1 ring-inset ring-gold-200/70" : "text-ink-2 hover:bg-surface-2"
                       )}
                     >
-                      <span dir={textDirection(title)} className={cn("min-w-0 flex-1 truncate text-sm", isRTL ? "text-right" : "text-left")}>{title}</span>
+                      <span {...textProps(title, cn("min-w-0 flex-1 truncate text-sm", isRTL ? "text-right" : "text-left"))} dir={textDirection(title)}>{title}</span>
                       <span className="t-caption shrink-0 text-xs">{timeLabel(s.lastAt, g.key, locale)}</span>
                     </button>
                     <button

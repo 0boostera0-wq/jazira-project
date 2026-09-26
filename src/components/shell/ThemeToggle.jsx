@@ -14,7 +14,7 @@ export default function ThemeToggle({ className }) {
       onClick={toggleTheme}
       aria-label={t("a11y.toggleTheme")}
       aria-pressed={hydrated ? isDark : undefined}
-      className={cn("grid h-10 w-10 place-items-center rounded-full text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink", className)}
+      className={cn("grid h-11 w-11 place-items-center rounded-full text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink lg:h-10 lg:w-10", className)}
     >
       {/* Both icons rendered; CSS picks one so SSR and first paint agree. */}
       <Sun size={18} className="hidden dark:block" aria-hidden="true" />

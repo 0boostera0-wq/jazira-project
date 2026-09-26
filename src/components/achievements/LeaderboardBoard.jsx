@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { formatNumber } from "@/i18n/format";
 import Avatar from "@/components/Avatar";
 import EliteBadge from "@/components/subscriptions/EliteBadge";
+import Alert from "@/components/ui/Alert";
 import Button from "@/components/ui/Button";
 import EmptyState from "@/components/ui/EmptyState";
 import Skeleton from "@/components/ui/Skeleton";
@@ -155,16 +156,18 @@ export default function LeaderboardBoard() {
   if (b.status === "loading" || !b.authLoaded) {
     body = <BoardSkeleton />;
   } else if (b.status === "unavailable") {
+    // A failed request: the app-wide danger alert with a retry (not an empty-state illustration).
     body = (
-      <div className="surface-flat">
-        <EmptyState
-          compact
-          image="system.offline"
-          title={t("competitions.board.errorTitle")}
-          description={t("competitions.board.errorBody")}
-          action={<Button variant="secondary" iconStart={RotateCcw} onClick={b.retry}>{t("states.retry")}</Button>}
-        />
-      </div>
+      <Alert
+        tone="danger"
+        title={
+          <>
+            <span className="block">{t("competitions.board.errorTitle")}</span>
+            <span className="mt-0.5 block font-normal">{t("competitions.board.errorBody")}</span>
+          </>
+        }
+        action={<Button size="sm" variant="secondary" iconStart={RotateCcw} onClick={b.retry}>{t("states.retry")}</Button>}
+      />
     );
   } else if (b.entries.length === 0) {
     body = (

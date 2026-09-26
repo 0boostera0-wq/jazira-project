@@ -99,7 +99,7 @@ export default function SearchTabs({ items, value, onChange, label, idBase }) {
               onClick={() => onChange(it.value)}
               onKeyDown={(e) => onKey(e, i)}
               className={cn(
-                "inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-sm font-medium transition-colors duration-fast",
+                "inline-flex h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-sm font-medium transition-colors duration-fast sm:h-9",
                 active ? "bg-surface text-ink shadow-sm focus-visible:[box-shadow:var(--ring)]" : "text-ink-3 hover:text-ink"
               )}
             >

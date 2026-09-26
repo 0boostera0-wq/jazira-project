@@ -17,7 +17,6 @@ const RULES = [
 /**
  * /competitions body. Title, ranking rules and the XP guide render on the
  * server; one client provider loads the public XP board + the viewer's rank.
- * `preview` is only for visual QA of signed-in / populated states.
  *
  * xl+:   main (8) = intro · rules · board   |   rail (4) = standing · climb · related
  * md–lg: intro · [standing | rules] · board · climb · related (full width)
@@ -26,12 +25,12 @@ const RULES = [
  * can be re-ordered in one flow; they only become real columns at xl (at lg
  * the app sidebar leaves too little width for a readable rail).
  */
-export default async function CompetitionsView({ preview = null }) {
+export default async function CompetitionsView() {
   const t = await getT("achievements");
 
   return (
     <Messages ns={["achievements"]}>
-      <LeaderboardProvider preview={preview}>
+      <LeaderboardProvider>
         <div className="flex flex-col gap-6 md:grid md:grid-cols-2 md:gap-x-5 md:gap-y-8 xl:grid-cols-12 xl:gap-x-10 xl:gap-y-0">
           {/* ── Main column ── */}
           <div className="contents xl:col-span-8 xl:block xl:min-w-0">

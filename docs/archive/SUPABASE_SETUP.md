@@ -1,5 +1,13 @@
 # Supabase Integration Guide
 
+> **ARCHIVED — superseded, do not follow.** This is a report from an early
+> prototype. It describes files, providers and a schema that no longer exist
+> (e.g. src/lib/auth.js, supabase.js, questions.js, ProtectedRoute, Clerk
+> middleware, the `posts`/`comments`/`likes` tables). Current sources of
+> truth: [AGENTS.md](../../AGENTS.md), [CONVENTIONS](../CONVENTIONS.md),
+> [SECURITY](../SECURITY.md), [DATA_API](../DATA_API.md) and
+> `supabase/migrations/` (apply 0000 → latest to a fresh project).
+
 This document covers the Supabase database setup for the Jazira Edu Platform.
 
 ## 📋 Table of Contents
@@ -20,9 +28,8 @@ Supabase keys are already in `.env.local`. However, you need to add the **Servic
 
 ```env
 # Client-side (safe in browser)
-NEXT_PUBLIC_SUPABASE_URL=https://osbutymigkorsovnaatl.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_6R240tCb_omR3y26GiqQEQ_yH_30pGt
-
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable-key>
 # Server-side (SECRET - keep private!)
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
 ```

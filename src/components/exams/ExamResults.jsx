@@ -9,12 +9,12 @@ import Button from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
 import { ProgressBar, ProgressRing } from "@/components/ui/Progress";
 import { cn } from "@/components/ui/cn";
+import { PLATE } from "@/components/stages/parts";
 import { builderHref } from "./builder-logic";
 import { sectionLabel, signInHref, topicLabel } from "./labels";
 import ReviewList from "./ReviewList";
-import { accuracyTone, reviewCounts, retryPlan, scoreBand, sortTopics, usedSeconds } from "./results-logic";
+import { reviewCounts, retryPlan, ringTone, scoreBand, scoreTone, sortTopics, usedSeconds } from "./results-logic";
 
-const RING_TONE = { excellent: "green", good: "green", fair: "gold", low: "gold" };
 const BAR_TONE = { green: "green", gold: "gold", danger: "danger", neutral: "ink" };
 
 /**
@@ -59,7 +59,7 @@ export default function ExamResults({ result, isSignedIn, path }) {
       <header className="surface overflow-hidden">
         <div className="grid gap-6 p-5 sm:p-8 xl:grid-cols-12 xl:items-center xl:gap-8">
           <div className="flex items-center gap-5 sm:gap-7 xl:col-span-7">
-            <ProgressRing value={pct} size={116} stroke={9} tone={RING_TONE[band]} label={t("results.scoreLabel", { percent: formatPercent(pct / 100, locale, 1) })} className="shrink-0">
+            <ProgressRing value={pct} size={116} stroke={9} tone={ringTone(pct)} label={t("results.scoreLabel", { percent: formatPercent(pct / 100, locale, 1) })} className="shrink-0">
               <span className="text-[1.625rem] font-bold leading-none text-ink tabular sm:text-3xl">{formatPercent(pct / 100, locale, pct % 1 ? 1 : 0)}</span>
             </ProgressRing>
             <div className="min-w-0">
@@ -68,7 +68,8 @@ export default function ExamResults({ result, isSignedIn, path }) {
               <p className="t-caption mt-1">
                 {t("results.meta", {
                   exam: t(`types.${a.exam}`),
-                  section: sectionLabel(t, a.exam, a.section),
+                  // a single-skill test (0012) names its skill too
+                  section: a.topic ? `${sectionLabel(t, a.exam, a.section)} · ${topicLabel(t, a.topic)}` : sectionLabel(t, a.exam, a.section),
                   date: formatDate(a.submitted_at || a.started_at || Date.now(), locale, { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }),
                 })}
               </p>
@@ -110,8 +111,9 @@ export default function ExamResults({ result, isSignedIn, path }) {
           </div>
           {!isSignedIn && (
             <div className="flex shrink-0 flex-wrap gap-2 ps-7 sm:ps-0">
-              <Button href={signInHref(path, "/sign-up")} size="sm" iconStart={UserPlus}>{t("results.local.signUp")}</Button>
-              <Button href={signInHref(path)} size="sm" variant="secondary" iconStart={LogIn}>{t("results.local.signIn")}</Button>
+              {/* The header's next step stays the one primary action. */}
+              <Button href={signInHref(path, "/sign-up")} size="sm" variant="secondary" iconStart={UserPlus}>{t("results.local.signUp")}</Button>
+              <Button href={signInHref(path)} size="sm" variant="ghost" iconStart={LogIn}>{t("results.local.signIn")}</Button>
             </div>
           )}
         </section>
@@ -135,7 +137,7 @@ export default function ExamResults({ result, isSignedIn, path }) {
                         </span>
                         <span className="t-caption shrink-0 tabular">{t("results.topics.value", { correct: r.correct, total: r.total })}</span>
                       </div>
-                      <ProgressBar value={r.accuracy ?? 0} tone={BAR_TONE[accuracyTone(r.accuracy)]} size="sm" className="mt-1.5" label={`${topicLabel(t, r.topic)} ${formatPercent((r.accuracy ?? 0) / 100, locale)}`} />
+                      <ProgressBar value={r.accuracy ?? 0} tone={BAR_TONE[scoreTone(r.accuracy)]} size="sm" className="mt-1.5" label={`${topicLabel(t, r.topic)} ${formatPercent((r.accuracy ?? 0) / 100, locale)}`} />
                     </li>
                   ))}
                 </ul>
@@ -143,7 +145,7 @@ export default function ExamResults({ result, isSignedIn, path }) {
             )}
             <section aria-labelledby="next-title" className="surface-tint overflow-hidden">
               {/* decorative: dropped on phones so the answer review comes sooner */}
-              <div className="hidden border-b border-line/8 bg-[#F7F0E3] px-10 pt-2 sm:block">
+              <div className={cn("hidden border-b border-line/8 px-10 pt-2 sm:block", PLATE)}>
                 <Illustration id="ai.feedback" className="mx-auto w-full max-w-[200px]" />
               </div>
               <div className="p-5 sm:p-6">

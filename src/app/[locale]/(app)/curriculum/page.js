@@ -13,6 +13,8 @@ import StageCard, { HighSchoolCard } from "@/components/curriculum/StageCard";
 import OfficialChannels from "@/components/curriculum/OfficialChannels";
 import SourcesSection from "@/components/curriculum/SourcesSection";
 import { Chevron } from "@/components/curriculum/parts";
+import { SECTION_GAP } from "@/components/stages/parts";
+import { cn } from "@/components/ui/cn";
 import { nodeHref } from "@/components/curriculum/model";
 import { OFFICIAL_LINKS, channelsCopy } from "@/components/curriculum/copy";
 
@@ -108,7 +110,7 @@ export default async function CurriculumHub({ params }) {
       </NodeHeader>
 
       {/* ── Stages ── */}
-      <section id="stages" aria-labelledby="stages-title" className="mt-14 scroll-mt-24 sm:mt-20">
+      <section id="stages" aria-labelledby="stages-title" className={cn(SECTION_GAP, "scroll-mt-24")}>
         <SectionHeader id="stages-title" eyebrow={t("hub.stages.eyebrow")} title={t("hub.stages.title")} description={t("hub.stages.lead")} />
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:gap-5">
           {flatCard("elementary")}
@@ -142,7 +144,7 @@ export default async function CurriculumHub({ params }) {
       </section>
 
       {/* ── What Jazira adds + where the books are ── */}
-      <section aria-labelledby="value-title" className="mt-14 grid gap-8 sm:mt-20 xl:grid-cols-12 xl:gap-8">
+      <section aria-labelledby="value-title" className={cn(SECTION_GAP, "grid gap-8 xl:grid-cols-12 xl:gap-8")}>
         <div className="xl:col-span-7">
           <SectionHeader id="value-title" eyebrow={t("hub.value.eyebrow")} title={t("hub.value.title")} description={t("hub.value.lead")} />
           <ul className="mt-7 grid gap-3">
@@ -172,7 +174,7 @@ export default async function CurriculumHub({ params }) {
       </section>
 
       {/* ── Sources ── */}
-      <div className="mt-14 sm:mt-20">
+      <div className={SECTION_GAP}>
         <SourcesSection />
       </div>
 

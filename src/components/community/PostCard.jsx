@@ -158,6 +158,16 @@ export default function PostCard({ post, api, viewer, askSignIn, onPatch, onRemo
                 <span aria-hidden="true">·</span>
               </>
             )}
+            {post.mine && author.anonymous && (
+              // Own anonymous post (feed, own profile): others never see who wrote it.
+              <>
+                <span className="inline-flex min-w-0 items-center gap-1 text-ink-3">
+                  <EyeOff size={12} aria-hidden="true" className="shrink-0" />
+                  <span className="truncate">{t("post.onlyYou")}</span>
+                </span>
+                <span aria-hidden="true">·</span>
+              </>
+            )}
             <Link href={`/community/post/${post.id}`} className="shrink-0 hover:text-ink hover:underline hover:underline-offset-4">
               <time dateTime={post.created_at} title={formatDate(post.created_at, locale, { dateStyle: "full", timeStyle: "short" })}>
                 {formatRelative(post.created_at, locale)}

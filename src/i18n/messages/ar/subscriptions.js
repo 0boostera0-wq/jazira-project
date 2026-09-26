@@ -185,7 +185,7 @@ const subscriptions = {
     share: "مشاركة",
     shareTitle: "منصة جزيرة",
     shareText: "انضم إليّ في جزيرة لنتدرّب معًا على القدرات والتحصيلي.",
-    countError: "تعذّر تحديث عدد دعواتك الآن. سنحاول مجددًا عند زيارتك القادمة.",
+    countError: "تعذّر تحميل عدد دعواتك الآن. حاول مجددًا بعد قليل.",
     signedOutTitle: "سجّل الدخول لتحصل على رابط دعوتك",
     signedOutBody: "الرابط شخصي ومرتبط بحسابك، حتى تُحتسب الدعوات لك أنت.",
     signIn: "تسجيل الدخول",
@@ -227,11 +227,10 @@ const subscriptions = {
       cta: "المتابعة إلى الدفع الآمن",
       preparing: "جارٍ تجهيز صفحة الدفع…",
       redirecting: "ننقلك الآن إلى صفحة الدفع…",
-      agreeBefore: "بالمتابعة فإنك توافق على ",
+      // جملة واحدة؛ يتحوّل {terms} و{refund} إلى رابطين نصّهما agreeTerms / agreeRefund.
+      agree: "بالمتابعة فإنك توافق على {terms} و{refund}.",
       agreeTerms: "الشروط والأحكام",
-      agreeBetween: " و",
       agreeRefund: "سياسة الاسترداد",
-      agreeAfter: ".",
       secure: "صفحة الدفع يستضيفها {provider}",
     },
     states: {

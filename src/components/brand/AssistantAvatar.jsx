@@ -3,7 +3,7 @@ import { cn } from "@/components/ui/cn";
 
 /**
  * The Jazira assistant mascot as a circular avatar. Branding is always
- * "مساعد الجزيرة" / "Jazira Assistant" — the AI provider is an internal
+ * "مساعد جزيرة" / "Jazira Assistant" (common.brand.assistant) — the AI provider is an internal
  * implementation detail and is NEVER named in the interface.
  * `status="thinking"` adds a soft pulse ring.
  */

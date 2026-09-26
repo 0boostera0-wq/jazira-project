@@ -12,6 +12,8 @@ import ExamTypeCard from "@/components/exams/ExamTypeCard";
 import HowItWorks from "@/components/exams/HowItWorks";
 import PlanLimits from "@/components/exams/PlanLimits";
 import { allSectionCount, allTopicCount } from "@/components/exams/labels";
+import { cn } from "@/components/ui/cn";
+import { SECTION_GAP } from "@/components/stages/parts";
 
 export async function generateMetadata({ params }) {
   return buildMetadata({ locale: params.locale, key: "exams", path: "/exams" });
@@ -52,16 +54,18 @@ export default async function ExamsHubPage({ params }) {
           }
         />
 
-        <section id="choose" aria-labelledby="choose-title" className="mt-14 scroll-mt-24 sm:mt-20">
+        <section id="choose" aria-labelledby="choose-title" className={cn(SECTION_GAP, "scroll-mt-24")}>
           <SectionHeader id="choose-title" eyebrow={t("hub.choose.eyebrow")} title={t("hub.choose.title")} />
           <div className="mt-7 grid gap-5 xl:grid-cols-2 xl:gap-6">
-            <ExamTypeCard exam="aptitude" t={t} primary />
-            <ExamTypeCard exam="achievement" t={t} primary />
+            {/* One primary per view (the hero's): the cards' CTAs are secondary.
+                The first card's art is the phone LCP, so it loads eagerly. */}
+            <ExamTypeCard exam="aptitude" t={t} eagerArt />
+            <ExamTypeCard exam="achievement" t={t} />
           </div>
         </section>
 
         {/* The viewer's activity (resume · recent results) comes first on phones and tablets; on wide screens it is the rail beside "how it works". */}
-        <div className="mt-14 grid gap-8 sm:mt-20 xl:grid-cols-12 xl:gap-6">
+        <div className={cn(SECTION_GAP, "grid gap-8 xl:grid-cols-12 xl:gap-6")}>
           <div className="xl:order-last xl:col-span-4">
             <ExamActivity />
           </div>
@@ -70,7 +74,7 @@ export default async function ExamsHubPage({ params }) {
           </div>
         </div>
 
-        <div className="mt-14 sm:mt-20">
+        <div className={SECTION_GAP}>
           <PlanLimits t={t} tc={tc} />
         </div>
       </BankProvider>

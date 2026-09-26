@@ -8,14 +8,17 @@ import Skeleton from "@/components/ui/Skeleton";
 import { useSaver } from "./SettingsContext";
 import { Choice, FieldRow, SettingsCard, ToggleRow } from "./ui";
 
-/** Preferences: interface language + appearance (display) · sound + assistant suggestions (account). */
+/**
+ * Preferences: interface language + appearance (display) · assistant
+ * suggestions (account). No sound switch: the app plays no sounds, so a
+ * "Sound effects" setting would control nothing.
+ */
 export default function PreferencesSection() {
   const t = useT("settings");
   const tc = useT("common");
   const { locale } = useLocale();
-  const { sound, aiSuggestions, setSound, setAiSuggestions, setLanguage, loading } = usePreferences();
+  const { aiSuggestions, setAiSuggestions, setLanguage, loading } = usePreferences();
   const { theme, setTheme, hydrated } = useApp();
-  const soundSaver = useSaver(1800);
   const tipsSaver = useSaver(1800);
 
   // The provider saves locally at once and syncs to the account in the background.
@@ -53,14 +56,6 @@ export default function PreferencesSection() {
       </SettingsCard>
 
       <SettingsCard icon={Sparkles} title={t("preferences.experience.title")} desc={t("preferences.experience.desc")}>
-        <ToggleRow
-          title={t("preferences.sound.title")}
-          desc={t("preferences.sound.desc")}
-          checked={Boolean(sound)}
-          disabled={loading}
-          onChange={toggle(soundSaver, setSound)}
-          saver={soundSaver}
-        />
         <ToggleRow
           title={t("preferences.suggestions.title")}
           desc={t("preferences.suggestions.desc")}

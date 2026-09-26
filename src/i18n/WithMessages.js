@@ -5,6 +5,13 @@
 //   </Messages>
 //
 // Only the listed namespaces are serialized into the RSC payload for this subtree.
+// Prefer dotted subtrees when an island reads a small part of a big namespace:
+//
+//   <Messages ns={["support.faq", "support.topics", "support.shared"]}>
+//     <FaqExplorer />        ← still calls useT("support") → t("faq.title")
+//   </Messages>
+//
+// Nested <Messages> deep-merge, so a subtree never hides keys a parent provided.
 
 import { MessagesProvider } from "./client";
 import { getLocale, loadMessages } from "./server";

@@ -50,6 +50,8 @@ const search = {
   results: {
     pending: "Being verified",
     anonymous: "Anonymous member",
+    anonymousYou: "You (anonymous)",
+    moreError: "We couldn't load more results.",
     practiceCta: "Build a test",
     likes: { zero: "No likes", one: "1 like", other: "{count} likes" },
     comments: { zero: "No comments", one: "1 comment", other: "{count} comments" },

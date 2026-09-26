@@ -7,6 +7,7 @@ import Avatar from "@/components/Avatar";
 import Button from "@/components/ui/Button";
 import EliteBadge from "@/components/subscriptions/EliteBadge";
 import { cn } from "@/components/ui/cn";
+import { textProps } from "@/components/community/text";
 import { dirOfText, isUnread, listTimeFormat, previewOf } from "./messaging";
 
 // Truncated one-liners take the text's own direction (so an English line in
@@ -44,7 +45,7 @@ function Preview({ conv, me, className }) {
   else if (p.kind === "none") body = <span className={cn(LINE, "text-ink-3")}>{conv.isRequest ? t("list.requestSent") : t("list.noMessages")}</span>;
   else if (p.kind === "deleted") body = <span className={cn(LINE, "italic text-ink-3")}>{t("list.deleted")}</span>;
   else if (p.kind === "media") body = <span className={LINE}>{t("list.attachment")}</span>;
-  else body = <span dir={dirOfText(p.text)} className={cn(LINE, "min-w-0")}>{p.text}</span>;
+  else body = <span {...textProps(p.text, cn(LINE, "min-w-0"))} dir={dirOfText(p.text)}>{p.text}</span>;
   return (
     <span className={cn("flex min-w-0 flex-1 text-sm", className)}>
       {p.mine && !declined && p.kind !== "none" && <span className="shrink-0 whitespace-pre">{t("list.you")}</span>}
@@ -74,7 +75,7 @@ function ConversationRowBase({ conv, me, active, onOpen }) {
       <Avatar src={conv.other?.avatar_url} name={name} alt="" size={46} />
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1.5">
-          <span dir={dirOfText(name)} className={cn(LINE, "text-[0.9375rem]", unread ? "font-bold text-ink" : "font-medium text-ink")}>{name}</span>
+          <span {...textProps(name, cn(LINE, "text-[0.9375rem]", unread ? "font-bold text-ink" : "font-medium text-ink"))} dir={dirOfText(name)}>{name}</span>
           {conv.other?.is_elite && conv.other?.show_elite_badge !== false && <EliteBadge size="xs" iconOnly />}
           <ListTime iso={conv.last?.created_at || conv.createdAt} className="ms-auto" />
         </span>
@@ -106,13 +107,15 @@ function RequestRowBase({ req, active, busy, onOpen, onAccept, onIgnore }) {
         <Avatar src={req.other?.avatar_url} name={name} alt="" size={46} />
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-1.5">
-            <span dir={dirOfText(name)} className={cn(LINE, "text-[0.9375rem] font-medium text-ink")}>{name}</span>
+            <span {...textProps(name, cn(LINE, "text-[0.9375rem] font-medium text-ink"))} dir={dirOfText(name)}>{name}</span>
             {req.other?.is_elite && req.other?.show_elite_badge !== false && <EliteBadge size="xs" iconOnly />}
             <ListTime iso={req.last?.created_at || req.createdAt} className="ms-auto" />
           </span>
-          <span dir={p.kind === "text" ? dirOfText(p.text) : undefined} className={cn(LINE, "mt-0.5 block text-sm text-ink-3")}>
-            {p.kind === "text" ? p.text : t("requests.wantsToMessage")}
-          </span>
+          {p.kind === "text" ? (
+            <span {...textProps(p.text, cn(LINE, "mt-0.5 block text-sm text-ink-3"))} dir={dirOfText(p.text)}>{p.text}</span>
+          ) : (
+            <span className={cn(LINE, "mt-0.5 block text-sm text-ink-3")}>{t("requests.wantsToMessage")}</span>
+          )}
         </span>
       </button>
       <div className="mt-2.5 flex gap-2 ps-[58px]">

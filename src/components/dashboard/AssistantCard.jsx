@@ -4,6 +4,7 @@ import Button from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
 import AssistantAvatar from "@/components/brand/AssistantAvatar";
 import { cn } from "@/components/ui/cn";
+import { PLATE } from "@/components/stages/parts";
 import AssistantQuota from "./AssistantQuota";
 
 /** Shortcut to Jazira Assistant with the member's real message allowance. */
@@ -12,7 +13,7 @@ export default async function AssistantCard({ className }) {
   return (
     <section aria-labelledby="dash-assistant" className={cn("surface overflow-hidden", className)}>
       {/* Decorative art: dropped on phones, where the card sits at the end of a long page and the avatar carries it. */}
-      <div aria-hidden="true" className="hidden bg-[#F7F0E3] px-6 pt-3 dark:bg-surface-2 sm:block">
+      <div aria-hidden="true" className={cn("hidden px-6 pt-3 sm:block", PLATE)}>
         <Illustration id="ai.study-plan" className="mx-auto w-full max-w-[13rem]" />
       </div>
       <div className="p-5">

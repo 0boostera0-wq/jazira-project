@@ -45,21 +45,59 @@ export function SectionHeader({ eyebrow, title, description, actions, align = "s
 }
 
 /**
- * Standard in-app page header: breadcrumbs slot, title, description, actions,
- * and an optional illustration on the opposite side (hidden on small screens).
+ * Standard in-app page header — the one place page titles are composed.
+ *
+ *   <PageHeader eyebrow title description actions />               default
+ *   <PageHeader … media={<Illustration id="…" plate />} />          split hero (media at the inline end, lg+)
+ *   <PageHeader … variant="card" stats={<StatList …/>} />          card hero (tinted surface)
+ *   <PageHeader … variant="compact" />                              workspace pages (assistant, chat)
+ *
+ * Slots: `breadcrumbs`, `eyebrow`, `meta` (chips next to the eyebrow, e.g. the
+ * school year), `title` (always the page's single <h1>), `description`,
+ * `actions`, `stats` (under the text), `media` (illustration; `mediaOnMobile`
+ * shows it below lg too). `aside` is the legacy name for `media`.
+ * Rhythm is fixed: eyebrow → title mt-2, title max 24ch, lead mt-2.5.
  */
-export function PageHeader({ breadcrumbs, eyebrow, title, description, actions, aside, className }) {
+export function PageHeader({
+  variant = "default",
+  breadcrumbs,
+  eyebrow,
+  meta,
+  title,
+  description,
+  actions,
+  stats,
+  media,
+  aside,
+  mediaOnMobile = false,
+  className,
+}) {
+  const art = media ?? aside;
+  const compact = variant === "compact";
   return (
-    <header className={cn("relative mb-6 sm:mb-8", className)}>
+    <header
+      className={cn(
+        "relative",
+        compact ? "mb-4 sm:mb-5" : "mb-6 sm:mb-8",
+        variant === "card" && "surface-tint p-5 sm:p-7",
+        className
+      )}
+    >
       {breadcrumbs && <div className="mb-3">{breadcrumbs}</div>}
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 max-w-3xl">
-          {eyebrow && <p className="t-eyebrow mb-2">{eyebrow}</p>}
-          <h1 className="t-h1">{title}</h1>
-          {description && <p className="t-lead mt-2.5">{description}</p>}
+          {(eyebrow || meta) && (
+            <div className="flex flex-wrap items-center gap-2">
+              {eyebrow && <p className="t-eyebrow">{eyebrow}</p>}
+              {meta}
+            </div>
+          )}
+          <h1 className={cn(compact ? "t-h3" : "t-h1", "max-w-[24ch]", (eyebrow || meta) && "mt-2")}>{title}</h1>
+          {description && <p className={cn(compact ? "t-small mt-1 text-ink-3" : "t-lead mt-2.5")}>{description}</p>}
+          {stats && <div className="mt-5">{stats}</div>}
           {actions && <div className="mt-5 flex flex-wrap gap-2.5">{actions}</div>}
         </div>
-        {aside && <div className="hidden shrink-0 lg:block">{aside}</div>}
+        {art && <div className={cn("shrink-0", !mediaOnMobile && "hidden lg:block", "lg:w-[38%] lg:max-w-md")}>{art}</div>}
       </div>
     </header>
   );

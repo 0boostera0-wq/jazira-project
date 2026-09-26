@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import { DEFAULT_LOCALE, isLocale, localizeHref } from "@/i18n/config";
+import { isSameOrigin } from "@/lib/http-guards";
+import { isRateLimited } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,34 +25,10 @@ export const dynamic = "force-dynamic";
 const NO_STORE = { "Cache-Control": "no-store" };
 const reply = (body, status = 200) => Response.json(body, { status, headers: NO_STORE });
 
-// Mutating route: only accept same-origin browser requests.
-function isSameOrigin(req) {
-  const site = req.headers.get("sec-fetch-site");
-  if (site && site !== "same-origin" && site !== "none") return false;
-  const origin = req.headers.get("origin");
-  if (!origin) return true; // same-origin requests may omit Origin
-  try {
-    const host = new URL(origin).host;
-    return host === req.headers.get("host") || host === new URL(req.url).host;
-  } catch {
-    return false;
-  }
-}
-
-// Best-effort per-instance throttle (each call hits the provider's API).
-const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 6;
-const hits = new Map();
-function rateLimited(userId) {
-  const now = Date.now();
-  const recent = (hits.get(userId) || []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(userId, recent);
-  if (hits.size > 5000) {
-    for (const [k, v] of hits) if (!v.length || now - v[v.length - 1] > WINDOW_MS) hits.delete(k);
-  }
-  return recent.length > MAX_PER_WINDOW;
-}
+// Each call hits the provider's API: 6 per minute per member, shared by
+// every server instance (public.rate_limit_hit; per-instance memory only as
+// a fallback). Same-origin guard: src/lib/http-guards.js.
+const LIMIT = { max: 6, windowSeconds: 60 };
 
 export async function POST(req) {
   if (!isSameOrigin(req)) return reply({ error: "forbidden" }, 403);
@@ -73,7 +51,7 @@ export async function POST(req) {
     /* profile read failed — let the checkout proceed */
   }
 
-  if (rateLimited(user.id)) return reply({ error: "rate_limited" }, 429);
+  if (await isRateLimited({ bucket: "checkout", key: user.id, ...LIMIT })) return reply({ error: "rate_limited" }, 429);
 
   // Locale only selects which localized page to return to; validated against LOCALES.
   const body = await req.json().catch(() => ({}));

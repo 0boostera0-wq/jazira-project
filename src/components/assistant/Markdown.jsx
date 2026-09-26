@@ -5,7 +5,22 @@ import { Check, Copy } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useT } from "@/i18n/client";
 import { cn } from "@/components/ui/cn";
+import { textProps } from "@/components/community/text";
 import { parseMarkdown, textDirection } from "./markdown-parser";
+
+/** Plain text of inline nodes (to tag each block with its own language). */
+function textOf(nodes) {
+  let out = "";
+  for (const n of nodes || []) {
+    if (n.type === "text" || n.type === "code") out += n.text || "";
+    else if (n.children) out += textOf(n.children);
+    if (out.length > 200) break; // the first strong letter decides
+  }
+  return out;
+}
+
+/** lang + dir="auto" + font for one block (an Arabic paragraph in an English reply, or the reverse). */
+const blockProps = (nodes, className) => textProps(textOf(nodes), className);
 
 /**
  * Renders an assistant reply from the safe Markdown subset (./markdown-parser.js).
@@ -37,21 +52,21 @@ function Block({ block, caret }) {
   switch (block.type) {
     case "p":
       return (
-        <p dir="auto" className="my-3 first:mt-0 last:mb-0">
+        <p {...blockProps(block.children, "my-3 first:mt-0 last:mb-0")}>
           <Inline nodes={block.children} />
           {caret && <Caret />}
         </p>
       );
     case "h":
       return (
-        <p dir="auto" className="mb-2 mt-5 font-bold text-ink first:mt-0">
+        <p {...blockProps(block.children, "mb-2 mt-5 font-bold text-ink first:mt-0")}>
           <Inline nodes={block.children} />
           {caret && <Caret />}
         </p>
       );
     case "quote":
       return (
-        <blockquote dir="auto" className="my-3 border-s-2 border-gold-300 ps-4 text-ink-3 first:mt-0 last:mb-0">
+        <blockquote {...blockProps(block.children, "my-3 border-s-2 border-gold-300 ps-4 text-ink-3 first:mt-0 last:mb-0")}>
           <Inline nodes={block.children} />
           {caret && <Caret />}
         </blockquote>
@@ -80,7 +95,7 @@ function List({ block, caret, nested = false }) {
       )}
     >
       {block.items.map((item, i) => (
-        <li key={i} className="ps-1">
+        <li key={i} {...blockProps(item.children, "ps-1")}>
           <Inline nodes={item.children} />
           {item.sub && <List block={item.sub} nested />}
           {caret && i === block.items.length - 1 && !item.sub && <Caret />}

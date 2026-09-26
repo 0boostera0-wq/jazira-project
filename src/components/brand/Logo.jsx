@@ -14,7 +14,7 @@ export default function Logo({ name, size = "md", subtitle, className }) {
       <IslandMark size={mark} />
       <span className="flex flex-col leading-none">
         <span className={cn("font-bold text-ink", text)}>{name}</span>
-        {subtitle && <span className="mt-1 text-[0.6875rem] font-medium text-ink-3">{subtitle}</span>}
+        {subtitle && <span className="mt-1 text-xs font-medium text-ink-3">{subtitle}</span>}
       </span>
     </span>
   );

@@ -83,12 +83,19 @@ export function aggregateKey(n, day) {
   return `${day}|${n.type}`;
 }
 
+/**
+ * The actor of a row. Since 0012 anonymous content stores no actor at all
+ * (actor_id null + data.anonymous = true): that is "an anonymous member",
+ * not "someone".
+ */
+export const actorOf = (n) => n?.actor || (n?.data?.anonymous === true ? { id: null, anonymous: true } : null);
+
 /** Distinct actors, newest first (anonymous actors stay distinct by id). */
 export function uniqueActors(items) {
   const seen = new Set();
   const out = [];
   for (const n of items) {
-    const a = n.actor;
+    const a = actorOf(n);
     if (!a) continue;
     const key = a.id || `anon:${n.id}`;
     if (seen.has(key)) continue;
@@ -209,10 +216,34 @@ function examLabel(data, t) {
 
 const str = (v, max = 160) => (typeof v === "string" && v.trim() ? v.trim().slice(0, max) : null);
 
+/** "ar" | "en" from the first strong letter (null when there is none). */
+export function langOfText(s) {
+  const m = /[A-Za-zÀ-ɏ]|[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/.exec(String(s || ""));
+  if (!m) return null;
+  return /[A-Za-zÀ-ɏ]/.test(m[0]) ? "en" : "ar";
+}
+
+/**
+ * Server-authored copy of achievement / system rows, in the viewer's language:
+ * data.<field>_<locale> (e.g. title_ar / title_en), else the other language,
+ * else the legacy single-language data.<field>. → { text, lang } | null —
+ * `lang` marks copy that isn't in the UI language (lang + dir on render).
+ */
+export function localizedData(data, field, locale, max = 160) {
+  const other = locale === "ar" ? "en" : "ar";
+  const own = str(data?.[`${field}_${locale}`], max);
+  if (own) return { text: own, lang: locale };
+  const alt = str(data?.[`${field}_${other}`], max);
+  if (alt) return { text: alt, lang: other };
+  const legacy = str(data?.[field], max);
+  return legacy ? { text: legacy, lang: langOfText(legacy) } : null;
+}
+
 /**
  * Localized sentence for a group.
- * @returns {{ text: string, detail: string|null, emphasis: string|null }}
- *   emphasis = the actors phrase inside `text` (rendered bold), or null
+ * @returns {{ text: string, detail: string|null, emphasis: string|null, lang?: string|null, detailLang?: string|null }}
+ *   emphasis = the actors phrase inside `text` (rendered bold), or null;
+ *   lang / detailLang = language of server-authored copy (achievement, system)
  */
 export function describe(group, t, locale) {
   const n = group.lead;
@@ -244,9 +275,17 @@ export function describe(group, t, locale) {
       return { text, detail: parts.length ? parts.join(" · ") : null, emphasis: null };
     }
     case "achievement":
-      return { text: str(n.data?.title) || t("types.achievement"), detail: str(n.data?.body, 200), emphasis: null };
-    case "system":
-      return { text: str(n.data?.title) || t("types.system"), detail: str(n.data?.body, 200), emphasis: null };
+    case "system": {
+      const title = localizedData(n.data, "title", locale);
+      const body = localizedData(n.data, "body", locale, 200);
+      return {
+        text: title?.text || t(`types.${group.type}`),
+        lang: title ? title.lang : locale,
+        detail: body?.text || null,
+        detailLang: body?.lang || null,
+        emphasis: null,
+      };
+    }
     default:
       return { text: t("types.unknown"), detail: null, emphasis: null };
   }

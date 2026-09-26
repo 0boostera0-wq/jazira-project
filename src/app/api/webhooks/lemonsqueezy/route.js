@@ -1,90 +1,91 @@
-import crypto from "crypto";
-import { createClient as createAdminClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase-admin";
+import {
+  PROVIDER, decideEntitlement, eventKey, isProductionEnv, verifySignature,
+} from "@/lib/payments/lemonsqueezy";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // Verified payment webhook — the ONLY place Elite is activated/deactivated.
-// Elite is never set from the browser. Configure these server env vars to enable:
-//   LEMONSQUEEZY_WEBHOOK_SECRET, SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_SUPABASE_URL
+// Elite is never set from the browser. Required server env:
+//   LEMONSQUEEZY_WEBHOOK_SECRET, LEMONSQUEEZY_STORE_ID, LEMONSQUEEZY_VARIANT_ID,
+//   SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_SUPABASE_URL
+// Optional: LEMONSQUEEZY_ALLOW_TEST_EVENTS=true accepts test-mode events in
+// production (they are always accepted outside production).
+//
+//   200 { ok: true, result }  result: applied | duplicate | stale | recorded | unknown_user
+//   400 bad_payload · 401 invalid_signature · 413 payload_too_large
+//   500 persist_failed (nothing was recorded → the provider's retry is processed)
+//   501 not_configured
+//
+// Idempotency is per delivery (hash of the signed body), and recording the
+// event + changing the subscription + the Elite flag happen in ONE database
+// transaction (public.apply_payment_event), so an event is never marked
+// processed unless its state change was saved.
+const MAX_BODY_BYTES = 256 * 1024;
+const reply = (body, status = 200) => Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
+
 export async function POST(req) {
   const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!secret || !url || !serviceKey) {
-    console.error("[webhook] Missing env: LEMONSQUEEZY_WEBHOOK_SECRET / SUPABASE_SERVICE_ROLE_KEY / NEXT_PUBLIC_SUPABASE_URL");
-    return Response.json({ error: "not_configured" }, { status: 501 });
+  const storeId = process.env.LEMONSQUEEZY_STORE_ID;
+  const variantId = process.env.LEMONSQUEEZY_VARIANT_ID;
+  const admin = createAdminClient();
+  if (!secret || !storeId || !variantId || !admin) {
+    console.error("[webhook] Missing env: LEMONSQUEEZY_WEBHOOK_SECRET / LEMONSQUEEZY_STORE_ID / LEMONSQUEEZY_VARIANT_ID / SUPABASE_SERVICE_ROLE_KEY / NEXT_PUBLIC_SUPABASE_URL");
+    return reply({ error: "not_configured" }, 501);
   }
 
-  // 1) Verify HMAC signature over the raw body.
-  const raw = await req.text();
-  const signature = req.headers.get("x-signature") || "";
-  const digest = crypto.createHmac("sha256", secret).update(raw).digest("hex");
-  const ok =
-    signature.length === digest.length &&
-    crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest));
-  if (!ok) {
-    return Response.json({ error: "invalid_signature" }, { status: 401 });
+  // 1) Bounded raw body, then the HMAC over exactly those bytes.
+  if (Number(req.headers.get("content-length") || 0) > MAX_BODY_BYTES) return reply({ error: "payload_too_large" }, 413);
+  let raw;
+  try {
+    raw = await req.text();
+  } catch {
+    return reply({ error: "bad_payload" }, 400);
+  }
+  if (Buffer.byteLength(raw, "utf8") > MAX_BODY_BYTES) return reply({ error: "payload_too_large" }, 413);
+  if (!verifySignature(raw, req.headers.get("x-signature") || "", secret)) {
+    return reply({ error: "invalid_signature" }, 401);
   }
 
   let event;
-  try { event = JSON.parse(raw); } catch {
-    return Response.json({ error: "bad_payload" }, { status: 400 });
-  }
-
-  const admin = createAdminClient(url, serviceKey, { auth: { persistSession: false } });
-
-  const eventName = event?.meta?.event_name || "";
-  const eventId = event?.meta?.webhook_id || event?.data?.id || crypto.randomUUID();
-  // The app passes the Supabase user id as custom data at checkout.
-  const userId =
-    event?.meta?.custom_data?.user_id ||
-    event?.data?.attributes?.custom_data?.user_id ||
-    null;
-
-  // 2) Idempotency — ignore replays.
   try {
-    const { error: dupe } = await admin.from("payment_events").insert({
-      provider: "lemonsqueezy", event_id: String(eventId), event_type: eventName, raw: event,
-    });
-    if (dupe && /duplicate|unique/i.test(dupe.message || "")) {
-      return Response.json({ ok: true, duplicate: true });
-    }
-  } catch (e) {
-    console.error("[webhook] payment_events insert", e?.message || e);
+    event = JSON.parse(raw);
+  } catch {
+    return reply({ error: "bad_payload" }, 400);
   }
+  if (!event || typeof event !== "object") return reply({ error: "bad_payload" }, 400);
 
-  if (!userId) {
-    console.error("[webhook] missing custom_data.user_id");
-    return Response.json({ ok: true, note: "no user mapping" });
-  }
+  // 2) What the event means (store / variant / test mode / status checks).
+  const allowTestMode = !isProductionEnv() || process.env.LEMONSQUEEZY_ALLOW_TEST_EVENTS === "true";
+  const d = decideEntitlement(event, { storeId, variantId, allowTestMode });
 
-  const status = event?.data?.attributes?.status || "";
-  const active = ["active", "on_trial", "paid"].includes(status) ||
-    ["subscription_created", "subscription_payment_success", "order_created"].includes(eventName);
-  const ended = ["expired", "cancelled", "unpaid"].includes(status) ||
-    ["subscription_expired", "subscription_cancelled"].includes(eventName);
-
-  const isElite = active && !ended;
-
-  // 3) Persist the source-of-truth subscription + the public Elite flag.
+  // 3) Record + apply atomically.
+  let data;
+  let error;
   try {
-    await admin.from("subscriptions").upsert({
-      user_id: userId,
-      tier: isElite ? "elite" : "free",
-      status: isElite ? "active" : "inactive",
-      provider: "lemonsqueezy",
-      provider_subscription_id: event?.data?.id ? String(event.data.id) : null,
-      current_period_end: event?.data?.attributes?.renews_at || event?.data?.attributes?.ends_at || null,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "user_id" });
-
-    await admin.from("profiles").update({ is_elite: isElite }).eq("id", userId);
+    ({ data, error } = await admin.rpc("apply_payment_event", {
+      p_provider: PROVIDER,
+      p_event_id: eventKey(raw),
+      p_event_type: d.eventName || null,
+      p_raw: event,
+      p_user: d.entitled === null ? null : d.userId,
+      p_entitled: d.entitled,
+      p_subscription_id: d.subscriptionId,
+      p_provider_status: d.providerStatus,
+      p_period_end: d.periodEnd,
+      p_event_at: d.eventAt,
+    }));
   } catch (e) {
-    console.error("[webhook] persist failed", e?.message || e);
-    return Response.json({ error: "persist_failed" }, { status: 500 });
+    error = { message: String(e?.message || e) };
   }
-
-  return Response.json({ ok: true });
+  if (error) {
+    console.error("[webhook] persist failed:", error.code || "", String(error.message || "").slice(0, 200));
+    return reply({ error: "persist_failed" }, 500);
+  }
+  if (d.entitled === null && d.reason !== "not_entitling") {
+    console.warn(`[webhook] ${d.eventName || "event"} recorded without an entitlement change: ${d.reason}`);
+  }
+  if (data === "unknown_user") console.error("[webhook] custom_data.user_id does not match an account");
+  return reply({ ok: true, result: data });
 }

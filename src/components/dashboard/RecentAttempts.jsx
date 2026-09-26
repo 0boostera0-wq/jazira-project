@@ -1,17 +1,19 @@
 "use client";
 
-import { Brain, ChevronRight, FlaskConical } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useLocale, useT } from "@/i18n/client";
 import { formatPercent, formatRelative } from "@/i18n/format";
 import { Link } from "@/i18n/navigation";
 import Badge from "@/components/ui/Badge";
 import IconTile from "@/components/ui/IconTile";
 import Skeleton from "@/components/ui/Skeleton";
+import { examIcon } from "@/components/exams/labels";
+import { scoreTone } from "@/components/exams/results-logic";
 import { useDashboard, useResource } from "./DashboardProvider";
 import CardNotice from "./CardNotice";
 import Panel, { PanelLink } from "./Panel";
 import { attemptTitle } from "./labels";
-import { EXAM_HISTORY_HREF, attemptHref, attemptRow, scoreTone } from "./model";
+import { EXAM_HISTORY_HREF, attemptHref, attemptRow } from "./model";
 
 function Row({ a, now }) {
   const t = useT("dashboard");
@@ -31,7 +33,7 @@ function Row({ a, now }) {
         href={attemptHref(a.id)}
         className="group -mx-2 flex min-h-[60px] items-center gap-2.5 rounded-md px-2 py-2.5 transition-colors hover:bg-surface-2/70 sm:gap-3"
       >
-        <IconTile icon={a.exam === "achievement" ? FlaskConical : Brain} tone={a.exam === "achievement" ? "green" : "gold"} size="sm" />
+        <IconTile icon={examIcon(a.exam)} tone={a.exam === "achievement" ? "green" : "gold"} size="sm" />
         <span className="min-w-0 flex-1">
           <span className="block font-medium leading-snug text-ink sm:truncate">{title}</span>
           <span className="t-caption mt-0.5 block sm:truncate">{meta}</span>

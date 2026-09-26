@@ -29,14 +29,15 @@ restraint. It must never look like a generic AI-generated template.
 | Card | `bg-surface` | `#FFFDF9` |
 | Inset / tinted area | `bg-surface-2` | beige `#F5EFE4` |
 | Track, pressed, divider fill | `bg-surface-3` | sand |
-| Borders | `border-line/12` (default), `/20` (strong) | always with alpha |
+| Borders | `border-line/12` (default), `/20` (strong) | always with alpha; decorative only |
+| Form-control boundary | `border-field`, `ring-field` | inputs, selects, switch track — ≥3:1 on surface & canvas (WCAG 1.4.11) |
 | Headings / primary text | `text-ink` | |
 | Body text | `text-ink-2` | default body colour |
 | Secondary text | `text-ink-3` | captions, meta (AA on canvas) |
-| Placeholder / disabled | `text-ink-4` | never for real content |
-| Brand accent | `gold-50…800` | `gold-500` accent, `gold-600` accent *text* on light |
+| Placeholder / disabled | `text-ink-4` | never for real content (labels, counts, headings → `ink-3`) |
+| Brand accent | `gold-50…800` | `gold-500` accent fills/icons; `gold-600` (#825E20) is the lightest gold for *text* — 5.5:1 on canvas, 5.1:1 on surface-2; `gold-400/500` never for text |
 | Growth / success | `green-50…700` | progress, correct answers, success |
-| Feedback | `danger`, `warning`, `info` (+ `-soft` backgrounds) | |
+| Feedback | `danger`, `warning`, `info` (+ `-soft` backgrounds) | text on `bg-danger` is `text-danger-fg` (white in light, dark ink in dark); `warning` text on `warning-soft` is 4.6:1 |
 | Primary button | `bg-primary text-primary-fg` | deep ink (inverts in dark) |
 
 Radii: `rounded-xs 6 · sm 10 · md 14 · lg 20 · xl 28 · full`. Cards `rounded-lg`,
@@ -51,7 +52,11 @@ Dark mode: `html.dark` swaps every variable. Never hardcode hex in components
 ## 3. Typography
 
 Fonts: **IBM Plex Sans Arabic** (Arabic + Latin inside Arabic) and **IBM Plex
-Sans** (English UI). Weights 400 / 500 / 700 only.
+Sans** (English UI). Weights 400 / 500 / 700 only — `font-semibold` (600) is not
+loaded and would be synthesized; use `font-medium` or `font-bold`. Configured in
+`src/app/fonts.js`: `display: swap`, no preload (one layout serves both
+locales), and an Arabic-metric fallback face (`JaziraArabicFallback` in
+globals.css) so Arabic lines don't re-wrap when the webfont swaps in.
 
 | Class | Use |
 |---|---|
@@ -95,18 +100,18 @@ Rules: body ≥ 16px on mobile; nothing below 12px; paragraphs ≤ 72ch; heading
 
 | Component | Notes |
 |---|---|
-| `Button` | variants `primary · gold · secondary · soft · ghost · danger · link`; sizes `sm · md · lg · icon · icon-sm`; `href` makes a locale-aware link; `loading`; `iconStart`/`iconEnd` — pass the **LTR-forward** icon (`ArrowRight`, `ChevronRight`) as `iconEnd`; it is mirrored automatically in RTL |
-| `Card`, `CardTitle`, `CardText` | tones `default · flat · tint · gold · green · ink · outline`; `interactive` hover lift |
+| `Button` | variants `primary · gold · secondary · soft · ghost · danger · link`; sizes `sm · md · lg · icon · icon-sm`; `href` makes a locale-aware link; `loading`; `iconStart`/`iconEnd` — pass the **LTR-forward** icon (`ArrowRight`, `ChevronRight`) as `iconEnd`; it is mirrored automatically in RTL. Directional glyphs passed as `iconStart` (Send, LogIn/LogOut, TrendingUp/Down, Reply, arrows) are mirrored too; override with `flipStart` |
+| `Card` | tones `default · flat · tint · gold · green · ink · outline`; `interactive` hover lift. Titled section card: `title` (+ `titleId`, `titleAs`, `eyebrow`, `description`, `icon`, `action`, `divided`) renders a labelled `<section>` — use it instead of local Panel/SettingsCard/section-card copies |
 | `Badge` | tones `neutral · gold · green · danger · warning · info · ink · outline` |
 | `IconTile` | lucide icon on a tinted tile; `color` for subject colours |
-| `Stat` | KPI tile |
+| `Stat`, `StatList` | the KPI tile (`dt`/`dd` inside a `<dl>`): `size sm · md`, `surface flat · tint · plain`, optional inline `icon` + `tone`, `hint`, `ltr`, `muted` — use it instead of local Kpi/StatTile copies |
 | `ProgressBar`, `ProgressRing` | |
 | `Skeleton`, `SkeletonText`, `SkeletonCard`, `SkeletonGrid` | loading states |
-| `EmptyState` | illustration/icon + title + why + action |
+| `EmptyState` | illustration/icon + title + why + action; `titleAs` sets the heading level (default `h2`; `h1` when the empty state is the whole page) |
 | `Alert` | inline info/success/warning/danger |
 | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `Label` | forms (client) |
 | `PasswordInput`, `Switch`, `Tabs`, `Dialog` (native `<dialog>`, `variant="sheet"`) | interactive (client) |
-| `Breadcrumbs`, `PageHeader`, `SectionHeader`, `Section`, `Container`, `Grid` | layout |
+| `Breadcrumbs`, `PageHeader`, `SectionHeader`, `Section`, `Container`, `Grid` | layout. `PageHeader` variants `default · card · compact` with `eyebrow`, `meta`, `stats`, `actions`, `media` slots; its `<h1>` is the page title (t-h1, t-h3 for compact workspace pages) |
 | `PremiumLock` | locked preview + upgrade CTA (never render real premium data behind it) |
 | `Illustration` | library art by manifest id |
 | Brand: `Logo`, `IslandMark`, `AssistantAvatar` | src/components/brand |
@@ -118,9 +123,11 @@ so it points in the reading direction in both languages (Button does this for
 
 ## 6. Motion
 
-CSS only. `animate-in` (fade-up on mount), `animate-fade`, `animate-scale`,
-`reveal` (scroll-driven fade-up where supported; content is ALWAYS visible
-without JS). Durations 140/220/420ms, `ease-out`. Animate only `transform` and
+CSS only. `animate-in` (a 12px rise on mount — transform only, never opacity,
+so hero headlines stay LCP candidates from the first frame), `animate-fade`,
+`animate-scale` (secondary / below-the-fold content and overlays), `reveal`
+(scroll-driven fade-up where supported; content is ALWAYS visible without JS).
+Never fade in above-the-fold text. Durations 140/220/420ms, `ease-out`. Animate only `transform` and
 `opacity`. Respect `prefers-reduced-motion` (automatic). No framer-motion in
 new code.
 
@@ -153,7 +160,11 @@ All 50 illustrations share one hand-authored vector language:
 ## 8. Accessibility
 
 WCAG 2.2 AA: text contrast ≥ 4.5:1 (ink-3 is the lightest text colour on
-canvas), visible focus (`:focus-visible` ring is global), 44px targets, form
+canvas), visible focus (global `:focus-visible` = 2px solid gold-700 outline
+with 2px offset, 5.98:1; an outline so shadow/ring utilities can't hide it and
+forced-colors mode keeps it; `var(--ring)` draws the same band for components
+that need a box-shadow), focus never hidden under the fixed mobile tab bar
+(scroll-padding), 44px targets, form
 fields with labels + `aria-describedby`, `role="alert"` for errors, dialogs via
 native `<dialog>`, decorative images `alt=""`, one `<h1>` per page, landmarks
 (`header`, `nav`, `main`, `footer`), skip link in every shell.

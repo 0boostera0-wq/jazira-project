@@ -13,6 +13,7 @@ import Alert from "@/components/ui/Alert";
 import Skeleton from "@/components/ui/Skeleton";
 import EliteBadge from "@/components/subscriptions/EliteBadge";
 import { cn } from "@/components/ui/cn";
+import { textProps } from "@/components/community/text";
 import MessageBubble from "./MessageBubble";
 import ThreadComposer from "./ThreadComposer";
 import { displayName } from "./ConversationRow";
@@ -89,10 +90,14 @@ export default function Thread({ conv, me, onBack, subscribe, onRead, onActivity
       if (!m || m.conversation_id !== conv.id) return;
       setState((s) => {
         if (evt.type === "update" && !s.messages.some((x) => x.id === m.id)) return s;
-        // drop the optimistic copy when the echo of my own insert arrives first
-        const list = evt.type === "insert" && m.sender_id === me
-          ? s.messages.filter((x) => !(x.pending && x.content === m.content))
-          : s.messages;
+        // The echo of my own insert replaces ONE optimistic copy with the same
+        // text (the oldest). Removing every match would hide a later copy whose
+        // own insert then fails — deliver() re-adds a failed copy it can't find.
+        let list = s.messages;
+        if (evt.type === "insert" && m.sender_id === me && !s.messages.some((x) => x.id === m.id)) {
+          const i = s.messages.findIndex((x) => x.pending && x.content === m.content);
+          if (i !== -1) list = [...s.messages.slice(0, i), ...s.messages.slice(i + 1)];
+        }
         return { ...s, messages: mergeMessages(list, [m]) };
       });
       if (evt.type === "insert" && m.sender_id !== me && document.visibilityState === "visible") onRead?.(conv);
@@ -159,7 +164,10 @@ export default function Thread({ conv, me, onBack, subscribe, onRead, onActivity
     return () => io.disconnect();
   }, [state.cursor, state.status]);
 
-  const deliver = async (tempId, text) => {
+  // `temp` = the optimistic copy ({ id, content, created_at }).
+  const deliver = async (temp) => {
+    const tempId = temp.id;
+    const text = temp.content;
     try {
       const saved = await sendMessage(conv.id, me, text);
       if (!alive.current) return;
@@ -169,7 +177,14 @@ export default function Thread({ conv, me, onBack, subscribe, onRead, onActivity
     } catch (err) {
       if (!alive.current) return;
       if (err?.code === "cannot_send") setCannotSend(true);
-      setState((s) => ({ ...s, messages: s.messages.map((x) => (x.id === tempId ? { ...x, pending: false, failed: true } : x)) }));
+      setState((s) => {
+        if (s.messages.some((x) => x.id === tempId)) {
+          return { ...s, messages: s.messages.map((x) => (x.id === tempId ? { ...x, pending: false, failed: true } : x)) };
+        }
+        // Another copy's echo took this bubble's place: bring it back as failed.
+        const failed = { id: tempId, conversation_id: conv.id, sender_id: me, content: text, created_at: temp.created_at, pending: false, failed: true };
+        return { ...s, messages: mergeMessages(s.messages, [failed]) };
+      });
     }
   };
 
@@ -180,12 +195,13 @@ export default function Thread({ conv, me, onBack, subscribe, onRead, onActivity
     stick.current = true;
     setSelectedId(null);
     setState((s) => ({ ...s, messages: [...s.messages, temp] }));
-    deliver(temp.id, text);
+    deliver(temp);
   };
 
   const resend = (m) => {
-    setState((s) => ({ ...s, messages: s.messages.map((x) => (x.id === m.id ? { ...x, failed: false, pending: true, created_at: new Date().toISOString() } : x)) }));
-    deliver(m.id, m.content);
+    const retry = { ...m, failed: false, pending: true, created_at: new Date().toISOString() };
+    setState((s) => ({ ...s, messages: s.messages.map((x) => (x.id === m.id ? retry : x)) }));
+    deliver(retry);
   };
   const discard = (m) => setState((s) => ({ ...s, messages: s.messages.filter((x) => x.id !== m.id) }));
 
@@ -242,7 +258,7 @@ export default function Thread({ conv, me, onBack, subscribe, onRead, onActivity
       <Avatar src={conv.other?.avatar_url} name={name} alt="" size={40} />
       <span className="min-w-0">
         <span className="flex items-center gap-1.5">
-          <span dir={dirOfText(name)} className={cn("truncate font-bold text-ink", isRTL ? "text-right" : "text-left")}>{name}</span>
+          <span {...textProps(name, cn("truncate font-bold text-ink", isRTL ? "text-right" : "text-left"))} dir={dirOfText(name)}>{name}</span>
           {conv.other?.is_elite && conv.other?.show_elite_badge !== false && <EliteBadge size="xs" iconOnly />}
         </span>
         {conv.other?.username && <span dir="ltr" className="ltr block truncate text-start text-xs text-ink-3">@{conv.other.username}</span>}
@@ -306,7 +322,7 @@ export default function Thread({ conv, me, onBack, subscribe, onRead, onActivity
             {items.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center py-12 text-center">
                 <Avatar src={conv.other?.avatar_url} name={name} alt="" size={64} />
-                <p dir="auto" className="mt-3 font-bold text-ink">{name}</p>
+                <p {...textProps(name, "mt-3 font-bold text-ink")}>{name}</p>
                 <p className="t-small mt-1 max-w-xs text-ink-3">{mode === "ok" || mode === "requestSent" ? t("thread.empty.body") : t("thread.empty.title")}</p>
               </div>
             ) : (

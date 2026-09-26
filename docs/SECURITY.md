@@ -2,7 +2,8 @@
 
 Read this before you write a migration, a query in `src/`, or a route handler
 that touches Supabase. The model below is implemented by
-`supabase/migrations/0000–0009` and pinned down by `tests/db/security.test.js`
+`supabase/migrations/0000–0012` and pinned down by `tests/db/security.test.js`
+and, for anonymous posting (0012), `tests/db/anonymity.test.js`
 (run `npm run test:db`).
 
 ## 1. Principles
@@ -48,14 +49,14 @@ RLS policy (it affects 0 rows). "own" means RLS restricts the rows to
 | Table | SELECT | INSERT | UPDATE | DELETE |
 |---|---|---|---|---|
 | `profiles` | everyone: `id, username, full_name, avatar_url, bio, role, is_elite, show_elite_badge, anonymous_community, xp, created_at` | own: `id, username, full_name, show_elite_badge, anonymous_community` | own: **only** `show_elite_badge`, `anonymous_community` (guard trigger) | — |
-| `community_posts` | everyone | own: `user_id, content, media_url, media_type, media_path` | own: `content, media_*` | own |
-| `post_comments` | everyone | own: `post_id, user_id, content` (not if blocked) | own: `content` | own |
-| `post_likes` / `post_dislikes` / `post_reposts` | everyone | own (not if blocked) | — | own |
+| `community_posts` | everyone: public rows (`not is_anonymous`); own: all own rows. Others' anonymous rows only through `community_feed` / `search_all` (author masked) | own: `user_id, content, media_url, media_type, media_path, is_anonymous` | own: `content, media_*` (never `is_anonymous`) | own |
+| `post_comments` | everyone: public rows; own: all own rows (others' anonymous rows via `community_comments`) | own: `post_id, user_id, content, is_anonymous` (not if blocked by the author of a *public* post) | own: `content` | own |
+| `post_likes` / `post_dislikes` / `post_reposts` | everyone | own (not if blocked by the author of a *public* post) | — | own |
 | `follows` | everyone | own (not if blocked, not self) | own: `notify_pref` | own |
 | `reviews` | everyone | own: `user_id, rating, content`; **one per user** | own: `rating, content` | own |
 | `hashtags` | everyone | — (trigger) | — | — |
 | `post_hashtags` | everyone | post author: `post_id, hashtag_id` | — | post author |
-| `mentions` | actor + mentioned user | — (trigger) | — | — |
+| `mentions` | actor; mentioned user only when `not is_anonymous` | — (trigger) | — | — |
 | `notifications` | own | — (triggers / RPCs) | own: `read` | own |
 | `user_social_settings` | own | own | own | — |
 | `conversations` | participants | — (`start_conversation`) | — (trigger keeps `last_message_at`) | — |
@@ -73,6 +74,7 @@ RLS policy (it affects 0 rows). "own" means RLS restricts the rows to
 | `user_preferences` | own | own | own | — |
 | `user_sessions` | own | own (bounded text) | own | own |
 | `storage.objects` (`avatars`, `post-media`) | **owner's folder only**; public URLs need no RLS | own folder `<uid>/…` | own folder | own folder |
+| `storage.objects` (`post-media/anon/<uuid>/<file>`) | the uploader (`owner`) only | any signed-in member, as `owner` of it | — (write-once) | the uploader |
 
 No API role has `TRUNCATE`, `TRIGGER` or `REFERENCES` on the tables above.
 `TRUNCATE` bypasses RLS.
@@ -142,14 +144,24 @@ Rules for every definer function:
 | `respond_message_request(p_request, p_accept)` | recipient only; pending→accepted/rejected, rejected→accepted; accepting flips `is_request` and notifies the requester |
 | `mark_conversation_read(p_conversation)` | participant only; sets `read_at` on the other side's messages (not while still a request) and the caller's `last_read_at` |
 | `can_send_message(p_conversation)` | used by the `messages` INSERT policy: participant, no block, recipient allows messages, only the requester writes while a request is pending |
-| `get_public_social_settings(p_user)` | the only definer RPC `anon` may call: `show_likes_on_profile`, `show_reposts_on_profile`, `allow_messages` |
+| `get_public_social_settings(p_user)` | anon-callable: `show_likes_on_profile`, `show_reposts_on_profile`, `allow_messages` |
+| `community_feed(…)`, `community_comments(…)`, `community_new_posts_count(…)` (0012) | anon-callable **readers** of posts / comments. They are definer because they must return other members' anonymous rows, which RLS hides; they return author columns only when the row is public or the caller's own, never `user_id` otherwise, and apply blocks / `show_*_on_profile` themselves |
+| `search_all(…)` (0012: now definer) | same masking for posts; people = public columns of members not in anonymous mode; questions re-implement the `questions` RLS rule (`is_active and (not is_premium or has_premium(auth.uid()))`) |
+| `post_public_author(p_post)` (0012) | helper for the reaction / comment INSERT policies: the author of a **public** post, `null` for an anonymous one. It only returns what the table already shows |
 
 Definer **triggers** own the derived data: `sync_post_counts` (post counters),
 `sync_hashtag_count`, `index_post_entities` (`#tags` → `hashtags` /
 `post_hashtags`; `@handles` → `mentions` + `mention` notifications,
-max 10 each, skipping self, blocked pairs and `notify_mentions = false`),
-`notify_on_post_interaction`, `notify_on_follow`, `touch_conversation_last_message`,
-`handle_new_user`, `referrals_validate`.
+max 10 each, skipping self, blocked pairs and `notify_mentions = false`;
+anonymous content → anonymous mention, actor-less notification),
+`notify_on_post_interaction` (no notification between a blocked pair; an
+anonymous comment → actor-less notification), `notify_on_follow`,
+`touch_conversation_last_message`, `handle_new_user`, `referrals_validate`.
+
+Invoker triggers that are **not** `current_user` guards (they apply to every
+role): `community_content_anonymity` (fills `is_anonymous` at insert, refuses
+any later change with `anonymity_immutable`) and
+`community_posts_validate_media`.
 
 ## 6. Other enforced rules
 
@@ -159,9 +171,37 @@ max 10 each, skipping self, blocked pairs and `notify_mentions = false`),
   The content is wiped at that moment. A block, or the other side turning off
   `allow_messages`, stops new messages even in an existing conversation.
 - **Blocks** (either direction) prevent comments, likes, dislikes, reposts,
-  follows, new conversations, messages and mention notifications.
+  follows, new conversations, messages and mention notifications — on
+  **public** posts. On an anonymous post the database does not refuse a blocked
+  member (a refusal would tell them who wrote it); instead no notification is
+  created between the pair, and the blocker's own feed / thread / search never
+  shows public content of members they blocked.
+- **Anonymous posting (0012).** `is_anonymous` is a per-post / per-comment
+  snapshot: the client's explicit value or the author's
+  `profiles.anonymous_community` at insert, immutable afterwards for every role.
+  The author of anonymous content never leaves the database for another member
+  or a guest:
+  - RLS hides other members' anonymous rows (and therefore their `user_id`)
+    from `community_posts` / `post_comments`, embeds and head counts;
+  - the reader RPCs (`community_feed`, `community_comments`, `search_all`) mask
+    the author columns; `following` and other members' `author` lists never
+    contain anonymous posts;
+  - `community_posts` / `post_comments` are **not** in `supabase_realtime` (their
+    rows carry `user_id`);
+  - notifications and mentions from anonymous content store no actor
+    (`notifications.actor_id = null`, `data.anonymous = true`;
+    `mentions.is_anonymous` rows are readable by their author only);
+  - media: see below.
+  The author still reads their own rows (`is_mine`) and receives the
+  notifications about them (the recipient of a like on an anonymous post is its
+  author; nobody else sees that row).
 - **Media URLs.** `set_avatar()` and `community_posts.media_url` must be this
-  project's public Storage URL for `<bucket>/<owner uid>/<file>`. If the
+  project's public Storage URL for `<bucket>/<owner uid>/<file>` — except
+  anonymous posts, which must use `post-media/anon/<uuid>/<file>`, an object the
+  post's author uploaded (`storage.objects.owner`), and may not use their
+  `<uid>/` folder (the path would name them). Public posts may not use `anon/`.
+  `storage.objects` must never become readable by others: for `anon/` objects
+  `owner` *is* the author. If the
   setting is present, the origin must equal it exactly:
   ```sql
   alter database postgres set app.storage_origin = 'https://<project-ref>.supabase.co';
@@ -199,7 +239,14 @@ max 10 each, skipping self, blocked pairs and `notify_mentions = false`),
 - Send counters (`*_count`), `created_at`, `read_at`, `delivered_at`,
   `is_elite`, `xp` or `role` in any payload.
 - Store a URL the user typed as `avatar_url` / `media_url`. Upload to the
-  user's own folder, then pass the `getPublicUrl()` result.
+  user's own folder (anonymous posts: `anon/<crypto.randomUUID()>/…`), then pass
+  the `getPublicUrl()` result.
+- Render other members' posts or comments from table reads plus a profile
+  lookup by `user_id` (anonymous rows are missing and must stay unlinkable):
+  use `community_feed` / `community_comments`. Never derive anonymity from
+  `profiles.anonymous_community` for existing content — use `is_anonymous`.
+- Subscribe to realtime changes of `community_posts` / `post_comments` (they are
+  no longer published; poll `community_new_posts_count()`).
 - Import `SUPABASE_SERVICE_ROLE_KEY` anywhere reachable from the browser, or
   use the service role to do something on behalf of a user without
   re-checking that user's rights in the handler.
@@ -244,3 +291,34 @@ max 10 each, skipping self, blocked pairs and `notify_mentions = false`),
 - On a database with legacy data that violates a new CHECK or the
   one-review-per-user index, 0009 skips that constraint with a `WARNING` in
   the migration output. Clean the data and re-run 0009.
+- **Anonymity, residual channels (0012):**
+  - anonymous posts created before 0012 whose media live in `post-media/<uid>/…`
+    still expose the author's id in the media URL (move them with the Storage
+    API, see DATA_API.md → Known limits);
+  - EXIF / faces / voices inside media are the author's responsibility (the
+    composer warns);
+  - the backfill used each author's setting at migration time, which is what
+    readers saw until then — posts made anonymously and later exposed by the old
+    behaviour cannot be un-seen;
+  - writing style, timing and content can always identify someone; the
+    database only guarantees that it never *discloses* the author;
+  - a blocked member can like / comment on the blocker's anonymous posts (by
+    design, see §6); the blocker is not notified and does not see their public
+    comments.
+- If `supabase_realtime` was ever recreated `FOR ALL TABLES`, 0012 cannot remove
+  the community tables from it and says so with a `WARNING`; recreate the
+  publication with an explicit table list.
+- **Device sessions are not a security control yet.** "End this session"
+  (settings) only sets `user_sessions.revoked_at`; the targeted browser signs
+  itself out only if its `SessionTracker` runs and cooperates, its refresh token
+  and JWT stay valid, and `user_sessions` is client-updatable (a hijacker can
+  clear `revoked_at`). The real control today is "sign out everywhere"
+  (global `signOut`). Follow-up: record the JWT `session_id` (auth.sessions.id)
+  server-side when a device registers, revoke through a definer RPC/route that
+  deletes that `auth.sessions` row for `auth.uid()`, and make `revoked_at`
+  writable only by that function.
+- **Framework:** next@14.2.x has unpatched advisories fixed only in 15.5.x/16.x
+  (Image Optimization AVIF RCE GHSA-2xp9-vwfh-vxw4, Windows-host RCE
+  GHSA-p293-qw3h-jr36, several DoS/SSRF). Mitigated for now by turning the image
+  optimizer off (`images.unoptimized`, nothing uses `next/image`) and binding
+  `npm run dev` to 127.0.0.1; the upgrade to next ≥ 15.5.24 is still required.

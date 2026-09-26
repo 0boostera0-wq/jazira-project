@@ -4,6 +4,7 @@ import { getT } from "@/i18n/server";
 import Logo from "@/components/brand/Logo";
 import Illustration from "@/components/ui/Illustration";
 import LanguageSwitch from "./LanguageSwitch";
+import SkipLink from "./SkipLink";
 import ThemeToggle from "./ThemeToggle";
 
 /**
@@ -21,15 +22,16 @@ export default async function AuthShell({ title, description, illustration = "br
   const tc = await getT("common");
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)]">
+      <SkipLink />
       <div className="flex min-h-dvh flex-col px-[var(--gutter)]">
-        <div className="flex h-[68px] items-center justify-between">
+        <header className="flex h-[68px] items-center justify-between">
           <Link href="/" className="rounded-md"><Logo name={tc("brand.full")} size="sm" /></Link>
           <div className="flex items-center gap-1">
             <LanguageSwitch />
             <ThemeToggle />
           </div>
-        </div>
-        <main id="main" className="flex flex-1 items-center justify-center py-8 sm:py-12">
+        </header>
+        <main id="main" tabIndex={-1} className="flex flex-1 items-center justify-center py-8 outline-none sm:py-12">
           <div className="w-full max-w-[440px] animate-in">
             <h1 className="t-h2">{title}</h1>
             {description && <p className="t-body mt-2 text-ink-3">{description}</p>}

@@ -4,21 +4,23 @@ import { CheckCircle2, Minus, Target, TrendingDown, TrendingUp } from "lucide-re
 import { useLocale, useT } from "@/i18n/client";
 import { formatDate, formatNumber, formatPercent } from "@/i18n/format";
 import { Link } from "@/i18n/navigation";
+import PremiumLock from "@/components/ui/PremiumLock";
 import Skeleton from "@/components/ui/Skeleton";
 import { ProgressBar } from "@/components/ui/Progress";
 import { cn } from "@/components/ui/cn";
-import { useResource } from "./DashboardProvider";
+import Sparkline, { SPARK_SIZE } from "@/components/exams/Sparkline";
+import { sparkline, topicAnalyticsLocked } from "@/components/exams/stats-logic";
+import { useDashboard, useResource } from "./DashboardProvider";
 import CardNotice from "./CardNotice";
 import OnboardingPanel, { OnboardingCount } from "./OnboardingPanel";
 import Panel, { PanelLink } from "./Panel";
-import Sparkline, { SPARK_SIZE } from "./Sparkline";
 import { examName, sectionName, topicName } from "./labels";
-import { EXAM_HISTORY_HREF, practiceHref, sparklineGeometry } from "./model";
+import { EXAM_HISTORY_HREF, practiceHref } from "./model";
 
 // Sparkline scale labels, positioned with the same geometry as the chart's grid lines.
 const SCALE = [100, 50, 0];
-const SPARK = sparklineGeometry([], SPARK_SIZE);
-const scaleTop = (v) => ((v === 100 ? SPARK.topY : v === 50 ? SPARK.midY : SPARK.baseY) / SPARK.height) * 100;
+const SPARK = sparkline([], SPARK_SIZE);
+const scaleTop = (v) => (SPARK.yAt(v) / SPARK.height) * 100;
 
 const pct = (v, locale) => (v === null || v === undefined ? "—" : formatPercent(v / 100, locale));
 
@@ -104,6 +106,10 @@ function TopicList({ title, icon: Icon, tone, items, practise, className }) {
 function Analytics({ stats }) {
   const t = useT("dashboard");
   const { locale } = useLocale();
+  const { user } = useDashboard();
+  // Strongest / focus topics are Elite analytics (as on /exams/history): the
+  // database withholds them for other members, the card shows the Elite teaser.
+  const topicsLocked = topicAnalyticsLocked(stats, user.isElite);
   const { totals, trend, sections, strongest, focus, daily } = stats;
   const practiceDays = daily.filter((d) => d.accuracy !== null);
   const lastDay = practiceDays[practiceDays.length - 1];
@@ -146,7 +152,13 @@ function Analytics({ stats }) {
                     </span>
                   ))}
                 </div>
-                <Sparkline series={daily} label={chartLabel} pointLabel={pointLabel} className="min-w-0 flex-1" />
+                <Sparkline
+                  values={daily.map((d) => d.accuracy)}
+                  connectGaps
+                  label={chartLabel}
+                  pointLabel={(i) => pointLabel(daily[i])}
+                  className="min-w-0 flex-1"
+                />
               </div>
               <div aria-hidden="true" className="mt-1.5 flex justify-between ps-11 t-caption">
                 <span>{t("performance.trend.start")}</span>
@@ -187,7 +199,15 @@ function Analytics({ stats }) {
       </div>
 
       <div className="mt-6 border-t border-line/10 pt-5">
-        {strongest.length || focus.length ? (
+        {topicsLocked ? (
+          <PremiumLock
+            compact
+            title={t("performance.topics.locked.title")}
+            body={t("performance.topics.locked.body")}
+            cta={t("performance.topics.locked.cta")}
+            className="bg-surface-2/40"
+          />
+        ) : strongest.length || focus.length ? (
           <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
             <TopicList title={t("performance.topics.strongest")} icon={CheckCircle2} tone="green" items={strongest} />
             {/* Phones: the actionable list first. */}

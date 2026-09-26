@@ -1,6 +1,8 @@
 import { getT } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
-import Illustration from "@/components/ui/Illustration";
+import { cn } from "@/components/ui/cn";
+import HeroArt from "@/components/stages/HeroArt";
+import { PLATE } from "@/components/stages/parts";
 import ProgressProvider from "./ProgressProvider";
 import ProgressSummary from "./ProgressSummary";
 import StreakCard from "./StreakCard";
@@ -12,19 +14,19 @@ import RelatedLinks from "./RelatedLinks";
 /**
  * /achievements body. Static shell (titles, art, catalogue) renders on the
  * server; one client provider loads the member's progress once and feeds the
- * small islands. `preview` is only for visual QA of signed-in states.
+ * small islands.
  *
  * Layout: split hero (7/5, art from lg) · badges (8) + sticky rail (4) from xl
  * (at lg the app sidebar leaves too little width for a third column).
  * md–lg: the rail's two cards sit side by side above the gallery.
  * Phone: hero → streak → badges (tabbed) → related.
  */
-export default async function AchievementsView({ preview = null }) {
+export default async function AchievementsView() {
   const t = await getT("achievements");
 
   return (
     <Messages ns={["achievements"]}>
-      <ProgressProvider preview={preview}>
+      <ProgressProvider>
         {/* ── Hero: title + live level/XP/streak summary · summit illustration ── */}
         <section aria-labelledby="achievements-title" className="surface animate-in grid overflow-hidden lg:grid-cols-12">
           <div className="p-5 sm:p-8 lg:col-span-7 xl:p-10">
@@ -33,8 +35,9 @@ export default async function AchievementsView({ preview = null }) {
             <p className="t-lead mt-3 max-w-2xl">{t("page.lead")}</p>
             <ProgressSummary className="mt-7" />
           </div>
-          <div className="relative hidden bg-[#F7F0E3] lg:col-span-5 lg:flex lg:items-center lg:justify-center lg:p-8 dark:bg-surface-2">
-            <Illustration id="brand.island-achievement" priority className="w-full max-w-[460px]" />
+          {/* Art from lg only, so it is preloaded for lg+ screens only (HeroArt). */}
+          <div className={cn("relative hidden lg:col-span-5 lg:flex lg:items-center lg:justify-center lg:p-8", PLATE)}>
+            <HeroArt id="brand.island-achievement" from="lg" className="w-full max-w-[460px]" />
           </div>
         </section>
 

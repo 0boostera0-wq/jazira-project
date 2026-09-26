@@ -2,13 +2,14 @@ import { Suspense } from "react";
 import { CalendarDays, Sparkles } from "lucide-react";
 import { getT } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
-import { formatDate, formatNumber } from "@/i18n/format";
+import { formatDate } from "@/i18n/format";
 import { ProgressBar } from "@/components/ui/Progress";
 import Skeleton from "@/components/ui/Skeleton";
 import EliteBadge from "@/components/subscriptions/EliteBadge";
 import { levelFor } from "@/components/achievements/progress";
 import AuthorAvatar from "../AuthorAvatar";
 import WhoToFollow from "../WhoToFollow";
+import { LG_UP } from "../breakpoints";
 import { publicIdentity } from "../model";
 import { textProps } from "../text";
 import ProfileActions from "./ProfileActions";
@@ -83,13 +84,13 @@ export default async function ProfileView({ profile, settings, locale, counts = 
               <h2 id="lv-title" className="t-h4">{t("level.title")}</h2>
               <div className="mt-3 flex items-baseline justify-between gap-3">
                 <p className="text-2xl font-bold text-ink">{t("stats.level", { level: lv.level })}</p>
-                <p className="num tabular text-sm text-ink-3">{t("level.xp", { xp: formatNumber(lv.xp, locale) })}</p>
+                <p className="tabular text-sm text-ink-3">{t("level.xp", { count: Number(lv.xp) || 0 })}</p>
               </div>
               <ProgressBar value={lv.pct} className="mt-3" label={t("level.progressLabel", { level: lv.level + 1 })} />
-              <p className="t-caption mt-2">{t("level.toNext", { xp: formatNumber(lv.remaining, locale), level: lv.level + 1 })}</p>
+              <p className="t-caption mt-2">{t("level.toNext", { count: Math.max(0, Number(lv.remaining) || 0), level: lv.level + 1 })}</p>
               <p className="t-small mt-4 border-t border-line/10 pt-4 text-ink-3">{t("level.how")}</p>
             </section>
-            <WhoToFollow exclude={profile.id} />
+            <WhoToFollow exclude={profile.id} gate={LG_UP} />
           </div>
         </aside>
       </div>

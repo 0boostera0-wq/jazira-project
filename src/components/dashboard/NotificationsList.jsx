@@ -41,8 +41,14 @@ function useNotificationText() {
     }
     if (n.type === "achievement" || n.type === "system") return t(`notifications.types.${n.type}`);
     if (!t.has(`notifications.types.${n.type}`)) return t("notifications.types.fallback");
-    // A member's name is user content in either script: isolate it so it can't reorder the sentence.
-    const name = n.actor && !n.actor.anonymous && n.actor.full_name ? isolate(n.actor.full_name) : t("notifications.someone");
+    // Anonymous content (0012: no actor id, `anonymous` set) is labelled as such, never as a generic
+    // "member". A member's name is user content in either script: isolate it so it can't reorder the sentence.
+    const actor = n.actor;
+    const name = actor?.anonymous
+      ? t("notifications.anonymous")
+      : actor?.full_name
+        ? isolate(actor.full_name)
+        : t("notifications.someone");
     return t(`notifications.types.${n.type}`, { name });
   };
 }

@@ -59,20 +59,21 @@ export default function MarketingHeader() {
           <LanguageSwitch className="hidden sm:inline-flex" />
           <ThemeToggle className="hidden sm:grid" />
           {isLoaded && isSignedIn ? (
-            <Button href="/dashboard" size="sm" iconEnd={ArrowRight} className="ms-1">
+            <Button href="/dashboard" size="sm" iconEnd={ArrowRight} className="ms-1 max-sm:h-11">
               {t("marketing.openApp")}
             </Button>
           ) : (
             <>
-              <Button href="/sign-in" variant="ghost" size="sm" className="hidden sm:inline-flex">{t("marketing.signIn")}</Button>
-              <Button href="/sign-up" size="sm" className="ms-1">{t("marketing.getStarted")}</Button>
+              {/* auth pages are warmed on intent, not on every marketing page view */}
+              <Button href="/sign-in" variant="ghost" size="sm" prefetch="intent" className="hidden sm:inline-flex">{t("marketing.signIn")}</Button>
+              <Button href="/sign-up" size="sm" prefetch="intent" className="ms-1 max-sm:h-11">{t("marketing.getStarted")}</Button>
             </>
           )}
           <button
             type="button"
             onClick={() => setOpen(true)}
             aria-label={tc("a11y.openMenu")}
-            className="ms-1 grid h-10 w-10 place-items-center rounded-full text-ink-2 hover:bg-surface-2 lg:hidden"
+            className="ms-1 grid h-11 w-11 place-items-center rounded-full text-ink-2 hover:bg-surface-2 lg:hidden"
           >
             <Menu size={20} aria-hidden="true" />
           </button>

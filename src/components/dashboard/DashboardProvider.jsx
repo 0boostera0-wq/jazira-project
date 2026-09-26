@@ -16,14 +16,7 @@ export const RESOURCES = ["progress", "attempts", "resume", "stats", "notificati
 const LOADING = Object.freeze({ status: "loading", data: null, error: null });
 const SIGN_IN = `/sign-in?next=${encodeURIComponent("/dashboard")}`;
 
-function initialState(preview) {
-  const base = Object.fromEntries(RESOURCES.map((k) => [k, LOADING]));
-  if (!preview?.resources) return base;
-  for (const [k, v] of Object.entries(preview.resources)) {
-    if (RESOURCES.includes(k)) base[k] = { status: v.status || "ready", data: v.data ?? null, error: v.error ?? null };
-  }
-  return base;
-}
+const initialState = () => Object.fromEntries(RESOURCES.map((k) => [k, LOADING]));
 
 function reducer(state, action) {
   if (action.type !== "set") return state;
@@ -38,21 +31,18 @@ function reducer(state, action) {
  * Guards the page for expired sessions: once auth has resolved to "signed
  * out" it replaces the route with sign-in (the middleware only checks that an
  * auth cookie exists).
- *
- * `preview` (visual QA only) injects resolved resources + user and disables
- * fetching and the guard. Never fed with invented data in production.
  */
-export default function DashboardProvider({ preview = null, children }) {
+export default function DashboardProvider({ children }) {
   const auth = useAuthUser();
   const router = useRouter();
-  const [resources, dispatch] = useReducer(reducer, preview, initialState);
-  const [lastVisit, setLastVisit] = useState(preview ? preview.lastVisit ?? null : undefined);
-  const [now, setNow] = useState(preview?.now ?? null);
+  const [resources, dispatch] = useReducer(reducer, null, initialState);
+  const [lastVisit, setLastVisit] = useState(undefined);
+  const [now, setNow] = useState(null);
   const alive = useRef(true);
   const xpFallback = useRef(null);
 
-  const userId = preview ? null : auth.userId;
-  const live = !preview && auth.isLoaded && auth.isSignedIn && Boolean(userId);
+  const userId = auth.userId;
+  const live = auth.isLoaded && auth.isSignedIn && Boolean(userId);
   xpFallback.current = Number.isFinite(Number(auth.profile?.xp)) ? Number(auth.profile.xp) : null;
 
   useEffect(() => {
@@ -62,21 +52,20 @@ export default function DashboardProvider({ preview = null, children }) {
 
   // Client clock (greeting, "x min left", today's tip). Ticks once a minute.
   useEffect(() => {
-    if (preview?.now) return undefined;
     setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), 60000);
     return () => clearInterval(id);
-  }, [preview?.now]);
+  }, []);
 
   // Expired session / signed out → sign in, then come back here.
   useEffect(() => {
-    if (preview || !auth.isLoaded || auth.isSignedIn) return;
+    if (!auth.isLoaded || auth.isSignedIn) return;
     router.replace(SIGN_IN);
-  }, [preview, auth.isLoaded, auth.isSignedIn, router]);
+  }, [auth.isLoaded, auth.isSignedIn, router]);
 
   useEffect(() => {
-    if (!preview) setLastVisit(readLastVisit());
-  }, [preview]);
+    setLastVisit(readLastVisit());
+  }, []);
 
   // Latest request per card wins: a retry or refresh supersedes one still in flight.
   const seq = useRef({});
@@ -131,7 +120,7 @@ export default function DashboardProvider({ preview = null, children }) {
   }, [live, closedId, run, loaders]);
 
   // Elite renewal date — only members with Elite have a row worth reading.
-  const isElite = preview ? Boolean(preview.user?.isElite) : Boolean(auth.isElite);
+  const isElite = Boolean(auth.isElite);
   useEffect(() => {
     if (!live) return;
     if (isElite) run("subscription", loaders.subscription);
@@ -149,14 +138,13 @@ export default function DashboardProvider({ preview = null, children }) {
   }, [live, loaders, run]);
 
   const value = useMemo(() => ({
-    preview: Boolean(preview),
-    session: preview ? "ready" : !auth.isLoaded ? "loading" : auth.isSignedIn ? "ready" : "redirecting",
-    user: preview?.user || { name: auth.name || "", isElite: Boolean(auth.isElite) },
+    session: !auth.isLoaded ? "loading" : auth.isSignedIn ? "ready" : "redirecting",
+    user: { name: auth.name || "", isElite },
     now,
     lastVisit,
     resources,
     reload,
-  }), [preview, auth.isLoaded, auth.isSignedIn, auth.name, auth.isElite, now, lastVisit, resources, reload]);
+  }), [auth.isLoaded, auth.isSignedIn, auth.name, isElite, now, lastVisit, resources, reload]);
 
   return <DashboardContext.Provider value={value}>{children}</DashboardContext.Provider>;
 }

@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/Progress";
 import { cn } from "@/components/ui/cn";
 import { useLocale, useT } from "@/i18n/client";
+import { withArabic } from "@/components/stages/withArabic";
 
 // Read-aloud challenge (elementary "learning games"). The words are Arabic
 // reading content in both locales; English mode adds a small gloss.
@@ -112,7 +113,11 @@ export default function ReadingChallenge() {
 
   const feedback = {
     correct: { tone: "text-green-700", text: t("games.reading.correct") },
-    wrong: { tone: "text-danger", text: heard ? `${t("games.reading.wrong")} ${t("games.reading.heard", { heard })}` : t("games.reading.wrong") },
+    // What the recogniser heard is Arabic: its own lang="ar" run inside the UI sentence.
+    wrong: {
+      tone: "text-danger",
+      text: heard ? <>{t("games.reading.wrong")} {withArabic(t, "games.reading.heard", {}, "heard", heard)}</> : t("games.reading.wrong"),
+    },
     nospeech: { tone: "text-warning", text: t("games.reading.noSpeech") },
     blocked: { tone: "text-warning", text: t("games.reading.micBlocked") },
   }[result];
@@ -166,9 +171,7 @@ export default function ReadingChallenge() {
             {t("games.reading.unsupported")}
           </p>
         ) : feedback ? (
-          <p className={cn("font-medium", feedback.tone)}>
-            <span dir="auto">{feedback.text}</span>
-          </p>
+          <p className={cn("font-medium", feedback.tone)}>{feedback.text}</p>
         ) : (
           <p className="t-small text-ink-3">{listening ? t("games.reading.listening") : t("games.reading.instruction")}</p>
         )}

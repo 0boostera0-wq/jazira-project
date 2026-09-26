@@ -27,8 +27,9 @@ const TYPE = {
   system: { icon: Sparkles, cls: "text-gold-600" },
 };
 const TILE_TYPES = { exam_result: "bg-green-50 text-green-600 ring-green-100", achievement: "bg-gold-50 text-gold-600 ring-gold-200/60", system: "bg-gold-50 text-gold-600 ring-gold-200/60" };
-// Title/body of these come from the row's data (server-authored, any language):
-// isolate them so punctuation never jumps to the wrong end inside the other script.
+// Title/body of these come from the row's data (server-authored; localized
+// variants preferred — see describe()): isolate them so punctuation never jumps
+// to the wrong end inside the other script, and mark their language.
 const DATA_TEXT = new Set(["achievement", "system"]);
 
 function ActorAvatar({ actor, size }) {
@@ -90,7 +91,7 @@ function Sentence({ text, emphasis }) {
 function NotificationItem({ group, now, onOpen, onMarkRead }) {
   const t = useT("notifications");
   const { locale } = useLocale();
-  const { text, detail, emphasis } = describe(group, t, locale);
+  const { text, detail, emphasis, lang, detailLang } = describe(group, t, locale);
   const unread = !group.read;
   const time = formatRelative(group.created_at, locale, now);
   const kind = t(`kinds.${TYPE[group.type] ? group.type : "unknown"}`);
@@ -105,16 +106,16 @@ function NotificationItem({ group, now, onOpen, onMarkRead }) {
         <p className={cn("text-[0.9375rem] leading-relaxed", unread ? "text-ink" : "text-ink-2")}>
           {group.href ? (
             <Link href={group.href} onClick={() => onOpen(group)} className="outline-none after:absolute after:inset-0 after:rounded-[inherit] focus-visible:after:ring-2 focus-visible:after:ring-inset focus-visible:after:ring-gold-400">
-              {iso ? <bdi>{sentence}</bdi> : sentence}
+              {iso ? <bdi lang={lang || undefined} dir="auto">{sentence}</bdi> : sentence}
             </Link>
           ) : iso ? (
-            <bdi>{sentence}</bdi>
+            <bdi lang={lang || undefined} dir="auto">{sentence}</bdi>
           ) : (
             sentence
           )}
           {unread && <span className="sr-only"> · {t("item.unread")}</span>}
         </p>
-        {detail && <p className="t-small mt-0.5 text-ink-3">{iso ? <bdi>{detail}</bdi> : detail}</p>}
+        {detail && <p className="t-small mt-0.5 text-ink-3">{iso ? <bdi lang={detailLang || undefined} dir="auto">{detail}</bdi> : detail}</p>}
         {group.snippet && (
           // Quote bar on the page's start side; the post keeps its own direction inside.
           <p className="t-small mt-1.5 line-clamp-2 border-s-2 border-line/15 ps-2.5 text-ink-3">

@@ -273,8 +273,8 @@ const legal = {
       plans: {
         title: "Plans",
         body: [
-          "Jazira offers a free plan with the core features, and a paid Elite plan that unlocks advanced features such as unlimited access to practice tests, unlimited use of Jazira Assistant and in-depth performance analytics.",
-          "The features and price of each plan are shown clearly on the [Elite plan page](/subscriptions) before you subscribe.",
+          "Jazira offers a free plan with the core features, and a paid Elite plan that unlocks advanced features such as longer practice tests with no daily limit, Jazira Assistant with no message cap, and in-depth performance analytics.",
+          "The features, current limits and price of each plan are shown clearly on the [Elite plan page](/subscriptions) before you subscribe.",
         ],
       },
       billing: {

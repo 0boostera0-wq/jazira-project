@@ -32,7 +32,7 @@ const dashboard = {
     toNext: "{points} to reach level {level}",
     streakLabel: "Daily streak",
     streakStatus: {
-      keepGoing: "Today counts toward your streak",
+      keepGoing: "Today counts towards your streak",
       startTomorrow: "Come back tomorrow to start your streak",
       lastYesterday: "Last recorded day: yesterday",
       none: "Start your streak today",
@@ -115,6 +115,11 @@ const dashboard = {
       practiseAria: "Practise {topic}",
       meta: "{correct} of {total} correct",
       needMore: "Once you've answered at least 3 questions in a topic, your strongest topics and the ones to focus on appear here.",
+      locked: {
+        title: "Strongest topics and focus areas",
+        body: "The Elite plan shows the topics you've mastered and the ones to practise next, so you know where to start revising.",
+        cta: "See the Elite plan",
+      },
     },
     unavailable: "Performance analytics aren't available right now.",
   },
@@ -149,7 +154,7 @@ const dashboard = {
       },
     },
     analyticsTitle: "Your analytics will appear here",
-    analyticsBody: "After your first completed practice you'll see your accuracy by section, your progress over the month and the topics to focus on.",
+    analyticsBody: "After your first completed practice you'll see your accuracy by section and your progress over the month.",
   },
 
   recent: {
@@ -171,7 +176,7 @@ const dashboard = {
     title: "Quick start",
     items: {
       aptitude: { title: "Qudurat", body: "Verbal and quantitative, timed, with an explanation for every question." },
-      achievement: { title: "Tahsili", body: "Math, physics, chemistry and biology." },
+      achievement: { title: "Tahsili", body: "Maths, physics, chemistry and biology." },
       curriculum: { title: "Curriculum & resources", body: "Subjects and resources for every stage and grade." },
       assistant: { title: "Jazira Assistant", body: "Ask, summarise and plan your revision." },
       community: { title: "Community", body: "Learn with classmates and share your progress." },
@@ -181,8 +186,8 @@ const dashboard = {
   plan: {
     eyebrow: "Your plan",
     freeTitle: "Free plan",
-    eliteTitle: "Elite membership",
-    eliteStatus: "Your membership is active",
+    eliteTitle: "Elite plan",
+    eliteStatus: "Your plan is active",
     renews: "Renews on {date}",
     elitePerks: "No daily exam cap, up to {questions} per exam, and unlimited messages with the assistant.",
     manage: "Plan details",
@@ -202,6 +207,7 @@ const dashboard = {
     emptyTitle: "Nothing new",
     emptyBody: "Your exam results, comments and mentions will show up here.",
     someone: "A member",
+    anonymous: "An anonymous member",
     types: {
       like: "{name} liked your post",
       repost: "{name} reposted your post",
@@ -245,7 +251,7 @@ const dashboard = {
     body: "Get a problem explained step by step, a lesson summarised, or a revision plan that fits your time.",
     quota: "Messages available: {left} of {limit}",
     quotaReset: "Resets {when}",
-    quotaUnlimited: "Unlimited messages with your Elite membership",
+    quotaUnlimited: "Unlimited messages with your Elite plan",
     cta: "Ask the assistant",
   },
 
@@ -259,7 +265,7 @@ const dashboard = {
     sections: {
       quantitative: "Quantitative",
       verbal: "Verbal",
-      math: "Math",
+      math: "Mathematics",
       physics: "Physics",
       chemistry: "Chemistry",
       biology: "Biology",

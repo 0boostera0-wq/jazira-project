@@ -1,12 +1,13 @@
 "use client";
 
-import { ArrowRight, Brain, ClipboardCheck, FlaskConical, Library, PlayCircle } from "lucide-react";
+import { ArrowRight, ClipboardCheck, Library, PlayCircle } from "lucide-react";
 import { useLocale, useT } from "@/i18n/client";
 import { formatPercent, formatRelative } from "@/i18n/format";
 import Button from "@/components/ui/Button";
 import IconTile from "@/components/ui/IconTile";
 import Skeleton from "@/components/ui/Skeleton";
 import { ProgressBar } from "@/components/ui/Progress";
+import { examIcon } from "@/components/exams/labels";
 import { useDashboard, useResource, useResumable } from "./DashboardProvider";
 import CardNotice from "./CardNotice";
 import Panel from "./Panel";
@@ -48,8 +49,6 @@ function TileSkeleton() {
     </div>
   );
 }
-
-const examIcon = (exam) => (exam === "achievement" ? FlaskConical : Brain);
 
 function ExamTile() {
   const t = useT("dashboard");

@@ -13,15 +13,14 @@ const BoardContext = createContext(null);
  * viewer's own rank — once, for both the standing card and the board.
  *
  * status: "loading" | "ready" | "unavailable"
- * `preview` (optional) injects { entries, total, me } for visual QA only.
  */
-export default function LeaderboardProvider({ children, preview = null }) {
+export default function LeaderboardProvider({ children }) {
   const { isLoaded, isSignedIn, userId } = useAuthUser();
-  const [state, setState] = useState(() => (preview ? { status: "ready", ...preview } : { status: "loading" }));
+  const [state, setState] = useState({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (preview || !isLoaded) return;
+    if (!isLoaded) return;
     let alive = true;
     setState((s) => (s.status === "ready" ? s : { status: "loading" }));
     (async () => {
@@ -39,23 +38,22 @@ export default function LeaderboardProvider({ children, preview = null }) {
       }
     })();
     return () => { alive = false; };
-  }, [preview, isLoaded, isSignedIn, userId, attempt]);
+  }, [isLoaded, isSignedIn, userId, attempt]);
 
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
   const value = useMemo(() => {
-    const signedIn = preview ? !!preview.me : isSignedIn;
     const me = state.me ? { ...state.me, levelInfo: levelFor(state.me.xp) } : null;
     return {
       status: state.status,
-      authLoaded: preview ? true : isLoaded,
-      signedIn,
+      authLoaded: isLoaded,
+      signedIn: isSignedIn,
       entries: state.entries || [],
       total: state.total || 0,
       me,
       retry,
     };
-  }, [state, preview, isLoaded, isSignedIn, retry]);
+  }, [state, isLoaded, isSignedIn, retry]);
 
   return <BoardContext.Provider value={value}>{children}</BoardContext.Provider>;
 }

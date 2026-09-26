@@ -6,6 +6,7 @@ import Feed from "./Feed";
 import GuidelinesCard from "./GuidelinesCard";
 import PopularTags from "./PopularTags";
 import WhoToFollow from "./WhoToFollow";
+import { LG_UP } from "./breakpoints";
 
 const WAYS = [
   { key: "ask", icon: HelpCircle },
@@ -49,12 +50,13 @@ export default async function CommunityView() {
           <Feed scope="all" withComposer withFilters peopleStrip guidelinesNote />
         </section>
         <aside aria-label={t("rail.label")} className="hidden lg:col-span-4 lg:block">
+          {/* `gate`: the rail's islands mount and fetch only at lg+, where it is shown. */}
           <div className="space-y-5">
             <GuidelinesCard />
-            <WhoToFollow />
+            <WhoToFollow gate={LG_UP} />
           </div>
           <div className="sticky top-[calc(var(--topbar-h)+1.5rem)] mt-5">
-            <PopularTags limit={7} />
+            <PopularTags limit={7} gate={LG_UP} />
           </div>
         </aside>
       </div>

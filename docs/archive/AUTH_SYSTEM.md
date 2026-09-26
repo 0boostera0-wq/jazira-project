@@ -1,5 +1,13 @@
 # Authentication System — Complete Guide
 
+> **ARCHIVED — superseded, do not follow.** This is a report from an early
+> prototype. It describes files, providers and a schema that no longer exist
+> (e.g. src/lib/auth.js, supabase.js, questions.js, ProtectedRoute, Clerk
+> middleware, the `posts`/`comments`/`likes` tables). Current sources of
+> truth: [AGENTS.md](../../AGENTS.md), [CONVENTIONS](../CONVENTIONS.md),
+> [SECURITY](../SECURITY.md), [DATA_API](../DATA_API.md) and
+> `supabase/migrations/` (apply 0000 → latest to a fresh project).
+
 ## Overview
 
 The Jazira Edu Platform now uses **Supabase Auth** as the primary authentication system with email/password signup and login. The app requires authentication — there is no demo/guest mode.

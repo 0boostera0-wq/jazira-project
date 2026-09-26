@@ -91,7 +91,7 @@ export function ArabicName({ children, className }) {
   );
 }
 
-/** Round chevron affordance at the end of link cards. */
+/** Round chevron affordance at the end of link cards (the one implementation; stages/parts re-exports it). */
 export function Chevron({ className }) {
   return (
     <span aria-hidden="true" className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-full border border-line/15 bg-surface text-ink-3 transition-colors group-hover:border-line/25 group-hover:text-ink", className)}>
@@ -100,12 +100,16 @@ export function Chevron({ className }) {
   );
 }
 
-/** Subject pill: colour tile + name (name in the active language, passed in). */
+/**
+ * Subject pill: colour tile + name (name in the active language, passed in;
+ * `lang="ar"` marks an Arabic fallback name inside the English UI). The one
+ * subject chip of the app — stages/parts wraps it for catalog nodes.
+ */
 export function SubjectChip({ subject, name, lang, className }) {
   return (
     <span className={cn("inline-flex h-9 max-w-full items-center gap-2 rounded-full border border-line/15 bg-surface pe-3 ps-1 text-[0.8125rem] font-medium text-ink-2", className)}>
       <SubjectTile subject={subject} size="xs" className="rounded-full" />
-      <span lang={lang} className="truncate">{name}</span>
+      <span lang={lang} dir={lang === "ar" ? "rtl" : undefined} className="truncate">{name}</span>
     </span>
   );
 }

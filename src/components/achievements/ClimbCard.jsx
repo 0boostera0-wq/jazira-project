@@ -3,6 +3,7 @@ import { getT } from "@/i18n/server";
 import Button from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
+import { PLATE } from "@/components/stages/parts";
 
 const STEPS = [
   { key: "exam", icon: ClipboardCheck },
@@ -22,7 +23,7 @@ export default async function ClimbCard({ className }) {
   // Stacked in the xl rail; from sm to xl it spans the page width, so the art sits beside the text.
   return (
     <section aria-labelledby="climb-title" className={cn("surface overflow-hidden sm:grid sm:grid-cols-5 xl:block", className)}>
-      <div className="flex items-center justify-center bg-[#F7F0E3] px-8 pt-4 sm:col-span-2 sm:px-5 sm:pt-0 xl:px-8 xl:pt-4 dark:bg-surface-2">
+      <div className={cn("flex items-center justify-center px-8 pt-4 sm:col-span-2 sm:px-5 sm:pt-0 xl:px-8 xl:pt-4", PLATE)}>
         <Illustration id="brand.island-achievement" className="w-full max-w-[200px] sm:max-w-[240px]" />
       </div>
       <div className="p-5 sm:col-span-3 sm:p-6">

@@ -8,10 +8,10 @@ import Skeleton from "@/components/ui/Skeleton";
 import { ProgressBar } from "@/components/ui/Progress";
 import EliteBadge from "@/components/subscriptions/EliteBadge";
 import { PLAN } from "@/components/subscriptions/plan";
-import { riyadhToday } from "@/components/achievements/progress";
+import { attemptsToday } from "@/components/exams/stats-logic";
 import { useDashboard, useResource } from "./DashboardProvider";
 import { PanelLink } from "./Panel";
-import { FREE_DAILY_ATTEMPTS, attemptsStartedToday } from "./model";
+import { FREE_DAILY_ATTEMPTS } from "./model";
 
 function AttemptsMeter() {
   const t = useT("dashboard");
@@ -28,7 +28,7 @@ function AttemptsMeter() {
   }
   if (r.status !== "ready") return null; // history unavailable → no invented count
   // The dashboard clock, so the meter rolls over at Saudi midnight while the page stays open.
-  const used = Math.min(FREE_DAILY_ATTEMPTS, attemptsStartedToday(r.data, riyadhToday(new Date(now))));
+  const used = Math.min(FREE_DAILY_ATTEMPTS, attemptsToday(r.data, now));
   const vars = { used, limit: FREE_DAILY_ATTEMPTS };
   return (
     <div className="mt-4 rounded-md bg-surface-2 p-3.5">
@@ -98,7 +98,7 @@ export default function PlanCard() {
           {t("plan.elitePerks", { questions: tc("units.questions", { count: PLAN.exams.eliteMaxQuestions }) })}
         </p>
         <div className="mt-3">
-          <PanelLink href="/subscriptions" className="-ms-2.5">{t("plan.manage")}</PanelLink>
+          <PanelLink href="/subscriptions">{t("plan.manage")}</PanelLink>
         </div>
       </section>
     );

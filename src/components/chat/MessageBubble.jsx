@@ -6,6 +6,8 @@ import { AlertCircle, Ban, Check, CheckCheck, Clock3, Copy, MoreHorizontal, Rota
 import { useT, useLocale } from "@/i18n/client";
 import { formatDate } from "@/i18n/format";
 import { cn } from "@/components/ui/cn";
+import { textProps } from "@/components/community/text";
+import { isTrustedMediaUrl } from "@/components/community/mediaUrl";
 import { canDeleteForAll, tickState } from "./messaging";
 
 const TICKS = {
@@ -16,7 +18,8 @@ const TICKS = {
   failed: { Icon: AlertCircle, cls: "text-danger" },
 };
 
-const safeMedia = (url) => typeof url === "string" && /^https:\/\//i.test(url);
+// Only public Storage objects of this project (any bucket) — never another origin.
+const safeMedia = (url) => isTrustedMediaUrl(url, null);
 
 /**
  * One message. Mine sit at the end side (left in Arabic, right in English),
@@ -79,7 +82,7 @@ function MessageBubble({ item, me, selected, onSelect, onDelete, onResend, onDis
               ) : m.media_url ? (
                 <p className="mb-1 text-sm italic text-ink-3">{t("thread.attachment")}</p>
               ) : null}
-              {m.content && <p dir="auto" className="whitespace-pre-wrap break-words">{m.content}</p>}
+              {m.content && <p {...textProps(m.content, "whitespace-pre-wrap break-words")}>{m.content}</p>}
             </>
           )}
           <span className="mt-0.5 flex items-center justify-end gap-1 text-[0.75rem] leading-none text-ink-3">

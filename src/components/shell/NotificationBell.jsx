@@ -8,8 +8,9 @@ import { useT } from "@/i18n/client";
 import { getSupabase } from "@/lib/supabase-lazy";
 
 // Unread badge that links to /notifications. Never blocks rendering: the count
-// loads after mount, refreshes every 60 s and when the tab regains focus, and
-// silently stays at 0 if notifications aren't available.
+// loads after mount, refreshes every 60 s while the tab is visible and again
+// when it becomes visible, and silently stays at 0 if notifications aren't
+// available. Hidden tabs make no requests.
 async function fetchUnread(userId) {
   const supabase = await getSupabase();
   if (!supabase) return 0;
@@ -32,16 +33,17 @@ export default function NotificationBell() {
     if (!isSignedIn || !userId) { setCount(0); return; }
     let alive = true;
     const tick = () => fetchUnread(userId).then((n) => alive && setCount(n)).catch(() => {});
+    const visible = () => document.visibilityState === "visible";
     tick();
-    const id = setInterval(tick, 60000);
-    const onFocus = () => tick();
+    const id = setInterval(() => { if (visible()) tick(); }, 60000);
+    const onVisible = () => { if (visible()) tick(); };
     const onRead = () => tick();
-    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("jz:notifications-read", onRead);
     return () => {
       alive = false;
       clearInterval(id);
-      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("jz:notifications-read", onRead);
     };
   }, [isSignedIn, userId]);
@@ -49,10 +51,10 @@ export default function NotificationBell() {
   if (!isSignedIn) return null;
   const label = count > 0 ? `${t("a11y.notifications")} (${count})` : t("a11y.notifications");
   return (
-    <Link href="/notifications" aria-label={label} className="relative grid h-10 w-10 place-items-center rounded-full text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink">
+    <Link href="/notifications" aria-label={label} className="relative grid h-11 w-11 place-items-center rounded-full text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink lg:h-10 lg:w-10">
       <Bell size={19} aria-hidden="true" />
       {count > 0 && (
-        <span className="absolute end-1 top-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-danger px-1 text-[10px] font-bold leading-none text-white ring-2 ring-canvas tabular">
+        <span aria-hidden="true" className="absolute end-0.5 top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-danger px-1 text-xs font-bold leading-none text-danger-fg ring-2 ring-canvas tabular">
           {count > 99 ? "99+" : count}
         </span>
       )}

@@ -1,0 +1,19 @@
+{{ if eq (printf "%v" .Data.locale) "en" }}
+<div dir="ltr" lang="en" style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6;color:#1f2937;max-width:560px;margin:0 auto;padding:24px">
+  <h1 style="font-size:20px;margin:0 0 12px">Confirm your email</h1>
+  <p style="margin:0 0 16px">Welcome to Jazira. Enter this code on the verification page to activate your account:</p>
+  <p style="font-size:28px;font-weight:700;letter-spacing:6px;margin:0 0 16px">{{ .Token }}</p>
+  <p style="margin:0 0 16px">Or confirm with this link:</p>
+  <p style="margin:0 0 24px"><a href="{{ .ConfirmationURL }}" style="color:#9a7412">Confirm my email</a></p>
+  <p style="font-size:13px;color:#6b7280;margin:0">If you didn't create a Jazira account, you can ignore this email.</p>
+</div>
+{{ else }}
+<div dir="rtl" lang="ar" style="font-family:Tahoma,Arial,sans-serif;line-height:1.8;color:#1f2937;max-width:560px;margin:0 auto;padding:24px;text-align:right">
+  <h1 style="font-size:20px;margin:0 0 12px">تأكيد بريدك الإلكتروني</h1>
+  <p style="margin:0 0 16px">مرحبًا بك في منصة جزيرة. أدخل هذا الرمز في صفحة التحقق لتفعيل حسابك:</p>
+  <p dir="ltr" style="font-size:28px;font-weight:700;letter-spacing:6px;margin:0 0 16px;text-align:right">{{ .Token }}</p>
+  <p style="margin:0 0 16px">أو أكّد بريدك عبر هذا الرابط:</p>
+  <p style="margin:0 0 24px"><a href="{{ .ConfirmationURL }}" style="color:#9a7412">تأكيد بريدي الإلكتروني</a></p>
+  <p style="font-size:13px;color:#6b7280;margin:0">إن لم تُنشئ حسابًا في منصة جزيرة، فتجاهل هذه الرسالة.</p>
+</div>
+{{ end }}

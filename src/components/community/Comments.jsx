@@ -80,13 +80,17 @@ export default function Comments({ post, api, viewer, askSignIn, onCountChange, 
     if (!viewer.isSignedIn) return askSignIn();
     const body = text.trim();
     if (!body || body.length > COMMENT_MAX) return;
+    // Anonymity is stored per comment (0012): send the member's current choice
+    // explicitly so what we show optimistically is exactly what gets saved.
+    const anonymous = Boolean(viewer.anonymous);
     const temp = {
       id: `temp-${Date.now()}`,
       content: body,
       created_at: new Date().toISOString(),
       mine: true,
       pending: true,
-      author: viewer.anonymous
+      anonymous,
+      author: anonymous
         ? { anonymous: true }
         : { anonymous: false, id: viewer.userId, username: viewer.username, name: viewer.name, avatar: viewer.avatar, elite: viewer.elite },
     };
@@ -95,7 +99,7 @@ export default function Comments({ post, api, viewer, askSignIn, onCountChange, 
     setSendError(null);
     onCountChange(1);
     try {
-      const saved = await api.addComment(post.id, body);
+      const saved = await api.addComment(post.id, body, { anonymous });
       setItems((prev) => prev.map((c) => (c.id === temp.id ? saved : c)));
     } catch (err) {
       setItems((prev) => prev.filter((c) => c.id !== temp.id));

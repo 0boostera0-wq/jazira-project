@@ -4,18 +4,26 @@ import { buildMetadata } from "@/lib/seo";
 import TagView from "@/components/community/TagView";
 import { normalizeTag } from "@/components/community/model";
 
+// No tag is prerendered at build; each one renders on its first request and
+// is then served statically (dynamicParams stays true). The page reads no
+// cookies, headers or searchParams — the count and the posts are client
+// islands. A static render is also what lets notFound() answer a real 404: a
+// streamed (dynamic) render has already sent 200 with the loading shell.
+export function generateStaticParams() {
+  return [];
+}
+
 export function generateMetadata({ params }) {
-  const tag = normalizeTag(params.tag) || "";
+  const tag = normalizeTag(params.tag);
+  if (!tag) notFound();
   return buildMetadata({
     locale: params.locale,
     key: "tag",
     vars: { tag },
     path: `/tags/${encodeURIComponent(tag)}`,
-    noindex: !tag,
   });
 }
 
-// Shell renders statically; the count and the posts are client islands.
 export default function TagPage({ params }) {
   setRequestLocale(params.locale);
   const tag = normalizeTag(params.tag);

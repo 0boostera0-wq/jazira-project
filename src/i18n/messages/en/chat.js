@@ -131,6 +131,10 @@ const chat = {
 
   start: {
     opening: "Opening the conversation…",
+    title: "Start a conversation with {name}",
+    body: "Nothing is sent until you start. If {name} doesn't follow you, your messages arrive as a request they can accept or ignore.",
+    cta: "Start conversation",
+    cancel: "Not now",
     errors: {
       blocked: "You can't start a conversation with this member.",
       messages_disabled: "This member has turned off messages.",
