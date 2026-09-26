@@ -11,7 +11,7 @@ const POINTS = [
   ["delete", UserRoundX],
 ];
 
-/** Privacy & trust — one wide card: the sheltered-harbor painting at the start, commitments at the end. */
+/** Privacy & trust — one wide card: the private glass study room at the start, commitments at the end. */
 export default async function PrivacyTrust() {
   const t = await getT("landing");
   return (

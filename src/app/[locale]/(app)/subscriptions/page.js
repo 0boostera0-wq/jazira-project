@@ -3,6 +3,7 @@ import { setRequestLocale, getT } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
 import { buildMetadata } from "@/lib/seo";
 import IconTile from "@/components/ui/IconTile";
+import PageHero from "@/components/ui/PageHero";
 import PlanCard from "@/components/subscriptions/PlanCard";
 import FreePlanCard from "@/components/subscriptions/FreePlanCard";
 import FeatureBento from "@/components/subscriptions/FeatureBento";
@@ -32,17 +33,13 @@ export default async function SubscriptionsPage(props) {
 
   return (
     <Messages ns={["subscriptions"]}>
-      {/* ── Hero: intro + reassurance + Free plan beside the Elite card (card spans both rows on desktop) ── */}
-      <div className="grid gap-x-10 gap-y-8 lg:grid-cols-12 lg:grid-rows-[auto_1fr] xl:gap-x-14">
-        <header className="animate-in lg:col-span-7 lg:row-start-1 lg:pt-6">
-          <p className="t-eyebrow">{t("hero.eyebrow")}</p>
-          <h1 className="t-h1 mt-2.5 max-w-[22ch] lg:max-w-none">{t("hero.title")}</h1>
-          <p className="t-lead mt-4 max-w-2xl">{t("hero.lead")}</p>
-        </header>
+      {/* ── Hero, then reassurance + Free plan beside the Elite card ── */}
+      <PageHero id="subscriptions-title" image="subscriptions.hero" eyebrow={t("hero.eyebrow")} title={t("hero.title")} lead={t("hero.lead")} className="animate-in" />
 
-        <PlanCard priority className="animate-in lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:self-start" />
+      <div className="mt-8 grid gap-x-10 gap-y-8 sm:mt-10 lg:grid-cols-12 xl:gap-x-14">
+        <PlanCard className="animate-in lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:self-start" />
 
-        <div className="space-y-8 lg:col-span-7 lg:row-start-2">
+        <div className="space-y-8 lg:col-span-7 lg:row-start-1">
           <ul className="grid gap-5 sm:grid-cols-3 lg:max-w-xl lg:grid-cols-1">
             {POINTS.map(({ key, icon }) => (
               <li key={key} className="flex items-start gap-3.5">

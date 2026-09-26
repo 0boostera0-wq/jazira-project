@@ -22,7 +22,7 @@ export const SECTION_GAP = "mt-[clamp(3rem,2rem_+_3vw,5rem)]";
 
 /**
  * Cream "plate": the warm panel behind art thumbnails and their loading
- * placeholders; a quiet surface in dark mode. (Library paintings themselves are
+ * placeholders; a quiet surface in dark mode. (Library images themselves are
  * full-bleed — see ui/Illustration and the .art-frame utility.)
  */
 export const PLATE = "bg-[#F7F0E3] dark:bg-surface-2";

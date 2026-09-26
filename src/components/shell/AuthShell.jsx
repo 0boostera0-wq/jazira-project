@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { getT } from "@/i18n/server";
 import Logo from "@/components/brand/Logo";
 import Illustration from "@/components/ui/Illustration";
-import { ArtPreload } from "@/components/stages/HeroArt";
+import ArtPreload from "@/components/ui/ArtPreload";
 import { SIZES } from "@/lib/assets";
 import LanguageSwitch from "./LanguageSwitch";
 import SkipLink from "./SkipLink";
@@ -14,8 +14,8 @@ const ASIDE_SIZES = SIZES.aside;
 /**
  * Split-screen frame for sign-in / sign-up / password flows (server component).
  * Form column on the inline-start side; on the inline-end side (lg+ only — on
- * mobile the form stands alone, no dead space) a full-height painting with the
- * value points on a scrim over its lower third. The painting is preloaded for
+ * mobile the form stands alone, no dead space) a full-height image with the
+ * value points on a scrim over its lower third. The image is preloaded for
  * lg+ screens only (ArtPreload), so phones never download it.
  *
  *   <AuthShell title description illustration="welcome.sign-in"
@@ -51,7 +51,7 @@ export default async function AuthShell({ title, description, illustration = "we
         <div className="art-frame sticky top-4 flex h-[calc(100dvh-2rem)] flex-col justify-end rounded-xl bg-[#173a33]">
           <Illustration id={illustration} fill sizes={ASIDE_SIZES} />
           {(asideTitle || asidePoints.length > 0) && (
-            // Scrim: the copy sits on the painting's lower third in light text, AA on every scene.
+            // Scrim: the copy sits on the image's lower third in light text, AA on every scene.
             <div className="relative bg-gradient-to-t from-[#0B211C]/95 via-[#0B211C]/75 to-transparent px-10 pb-10 pt-28 text-white">
               {asideTitle && <p className="t-h3 max-w-md !text-white">{asideTitle}</p>}
               <ul className="mt-4 grid gap-2.5">

@@ -14,7 +14,7 @@ const RESOURCES = [
   { key: "exams", icon: ClipboardList },
 ];
 
-/** Curriculum feature — text at the start, the library painting + resource card at the end. */
+/** Curriculum feature — text at the start, the library image + resource card at the end. */
 export default async function CurriculumFeature() {
   const t = await getT("landing");
   const year = ACADEMIC_YEAR.replace(/\D/g, "");

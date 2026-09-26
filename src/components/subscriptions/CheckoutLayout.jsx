@@ -1,6 +1,6 @@
 import { Crown } from "lucide-react";
 import { getLocale, getT } from "@/i18n/server";
-import { PageHeader } from "@/components/ui/Layout";
+import PageHero from "@/components/ui/PageHero";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import IconTile from "@/components/ui/IconTile";
 import PriceTag from "./PriceTag";
@@ -21,15 +21,18 @@ export default async function CheckoutLayout({ pay }) {
 
   return (
     <>
-      <PageHeader
-        breadcrumbs={
+      <PageHero
+        id="checkout-title"
+        image="payment.checkout"
+        title={t("checkout.title")}
+        lead={t("checkout.lead")}
+        className="animate-in mb-8 sm:mb-10"
+        top={
           <Breadcrumbs
             label={tc("a11y.breadcrumb")}
             items={[{ label: tn("items.subscription"), href: "/subscriptions" }, { label: t("checkout.breadcrumb") }]}
           />
         }
-        title={t("checkout.title")}
-        description={t("checkout.lead")}
       />
 
       <div className="grid gap-x-8 gap-y-5 lg:grid-cols-12 xl:gap-x-10">
@@ -78,7 +81,7 @@ export default async function CheckoutLayout({ pay }) {
         </div>
 
         <aside className="space-y-5 lg:col-span-5">
-          <IncludedCard title={t("checkout.included.title")} art="payment.checkout" />
+          <IncludedCard title={t("checkout.included.title")} art={false} />
           <TrustNotes as="h2" support only={["provider", "cancel"]} />
         </aside>
       </div>

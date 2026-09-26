@@ -17,7 +17,7 @@ const POINTS = [
 /**
  * Jazira Assistant — a contained, softly tinted panel (id="assistant" is the
  * target of the header's "Assistant" link). Copy + honest usage limits at the
- * start; the tower-study painting with an illustrative chat at the end.
+ * start; the assistant image (the orb of ideas) with an illustrative chat at the end.
  */
 export default async function AssistantFeature() {
   const t = await getT("landing");

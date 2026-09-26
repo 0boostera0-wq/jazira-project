@@ -10,7 +10,7 @@ import { Chevron } from "./parts";
 const chip =
   "relative z-10 inline-flex h-11 min-w-11 items-center justify-center whitespace-nowrap rounded-full border border-line/15 bg-surface px-3 text-sm font-medium text-ink-2 transition-colors duration-fast hover:border-gold-300 hover:bg-gold-50 hover:text-ink sm:h-9 sm:min-w-9";
 
-// Full-bleed painting band (the card clips it to its radius).
+// Full-bleed image band (the card clips it to its radius).
 function ArtBand({ art, sizes, className }) {
   return (
     <div aria-hidden="true" className={cn("relative overflow-hidden", className)}>

@@ -1,6 +1,6 @@
 import Illustration from "@/components/ui/Illustration";
 
-/** Tips card for the builder rail: the painting on top (beside the tips from sm to xl), numbered advice below. */
+/** Tips card for the builder rail: the image on top (beside the tips from sm to xl), numbered advice below. */
 export default function StrategyTips({ title, items = [], illustration }) {
   return (
     <section aria-label={title} className="surface-tint overflow-hidden sm:grid sm:grid-cols-5 xl:block">

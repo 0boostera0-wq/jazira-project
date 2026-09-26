@@ -11,10 +11,14 @@ const CAPABILITIES = [
   { key: "plan", art: "assistant.plan" },
 ];
 
+// Width of the welcome column: the pane beside the rail from lg (max-w-3xl).
+const BAND_SIZES = "(min-width: 1440px) 740px, (min-width: 1024px) calc(100vw - 42rem), 94vw";
+
 /**
- * Empty-conversation state: greeting (split with the assistant island on
- * wider screens), four capability cards that start a prompt, and suggested
- * questions (hidden when the member turned assistant suggestions off).
+ * Empty-conversation state: the assistant's own image as a wide band (the
+ * page's hero, inside the pane so the composer stays in reach), the greeting,
+ * four capability cards that start a prompt, and suggested questions (hidden
+ * when the member turned assistant suggestions off).
  */
 export default function Welcome({ name, showSuggestions = true, disabled = false, onTemplate, onAsk }) {
   const t = useT("assistant");
@@ -22,15 +26,13 @@ export default function Welcome({ name, showSuggestions = true, disabled = false
   const suggestions = t.raw("welcome.suggestions") || [];
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col py-5 sm:py-7">
-      <div className="grid items-center gap-4 md:grid-cols-[minmax(0,1fr)_200px] lg:grid-cols-[minmax(0,1fr)_240px]">
-        <div className="animate-in">
-          <h2 className="t-h2">{first ? t("welcome.greeting", { name: first }) : t("welcome.greetingGuest")}</h2>
-          <p className="t-body mt-2 max-w-xl text-ink-3">{t("welcome.lead")}</p>
+    <div className="mx-auto flex w-full max-w-3xl flex-col py-4 sm:py-6">
+      <div className="animate-in">
+        <div aria-hidden="true" className="art-frame relative h-32 rounded-lg sm:h-40 lg:h-44 xl:h-52">
+          <Illustration id="assistant.hero" fill priority sizes={BAND_SIZES} />
         </div>
-        <div aria-hidden="true" className="art-frame hidden rounded-lg md:block">
-          <Illustration id="assistant.hero" priority sizes="(min-width: 768px) 240px, 0px" aspect="4/3" />
-        </div>
+        <h2 className="t-h2 mt-5">{first ? t("welcome.greeting", { name: first }) : t("welcome.greetingGuest")}</h2>
+        <p className="t-body mt-2 max-w-xl text-ink-3">{t("welcome.lead")}</p>
       </div>
 
       <h3 className="t-caption mt-6 font-medium text-ink-3">{t("welcome.capabilitiesLabel")}</h3>

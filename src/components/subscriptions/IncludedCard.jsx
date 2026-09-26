@@ -1,6 +1,6 @@
 import { getT } from "@/i18n/server";
 import Illustration from "@/components/ui/Illustration";
-import { ArtPreload } from "@/components/stages/HeroArt";
+import ArtPreload from "@/components/ui/ArtPreload";
 import { cn } from "@/components/ui/cn";
 import PerkList from "./PerkList";
 import { elitePerks } from "./plan";

@@ -81,11 +81,12 @@ Rules: body ≥ 16px on mobile; nothing below 12px; paragraphs ≤ 72ch; heading
   (1400px). Gutters 16 / 24 / 32px.
 - Marketing sections: `<Section>` (fluid 56–104px vertical rhythm) +
   `<SectionHeader>`.
-- App pages: rendered inside the AppShell content column. Start with
-  `<PageHeader>` (title, lead, actions, optional illustration `aside`).
+- App pages: rendered inside the AppShell content column. Major pages open on
+  `<PageHero>` (§7); workspace pages start with `<PageHeader>` (title, lead,
+  actions, optional illustration `aside`).
 - Grids: 12-col mental model. Typical desktop compositions:
-  - **Split hero**: 7/5 text/illustration; stack on mobile, illustration
-    first only when it adds meaning, otherwise after the text.
+  - **Page hero**: a wide image band across the page (`PageHero`), the title
+    on it from md, actions and facts under it.
   - **Main + rail**: content 8 cols + sticky rail 4 cols (progress, tips,
     related) at `lg`; the rail moves below content on mobile.
   - **Bento**: mixed card sizes (2×1, 1×1) for dashboards / feature overviews.
@@ -113,7 +114,7 @@ Rules: body ≥ 16px on mobile; nothing below 12px; paragraphs ≤ 72ch; heading
 | `PasswordInput`, `Switch`, `Tabs`, `Dialog` (native `<dialog>`, `variant="sheet"`) | interactive (client) |
 | `Breadcrumbs`, `PageHeader`, `SectionHeader`, `Section`, `Container`, `Grid` | layout. `PageHeader` variants `default · card · compact` with `eyebrow`, `meta`, `stats`, `actions`, `media` slots; its `<h1>` is the page title (t-h1, t-h3 for compact workspace pages) |
 | `PremiumLock` | locked preview + upgrade CTA (never render real premium data behind it) |
-| `Illustration` | library painting by manifest id (next/image; `sizes`, `priority`, `aspect`, `fill`) |
+| `Illustration` | library image by manifest id (next/image; `sizes`, `priority`, `aspect`, `fill`) |
 | Brand: `Logo`, `IslandMark`, `AssistantAvatar` | src/components/brand |
 
 Icons: `lucide-react`, 18–20px in UI, stroke default. Directional icons: always
@@ -133,24 +134,34 @@ new code.
 
 ## 7. Imagery (public/images/**) and brand
 
-**Paintings.** Every page's art comes from one painted world — the island of
-learning — generated as 1536×1024 originals, quality-checked one by one and
-registered in `src/lib/assets.js` (the central manifest: path, category, pages,
-purpose, language neutrality, responsive `sizes`, priority). Style, palette and
-the per-audience tiers (toy-like elementary, refined middle school, cinematic
-high school / exams) are in [ART_DIRECTION.md](ART_DIRECTION.md).
+**Images.** Every major page has its own image — the place that represents that
+page, in its own palette and light — generated as 1536×1024 originals,
+quality-checked one by one and registered in `src/lib/assets.js` (the central
+manifest: path, category, pages, purpose, language neutrality, responsive
+`sizes`, priority, focus). The style follows the audience (3D cartoon for
+elementary, stylized for middle school, realistic editorial for high school,
+exams and the professional pages); the island appears only on brand pages. See
+[ART_DIRECTION.md](ART_DIRECTION.md).
 
 - **Never text in the art** — titles stay HTML, so one image serves Arabic and
-  English, RTL and LTR. No real or photorealistic people.
+  English, RTL and LTR (only elementary letter/number cards show glyphs, as their
+  subject). No stock photography, no identifiable people.
 - **Rendering**: `<Illustration id="…" />` (next/image with the library
   loader — pre-rendered WebP at 256–1536px, no runtime optimizer). Pass a
   `sizes` that matches the slot; `priority` only on a page's LCP hero;
   everything else is lazy. Art that only shows from a breakpoint up uses
-  `HeroArt` / `ArtPreload` (media-gated preload, never fetched on phones).
-- **Framing**: paintings are full-bleed — edge to edge in a panel (`fill` + a
+  `ArtPreload` (media-gated preload, never fetched on phones).
+- **Page heroes**: every major page opens on `PageHero` — the page's own
+  image as a wide band (full-bleed under the marketing header, or across
+  the app column) with a sea-wave cut into its lower edge. On wide screens (lg
+  for the site band, xl in the app column) the title sits on a framed glass
+  panel over the band's start side, and the band grows if the copy needs it;
+  on smaller screens a solid title card rises over the band. Only the title
+  copy sits on the image; actions and facts follow under the band.
+- **Framing**: images are full-bleed — edge to edge in a panel (`fill` + a
   positioned parent), or in an `.art-frame` with a radius (a hairline drawn
   over the image) and an `aspect` crop around the manifest's `focus`. No padded
-  plates around paintings; no huge empty areas.
+  plates around images; no huge empty areas.
 - **Budgets**: 1536w ≤ 320 KB, 640w ≤ 100 KB (enforced by `npm run assets:check`).
 
 **Brand.** The mark (the letter ج drawn as one stroke — horizon, sheltering

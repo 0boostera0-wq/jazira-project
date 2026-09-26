@@ -1,7 +1,6 @@
 import { getT } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
-import Illustration from "@/components/ui/Illustration";
-import { ArtPreload } from "@/components/stages/HeroArt";
+import PageHero from "@/components/ui/PageHero";
 import ProgressProvider from "./ProgressProvider";
 import ProgressSummary from "./ProgressSummary";
 import StreakCard from "./StreakCard";
@@ -15,34 +14,21 @@ import RelatedLinks from "./RelatedLinks";
  * server; one client provider loads the member's progress once and feeds the
  * small islands.
  *
- * Layout: split hero (7/5, the hall-of-honour painting full-bleed from lg) · badges (8) + sticky rail (4) from xl
+ * Layout: full-width hero (PageHero) with the live summary under it · badges (8) + sticky rail (4) from xl
  * (at lg the app sidebar leaves too little width for a third column).
  * md–lg: the rail's two cards sit side by side above the gallery.
  * Phone: hero → streak → badges (tabbed) → related.
  */
-// Hero panel: 5/12 of the content column from lg, as tall as the summary.
-const ART_SIZES = "(min-width: 1280px) 520px, 40vw";
-
 export default async function AchievementsView() {
   const t = await getT("achievements");
 
   return (
     <Messages ns={["achievements"]}>
       <ProgressProvider>
-        {/* ── Hero: title + live level/XP/streak summary · summit illustration ── */}
-        <section aria-labelledby="achievements-title" className="surface animate-in grid overflow-hidden lg:grid-cols-12">
-          <div className="p-5 sm:p-8 lg:col-span-7 xl:p-10">
-            <p className="t-eyebrow">{t("page.eyebrow")}</p>
-            <h1 id="achievements-title" className="t-h1 mt-2">{t("page.title")}</h1>
-            <p className="t-lead mt-3 max-w-2xl">{t("page.lead")}</p>
-            <ProgressSummary className="mt-7" />
-          </div>
-          {/* Art from lg only, so it is preloaded for lg+ screens only (HeroArt). */}
-          <div aria-hidden="true" className="relative hidden lg:col-span-5 lg:block">
-            <ArtPreload id="community.achievements" from="lg" sizes={ART_SIZES} />
-            <Illustration id="community.achievements" fill sizes={ART_SIZES} />
-          </div>
-        </section>
+        {/* ── Hero: the hall-of-honour image with the title · live level/XP/streak summary under it ── */}
+        <PageHero id="achievements-title" image="community.achievements" eyebrow={t("page.eyebrow")} title={t("page.title")} lead={t("page.lead")} className="animate-in">
+          <ProgressSummary />
+        </PageHero>
 
         {/* ── Badges (main) · streak + closest badges (rail; above the gallery below xl) ── */}
         <div className="mt-6 grid gap-6 sm:mt-8 lg:mt-10 xl:grid-cols-12 xl:gap-8">

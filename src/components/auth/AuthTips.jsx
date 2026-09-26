@@ -26,7 +26,7 @@ export default function AuthTips({ title, points = [], illustration, from = "bas
     >
       <div className="flex items-center gap-4 sm:gap-5">
         {illustration && (
-          // A square crop of the page's painting (the full scene is the lg+ aside).
+          // A square crop of the page's image (the full scene is the lg+ aside).
           <div className="art-frame hidden w-32 shrink-0 rounded-md sm:block" aria-hidden="true">
             <Illustration id={illustration} aspect="1/1" sizes="128px" />
           </div>

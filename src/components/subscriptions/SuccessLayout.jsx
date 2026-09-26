@@ -1,6 +1,7 @@
 import { MailCheck, RefreshCcw, Sparkles } from "lucide-react";
 import { getT } from "@/i18n/server";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import PageHero from "@/components/ui/PageHero";
 import IncludedCard from "./IncludedCard";
 import { HelpCard } from "./TrustNotes";
 import { PAYMENT_PROVIDER } from "./plan";
@@ -21,10 +22,16 @@ export default async function SuccessLayout({ status }) {
 
   return (
     <>
-      <Breadcrumbs
-        className="mb-5 sm:mb-6"
-        label={tc("a11y.breadcrumb")}
-        items={[{ label: tn("items.subscription"), href: "/subscriptions" }, { label: t("success.breadcrumb") }]}
+      {/* The celebration band; the page heading is the live status card below. */}
+      <PageHero
+        image="payment.success"
+        className="animate-in mb-8 sm:mb-10"
+        top={
+          <Breadcrumbs
+            label={tc("a11y.breadcrumb")}
+            items={[{ label: tn("items.subscription"), href: "/subscriptions" }, { label: t("success.breadcrumb") }]}
+          />
+        }
       />
 
       <div className="grid gap-x-8 gap-y-5 lg:grid-cols-12 xl:gap-x-10">
@@ -47,7 +54,7 @@ export default async function SuccessLayout({ status }) {
         </div>
 
         <aside className="space-y-5 lg:col-span-5">
-          <IncludedCard title={t("hero.includes")} art="payment.success" />
+          <IncludedCard title={t("hero.includes")} art={false} />
           <HelpCard as="h2" />
         </aside>
       </div>

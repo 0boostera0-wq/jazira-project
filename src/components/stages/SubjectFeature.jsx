@@ -2,13 +2,13 @@ import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
 
 /**
- * Subject highlight with its library painting as a full-bleed panel.
- *   layout="row"    painting panel at the start, text at the end
- *   layout="stack"  painting on top, text below (from `sm`)
+ * Subject highlight with its library image as a full-bleed panel.
+ *   layout="row"    image panel at the start, text at the end
+ *   layout="stack"  image on top, text below (from `sm`)
  * Phones always get the compact row (a cropped panel beside the text) so the
- * paintings don't turn into full-width banners.
+ * images don't turn into full-width banners.
  *   grow="text"  (default) extra height goes to the text block, so titles line up across a row
- *   grow="art"   extra height goes to the painting (cards stretched beside a taller neighbour)
+ *   grow="art"   extra height goes to the image (cards stretched beside a taller neighbour)
  */
 export default function SubjectFeature({ illustration, title, body, tag, action, layout = "stack", compact = false, grow = "text", as: H = "h3", className }) {
   const artGrows = grow === "art";

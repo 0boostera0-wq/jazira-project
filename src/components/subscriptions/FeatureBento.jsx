@@ -28,7 +28,7 @@ export default async function FeatureBento({ className }) {
       />
 
       <div className="mt-7 grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-12">
-        {/* Analytics — the wide editorial tile with its painting full-bleed beside the copy */}
+        {/* Analytics — the wide editorial tile with its image full-bleed beside the copy */}
         <Tile className="overflow-hidden !p-0 md:col-span-2 lg:col-span-7">
           <div className="grid h-full sm:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
             <div className="flex flex-col justify-center p-5 sm:p-7">

@@ -26,7 +26,7 @@ export default async function PlanCard({ className, priority = false }) {
       <div className="md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:block">
         <div aria-hidden="true" className="relative aspect-[16/9] md:aspect-auto md:min-h-[15rem] lg:aspect-[16/10] lg:min-h-0">
           <Illustration
-            id="subscriptions.hero"
+            id="subscriptions.premium"
             fill
             priority={priority}
             sizes="(min-width: 1280px) 480px, (min-width: 1024px) 40vw, (min-width: 768px) 42vw, 100vw"

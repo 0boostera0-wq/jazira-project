@@ -15,7 +15,7 @@ export const SITE_URL = (
   "http://localhost:3000"
 ).replace(/\/$/, "");
 
-export const OG_IMAGE = "/og/jazira-og.jpg"; // 1200×630: the island painting + the bilingual lockup (docs/BRAND.md)
+export const OG_IMAGE = "/og/jazira-og.jpg"; // 1200×630: the island campus + the bilingual lockup (docs/BRAND.md)
 
 /** Absolute URL for a path in a locale. */
 export const absoluteUrl = (path, locale = "ar") => `${SITE_URL}${localizeHref(path, locale)}`;

@@ -198,6 +198,16 @@ export function toClientSubject(s, { practice = null, tag = null, art = null } =
 const ORDER = ["student_book", "activity_book", "exam_samples"];
 const order = (type) => ORDER.indexOf(type);
 
+// High-school track → its library image (src/lib/assets.js): the track
+// explorer on /high-school and the hero of each track's year pages.
+export const TRACK_ART = {
+  general: "landing.curriculum",
+  sharia: "high-school.sharia",
+  business: "high-school.business",
+  "cs-eng": "high-school.computer-science",
+  health: "high-school.health",
+};
+
 // High-school subjects share their track's art (src/lib/assets.js).
 const HS_ART = {
   "high-school.computer-science": ["cs", "data-science", "iot", "engineering", "digital"],

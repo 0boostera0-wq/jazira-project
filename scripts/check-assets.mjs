@@ -59,7 +59,7 @@ let bytes = 0;
 for (const a of ASSET_LIST) {
   const where = `${a.id}:`;
   if (!CATEGORIES.includes(a.category)) problems.push(`${where} unknown category "${a.category}"`);
-  if (a.id !== `${a.category}.${a.src.split("/").pop().replace(/\.(webp|svg|png|jpg)$/, "")}`) problems.push(`${where} id does not match its file name`);
+  if (a.id !== `${a.category}.${a.src.split("?")[0].split("/").pop().replace(/\.(webp|svg|png|jpg)$/, "")}`) problems.push(`${where} id does not match its file name`);
   if (a.kind !== "brand" && !a.src.startsWith(`/images/${a.category}/`)) problems.push(`${where} src ${a.src} is not under /images/${a.category}/`);
   if (!Array.isArray(a.pages) || !a.pages.length) problems.push(`${where} pages is empty`);
   if (!a.purpose) problems.push(`${where} purpose is empty`);
@@ -68,10 +68,10 @@ for (const a of ASSET_LIST) {
   if (!["lcp", "lazy"].includes(a.priority)) problems.push(`${where} priority must be "lcp" or "lazy"`);
 
   if (a.kind === "raster") {
-    logical.add(a.src);
+    logical.add(a.src.split("?")[0]);
     if (!a.sizes) problems.push(`${where} sizes is empty`);
     if (!COLORS[a.id]) problems.push(`${where} no placeholder colour — run \`npm run assets:process ${a.id}\``);
-    const stem = a.src.slice(0, -".webp".length);
+    const stem = a.src.split("?")[0].slice(0, -".webp".length);
     for (const w of IMAGE_WIDTHS) {
       const url = `${stem}-${w}.webp`;
       expected.add(url);
@@ -131,6 +131,6 @@ if (problems.length) {
 const raster = ASSET_LIST.filter((a) => a.kind === "raster").length;
 const brand = ASSET_LIST.length - raster;
 console.log(
-  `✓ ${ASSET_LIST.length} assets OK (${raster} paintings × ${IMAGE_WIDTHS.length} renditions + ${brand} brand-kit files, ${(bytes / 1024).toFixed(1)} MB) — ` +
+  `✓ ${ASSET_LIST.length} assets OK (${raster} images × ${IMAGE_WIDTHS.length} renditions + ${brand} brand-kit files, ${(bytes / 1024).toFixed(1)} MB) — ` +
     "all present, sized, within budget, referenced, documented, no orphans or broken paths"
 );

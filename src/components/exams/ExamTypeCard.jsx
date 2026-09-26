@@ -9,7 +9,7 @@ import { BankNumber } from "./BankProvider";
 import { examIcon, sectionColor, sectionIcon } from "./labels";
 
 /**
- * Hub card for one exam: painting · tag · title · body · its sections with
+ * Hub card for one exam: image · tag · title · body · its sections with
  * live question counts · CTA. The title is a link; the CTA is a real
  * button-link for touch users.
  *

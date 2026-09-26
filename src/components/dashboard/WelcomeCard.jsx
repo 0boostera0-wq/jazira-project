@@ -1,5 +1,5 @@
 import Illustration from "@/components/ui/Illustration";
-import { ArtPreload } from "@/components/stages/HeroArt";
+import ArtPreload from "@/components/ui/ArtPreload";
 import { WelcomeActions, WelcomeHeading, WelcomeProgress } from "./WelcomeLive";
 
 // The panel is ~14–21rem wide and as tall as the greeting; cover-cropping a 3:2
@@ -8,7 +8,7 @@ const ART_SIZES = "(min-width: 1536px) 400px, 340px";
 
 /**
  * Split header + stats strip:
- *   ┌ date · greeting (h1) · context · primary action ┬ sunrise painting (sm+) ┐
+ *   ┌ date · greeting (h1) · context · primary action ┬ morning-lake image (sm+) ┐
  *   └ level ring + XP to next level │ streak │ achievements link ──────────────┘
  * Phones drop the art (and never download it: it is preloaded from sm up only).
  */

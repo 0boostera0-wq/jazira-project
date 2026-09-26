@@ -39,7 +39,7 @@ quarter of the mark.
 | `/images/brand/jazira-icon.svg` | small icon: ivory mark on the teal tile (= `src/app/icon.svg`, the favicon) |
 | `/images/brand/jazira-icon-192.png` · `/images/brand/jazira-icon-512.png` | app icons (web app manifest, Organization logo in JSON-LD) |
 | `/images/brand/jazira-icon-maskable-512.png` | maskable app icon (mark inside the safe zone) |
-| `/og/jazira-og.jpg` | 1200×630 social preview: the island painting + the bilingual lockup |
+| `/og/jazira-og.jpg` | 1200×630 social preview: the island campus + the bilingual lockup |
 
 Next.js metadata files: `src/app/icon.svg` (favicon), `src/app/favicon.ico`
 (16/32/48 for legacy agents), `src/app/apple-icon.png` (180×180, full-bleed —

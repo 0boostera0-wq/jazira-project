@@ -51,7 +51,7 @@ for (const a of targets) {
     continue;
   }
 
-  const stem = join("public", a.src.slice(1, -".webp".length));
+  const stem = join("public", a.src.split("?")[0].slice(1, -".webp".length));
   mkdirSync(dirname(stem), { recursive: true });
   // Drop renditions of this asset that the current width list no longer produces.
   const base = stem.split(/[\\/]/).pop();

@@ -56,7 +56,7 @@ export default function ExamResults({ result, isSignedIn, path }) {
     <div className="animate-in">
       {/* ── score header ── */}
       <header className="surface overflow-hidden">
-        {/* A finished paper and a well-earned pause — a painted strip above the score. */}
+        {/* A finished paper and a well-earned pause — an image strip above the score. */}
         <div aria-hidden="true" className="relative h-24 sm:h-32 lg:h-36">
           <Illustration id="exams.results" fill sizes="(min-width: 1280px) 960px, 100vw" />
         </div>

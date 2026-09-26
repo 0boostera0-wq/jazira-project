@@ -13,7 +13,7 @@ const POINTS = [
   ["photo", ImagePlus],
 ];
 
-/** Community — courtyard painting + illustrative post at the start, copy at the end. */
+/** Community — student-commons image + illustrative post at the start, copy at the end. */
 export default async function CommunityFeature() {
   const t = await getT("landing");
   return (

@@ -9,6 +9,7 @@ import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import Button from "@/components/ui/Button";
 import IconTile from "@/components/ui/IconTile";
 import Illustration from "@/components/ui/Illustration";
+import PageHero from "@/components/ui/PageHero";
 import { cn } from "@/components/ui/cn";
 import LegalBlocks, { Inline, blocksText } from "./LegalBlocks";
 import TocSpy from "./TocSpy";
@@ -73,44 +74,40 @@ export default async function LegalDocument({ doc, locale, art = "legal.hero" })
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(crumbs) }} />
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <header id="legal-top" className="border-b border-line/10 bg-surface-2/50">
-        <div className="container-wide pb-10 pt-6 sm:pb-12 sm:pt-8 lg:pb-14">
-          <Breadcrumbs label={t("ui.breadcrumb")} items={[{ label: t("ui.home"), href: "/" }, { label: content.title }]} />
+      {/* ── Hero: the document's image full-bleed, the title panel over it ── */}
+      <div id="legal-top" className="border-b border-line/10 bg-surface-2/40 pb-10 sm:pb-12 lg:pb-14">
+        <PageHero
+          variant="site"
+          id="legal-title"
+          image={art}
+          eyebrow={
+            <span className="inline-flex items-center gap-2">
+              <DocIcon size={16} aria-hidden="true" />
+              {t("ui.eyebrow")}
+            </span>
+          }
+          title={content.title}
+          lead={content.intro}
+          top={<Breadcrumbs label={t("ui.breadcrumb")} items={[{ label: t("ui.home"), href: "/" }, { label: content.title }]} />}
+          className="animate-in"
+        >
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-start lg:gap-12">
+            <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-3 lg:col-span-7">
+              <li className="flex items-center gap-2">
+                <CalendarDays size={16} aria-hidden="true" className="text-ink-4" />
+                <time dateTime={LEGAL_UPDATED}>{t("ui.updated", { date: formatDate(LEGAL_UPDATED, locale, DATE_OPTS) })}</time>
+              </li>
+              <li className="flex items-center gap-2">
+                <Clock size={16} aria-hidden="true" className="text-ink-4" />
+                {t("ui.readingTime", { count: minutes })}
+              </li>
+              <li className="hidden items-center gap-2 sm:flex">
+                <ListOrdered size={16} aria-hidden="true" className="text-ink-4" />
+                {t("ui.sections", { count: sections.length })}
+              </li>
+            </ul>
 
-          <div className="mt-6 grid gap-8 lg:mt-10 lg:grid-cols-12 lg:items-start lg:gap-12">
-            <div className="animate-in lg:col-span-7">
-              <p className="t-eyebrow flex items-center gap-2">
-                <DocIcon size={16} aria-hidden="true" />
-                {t("ui.eyebrow")}
-              </p>
-              <h1 className="t-h1 mt-3">{content.title}</h1>
-              <p className="t-lead mt-4 max-w-2xl">{content.intro}</p>
-
-              <ul className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-3">
-                <li className="flex items-center gap-2">
-                  <CalendarDays size={16} aria-hidden="true" className="text-ink-4" />
-                  <time dateTime={LEGAL_UPDATED}>{t("ui.updated", { date: formatDate(LEGAL_UPDATED, locale, DATE_OPTS) })}</time>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Clock size={16} aria-hidden="true" className="text-ink-4" />
-                  {t("ui.readingTime", { count: minutes })}
-                </li>
-                <li className="hidden items-center gap-2 sm:flex">
-                  <ListOrdered size={16} aria-hidden="true" className="text-ink-4" />
-                  {t("ui.sections", { count: sections.length })}
-                </li>
-              </ul>
-            </div>
-
-            <section
-              aria-labelledby="legal-summary"
-              className="relative rounded-xl border border-line/[.12] bg-surface p-6 shadow-sm sm:p-7 lg:col-span-5"
-            >
-              {/* The document's painting as a full-bleed strip across the top of the card. */}
-              <div aria-hidden="true" className="relative -mx-6 -mt-6 mb-6 aspect-[16/7] overflow-hidden rounded-t-xl sm:-mx-7 sm:-mt-7">
-                <Illustration id={art} fill sizes="(min-width: 1024px) 40vw, 100vw" />
-              </div>
+            <section aria-labelledby="legal-summary" className="relative rounded-xl border border-line/[.12] bg-surface p-6 shadow-sm sm:p-7 lg:col-span-5">
               <h2 id="legal-summary" className="t-h4">{t("ui.summaryTitle")}</h2>
               <ul className="mt-4 space-y-3">
                 {content.summary.map((line, i) => (
@@ -124,8 +121,8 @@ export default async function LegalDocument({ doc, locale, art = "legal.hero" })
               <p className="t-caption mt-5 border-t border-line/10 pt-4">{t("ui.summaryNote")}</p>
             </section>
           </div>
-        </div>
-      </header>
+        </PageHero>
+      </div>
 
       {/* ── Body ─────────────────────────────────────────────────────────── */}
       <div className="container-wide pb-16 pt-8 sm:pb-20 lg:pt-14">

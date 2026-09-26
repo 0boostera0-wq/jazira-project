@@ -6,19 +6,11 @@ import Button from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
 import IconTile from "@/components/ui/IconTile";
 import { cn } from "@/components/ui/cn";
+import { TRACK_ART as ART } from "@/components/curriculum/model";
 import { useLocale, useT } from "@/i18n/client";
 import { subjectIcon } from "./icons";
 import { catalogLabel } from "./names";
 import { SubjectChip } from "./parts";
-
-// Track → library painting (full-bleed panel beside the track details).
-const ART = {
-  general: "landing.curriculum",
-  sharia: "high-school.sharia",
-  business: "high-school.business",
-  "cs-eng": "high-school.computer-science",
-  health: "high-school.health",
-};
 
 /**
  * Explorer for the high-school tracks. `tracks` comes from the catalog

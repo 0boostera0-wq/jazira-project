@@ -76,7 +76,6 @@ export default async function AboutPage(props) {
         title={t("about.title")}
         lead={t("about.lead")}
         art="landing.about"
-        mobileArt
         actions={
           <>
             <Button href="/sign-up" size="lg" iconEnd={ArrowRight}>{t("about.primaryCta")}</Button>

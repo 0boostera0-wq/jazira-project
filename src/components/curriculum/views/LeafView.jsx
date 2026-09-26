@@ -8,7 +8,7 @@ import OfficialChannels from "../OfficialChannels";
 import PlanCard from "../PlanCard";
 import SubjectExplorer from "../SubjectExplorer";
 import { LevelSwitcher, pageList } from "../parts";
-import { subjectArt, switcherFor, toClientSubject, totalPeriods } from "../model";
+import { TRACK_ART, subjectArt, switcherFor, toClientSubject, totalPeriods } from "../model";
 import { OFFICIAL_LINKS, PLAN_URL, breadcrumbs, channelsCopy, nameOf, titleOf } from "../copy";
 
 /** A grade (K–9) or a track year (secondary): the subjects, their official resources and Jazira's help. */
@@ -30,39 +30,46 @@ export default async function LeafView({ slug, node, trail, locale }) {
   // (the full "track · year" title stays in metadata, the drawer and recent visits).
   const heading = hs && trail[1] ? nameOf(node, locale) : title;
   const eyebrow = hs && trail[1] ? `${nameOf(stage, locale)} · ${nameOf(trail[1], locale)}` : nameOf(stage, locale);
+  // Track years open on their track's image; grades and the common first year
+  // keep the compact text header, so the subject list starts high on the page.
+  const art = hs && trail[1] ? TRACK_ART[node.id] : null;
+
+  const switchers = (levels || tracks) && (
+    <div className="flex flex-col gap-2.5">
+      {levels && (
+        <LevelSwitcher
+          label={hs ? t("switch.year") : t("switch.grade")}
+          items={levels.map((l) => ({ key: l.id, label: levelLabel(l), href: l.href, active: l.active }))}
+        />
+      )}
+      {tracks && (
+        <LevelSwitcher
+          label={t("switch.track")}
+          items={tracks.map((tr) => ({ key: tr.id, label: t(`switch.tracks.${tr.id}`), href: tr.href, active: tr.active }))}
+        />
+      )}
+    </div>
+  );
+  const header = { eyebrow, title: heading, lead: t("leaf.lead", { subjects: t("count.subjects", { count: node.subjects.length }) }) };
 
   return (
     <div className="pb-6">
       <RecordCurriculumVisit path={path} title={title} context={nameOf(stage, locale)} />
-      <HeaderTopRow crumbs={crumbs} crumbsLabel={tc("a11y.breadcrumb")} year={t("year", { year: YEAR })} />
+      {art ? (
+        <NodeHeader crumbs={crumbs} crumbsLabel={tc("a11y.breadcrumb")} year={t("year", { year: YEAR })} art={art} {...header}>
+          {switchers}
+        </NodeHeader>
+      ) : (
+        <HeaderTopRow crumbs={crumbs} crumbsLabel={tc("a11y.breadcrumb")} year={t("year", { year: YEAR })} />
+      )}
 
-      {/* Title, switchers and subjects in the main column; the plan + official channels rail starts beside the title. */}
-      <div className="mt-5 grid gap-8 sm:mt-7 xl:grid-cols-12 xl:gap-8">
+      {/* Title, switchers and subjects in the main column (under the hero when the
+          track has one); the plan + official channels rail starts beside them. */}
+      <div className={art ? "mt-9 grid gap-8 sm:mt-10 xl:grid-cols-12 xl:gap-8" : "mt-5 grid gap-8 sm:mt-7 xl:grid-cols-12 xl:gap-8"}>
         <div className="min-w-0 xl:col-span-8">
-          <NodeHeader
-            eyebrow={eyebrow}
-            title={heading}
-            lead={t("leaf.lead", { subjects: t("count.subjects", { count: node.subjects.length }) })}
-          >
-            {(levels || tracks) && (
-              <div className="flex flex-col gap-2.5">
-                {levels && (
-                  <LevelSwitcher
-                    label={hs ? t("switch.year") : t("switch.grade")}
-                    items={levels.map((l) => ({ key: l.id, label: levelLabel(l), href: l.href, active: l.active }))}
-                  />
-                )}
-                {tracks && (
-                  <LevelSwitcher
-                    label={t("switch.track")}
-                    items={tracks.map((tr) => ({ key: tr.id, label: t(`switch.tracks.${tr.id}`), href: tr.href, active: tr.active }))}
-                  />
-                )}
-              </div>
-            )}
-          </NodeHeader>
+          {!art && <NodeHeader {...header}>{switchers}</NodeHeader>}
 
-          <div className="mt-9 sm:mt-10">
+          <div className={art ? undefined : "mt-9 sm:mt-10"}>
             <Messages ns={["curriculum"]}>
               <SubjectExplorer
                 subjects={subjects}

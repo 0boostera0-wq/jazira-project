@@ -18,7 +18,7 @@ const EXAMS = [
 
 /**
  * Stage & goal selector.
- *   md+: three tall school-stage cards (painting header, copy below) and two
+ *   md+: three tall school-stage cards (image header, copy below) and two
  *        wide gold exam cards (art at the start, copy beside it).
  *   <md: one compact list of rows with a small art thumbnail — quick to scan
  *        and tap, no oversized decoration.
@@ -82,7 +82,7 @@ function StageCard({ t, item, exam = false }) {
           : "border-line/15 bg-surface hover:border-line/25 md:flex-col md:items-stretch md:gap-0 md:p-0"
       )}
     >
-      {/* painting: cropped thumbnail on phones, full-width header (school) / side panel (exam) from md */}
+      {/* image: cropped thumbnail on phones, full-width header (school) / side panel (exam) from md */}
       <div
         aria-hidden="true"
         className={cn(
