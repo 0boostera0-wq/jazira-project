@@ -5,7 +5,6 @@ import { setRequestLocale, loadMessages, getT } from "@/i18n/server";
 import { I18nProvider } from "@/i18n/client";
 import Providers from "@/components/providers/Providers";
 import { SITE_URL, OG_IMAGE, organizationJsonLd, jsonLd } from "@/lib/seo";
-import "@/styles/legacy.css";
 
 // Typography: IBM Plex Sans Arabic for Arabic (and Latin runs inside Arabic
 // text) — a humanist sans with excellent long-form readability — paired with
