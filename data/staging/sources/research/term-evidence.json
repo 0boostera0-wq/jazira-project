@@ -1,0 +1,58 @@
+{
+  "schema": "research-claims@1",
+  "retrieved_at": "2026-09-26",
+  "collected_by": "orchestrator (Claude) — WebSearch/WebFetch; quotes copied from the fetched pages",
+  "claims": [
+    {
+      "id": "two-terms-1447-1450",
+      "claim": "General-education schools run two terms per year for the four years starting 1447H (so 1448H has two terms).",
+      "scope": "all stages",
+      "url": "https://spa.gov.sa/N2373796",
+      "source_title": "وزارة التعليم تثمن موافقة مجلس الوزراء على إقرار فصلين دراسيين لمدارس التعليم العام وتطبيقها في الأعوام الأربعة القادمة",
+      "publisher": "Saudi Press Agency (SPA)",
+      "quote": "إقرار فصلين دراسيين لمدارس التعليم العام وتطبيقها في الأعوام الأربعة القادمة",
+      "confidence": "verified"
+    },
+    {
+      "id": "plan-guide-latest-5th",
+      "claim": "The latest published study-plan guide is the 5th edition (13 Oct 2025); no 1448-specific edition is listed.",
+      "scope": "all stages",
+      "url": "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx",
+      "source_title": "وزارة التعليم | الخطط الدراسية",
+      "publisher": "Ministry of Education",
+      "quote": "دليل الخطط الدراسية الإصدار الخامس",
+      "confidence": "verified"
+    },
+    {
+      "id": "ien-is-official-course-source",
+      "claim": "The MoE study-plans page points to iEN for viewing the course textbooks, i.e. iEN is the Ministry-endorsed public source for the books.",
+      "scope": "all stages",
+      "url": "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx",
+      "source_title": "وزارة التعليم | الخطط الدراسية",
+      "publisher": "Ministry of Education",
+      "quote": "للاطلاع على المقررات الدراسية​-عين الإثرائية",
+      "confidence": "verified"
+    },
+    {
+      "id": "books-in-two-parts",
+      "claim": "Textbooks for 1448 on iEN are published as parts («الجزء الأول / الثاني من المقرر»); the books themselves do not state which term each part belongs to.",
+      "scope": "elementary, middle; secondary courses numbered x-1 / x-2",
+      "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf",
+      "source_title": "الرياضيات / الصف الأول المتوسط / الجزء الأول من المقرر",
+      "publisher": "National Curriculum Center / MoE via iEN",
+      "quote": "الرياضيات/ الصف األول املتوسط / اجلزء األول من املقرر",
+      "confidence": "verified"
+    },
+    {
+      "id": "part-to-term-inferred",
+      "claim": "Part 1 is taught in term 1 and part 2 in term 2. NOT stated by an official source found so far; only non-official sites label books this way. Treat as INFERRED, never verified.",
+      "scope": "books split into parts",
+      "url": "https://spa.gov.sa/N2373796",
+      "source_title": "(inference from the two-term decision + the two-part books)",
+      "publisher": "—",
+      "quote": "فصلين دراسيين",
+      "confidence": "unverified"
+    }
+  ],
+  "conclusions": "1448 has two terms (verified). Per-subject term membership: for subjects whose book is split into two parts, term = inferred (part n → term n); for single-book courses (many secondary track courses) the term is unknown until an official distribution is found. Nothing is marked 'verified' per term. Madrasati (login) was not used."
+}

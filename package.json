@@ -29,6 +29,7 @@
     "axe-core": "^4.13.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.26",
+    "pdfjs-dist": "^4.10.38",
     "postcss": "^8.4.49",
     "puppeteer-core": "^25.12.0",
     "sharp": "^0.35.4",
