@@ -13,6 +13,8 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  // Lets a production build run beside `next dev` locally (NEXT_DIST_DIR=.next-prod).
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   reactStrictMode: true,
   poweredByHeader: false,
   images: {

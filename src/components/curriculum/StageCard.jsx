@@ -1,35 +1,134 @@
-"use client";
+import { Link } from "@/i18n/navigation";
+import Illustration from "@/components/ui/Illustration";
+import { cn } from "@/components/ui/cn";
+import { subjectGlyph } from "./SubjectIcon";
+import { Chevron } from "./parts";
 
-import { motion, useReducedMotion } from "framer-motion";
-import { ChevronLeft } from "lucide-react";
-import SubjectIcon from "./SubjectIcon";
+// Stage cards for the curriculum hub. The whole card links to the stage;
+// the grade / track chips inside are their own targets (44px tall on touch screens).
 
-// Branch / stage card used for the index + every intermediate level (grades,
-// tracks, special-ed sections). Wrap in a <Link>.
-export default function StageCard({ node }) {
-  const reduce = useReducedMotion();
-  const count = node.children?.length ?? (node.subjects?.length || 0);
-  const label = node.children ? `${count} أقسام` : `${count} مواد`;
+const chip =
+  "relative z-10 inline-flex h-11 min-w-11 items-center justify-center whitespace-nowrap rounded-full border border-line/15 bg-surface px-3 text-sm font-medium text-ink-2 transition-colors duration-fast hover:border-gold-300 hover:bg-gold-50 hover:text-ink sm:h-9 sm:min-w-9";
 
+function ArtBand({ art, className }) {
   return (
-    <motion.div
-      whileHover={reduce ? {} : { y: -6 }}
-      transition={{ type: "spring", stiffness: 300, damping: 22 }}
-      className="bezel h-full"
-    >
-      <div className="bezel-core glass relative flex h-full items-center gap-4 overflow-hidden p-5">
-        <span
-          className="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-white shadow-gold"
-          style={{ background: `linear-gradient(135deg, ${node.color}, ${node.color}cc)` }}
-        >
-          <SubjectIcon icon={node.icon} size={26} />
-        </span>
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate text-lg font-extrabold text-ink">{node.name}</h3>
-          <p className="truncate text-xs text-ink-muted">{node.sub || label}</p>
+    <div aria-hidden="true" className={cn("flex items-end justify-center overflow-hidden bg-[#F7F0E3] px-6 pt-5 ring-1 ring-inset ring-[#7A623A]/10 dark:bg-surface-2 dark:ring-line/10", className)}>
+      <Illustration id={art} className="h-full max-w-full object-contain" />
+    </div>
+  );
+}
+
+/** Elementary / middle: art band on top, copy, grade chips. */
+export default function StageCard({ href, art, name, range, body, meta, gradesLabel, grades, className }) {
+  return (
+    <article className={cn("group relative flex h-full flex-col overflow-hidden rounded-xl border border-line/15 bg-surface shadow-sm transition-[box-shadow,border-color] duration ease-out hover:border-line/20 hover:shadow-md", className)}>
+      <ArtBand art={art} className="h-32 sm:h-48" />
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="t-caption font-medium text-gold-600">{range}</p>
+            <h3 className="t-h3 mt-0.5">
+              <Link href={href} className="rounded-xs after:absolute after:inset-0 after:content-['']">
+                {name}
+              </Link>
+            </h3>
+          </div>
+          <Chevron className="mt-1" />
         </div>
-        <ChevronLeft className="shrink-0 text-gold" size={20} />
+        <p className="t-small mt-2 text-ink-3">{body}</p>
+        <div className="mt-auto pt-5">
+          <div className="mb-2.5 flex items-center justify-between gap-3">
+            <p className="t-caption font-medium">{gradesLabel}</p>
+            {meta && <p className="t-caption">{meta}</p>}
+          </div>
+          <ul className="flex flex-wrap gap-1.5">
+            {grades.map((g) => (
+              <li key={g.key}>
+                <Link href={g.href} className={chip} aria-label={g.aria}>
+                  {g.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-    </motion.div>
+    </article>
+  );
+}
+
+/**
+ * High school: art beside the copy; the common first year, then a compact
+ * track × year table (each cell a link).
+ *   tracks: [{ key, name, icon, id, cells: [{ key, label, href, aria }] }]
+ */
+export function HighSchoolCard({ href, art, name, range, body, meta, common, yearHeads, trackLabel, tracks, className }) {
+  return (
+    <article className={cn("group relative grid overflow-hidden rounded-xl border border-line/15 bg-surface shadow-sm transition-[box-shadow,border-color] duration ease-out hover:border-line/20 hover:shadow-md md:grid-cols-12", className)}>
+      <ArtBand art={art} className="h-36 sm:h-52 md:col-span-4 md:h-full md:items-center md:py-6" />
+      <div className="flex flex-col p-5 sm:p-6 md:col-span-8 lg:p-7">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="t-caption font-medium text-gold-600">{range}</p>
+            <h3 className="t-h3 mt-0.5">
+              <Link href={href} className="rounded-xs after:absolute after:inset-0 after:content-['']">
+                {name}
+              </Link>
+            </h3>
+          </div>
+          <Chevron className="mt-1" />
+        </div>
+        <p className="t-small mt-2 max-w-2xl text-ink-3">{body}</p>
+
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-line/10 pt-4">
+          {common ? (
+            <Link href={common.href} className={chip}>
+              {common.label}
+            </Link>
+          ) : (
+            <span />
+          )}
+          {meta && <p className="t-caption">{meta}</p>}
+        </div>
+
+        <table className="mt-3 w-full border-separate border-spacing-y-1.5 text-start">
+          <thead>
+            <tr>
+              <th scope="col" className="t-caption pb-1 text-start font-medium">{trackLabel}</th>
+              {yearHeads.map((h) => (
+                <th key={h} scope="col" className="t-caption w-[5.5rem] pb-1 text-center font-medium sm:w-28">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {tracks.map((tr) => {
+              const Icon = subjectGlyph({ icon: tr.icon });
+              return (
+                <tr key={tr.key}>
+                  <th scope="row" className="pe-2 text-start font-normal">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <Icon size={16} aria-hidden="true" className="shrink-0 text-ink-3" />
+                      <span className="text-sm font-medium leading-snug text-ink">{tr.name}</span>
+                    </span>
+                  </th>
+                  {tr.cells.map((c) => (
+                    <td key={c.key} className="text-center">
+                      {c.href ? (
+                        <Link href={c.href} aria-label={c.aria} className={cn(chip, "w-full px-2 text-[0.8125rem] tabular")}>
+                          {c.label}
+                        </Link>
+                      ) : (
+                        <span className="text-ink-4">—</span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </article>
   );
 }

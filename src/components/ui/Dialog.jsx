@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import { X } from "lucide-react";
 import { cn } from "./cn";
 import { useT } from "@/i18n/client";
@@ -10,10 +10,12 @@ import { useT } from "@/i18n/client";
  * background and top-layer stacking come for free — no portal, no library.
  *   <Dialog open={open} onClose={() => setOpen(false)} title="…">…</Dialog>
  * variant="sheet" renders a bottom sheet on mobile (centred panel ≥ sm).
- * bare = no header and no body padding (command palette, media viewers).
+ * bare = no header and no body padding (command palette, media viewers) —
+ *   give it an accessible name with `ariaLabel` (or a string `title`).
  */
-export default function Dialog({ open, onClose, title, description, children, footer, size = "md", variant = "modal", bare = false, className }) {
+export default function Dialog({ open, onClose, title, description, children, footer, size = "md", variant = "modal", bare = false, ariaLabel, className }) {
   const ref = useRef(null);
+  const titleId = `jz-dialog-title-${useId().replace(/:/g, "")}`;
   const t = useT("common");
 
   useEffect(() => {
@@ -38,7 +40,8 @@ export default function Dialog({ open, onClose, title, description, children, fo
     <dialog
       ref={ref}
       className={cn("jz-dialog", sheet && "jz-sheet")}
-      aria-labelledby={title ? "jz-dialog-title" : undefined}
+      aria-labelledby={title && !bare ? titleId : undefined}
+      aria-label={ariaLabel || (bare && typeof title === "string" ? title : undefined)}
       onClick={(e) => { if (e.target === ref.current) onClose?.(); }}
     >
       <div
@@ -53,7 +56,7 @@ export default function Dialog({ open, onClose, title, description, children, fo
         {!bare && (title || onClose) && (
           <div className="flex items-start justify-between gap-4 border-b border-line/10 px-5 py-4 sm:px-6">
             <div className="min-w-0">
-              {title && <h2 id="jz-dialog-title" className="t-h4">{title}</h2>}
+              {title && <h2 id={titleId} className="t-h4">{title}</h2>}
               {description && <p className="t-small mt-1 text-ink-3">{description}</p>}
             </div>
             {onClose && (

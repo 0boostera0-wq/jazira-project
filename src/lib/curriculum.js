@@ -1,315 +1,773 @@
 // ============================================================================
-// Al-Jazira — Educational Curriculum & Resources (Academic Year 1447H)
+// Jazira — curriculum catalog, academic year 1447H (2025–2026)
 // ----------------------------------------------------------------------------
-// Pure data + resolvers. Fetches NOTHING. Each resource carries a `key` that
-// resolves to YOUR OWN hosted file via /api/content/fetch (local public store
-// or your remote store). See scripts/README.md for importing real PDFs.
+// Pure data + resolvers. Fetches nothing; safe on the server and the client
+// (the command palette lazy-loads it). Documented in docs/CURRICULUM.md.
 //
-// Model:  stage → (grade | grade→track) → subject → term → resource
-//   • TERMS: two terms only (الأول، الثاني) + "كامل العام" filter.
-//   • Each subject declares which terms it runs in (`terms`); resources are
-//     generated only for those terms — subjects are NOT forced into both.
-//   • Resource types are ALWAYS exactly three, in this order:
-//        كتاب الطالب → كتاب النشاط → نماذج اختبارات
+// Model:  stage → grade → (track) → subject → term → resource
+//
+// Sources (see docs/research/curriculum-k9.md and curriculum-secondary.md):
+//   • Subject lists, official Arabic names and annual periods per grade/track:
+//     «دليل الخطط الدراسية – الإصدار الخامس» (National Curriculum Center, on
+//     moe.gov.sa) — VERIFIED. `scripts/build-curriculum-manifest.mjs` and
+//     tests/unit/curriculum.test.js compare every leaf below with
+//     src/content/curriculum/verified-*.json and fail on any difference.
+//   • Two terms in 1447H — VERIFIED (Cabinet decision, MoE news 11/02/1447).
+//   • Which term each subject runs in — NOT PUBLISHED: the plan gives annual
+//     periods only. Every subject is therefore listed in both terms and
+//     `terms_status` is "unverified"; the UI says so.
+//   • Textbooks — published by the MoE through «مقرراتي» on منصة مدرستي (and
+//     «عين»). Redistribution is not permitted without written permission, so
+//     no textbook is hosted: resources link to the official channel
+//     (`availability: "external_official"`). Files Jazira is authorised to host
+//     are registered in src/content/curriculum/hosted.js.
+//   • name_en values are Jazira's English renderings, not official MoE names.
 // ============================================================================
 
-export const ACADEMIC_YEAR = "1447هـ";
-const YEAR_KEY = "1447";
-const ORD = ["", "الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس"];
+import { HOSTED_FILES } from "../content/curriculum/hosted.js";
 
-// --- terms (exactly two) ---------------------------------------------------
+export const YEAR = "1447";
+export const ACADEMIC_YEAR = `${YEAR}هـ`;
+export const SOURCES_CHECKED = "2026-09-25T12:00:00Z"; // access date of every cited source
+
+// --- terms (two, verified) ---------------------------------------------------
 export const TERMS = [
-  { id: "t1", name: "الفصل الدراسي الأول", short: "الأول" },
-  { id: "t2", name: "الفصل الدراسي الثاني", short: "الثاني" },
+  { id: "t1", name: "الفصل الدراسي الأول", short: "الأول", name_en: "Term 1", short_en: "Term 1" },
+  { id: "t2", name: "الفصل الدراسي الثاني", short: "الثاني", name_en: "Term 2", short_en: "Term 2" },
 ];
-export const TERM_FILTERS = [{ id: "all", name: "كامل العام", short: "كامل العام" }, ...TERMS];
-export const termName = (id) => TERMS.find((t) => t.id === id)?.name || "";
+export const TERM_FILTERS = [
+  { id: "all", name: "كامل العام", short: "كامل العام", name_en: "Whole year", short_en: "Whole year" },
+  ...TERMS,
+];
+export const termName = (id, locale = "ar") => {
+  const t = TERM_FILTERS.find((x) => x.id === id);
+  return t ? (locale === "en" ? t.name_en : t.name) : "";
+};
 
-// --- resource types (exactly three, fixed order) ---------------------------
-const DOC_TYPES = [
-  { suffix: "student", title: "كتاب الطالب", kind: "textbook", file: "student-book.pdf" },
-  { suffix: "activity", title: "كتاب النشاط", kind: "workbook", file: "activity-book.pdf" },
-  { suffix: "exams", title: "نماذج اختبارات", kind: "exam", file: "exams.pdf" },
+// --- official channels & plan source (cited in the UI and the manifest) ------
+export const OFFICIAL = {
+  madrasati: {
+    id: "madrasati",
+    name: "منصة مدرستي",
+    name_en: "Madrasati",
+    url: "https://schools.madrasati.sa/",
+    service: "خدمة مقرراتي (المقررات الدراسية)",
+    service_en: "Muqarrarati (digital textbooks) service",
+    serviceUrl: "https://www.moe.gov.sa/ar/knowledgecenter/eservices/pages/courses.aspx",
+    requiresAccount: true,
+  },
+  ien: {
+    id: "ien",
+    name: "بوابة عين",
+    name_en: "iEN portal",
+    url: "https://www.ien.edu.sa/",
+    requiresAccount: false,
+  },
+};
+
+export const PLAN_SOURCE = {
+  name: "دليل الخطط الدراسية – الإصدار الخامس (المركز الوطني للمناهج)",
+  name_en: "Study Plans Guide, 5th edition (National Curriculum Center)",
+  url: "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf",
+  listedOn: "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx",
+  termsUrl: "https://www.moe.gov.sa/ar/mediacenter/MOEnews/Pages/news1_05082025.aspx",
+};
+
+// --- resource types (three, fixed order) --------------------------------------
+// Default availability: textbooks are on the official platform; no authorised
+// source for sample exams has been identified. A registered hosted file
+// (src/content/curriculum/hosted.js) overrides both.
+export const RESOURCE_TYPES = [
+  { id: "student_book", kind: "textbook", suffix: "student", file: "student-book.pdf", title: "كتاب الطالب", title_en: "Student book", availability: "external_official" },
+  { id: "activity_book", kind: "workbook", suffix: "activity", file: "activity-book.pdf", title: "كتاب النشاط", title_en: "Activity book", availability: "external_official" },
+  { id: "exam_samples", kind: "exam", suffix: "exams", file: "exam-samples.pdf", title: "نماذج اختبارات", title_en: "Sample exams", availability: "unavailable" },
+];
+export const AVAILABILITY = ["external_official", "hosted", "unavailable"];
+
+const HOSTED = new Map(HOSTED_FILES.map((f) => [f.key, f]));
+export const isRegisteredHosted = (key) => HOSTED.has(key);
+
+// --- subject visuals: id → [shared icon id, colour family] ---------------------
+// Icon ids are the ones src/components/stages/icons.js understands; the
+// curriculum UI refines them per subject id (src/components/curriculum/SubjectIcon.jsx).
+const FAMILY = {
+  faith: "#4F7A5E",
+  language: "#A0672E",
+  english: "#52709A",
+  math: "#B88C3C",
+  physics: "#446A8A",
+  chemistry: "#8A5A9E",
+  lifesci: "#3F7F72",
+  social: "#9C6B4E",
+  tech: "#56657A",
+  arts: "#A85D6E",
+  pe: "#B5604A",
+  skills: "#7F6A45",
+  business: "#8C6A2E",
+  law: "#6E5F4B",
+  project: "#9A722C",
+};
+
+const VISUAL = {
+  islamic: ["islamic", "faith"], quran: ["quran", "faith"], tawhid: ["tawhid", "faith"], hadith: ["hadith", "faith"],
+  tafsir: ["quran", "faith"], qiraat: ["quran", "faith"], "quran-sciences": ["quran", "faith"], fiqh: ["law", "faith"],
+  "usul-fiqh": ["law", "faith"], "hadith-terminology": ["hadith", "faith"], faraid: ["law", "faith"],
+  arabic: ["arabic", "language"], "linguistic-studies": ["arabic", "language"], rhetoric: ["arabic", "language"],
+  english: ["english", "english"],
+  math: ["math", "math"], statistics: ["math", "math"],
+  physics: ["physics", "physics"], "earth-space": ["physics", "physics"],
+  chemistry: ["chemistry", "chemistry"],
+  science: ["science", "lifesci"], biology: ["biology", "lifesci"], environment: ["science", "lifesci"],
+  "health-sciences": ["health", "lifesci"], healthcare: ["health", "lifesci"], "body-systems": ["health", "lifesci"],
+  social: ["social", "social"], history: ["social", "social"], geography: ["social", "social"], "psych-social": ["social", "social"],
+  digital: ["digital", "tech"], "digital-citizenship": ["digital", "tech"], "data-science": ["cs", "tech"], iot: ["digital", "tech"],
+  ai: ["cs", "tech"], cybersecurity: ["cs", "tech"], "software-engineering": ["cs", "tech"],
+  engineering: ["engineering", "tech"], "engineering-design": ["engineering", "tech"],
+  art: ["art", "arts"], arts: ["art", "arts"],
+  pe: ["pe", "pe"], fitness: ["pe", "pe"],
+  life: ["life", "skills"], critical: ["critical", "skills"], vocational: ["business", "skills"],
+  "financial-literacy": ["finance", "skills"], research: ["critical", "skills"],
+  "decision-making": ["business", "business"], "intro-business": ["business", "business"], economics: ["finance", "business"],
+  finance: ["finance", "business"], management: ["business", "business"], events: ["business", "business"],
+  marketing: ["business", "business"], secretarial: ["business", "business"],
+  law: ["law", "law"], "law-applications": ["law", "law"],
+  capstone: ["grade", "project"], elective: ["grade", "project"],
+};
+
+// --- English renderings (keyed by the official Arabic name) --------------------
+const NAME_EN = {
+  "القرآن الكريم والدراسات الإسلامية": "Holy Quran and Islamic Studies",
+  "اللغة العربية": "Arabic Language",
+  "الرياضيات": "Mathematics",
+  "العلوم": "Science",
+  "اللغة الإنجليزية": "English Language",
+  "التربية الفنية": "Art Education",
+  "التربية البدنية والدفاع عن النفس": "Physical Education and Self-Defense",
+  "المهارات الحياتية والأسرية": "Life and Family Skills",
+  "الدراسات الاجتماعية": "Social Studies",
+  "المهارات الرقمية": "Digital Skills",
+  "التفكير الناقد": "Critical Thinking",
+  "القرآن الكريم وتفسيره": "Holy Quran and Tafsir",
+  "التقنية الرقمية": "Digital Technology",
+  "الأحياء": "Biology",
+  "الكيمياء": "Chemistry",
+  "الفيزياء": "Physics",
+  "علم البيئة": "Environmental Science",
+  "الكفايات اللغوية": "Arabic Language Competencies",
+  "الحديث": "Hadith",
+  "المعرفة المالية": "Financial Literacy",
+  "التربية المهنية": "Vocational Education",
+  "التربية الصحية والبدنية": "Health and Physical Education",
+  "التوحيد": "Tawhid",
+  "التاريخ": "History",
+  "الفنون": "Arts",
+  "اللياقة والثقافة الصحية": "Fitness and Health Literacy",
+  "القرآن الكريم": "Holy Quran",
+  "القراءات": "Quranic Readings (Qira'at)",
+  "علوم القرآن": "Quranic Sciences",
+  "التفسير": "Tafsir (Quranic Exegesis)",
+  "الدراسات اللغوية": "Linguistic Studies",
+  "صناعة القرار في الأعمال": "Business Decision-Making",
+  "مقدمة في الأعمال": "Introduction to Business",
+  "مبادئ الاقتصاد": "Principles of Economics",
+  "الإدارة المالية": "Financial Management",
+  "علم البيانات": "Data Science",
+  "إنترنت الأشياء": "Internet of Things",
+  "الهندسة": "Engineering",
+  "مبادئ العلوم الصحية": "Principles of Health Sciences",
+  "علوم الأرض والفضاء": "Earth and Space Sciences",
+  "الفقه": "Fiqh (Islamic Jurisprudence)",
+  "الدراسات الأدبية": "Literary Studies",
+  "الدراسات النفسية والاجتماعية": "Psychological and Social Studies",
+  "المواطنة الرقمية": "Digital Citizenship",
+  "الجغرافيا": "Geography",
+  "المهارات الحياتية": "Life Skills",
+  "البحث ومصادر المعلومات": "Research and Information Sources",
+  "المجال الاختياري": "Elective Field",
+  "أصول الفقه": "Principles of Fiqh (Usul al-Fiqh)",
+  "مصطلح الحديث": "Hadith Terminology",
+  "الفرائض": "Inheritance Law (Fara'id)",
+  "الدراسات البلاغية والنقدية": "Rhetorical and Critical Studies",
+  "مبادئ القانون": "Principles of Law",
+  "تطبيقات في القانون": "Applications in Law",
+  "مشروع التخرج": "Graduation Project",
+  "مبادئ الإدارة": "Principles of Management",
+  "إدارة الفعاليات": "Event Management",
+  "تخطيط الحملات التسويقية": "Marketing Campaign Planning",
+  "السكرتارية والإدارة المكتبية": "Secretarial and Office Management",
+  "الإحصاء": "Statistics",
+  "الذكاء الاصطناعي": "Artificial Intelligence",
+  "الأمن السيبراني": "Cybersecurity",
+  "هندسة البرمجيات": "Software Engineering",
+  "التصميم الهندسي": "Engineering Design",
+  "الرعاية الصحية": "Healthcare",
+  "أنظمة جسم الإنسان": "Human Body Systems",
+};
+
+// Short English stems for numbered plan labels («الرياضيات 2» → "Mathematics 2").
+const LEVEL_EN = {
+  "الرياضيات": "Mathematics",
+  "اللغة الإنجليزية": "English",
+  "التقنية الرقمية": "Digital Technology",
+  "الأحياء": "Biology",
+  "الكيمياء": "Chemistry",
+  "الفيزياء": "Physics",
+  "الكفايات اللغوية": "Language Competencies",
+  "الحديث": "Hadith",
+  "التربية الصحية والبدنية": "Health and PE",
+  "التوحيد": "Tawhid",
+  "القرآن الكريم": "Holy Quran",
+  "القراءات": "Qira'at",
+  "التفسير": "Tafsir",
+  "الفقه": "Fiqh",
+};
+
+const labelEn = (name, label) => {
+  const m = label.match(/^(.*)\s(\d+)$/);
+  if (m && m[1] === name) return `${LEVEL_EN[name] || NAME_EN[name] || name} ${m[2]}`;
+  return NAME_EN[label] || label;
+};
+
+// Notes shown with a subject (message keys under curriculum.notes.*).
+const NOTE_RULES = [
+  // K–9: the plan prints ONE combined subject for Quran + Islamic studies (pp.19, 21, 23).
+  { stage: ["elementary", "middle"], id: "islamic", note: "islamicCombined" },
+  // Grades 5–6: the subject includes «تلاوة القرآن الكريم وتجويده» (p.21 footnote).
+  { stage: ["elementary"], grade: ["grade-5", "grade-6"], id: "islamic", note: "tilawa" },
+  // Printed textbook title (e.g. «لغتي») could not be checked.
+  { stage: ["elementary", "middle"], id: "arabic", note: "arabicTitle" },
+  // Research flags these as unlikely to have a textbook (unverified).
+  { stage: ["high-school"], id: ["pe", "fitness", "capstone", "research", "elective"], note: "noTextbook" },
+  // Rule 10 (p.14): multi-level subjects are taught in order within the year.
+  { stage: ["high-school"], track: ["sharia"], id: ["tawhid", "qiraat", "fiqh"], multiLevel: true, note: "levelsInOrder" },
+  { stage: ["high-school"], id: "law-applications", note: "afterLaw" },
+  { stage: ["high-school"], id: "elective", note: "electiveOptions" },
 ];
 
-// Build a subject's resources: for each term it runs in, the 3 types in order.
-function subjectResources(path, subjectId, terms) {
-  const base = `${path}/${subjectId}`;
+// Elective field options (guide p.30; also SPA N2383308).
+export const ELECTIVE_OPTIONS = {
+  inPerson: [
+    ["التصميم الرقمي", "Digital Design"],
+    ["المهارات الإدارية", "Administrative Skills"],
+    ["التنمية المستدامة", "Sustainable Development"],
+    ["الكتابة الوظيفية والإبداعية", "Functional and Creative Writing"],
+    ["فن تصميم الأزياء", "Fashion Design"],
+    ["الإسعافات الأولية", "First Aid"],
+  ],
+  selfPaced: [
+    ["الأمن السيبراني", "Cybersecurity"],
+    ["السياحة والضيافة", "Tourism and Hospitality"],
+    ["الذكاء الاصطناعي", "Artificial Intelligence"],
+  ],
+};
+
+const asList = (v) => (v == null ? null : Array.isArray(v) ? v : [v]);
+function notesFor(ctx, id, labels) {
   const out = [];
-  for (const t of TERMS) {
-    if (!terms.includes(t.id)) continue;
-    DOC_TYPES.forEach((d, i) => {
-      out.push({
-        id: `${subjectId}-${t.id}-${d.suffix}`,
-        title: d.title,
-        kind: d.kind,
-        order: i, // 0=student, 1=activity, 2=exams — UI sorts on this
-        term: t.id,
-        termName: t.name,
-        key: `${base}/${t.id}/${d.file}`,
-      });
-    });
+  for (const r of NOTE_RULES) {
+    if (!asList(r.id).includes(id)) continue;
+    if (r.stage && !r.stage.includes(ctx.stage)) continue;
+    if (r.grade && !r.grade.includes(ctx.grade)) continue;
+    if (r.track && !r.track.includes(ctx.track)) continue;
+    if (r.multiLevel && !(labels && labels.length > 1)) continue;
+    out.push(r.note);
   }
   return out;
 }
 
-// subject tuple: [id, name, icon, color, terms?]   terms defaults to BOTH.
-// Pass ["t1"] or ["t2"] for subjects that run in only one term.
-const mk = (path, list) =>
-  list.map(([id, name, icon, color, terms = ["t1", "t2"]]) => ({
-    id,
-    name,
-    icon,
-    color,
-    terms,
-    resources: subjectResources(path, id, terms),
-  }));
+// --- Jazira practice mapping (exam center sections) ---------------------------
+// Only where the exam center actually covers the subject at that stage.
+const PRACTICE = {
+  "high-school": {
+    math: ["achievement", "math"],
+    physics: ["achievement", "physics"],
+    chemistry: ["achievement", "chemistry"],
+    biology: ["achievement", "biology"],
+    // Optional third item: a topic of that section (src/lib/exams/catalog.js) to preselect.
+    statistics: ["aptitude", "quantitative", "statistics"],
+    arabic: ["aptitude", "verbal"],
+    "linguistic-studies": ["aptitude", "verbal"],
+    rhetoric: ["aptitude", "verbal"],
+  },
+  middle: {
+    math: ["aptitude", "quantitative"],
+    arabic: ["aptitude", "verbal"],
+  },
+};
 
-// ---------------------------------------------------------------------------
-// Subject sets per stage. Most core subjects run BOTH terms (realistic for the
-// Saudi plan); a few single-term examples below demonstrate the per-term model
-// (the `terms` field). Confirm exact per-term availability against the official
-// source and edit `terms` here — the UI updates automatically.
-// ---------------------------------------------------------------------------
-const ELEMENTARY = (p) =>
-  mk(p, [
-    ["quran", "القرآن الكريم", "quran", "#7C9A6A"],
-    ["islamic", "الدراسات الإسلامية", "islamic", "#5E8C7B"],
-    ["arabic", "لغتي الجميلة", "arabic", "#C9A227"],
-    ["math", "الرياضيات", "math", "#C97B3B"],
-    ["science", "العلوم", "science", "#3B82A6"],
-    ["social", "الدراسات الاجتماعية", "social", "#A6643B"],
-    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-    ["digital", "المهارات الرقمية", "digital", "#4B5563"],
-    ["art", "التربية الفنية", "art", "#C93B7B"],
-    ["pe", "التربية البدنية والصحية", "pe", "#3BA67B"],
-  ]);
+/** { exam, section, topic?, href } for the exam center builder, or null when no section fits. */
+export function practiceFor(stageId, subjectId) {
+  const hit = PRACTICE[stageId]?.[subjectId];
+  if (!hit) return null;
+  const [exam, section, topic] = hit;
+  const query = `section=${section}${topic ? `&topic=${topic}` : ""}`;
+  return { exam, section, ...(topic ? { topic } : {}), href: `/exams/${exam}?${query}#builder` };
+}
 
-const MIDDLE = (p) =>
-  mk(p, [
-    ["quran", "القرآن الكريم", "quran", "#7C9A6A"],
-    ["islamic", "الدراسات الإسلامية", "islamic", "#5E8C7B"],
-    ["arabic", "اللغة العربية", "arabic", "#C9A227"],
-    ["math", "الرياضيات", "math", "#C97B3B"],
-    ["science", "العلوم", "science", "#3B82A6"],
-    ["social", "الدراسات الاجتماعية", "social", "#A6643B"],
-    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-    ["digital", "المهارات الرقمية", "digital", "#4B5563"],
-    ["art", "التربية الفنية", "art", "#C93B7B"],
-    ["pe", "التربية البدنية والدفاع عن النفس", "pe", "#3BA67B"],
-    ["life", "المهارات الحياتية والأسرية", "life", "#8B5C9E"],
-  ]);
+/** Community hashtag for a subject (the feed accepts [0-9A-Za-z_] + Arabic, 2–50 chars). */
+export function communityTag(name) {
+  const tag = String(name || "")
+    .trim()
+    .replace(/\s+/g, "_")
+    .replace(/[^0-9A-Za-z_؀-ۿ]/g, "")
+    .replace(/_+/g, "_")
+    .slice(0, 50)
+    .toLowerCase();
+  return tag.length >= 2 ? tag : null;
+}
 
-const HS_COMMON = (p) =>
-  mk(p, [
-    ["quran", "القرآن الكريم", "quran", "#7C9A6A"],
-    ["islamic", "الدراسات الإسلامية", "islamic", "#5E8C7B"],
-    ["arabic", "الكفايات اللغوية", "arabic", "#C9A227"],
-    ["math", "الرياضيات", "math", "#C97B3B"],
-    ["physics", "الفيزياء", "physics", "#3B82A6"],
-    ["chemistry", "الكيمياء", "chemistry", "#3BA67B"],
-    ["biology", "الأحياء", "biology", "#7C9A6A"],
-    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-    ["social", "الدراسات الاجتماعية", "social", "#A6643B"],
-    ["digital", "التقنية الرقمية", "digital", "#4B5563"],
-    ["critical", "التفكير الناقد", "critical", "#8B5C9E", ["t1"]], // example: term 1 only
-  ]);
-
-const HS_GENERAL = (p) =>
-  mk(p, [
-    ["islamic", "الدراسات الإسلامية", "islamic", "#5E8C7B"],
-    ["arabic", "اللغة العربية", "arabic", "#C9A227"],
-    ["math", "الرياضيات", "math", "#C97B3B"],
-    ["physics", "الفيزياء", "physics", "#3B82A6"],
-    ["chemistry", "الكيمياء", "chemistry", "#3BA67B"],
-    ["biology", "الأحياء", "biology", "#7C9A6A"],
-    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-    ["social", "الدراسات الاجتماعية", "social", "#A6643B"],
-    ["digital", "التقنية الرقمية", "digital", "#4B5563"],
-  ]);
-
-const HS_SHARIA = (p) =>
-  mk(p, [
-    ["tafsir", "التفسير", "quran", "#7C9A6A"],
-    ["hadith", "الحديث", "hadith", "#5E8C7B"],
-    ["fiqh", "الفقه", "law", "#A6643B"],
-    ["tawhid", "التوحيد", "tawhid", "#C9A227"],
-    ["arabic", "الدراسات الأدبية", "arabic", "#C97B3B"],
-    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-  ]);
-
-const HS_BUSINESS = (p) =>
-  mk(p, [
-    ["business", "إدارة الأعمال", "business", "#C97B3B"],
-    ["finance", "المالية", "finance", "#3BA67B"],
-    ["law", "القانون", "law", "#A6643B"],
-    ["math", "الرياضيات", "math", "#C9A227"],
-    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-    ["digital", "التقنية الرقمية", "digital", "#4B5563"],
-  ]);
-
-const HS_CS = (p) =>
-  mk(p, [
-    ["cs", "علوم الحاسب", "cs", "#4B5563"],
-    ["math", "الرياضيات", "math", "#C9A227"],
-    ["physics", "الفيزياء", "physics", "#3B82A6"],
-    ["engineering", "الهندسة", "engineering", "#A6643B"],
-    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-    ["capstone", "مشروع التخرج", "engineering", "#8B5C9E", ["t2"]], // example: term 2 only
-  ]);
-
-const HS_HEALTH = (p) =>
-  mk(p, [
-    ["biology", "الأحياء", "biology", "#7C9A6A"],
-    ["chemistry", "الكيمياء", "chemistry", "#3BA67B"],
-    ["health", "الصحة واللياقة", "health", "#C9485E"],
-    ["physics", "الفيزياء", "physics", "#3B82A6"],
-    ["math", "الرياضيات", "math", "#C9A227"],
-    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-  ]);
-
-const CONTINUING = (p) =>
-  mk(p, [
-    ["islamic", "الدراسات الإسلامية", "islamic", "#5E8C7B"],
-    ["arabic", "اللغة العربية", "arabic", "#C9A227"],
-    ["math", "الرياضيات", "math", "#C97B3B"],
-    ["science", "العلوم", "science", "#3B82A6"],
-    ["social", "الدراسات الاجتماعية", "social", "#A6643B"],
-    ["english", "اللغة الإنجليزية", "english", "#6A6AC9"],
-    ["digital", "المهارات الرقمية", "digital", "#4B5563"],
-  ]);
-
-const SPECIAL_ELEM = (p) =>
-  mk(p, [
-    ["quran", "القرآن الكريم", "quran", "#7C9A6A"],
-    ["islamic", "الدراسات الإسلامية", "islamic", "#5E8C7B"],
-    ["arabic", "التواصل اللغوي", "arabic", "#C9A227"],
-    ["math", "المفاهيم الكمية", "math", "#C97B3B"],
-    ["science", "العلوم", "science", "#3B82A6"],
-    ["life", "المهارات الحياتية", "life", "#8B5C9E"],
-  ]);
-
-const SPECIAL_MID = (p) =>
-  mk(p, [
-    ["islamic", "الدراسات الإسلامية", "islamic", "#5E8C7B"],
-    ["arabic", "التواصل اللغوي", "arabic", "#C9A227"],
-    ["math", "المفاهيم الكمية", "math", "#C97B3B"],
-    ["science", "العلوم", "science", "#3B82A6"],
-    ["digital", "المهارات الرقمية", "digital", "#4B5563"],
-    ["life", "المهارات الحياتية", "life", "#8B5C9E"],
-  ]);
-
-const SPECIAL_REHAB = (p) =>
-  mk(p, [
-    ["life", "المهارات الحياتية", "life", "#8B5C9E"],
-    ["arabic", "التواصل اللغوي", "arabic", "#C9A227"],
-    ["math", "المفاهيم الكمية", "math", "#C97B3B"],
-    ["pe", "المهارات الحركية", "pe", "#3BA67B"],
-    ["digital", "المهارات المهنية", "digital", "#4B5563"],
-  ]);
-
-const SPECIAL_GUIDE = (p) =>
-  mk(p, [["teacher", "الدليل المرجعي للمعلم", "teacher", "#4B5563"]]);
-
-// --- grade-leaf builder (elementary / middle / continuing) -----------------
-function gradeLeaves(stageId, count, subjFn, color) {
-  return Array.from({ length: count }, (_, i) => {
-    const g = i + 1;
-    const id = `grade-${g}`;
-    return {
+// --- builders --------------------------------------------------------------
+// Subject row: [id, official Arabic name, annual periods (max), plan labels?]
+function buildSubjects(ctx, rows) {
+  return rows.map(([id, name, periods, labels]) => {
+    const [icon, family] = VISUAL[id] || ["grade", "project"];
+    const subject = {
       id,
-      name: `الصف ${ORD[g]}`,
-      icon: "grade",
-      color,
-      subjects: subjFn(`${YEAR_KEY}/${stageId}/${id}`),
+      name,
+      name_en: NAME_EN[name] || name,
+      labels: labels || null,
+      labels_en: labels ? labels.map((l) => labelEn(name, l)) : null,
+      icon,
+      color: FAMILY[family],
+      periods,
+      status: "verified",
+      terms: ["t1", "t2"],
+      terms_status: "unverified",
+      notes: notesFor(ctx, id, labels),
+      resources: [],
     };
+    const base = `${YEAR}/${ctx.path}/${id}`;
+    for (const t of TERMS) {
+      RESOURCE_TYPES.forEach((d, i) => {
+        const key = `${base}/${t.id}/${d.file}`;
+        subject.resources.push({
+          id: `${id}-${t.id}-${d.suffix}`,
+          type: d.id,
+          kind: d.kind,
+          order: i, // 0 student · 1 activity · 2 exams
+          title: d.title,
+          title_en: d.title_en,
+          term: t.id,
+          termName: t.name,
+          key,
+          file_type: "pdf",
+          availability: HOSTED.has(key) ? "hosted" : d.availability,
+          status: "unverified", // the official book listing could not be observed (docs/CURRICULUM.md)
+        });
+      });
+    }
+    return subject;
   });
 }
 
-// --- high-school tracks (shared by ثاني/ثالث ثانوي) ------------------------
-const HS_TRACKS = (gradeKey, color) => [
-  { id: "general", name: "المسار العام", icon: "critical", color: "#6A6AC9", subjects: HS_GENERAL(`${gradeKey}/general`) },
-  { id: "sharia", name: "المسار الشرعي", icon: "quran", color: "#7C9A6A", subjects: HS_SHARIA(`${gradeKey}/sharia`) },
-  { id: "business", name: "مسار إدارة الأعمال", icon: "business", color: "#A6643B", subjects: HS_BUSINESS(`${gradeKey}/business`) },
-  { id: "cs-eng", name: "مسار علوم الحاسب والهندسة", icon: "cs", color: "#4B5563", subjects: HS_CS(`${gradeKey}/cs-eng`) },
-  { id: "health", name: "مسار الصحة والحياة", icon: "health", color: "#C9485E", subjects: HS_HEALTH(`${gradeKey}/health`) },
-];
+const ORD = ["", "الأول", "الثاني", "الثالث", "الرابع", "الخامس", "السادس"];
 
 // ============================================================================
-// The tree.  branch node → `children`.  leaf node → `subjects`.
+// General education, grades 1–9 (guide pp.19, 21, 23 — general-education tables)
+// ============================================================================
+// Per grade: [id, name, [periods by grade]]; 0 = not taught in that grade.
+const ELEMENTARY_ROWS = {
+  low: {
+    page: 19,
+    rows: [
+      ["islamic", "القرآن الكريم والدراسات الإسلامية", [180, 180, 180]],
+      ["arabic", "اللغة العربية", [288, 252, 216]],
+      ["math", "الرياضيات", [180, 216, 216]],
+      ["science", "العلوم", [108, 108, 144]],
+      ["english", "اللغة الإنجليزية", [108, 108, 108]],
+      ["art", "التربية الفنية", [72, 72, 72]],
+      ["pe", "التربية البدنية والدفاع عن النفس", [108, 108, 108]],
+      ["life", "المهارات الحياتية والأسرية", [36, 36, 36]],
+    ],
+  },
+  up: {
+    page: 21,
+    rows: [
+      ["islamic", "القرآن الكريم والدراسات الإسلامية", [180, 180, 180]],
+      ["arabic", "اللغة العربية", [180, 180, 180]],
+      ["social", "الدراسات الاجتماعية", [72, 72, 72]],
+      ["math", "الرياضيات", [216, 216, 216]],
+      ["science", "العلوم", [144, 144, 144]],
+      ["english", "اللغة الإنجليزية", [108, 108, 108]],
+      ["digital", "المهارات الرقمية", [72, 72, 72]],
+      ["art", "التربية الفنية", [36, 36, 36]],
+      ["pe", "التربية البدنية والدفاع عن النفس", [72, 72, 72]],
+      ["life", "المهارات الحياتية والأسرية", [36, 36, 36]],
+    ],
+  },
+};
+
+const MIDDLE_ROWS = {
+  page: 23,
+  rows: [
+    ["islamic", "القرآن الكريم والدراسات الإسلامية", [180, 180, 180]],
+    ["arabic", "اللغة العربية", [180, 180, 144]],
+    ["social", "الدراسات الاجتماعية", [108, 108, 72]],
+    ["math", "الرياضيات", [216, 216, 216]],
+    ["science", "العلوم", [144, 144, 144]],
+    ["english", "اللغة الإنجليزية", [144, 144, 144]],
+    ["digital", "المهارات الرقمية", [72, 72, 72]],
+    ["art", "التربية الفنية", [72, 72, 72]],
+    ["pe", "التربية البدنية والدفاع عن النفس", [72, 72, 72]],
+    ["life", "المهارات الحياتية والأسرية", [36, 36, 36]],
+    ["critical", "التفكير الناقد", [0, 0, 72]],
+  ],
+};
+
+function gradeLeaf(stage, n, table, column, suffix, suffixEn) {
+  const id = `grade-${n}`;
+  const ctx = { stage, grade: id, track: null, path: `${stage}/${id}` };
+  const rows = table.rows.filter((r) => r[2][column] > 0).map(([sid, name, p]) => [sid, name, p[column]]);
+  return {
+    id,
+    n,
+    name: `الصف ${ORD[n]}`,
+    name_en: `Grade ${n}`,
+    title: `الصف ${ORD[n]} ${suffix}`,
+    title_en: `${suffixEn} Grade ${n}`,
+    icon: "grade",
+    status: "verified",
+    plan: { pages: [table.page] },
+    subjects: buildSubjects(ctx, rows),
+  };
+}
+
+// ============================================================================
+// Secondary (الثانوية العامة) — guide pp.25–40. Year 2 and year 3 differ.
+// ============================================================================
+const SECONDARY = {
+  "grade-1": {
+    "first-year": {
+      pages: [25, 28],
+      rows: [
+        ["quran", "القرآن الكريم وتفسيره", 60],
+        ["math", "الرياضيات", 180, ["الرياضيات 1"]],
+        ["english", "اللغة الإنجليزية", 180, ["اللغة الإنجليزية 1"]],
+        ["digital", "التقنية الرقمية", 108, ["التقنية الرقمية 1"]],
+        ["biology", "الأحياء", 60, ["الأحياء 1"]],
+        ["chemistry", "الكيمياء", 60, ["الكيمياء 1"]],
+        ["physics", "الفيزياء", 60, ["الفيزياء 1"]],
+        ["environment", "علم البيئة", 36],
+        ["arabic", "الكفايات اللغوية", 120, ["الكفايات اللغوية 1"]],
+        ["hadith", "الحديث", 36, ["الحديث 1"]],
+        ["financial-literacy", "المعرفة المالية", 36],
+        ["social", "الدراسات الاجتماعية", 60],
+        ["critical", "التفكير الناقد", 48],
+        ["vocational", "التربية المهنية", 36],
+        ["pe", "التربية الصحية والبدنية", 72, ["التربية الصحية والبدنية 1"]],
+      ],
+    },
+  },
+  "grade-2": {
+    general: {
+      pages: [26, 29, 30],
+      rows: [
+        ["math", "الرياضيات", 180, ["الرياضيات 2"]],
+        ["english", "اللغة الإنجليزية", 180, ["اللغة الإنجليزية 2"]],
+        ["chemistry", "الكيمياء", 180, ["الكيمياء 2"]],
+        ["biology", "الأحياء", 144, ["الأحياء 2"]],
+        ["physics", "الفيزياء", 60, ["الفيزياء 2"]],
+        ["tawhid", "التوحيد", 36, ["التوحيد 1"]],
+        ["arabic", "الكفايات اللغوية", 72, ["الكفايات اللغوية 2"]],
+        ["digital", "التقنية الرقمية", 72, ["التقنية الرقمية 2"]],
+        ["history", "التاريخ", 60],
+        ["arts", "الفنون", 36],
+        ["fitness", "اللياقة والثقافة الصحية", 60],
+      ],
+    },
+    sharia: {
+      pages: [26, 38, 39, 40],
+      rows: [
+        ["quran", "القرآن الكريم", 180, ["القرآن الكريم 1"]],
+        ["english", "اللغة الإنجليزية", 180, ["اللغة الإنجليزية 2"]],
+        ["tawhid", "التوحيد", 72, ["التوحيد 1", "التوحيد 2"]],
+        ["hadith", "الحديث", 36, ["الحديث 2"]],
+        ["qiraat", "القراءات", 120, ["القراءات 1", "القراءات 2"]],
+        ["quran-sciences", "علوم القرآن", 60],
+        ["tafsir", "التفسير", 36, ["التفسير 1"]],
+        ["arabic", "الكفايات اللغوية", 72, ["الكفايات اللغوية 2"]],
+        ["linguistic-studies", "الدراسات اللغوية", 60],
+        ["digital", "التقنية الرقمية", 72, ["التقنية الرقمية 2"]],
+        ["history", "التاريخ", 60],
+        ["arts", "الفنون", 36],
+        ["fitness", "اللياقة والثقافة الصحية", 60],
+      ],
+    },
+    business: {
+      pages: [26, 35, 36, 37],
+      rows: [
+        ["english", "اللغة الإنجليزية", 180, ["اللغة الإنجليزية 2"]],
+        ["tawhid", "التوحيد", 36, ["التوحيد 1"]],
+        ["tafsir", "التفسير", 36, ["التفسير 1"]],
+        ["arabic", "الكفايات اللغوية", 72, ["الكفايات اللغوية 2"]],
+        ["linguistic-studies", "الدراسات اللغوية", 60],
+        ["decision-making", "صناعة القرار في الأعمال", 156],
+        ["intro-business", "مقدمة في الأعمال", 120],
+        ["economics", "مبادئ الاقتصاد", 48],
+        ["finance", "الإدارة المالية", 108],
+        ["digital", "التقنية الرقمية", 72, ["التقنية الرقمية 2"]],
+        ["history", "التاريخ", 60],
+        ["arts", "الفنون", 36],
+        ["fitness", "اللياقة والثقافة الصحية", 60],
+      ],
+    },
+    "cs-eng": {
+      pages: [26, 31, 32],
+      rows: [
+        ["math", "الرياضيات", 180, ["الرياضيات 2"]],
+        ["english", "اللغة الإنجليزية", 180, ["اللغة الإنجليزية 2"]],
+        ["chemistry", "الكيمياء", 180, ["الكيمياء 2"]],
+        ["biology", "الأحياء", 144, ["الأحياء 2"]],
+        ["physics", "الفيزياء", 60, ["الفيزياء 2"]],
+        ["tawhid", "التوحيد", 36, ["التوحيد 1"]],
+        ["arabic", "الكفايات اللغوية", 72, ["الكفايات اللغوية 2"]],
+        ["data-science", "علم البيانات", 36],
+        ["iot", "إنترنت الأشياء", 72],
+        ["engineering", "الهندسة", 60],
+        ["fitness", "اللياقة والثقافة الصحية", 60],
+      ],
+    },
+    health: {
+      pages: [26, 33, 34],
+      rows: [
+        ["math", "الرياضيات", 180, ["الرياضيات 2"]],
+        ["english", "اللغة الإنجليزية", 180, ["اللغة الإنجليزية 2"]],
+        ["chemistry", "الكيمياء", 180, ["الكيمياء 2"]],
+        ["biology", "الأحياء", 144, ["الأحياء 2"]],
+        ["physics", "الفيزياء", 60, ["الفيزياء 2"]],
+        ["tawhid", "التوحيد", 36, ["التوحيد 1"]],
+        ["arabic", "الكفايات اللغوية", 72, ["الكفايات اللغوية 2"]],
+        ["digital", "التقنية الرقمية", 72, ["التقنية الرقمية 2"]],
+        ["health-sciences", "مبادئ العلوم الصحية", 96],
+        ["fitness", "اللياقة والثقافة الصحية", 60],
+      ],
+    },
+  },
+  "grade-3": {
+    general: {
+      pages: [27, 29, 30],
+      rows: [
+        ["math", "الرياضيات", 144, ["الرياضيات 3"]],
+        ["english", "اللغة الإنجليزية", 144, ["اللغة الإنجليزية 3"]],
+        ["chemistry", "الكيمياء", 60, ["الكيمياء 3"]],
+        ["physics", "الفيزياء", 180, ["الفيزياء 3"]],
+        ["earth-space", "علوم الأرض والفضاء", 96],
+        ["fiqh", "الفقه", 36, ["الفقه 1"]],
+        ["arabic", "الدراسات الأدبية", 36],
+        ["psych-social", "الدراسات النفسية والاجتماعية", 36],
+        ["digital", "التقنية الرقمية", 36, ["التقنية الرقمية 3"]],
+        ["digital-citizenship", "المواطنة الرقمية", 36],
+        ["geography", "الجغرافيا", 36],
+        ["life", "المهارات الحياتية", 36],
+        ["pe", "التربية الصحية والبدنية", 48, ["التربية الصحية والبدنية 2"]],
+        ["research", "البحث ومصادر المعلومات", 36],
+        ["elective", "المجال الاختياري", 120],
+      ],
+    },
+    sharia: {
+      pages: [27, 38, 39, 40],
+      rows: [
+        ["quran", "القرآن الكريم", 180, ["القرآن الكريم 2"]],
+        ["english", "اللغة الإنجليزية", 144, ["اللغة الإنجليزية 3"]],
+        ["tafsir", "التفسير", 36, ["التفسير 2"]],
+        ["fiqh", "الفقه", 96, ["الفقه 1", "الفقه 2"]],
+        ["usul-fiqh", "أصول الفقه", 36],
+        ["hadith-terminology", "مصطلح الحديث", 36],
+        ["faraid", "الفرائض", 48],
+        ["arabic", "الدراسات الأدبية", 36],
+        ["psych-social", "الدراسات النفسية والاجتماعية", 36],
+        ["rhetoric", "الدراسات البلاغية والنقدية", 48],
+        ["law", "مبادئ القانون", 120],
+        ["law-applications", "تطبيقات في القانون", 36],
+        ["digital-citizenship", "المواطنة الرقمية", 36],
+        ["geography", "الجغرافيا", 36],
+        ["life", "المهارات الحياتية", 36],
+        ["pe", "التربية الصحية والبدنية", 48, ["التربية الصحية والبدنية 2"]],
+        ["research", "البحث ومصادر المعلومات", 36],
+        ["capstone", "مشروع التخرج", 36],
+      ],
+    },
+    business: {
+      pages: [27, 35, 36, 37],
+      rows: [
+        ["english", "اللغة الإنجليزية", 144, ["اللغة الإنجليزية 3"]],
+        ["fiqh", "الفقه", 36, ["الفقه 1"]],
+        ["arabic", "الدراسات الأدبية", 36],
+        ["psych-social", "الدراسات النفسية والاجتماعية", 36],
+        ["rhetoric", "الدراسات البلاغية والنقدية", 48],
+        ["management", "مبادئ الإدارة", 60],
+        ["events", "إدارة الفعاليات", 120],
+        ["marketing", "تخطيط الحملات التسويقية", 120],
+        ["secretarial", "السكرتارية والإدارة المكتبية", 60],
+        ["law", "مبادئ القانون", 120],
+        ["law-applications", "تطبيقات في القانون", 36],
+        ["digital-citizenship", "المواطنة الرقمية", 36],
+        ["statistics", "الإحصاء", 36],
+        ["geography", "الجغرافيا", 36],
+        ["life", "المهارات الحياتية", 36],
+        ["pe", "التربية الصحية والبدنية", 48, ["التربية الصحية والبدنية 2"]],
+        ["research", "البحث ومصادر المعلومات", 36],
+        ["capstone", "مشروع التخرج", 36],
+      ],
+    },
+    "cs-eng": {
+      pages: [27, 31, 32],
+      rows: [
+        ["math", "الرياضيات", 144, ["الرياضيات 3"]],
+        ["english", "اللغة الإنجليزية", 144, ["اللغة الإنجليزية 3"]],
+        ["chemistry", "الكيمياء", 60, ["الكيمياء 3"]],
+        ["physics", "الفيزياء", 180, ["الفيزياء 3"]],
+        ["earth-space", "علوم الأرض والفضاء", 96],
+        ["fiqh", "الفقه", 36, ["الفقه 1"]],
+        ["arabic", "الدراسات الأدبية", 36],
+        ["ai", "الذكاء الاصطناعي", 84],
+        ["cybersecurity", "الأمن السيبراني", 36],
+        ["software-engineering", "هندسة البرمجيات", 60],
+        ["engineering-design", "التصميم الهندسي", 48],
+        ["life", "المهارات الحياتية", 36],
+        ["pe", "التربية الصحية والبدنية", 48, ["التربية الصحية والبدنية 2"]],
+        ["research", "البحث ومصادر المعلومات", 36],
+        ["capstone", "مشروع التخرج", 36],
+      ],
+    },
+    health: {
+      pages: [27, 33, 34],
+      rows: [
+        ["math", "الرياضيات", 144, ["الرياضيات 3"]],
+        ["english", "اللغة الإنجليزية", 144, ["اللغة الإنجليزية 3"]],
+        ["chemistry", "الكيمياء", 60, ["الكيمياء 3"]],
+        ["physics", "الفيزياء", 180, ["الفيزياء 3"]],
+        ["earth-space", "علوم الأرض والفضاء", 96],
+        ["fiqh", "الفقه", 36, ["الفقه 1"]],
+        ["arabic", "الدراسات الأدبية", 36],
+        ["healthcare", "الرعاية الصحية", 108],
+        ["body-systems", "أنظمة جسم الإنسان", 84],
+        ["statistics", "الإحصاء", 36],
+        ["life", "المهارات الحياتية", 36],
+        ["pe", "التربية الصحية والبدنية", 48, ["التربية الصحية والبدنية 2"]],
+        ["research", "البحث ومصادر المعلومات", 36],
+        ["capstone", "مشروع التخرج", 36],
+      ],
+    },
+  },
+};
+
+const HS_GRADES = [
+  { id: "grade-1", n: 1, name: "أول ثانوي", name_en: "Year 1", plan_label: "السنة الأولى", sub: "السنة الأولى المشتركة", sub_en: "Common first year" },
+  { id: "grade-2", n: 2, name: "ثاني ثانوي", name_en: "Year 2", plan_label: "السنة الثانية", sub: "خمسة مسارات", sub_en: "Five tracks" },
+  { id: "grade-3", n: 3, name: "ثالث ثانوي", name_en: "Year 3", plan_label: "السنة الثالثة", sub: "خمسة مسارات", sub_en: "Five tracks" },
+];
+
+const HS_TRACKS = {
+  "first-year": { name: "السنة الأولى المشتركة", name_en: "Common first year", icon: "grade" },
+  general: { name: "المسار العام", name_en: "General track", icon: "critical" },
+  sharia: { name: "المسار الشرعي", name_en: "Sharia track", icon: "quran" },
+  business: { name: "مسار إدارة الأعمال", name_en: "Business Administration track", icon: "business" },
+  "cs-eng": { name: "مسار علوم الحاسب والهندسة", name_en: "Computer Science and Engineering track", icon: "cs" },
+  health: { name: "مسار الصحة والحياة", name_en: "Health and Life track", icon: "health" },
+};
+
+function secondaryGrade(g) {
+  const tracks = SECONDARY[g.id];
+  return {
+    id: g.id,
+    n: g.n,
+    name: g.name,
+    name_en: g.name_en,
+    title: g.name,
+    title_en: `High School ${g.name_en}`,
+    plan_label: g.plan_label,
+    sub: g.sub,
+    sub_en: g.sub_en,
+    icon: "grade",
+    status: "verified",
+    children: Object.entries(tracks).map(([tid, def]) => {
+      const tr = HS_TRACKS[tid];
+      const ctx = { stage: "high-school", grade: g.id, track: tid, path: `high-school/${g.id}/${tid}` };
+      return {
+        id: tid,
+        name: tr.name,
+        name_en: tr.name_en,
+        title: `${tr.name} · ${g.name}`,
+        title_en: `${tr.name_en} · High School ${g.name_en}`,
+        icon: tr.icon,
+        status: "verified",
+        plan: { pages: def.pages },
+        subjects: buildSubjects(ctx, def.rows),
+      };
+    }),
+  };
+}
+
+// ============================================================================
+// The tree. Branch node → `children`; leaf node → `subjects`.
+// `pending` programmes have separate official plans that have not been
+// verified yet: they have no subjects and render an honest notice.
 // ============================================================================
 export const CURRICULUM = [
   {
     id: "elementary",
     name: "المرحلة الابتدائية",
+    name_en: "Elementary",
+    title: "المرحلة الابتدائية",
+    title_en: "Elementary stage",
     sub: "الصفوف من الأول إلى السادس",
+    sub_en: "Grades 1 to 6",
     icon: "islamic",
-    color: "#7C9A6A",
-    children: gradeLeaves("elementary", 6, ELEMENTARY, "#7C9A6A"),
+    status: "verified",
+    children: [1, 2, 3, 4, 5, 6].map((n) =>
+      gradeLeaf("elementary", n, n <= 3 ? ELEMENTARY_ROWS.low : ELEMENTARY_ROWS.up, (n - 1) % 3, "الابتدائي", "Elementary")
+    ),
   },
   {
     id: "middle",
     name: "المرحلة المتوسطة",
+    name_en: "Middle school",
+    title: "المرحلة المتوسطة",
+    title_en: "Middle school stage",
     sub: "الصفوف من الأول إلى الثالث",
+    sub_en: "Grades 1 to 3",
     icon: "science",
-    color: "#3B82A6",
-    children: gradeLeaves("middle", 3, MIDDLE, "#3B82A6"),
+    status: "verified",
+    children: [1, 2, 3].map((n) => gradeLeaf("middle", n, MIDDLE_ROWS, n - 1, "المتوسط", "Middle School")),
   },
   {
     id: "high-school",
     name: "الثانوية العامة",
-    sub: "اختر الصف ثم المسار",
+    name_en: "High school",
+    title: "الثانوية العامة",
+    title_en: "High school (general secondary)",
+    sub: "سنة أولى مشتركة ثم خمسة مسارات",
+    sub_en: "A common first year, then five tracks",
     icon: "physics",
-    color: "#C97B3B",
-    children: [
-      {
-        id: "grade-1",
-        name: "أول ثانوي",
-        sub: "السنة الأولى المشتركة",
-        icon: "grade",
-        color: "#C97B3B",
-        children: [
-          { id: "first-year", name: "السنة الأولى المشتركة", icon: "grade", color: "#C97B3B", subjects: HS_COMMON(`${YEAR_KEY}/high-school/grade-1/first-year`) },
-        ],
-      },
-      {
-        id: "grade-2",
-        name: "ثاني ثانوي",
-        sub: "خمسة مسارات تخصّصية",
-        icon: "grade",
-        color: "#C97B3B",
-        children: HS_TRACKS(`${YEAR_KEY}/high-school/grade-2`),
-      },
-      {
-        id: "grade-3",
-        name: "ثالث ثانوي",
-        sub: "خمسة مسارات تخصّصية",
-        icon: "grade",
-        color: "#C97B3B",
-        children: HS_TRACKS(`${YEAR_KEY}/high-school/grade-3`),
-      },
-    ],
+    status: "verified",
+    children: HS_GRADES.map(secondaryGrade),
   },
   {
     id: "continuing",
     name: "التعليم المستمر",
-    sub: "الصفوف من الأول إلى الثالث",
+    name_en: "Continuing education",
+    title: "التعليم المستمر",
+    title_en: "Continuing education",
+    sub: "خطة مستقلة لم نتحقق منها بعد",
+    sub_en: "A separate plan we have not verified yet",
     icon: "social",
-    color: "#8B5C9E",
-    children: gradeLeaves("continuing", 3, CONTINUING, "#8B5C9E"),
+    status: "unverified",
+    pending: true,
+    children: [],
   },
   {
     id: "special",
     name: "التربية الخاصة",
-    sub: "ابتدائي ومتوسط والتأهيلية والدليل المرجعي",
+    name_en: "Special education",
+    title: "التربية الخاصة",
+    title_en: "Special education",
+    sub: "خطط مستقلة لم نتحقق منها بعد",
+    sub_en: "Separate plans we have not verified yet",
     icon: "rehab",
-    color: "#3BA67B",
-    children: [
-      { id: "elementary", name: "التربية الخاصة — ابتدائي", icon: "islamic", color: "#7C9A6A", subjects: SPECIAL_ELEM(`${YEAR_KEY}/special/elementary`) },
-      { id: "middle", name: "التربية الخاصة — متوسط", icon: "science", color: "#3B82A6", subjects: SPECIAL_MID(`${YEAR_KEY}/special/middle`) },
-      { id: "rehab", name: "البرامج التأهيلية", icon: "rehab", color: "#3BA67B", subjects: SPECIAL_REHAB(`${YEAR_KEY}/special/rehab`) },
-      { id: "teacher-guide", name: "الدليل المرجعي للمعلم", icon: "teacher", color: "#4B5563", subjects: SPECIAL_GUIDE(`${YEAR_KEY}/special/teacher-guide`) },
-    ],
+    status: "unverified",
+    pending: true,
+    children: [],
   },
 ];
 
@@ -317,7 +775,9 @@ export const CURRICULUM = [
 // Resolvers
 // ============================================================================
 
-// Walk a slug array → { node, trail } or null.
+export const isLeaf = (node) => Array.isArray(node?.subjects);
+
+/** Walk a slug array → { node, trail } or null. */
 export function resolveCurriculum(slug = []) {
   let nodes = CURRICULUM;
   let node = null;
@@ -331,13 +791,24 @@ export function resolveCurriculum(slug = []) {
   return { node, trail };
 }
 
-// Every branch + leaf path, for generateStaticParams (static/ISR pre-render).
-export function allCurriculumPaths() {
+/**
+ * A branch with a single leaf child (high school year 1 → the common first
+ * year). Its page redirects to that leaf, so it is not a page of its own.
+ */
+export const isAlias = (node) => Array.isArray(node?.children) && node.children.length === 1 && isLeaf(node.children[0]);
+
+/**
+ * Every branch + leaf path that is a real page (the sitemap's list).
+ * Pending programmes and alias branches are left out by default; pass
+ * { includePending: true, includeAliases: true } for generateStaticParams.
+ */
+export function allCurriculumPaths({ includePending = false, includeAliases = false } = {}) {
   const out = [];
   const walk = (nodes, prefix) => {
     for (const n of nodes) {
+      if (n.pending && !includePending) continue;
       const p = [...prefix, n.id];
-      out.push(p);
+      if (includeAliases || !isAlias(n)) out.push(p);
       if (n.children) walk(n.children, p);
     }
   };
@@ -345,39 +816,58 @@ export function allCurriculumPaths() {
   return out;
 }
 
-// Flat list of every resource (importer + tooling).
-export function allResources() {
+/** Every leaf with its slug and trail: [{ slug, node, trail, stage }]. */
+export function allLeaves() {
   const out = [];
-  const visit = (nodes, trail) => {
+  const walk = (nodes, prefix, trail) => {
     for (const n of nodes) {
-      const t = [...trail, n.name];
-      for (const s of n.subjects || []) {
-        for (const r of s.resources || []) {
-          out.push({ ...r, subjectId: s.id, subjectName: s.name, path: t.join(" › ") });
-        }
-      }
-      if (n.children) visit(n.children, t);
+      const p = [...prefix, n.id];
+      const tr = [...trail, n];
+      if (isLeaf(n)) out.push({ slug: p, node: n, trail: tr, stage: p[0] });
+      if (n.children) walk(n.children, p, tr);
     }
   };
-  visit(CURRICULUM, []);
+  walk(CURRICULUM, [], []);
   return out;
 }
 
-// Allow-list lookup used by the content API (confirms a key belongs to the
-// catalog) and returns the resource (for its title in the pending fallback).
-export function findResourceByKey(key) {
-  let found = null;
-  const visit = (nodes) => {
-    for (const n of nodes) {
-      if (found) return;
-      for (const s of n.subjects || []) {
-        for (const r of s.resources || []) {
-          if (r.key === key) { found = { ...r, subjectName: s.name }; return; }
-        }
+/** Flat list of every resource (importer, manifest builder, tooling). */
+export function allResources() {
+  const out = [];
+  for (const { slug, node, trail } of allLeaves()) {
+    for (const s of node.subjects) {
+      for (const r of s.resources) {
+        out.push({
+          ...r,
+          subjectId: s.id,
+          subjectName: s.name,
+          subjectName_en: s.name_en,
+          stage: slug[0],
+          grade: slug[1] || null,
+          track: slug[2] || null,
+          slug,
+          path: trail.map((n) => n.name).join(" › "),
+          path_en: trail.map((n) => n.name_en).join(" › "),
+        });
       }
-      if (n.children) visit(n.children);
     }
-  };
-  visit(CURRICULUM);
-  return found;
+  }
+  return out;
+}
+
+let byKey = null;
+/** Allow-list lookup: the resource for a catalog key (or null). */
+export function findResourceByKey(key) {
+  if (!byKey) byKey = new Map(allResources().map((r) => [r.key, r]));
+  return byKey.get(key) || null;
+}
+
+/** Headline numbers for the hub, derived from the tree (never hand-typed). */
+export function curriculumStats() {
+  const leaves = allLeaves();
+  const stages = CURRICULUM.filter((s) => !s.pending);
+  const grades = stages.reduce((n, s) => n + (s.children?.length || 0), 0);
+  const tracks = new Set(leaves.filter((l) => l.slug.length === 3 && l.node.id !== "first-year").map((l) => l.node.id));
+  const subjects = new Set(leaves.flatMap((l) => l.node.subjects.map((s) => s.name)));
+  return { stages: stages.length, grades, tracks: tracks.size, subjects: subjects.size, leaves: leaves.length };
 }

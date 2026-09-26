@@ -110,7 +110,7 @@ recommendations**.
 
 ## 7. Quality gates
 
-- `npx eslint <your files>` must pass (the full `next build` is run centrally).
+- `npx eslint --ext .js,.jsx <your files or folders>` must pass (the full `next build` is run centrally).
 - `npm test` — unit tests (vitest): i18n key parity, pure logic.
 - `npm run test:db` — database tests (PGlite + Supabase shim): schema, RLS,
   RPCs, constraints, pagination.

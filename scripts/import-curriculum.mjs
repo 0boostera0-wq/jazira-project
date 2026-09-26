@@ -2,12 +2,16 @@
 /* ============================================================================
  * Jazira — Curriculum PDF importer (authorized content only)
  * ----------------------------------------------------------------------------
- * Downloads APPROVED curriculum PDFs ONCE from an authorized source you control
- * or are licensed to use, and stores them in YOUR OWN storage so the app serves
- * them from Jazira's own domain. It is deliberately SAFE and NARROW:
+ * Downloads AUTHORISED curriculum PDFs ONCE from a source you control or are
+ * licensed to use, and stores them in YOUR OWN storage so the app serves them
+ * from Jazira's own domain. It is deliberately SAFE and NARROW:
  *
+ *   • Authorised targets    — every `key` must exist in the curriculum catalog
+ *                             AND be registered in src/content/curriculum/hosted.js
+ *                             (written permission or Jazira's own work on file).
+ *                             Official MoE textbooks may NOT be rehosted without
+ *                             written permission — see docs/CURRICULUM.md.
  *   • Allow-listed sources  — only hosts in SOURCE_ALLOWLIST are ever fetched.
- *   • Allow-listed targets  — every `key` must exist in the curriculum catalog.
  *   • No traversal / no schemes in keys; redirects are re-checked per hop.
  *   • Content-Type + size are validated; it is NOT a general URL proxy.
  *   • Idempotent — already-imported files are skipped (use --force to refresh).
@@ -26,8 +30,8 @@
  *
  * ENV
  *   SOURCE_ALLOWLIST          required for import — comma-separated hostnames,
- *                             e.g. "ebook.moe.gov.sa,moe.gov.sa"
- *   CONTENT_STORE             public | supabase   (default: public)
+ *                             e.g. "files.your-licensor.example"
+ *   CONTENT_STORE             public | supabase (alias: remote)   (default: public)
  *   CONTENT_BUCKET            supabase bucket name (default: curriculum)
  *   NEXT_PUBLIC_SUPABASE_URL  } required for the supabase store
  *   SUPABASE_SERVICE_ROLE_KEY }  (server secret — local use only)
@@ -49,7 +53,13 @@ const val = (f, d) => { const i = argv.indexOf(f); return i >= 0 && argv[i + 1] 
 
 const DRY = has("--dry-run");
 const FORCE = has("--force");
-const STORE = (val("--store", process.env.CONTENT_STORE) || "public").toLowerCase();
+// "remote" is what /api/content/fetch calls a CONTENT_BASE_URL bucket; here it means the Supabase store.
+const STORE_RAW = (val("--store", process.env.CONTENT_STORE) || "public").toLowerCase();
+const STORE = STORE_RAW === "remote" ? "supabase" : STORE_RAW;
+if (!["public", "supabase"].includes(STORE)) {
+  console.error(`Unknown store "${STORE_RAW}" — use public or supabase (remote).`);
+  process.exit(1);
+}
 const BUCKET = process.env.CONTENT_BUCKET || "curriculum";
 const MAX_BYTES = (Number(process.env.CONTENT_MAX_MB) || 100) * 1024 * 1024;
 const LIMIT = Number(val("--limit", "0")) || 0;
@@ -67,7 +77,7 @@ async function loadCatalog() {
 // ── helper commands ─────────────────────────────────────────────────────────
 async function cmdListKeys(catalog, prefix) {
   const rows = catalog.allResources().filter((r) => !prefix || r.key.startsWith(prefix));
-  for (const r of rows) log(`${r.key}${C.gray}  — ${r.path} › ${r.title}${C.reset}`);
+  for (const r of rows) log(`${r.key}${C.gray}  — ${r.path} › ${r.subjectName} › ${r.termName} › ${r.title} (${r.availability})${C.reset}`);
   log(`${C.cyan}${rows.length} keys${C.reset}`);
 }
 
@@ -75,7 +85,7 @@ async function cmdEmitManifest(catalog, prefix, outFile) {
   if (!prefix) { log(`${C.red}--emit-manifest needs a <keyPrefix> (e.g. 1447/elementary/grade-1)${C.reset}`); process.exit(1); }
   const rows = catalog.allResources().filter((r) => r.key.startsWith(prefix));
   if (!rows.length) { log(`${C.yellow}No catalog keys match "${prefix}".${C.reset}`); process.exit(1); }
-  const sources = rows.map((r) => ({ key: r.key, url: "", _note: `${r.path} › ${r.title}` }));
+  const sources = rows.map((r) => ({ key: r.key, url: "", _note: `${r.path} › ${r.subjectName} › ${r.termName} › ${r.title}` }));
   const out = outFile || path.join(__dirname, "curriculum-sources.json");
   await fs.writeFile(out, JSON.stringify({ sources }, null, 2) + "\n", "utf8");
   log(`${C.green}Wrote ${sources.length} skeleton entries → ${out}${C.reset}`);
@@ -190,6 +200,11 @@ async function cmdImport(catalog) {
       log(`${C.red}✗ ${tag}${C.reset} ${C.gray}— key not in catalog / invalid shape${C.reset}`);
       report.push({ key: e.key, status: "failed", error: "invalid_or_unknown_key" }); failed++; continue;
     }
+    // 2) the file must be authorised: registered in src/content/curriculum/hosted.js
+    if (!catalog.isRegisteredHosted(e.key)) {
+      log(`${C.red}✗ ${tag}${C.reset} ${C.gray}— not registered in src/content/curriculum/hosted.js (authorisation required)${C.reset}`);
+      report.push({ key: e.key, status: "failed", error: "not_authorised" }); failed++; continue;
+    }
     try {
       if (!FORCE && (await store.exists(e.key))) {
         log(`${C.gray}• ${tag} — already present, skipped${C.reset}`);
@@ -217,7 +232,10 @@ async function cmdImport(catalog) {
 
   log(`\n${C.cyan}Done.${C.reset} imported=${C.green}${imported}${C.reset} skipped=${skipped} failed=${C.red}${failed}${C.reset}`);
   log(`${C.gray}Report → ${reportPath}${C.reset}`);
-  if (imported && !DRY) log(`${C.cyan}Next:${C.reset} ${store.hint(process.env.NEXT_PUBLIC_SUPABASE_URL)}`);
+  if (imported && !DRY) {
+    log(`${C.cyan}Next:${C.reset} ${store.hint(process.env.NEXT_PUBLIC_SUPABASE_URL)}`);
+    log(`${C.cyan}Then:${C.reset} node scripts/build-curriculum-manifest.mjs  (marks the imported keys "hosted")`);
+  }
   if (failed) process.exitCode = 1;
 }
 

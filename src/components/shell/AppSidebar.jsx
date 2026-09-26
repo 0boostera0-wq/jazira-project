@@ -40,8 +40,8 @@ export default function AppSidebar() {
         ) : (
           <div className="relative overflow-hidden rounded-lg border border-line/10 bg-surface p-4 shadow-xs">
             <Sparkles size={56} aria-hidden="true" className="absolute -end-3 -top-3 text-gold-100" />
-            <p className="relative text-sm font-medium text-ink">{tc("premium.lockedTitle")}</p>
-            <p className="relative mt-1 text-xs leading-relaxed text-ink-3">{tc("premium.lockedBody")}</p>
+            <p className="relative text-sm font-medium text-ink">{t("promo.title")}</p>
+            <p className="relative mt-1 text-xs leading-relaxed text-ink-3">{t("promo.body")}</p>
             <Button href="/subscriptions" variant="gold" size="sm" iconStart={Crown} className="relative mt-3 w-full">
               {tc("premium.upgradeCta")}
             </Button>

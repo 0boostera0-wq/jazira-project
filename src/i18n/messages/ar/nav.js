@@ -59,6 +59,10 @@ const nav = {
     searchShort: "بحث",
     shortcut: "Ctrl K",
   },
+  promo: {
+    title: "ارتقِ بتدريبك مع النخبة",
+    body: "اختبارات أطول دون حد يومي، وتحليلات أدق لنقاط قوتك، ومساعد بلا حدود.",
+  },
   account: {
     guestName: "زائر",
     guestBody: "سجّل الدخول لحفظ تقدّمك",

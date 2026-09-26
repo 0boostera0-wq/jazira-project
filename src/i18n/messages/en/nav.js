@@ -58,6 +58,10 @@ const nav = {
     searchShort: "Search",
     shortcut: "Ctrl K",
   },
+  promo: {
+    title: "Level up with Elite",
+    body: "Longer exams with no daily limit, sharper analytics and an unlimited assistant.",
+  },
   account: {
     guestName: "Guest",
     guestBody: "Sign in to save your progress",

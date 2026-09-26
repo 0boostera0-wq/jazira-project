@@ -53,7 +53,7 @@ export default function Tabs({ items, value, onChange, variant = "pill", size = 
             onClick={() => onChange(it.value)}
             onKeyDown={(e) => onKey(e, i)}
             className={cn(
-              "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-medium transition-colors duration-fast",
+              "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-medium transition-colors duration-fast focus-visible:[box-shadow:var(--ring)]",
               size === "sm" ? "text-[0.8125rem]" : "text-sm",
               variant === "pill"
                 ? cn("rounded-full px-3.5", size === "sm" ? "h-8" : "h-9", active ? "bg-surface text-ink shadow-sm" : "text-ink-3 hover:text-ink")

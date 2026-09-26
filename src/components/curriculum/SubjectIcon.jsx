@@ -1,86 +1,85 @@
-"use client";
-
-import { useRef } from "react";
-import { motion, useReducedMotion, useInView } from "framer-motion";
 import {
-  Calculator, FlaskConical, Atom, BookOpen, BookMarked, Feather, Languages,
-  Microscope, Dna, Globe, Cpu, Code, Palette, Dumbbell, Brain, Briefcase,
-  TrendingUp, Scale, DraftingCompass, HeartPulse, ScrollText, Sparkles,
-  HeartHandshake, ClipboardList, Accessibility, GraduationCap,
+  Accessibility, Activity, Atom, Award, BadgeDollarSign, BookHeart, BookMarked, BookOpen, BookOpenText,
+  Brain, BrainCircuit, Briefcase, Building2, Calculator, CalendarRange, ChartColumn, ChartPie, ClipboardList,
+  Code, Cpu, Database, DraftingCompass, Dumbbell, Earth, Feather, FileSearch, FlaskConical, Gavel,
+  Globe, GraduationCap, HandCoins, HeartHandshake, HeartPulse, Landmark, Languages, Leaf, Map as MapIcon,
+  Megaphone, Microscope, Mic, Orbit, Palette, PenTool, Quote, Route, Scale, ScrollText, Shapes, ShieldCheck,
+  SpellCheck, Stethoscope, TrendingUp, Users, Wallet, Wifi, Wrench,
 } from "lucide-react";
+import { cn } from "@/components/ui/cn";
 
-// Each subject maps to a Lucide glyph + a continuous micro-animation preset.
-// Animations are transform/opacity ONLY (GPU-cheap), pause when off-screen, and
-// are fully disabled under prefers-reduced-motion. Hover intensifies them.
-const MAP = {
-  quran: { Icon: BookMarked, motion: "breathe" },
-  islamic: { Icon: BookOpen, motion: "flip" },
-  arabic: { Icon: Feather, motion: "write" },
-  english: { Icon: Languages, motion: "pop" },
-  math: { Icon: Calculator, motion: "press" },     // "interacting" calculator
-  science: { Icon: Microscope, motion: "bob" },
-  physics: { Icon: Atom, motion: "spin" },         // orbiting atom
-  chemistry: { Icon: FlaskConical, motion: "bubble" }, // reacting flask
-  biology: { Icon: Dna, motion: "spin" },
-  social: { Icon: Globe, motion: "spin" },
-  digital: { Icon: Cpu, motion: "pulse" },
-  cs: { Icon: Code, motion: "press" },
-  art: { Icon: Palette, motion: "sway" },
-  pe: { Icon: Dumbbell, motion: "lift" },
-  critical: { Icon: Brain, motion: "pulse" },
-  business: { Icon: Briefcase, motion: "pop" },
-  finance: { Icon: TrendingUp, motion: "rise" },
-  law: { Icon: Scale, motion: "sway" },
-  engineering: { Icon: DraftingCompass, motion: "spin" },
-  health: { Icon: HeartPulse, motion: "pulse" },
-  hadith: { Icon: ScrollText, motion: "breathe" },
-  tawhid: { Icon: Sparkles, motion: "twinkle" },
-  life: { Icon: HeartHandshake, motion: "pulse" },
-  teacher: { Icon: ClipboardList, motion: "bob" },
-  rehab: { Icon: Accessibility, motion: "pulse" },
-  grade: { Icon: GraduationCap, motion: "bob" },
-  default: { Icon: BookOpen, motion: "breathe" },
+// Subject glyphs. Server-safe (no hooks, no motion). The catalog's `icon` field
+// (shared with src/components/stages/icons.js) is the fallback; the id map
+// gives newer secondary subjects a more specific glyph.
+const BY_ID = {
+  islamic: BookOpen, quran: BookMarked, tawhid: BookHeart, hadith: ScrollText, tafsir: BookOpenText,
+  qiraat: Mic, "quran-sciences": BookMarked, fiqh: Scale, "usul-fiqh": Landmark, "hadith-terminology": ScrollText,
+  faraid: HandCoins,
+  arabic: Feather, "linguistic-studies": SpellCheck, rhetoric: Quote,
+  english: Languages,
+  math: Calculator, statistics: ChartPie,
+  physics: Atom, "earth-space": Orbit,
+  chemistry: FlaskConical,
+  science: Microscope, biology: Leaf, environment: Earth, "health-sciences": Stethoscope, healthcare: Stethoscope,
+  "body-systems": HeartPulse,
+  social: Globe, history: Landmark, geography: MapIcon, "psych-social": Users,
+  digital: Cpu, "digital-citizenship": ShieldCheck, "data-science": Database, iot: Wifi, ai: BrainCircuit,
+  cybersecurity: ShieldCheck, "software-engineering": Code, engineering: DraftingCompass, "engineering-design": PenTool,
+  art: Palette, arts: Palette,
+  pe: Dumbbell, fitness: Activity,
+  life: HeartHandshake, critical: Brain, vocational: Wrench, "financial-literacy": Wallet, research: FileSearch,
+  "decision-making": Route, "intro-business": Briefcase, economics: TrendingUp, finance: BadgeDollarSign,
+  management: Building2, events: CalendarRange, marketing: Megaphone, secretarial: ClipboardList,
+  law: Gavel, "law-applications": Gavel,
+  capstone: Award, elective: Shapes,
 };
 
-const LOOP = {
-  breathe: { animate: { scale: [1, 1.06, 1] }, transition: { duration: 3.2 } },
-  spin: { animate: { rotate: 360 }, transition: { duration: 9, ease: "linear" } },
-  bubble: { animate: { y: [0, -2.5, 0], rotate: [0, -4, 4, 0] }, transition: { duration: 2.6 } },
-  press: { animate: { y: [0, -2, 0] }, transition: { duration: 1.8 } },
-  write: { animate: { rotate: [0, -7, 6, 0] }, transition: { duration: 2.4 } },
-  pulse: { animate: { scale: [1, 1.1, 1], opacity: [0.9, 1, 0.9] }, transition: { duration: 2 } },
-  bob: { animate: { y: [0, -3, 0] }, transition: { duration: 2.8 } },
-  sway: { animate: { rotate: [0, 6, -6, 0] }, transition: { duration: 3 } },
-  pop: { animate: { scale: [1, 1.08, 1] }, transition: { duration: 2.2 } },
-  lift: { animate: { y: [0, -3, 0], rotate: [0, -3, 0] }, transition: { duration: 2 } },
-  rise: { animate: { y: [0, -3, 0] }, transition: { duration: 2 } },
-  twinkle: { animate: { scale: [1, 1.15, 1], rotate: [0, 15, 0] }, transition: { duration: 2.4 } },
-  flip: { animate: { rotateY: [0, 22, 0] }, transition: { duration: 3 } },
+const BY_ICON = {
+  quran: BookMarked, islamic: BookOpen, arabic: Feather, english: Languages, math: Calculator, science: Microscope,
+  physics: Atom, chemistry: FlaskConical, biology: Leaf, social: Globe, digital: Cpu, cs: Code, art: Palette,
+  pe: Dumbbell, critical: Brain, business: Briefcase, finance: TrendingUp, law: Scale, engineering: DraftingCompass,
+  health: HeartPulse, hadith: ScrollText, tawhid: BookHeart, life: HeartHandshake, teacher: ClipboardList,
+  rehab: Accessibility, grade: GraduationCap, chart: ChartColumn,
 };
 
-export default function SubjectIcon({ icon = "default", size = 26, className = "" }) {
-  const reduce = useReducedMotion();
-  const ref = useRef(null);
-  const inView = useInView(ref, { margin: "0px 0px -10% 0px" });
+/** Lucide glyph for a subject (by id, then by catalog icon id). */
+export function subjectGlyph({ id, icon } = {}) {
+  return BY_ID[id] || BY_ICON[icon] || BookOpen;
+}
 
-  const { Icon, motion: m } = MAP[icon] || MAP.default;
-  const preset = LOOP[m] || LOOP.breathe;
-  const live = !reduce && inView;
+/** Bare glyph. */
+export default function SubjectIcon({ id, icon, size = 20, className }) {
+  const Icon = subjectGlyph({ id, icon });
+  return <Icon size={size} aria-hidden="true" className={className} />;
+}
 
+const TILE = {
+  xs: ["h-7 w-7 rounded-sm", 14],
+  sm: ["h-8 w-8 rounded-sm", 16],
+  md: ["h-11 w-11 rounded-md", 20],
+  lg: ["h-14 w-14 rounded-lg", 26],
+};
+
+/**
+ * Subject colour tile. The subject colour is a CSS variable; the tint and the
+ * glyph colour are mixed per theme so contrast holds in light and dark mode.
+ */
+export function SubjectTile({ subject, size = "md", className }) {
+  const [box, px] = TILE[size] || TILE.md;
+  const Icon = subjectGlyph(subject || {});
   return (
-    <motion.span
-      ref={ref}
-      animate={live ? preset.animate : {}}
-      transition={
-        live
-          ? { ...preset.transition, repeat: Infinity, repeatType: "loop", ease: preset.transition.ease || "easeInOut" }
-          : { duration: 0.2 }
-      }
-      whileHover={reduce ? {} : { scale: 1.18 }}
-      style={{ display: "inline-flex", transformStyle: "preserve-3d", willChange: "transform" }}
-      className={className}
+    <span
+      aria-hidden="true"
+      className={cn(
+        "inline-grid shrink-0 place-items-center ring-1 ring-inset",
+        "bg-[color-mix(in_srgb,var(--subj)_11%,transparent)] text-[color:var(--subj)] ring-[color:color-mix(in_srgb,var(--subj)_22%,transparent)]",
+        "dark:bg-[color-mix(in_srgb,var(--subj)_24%,transparent)] dark:text-[color:color-mix(in_srgb,var(--subj)_45%,white)] dark:ring-[color:color-mix(in_srgb,var(--subj)_40%,transparent)]",
+        box,
+        className
+      )}
+      style={{ "--subj": subject?.color || "#9A722C" }}
     >
-      <Icon size={size} strokeWidth={1.6} />
-    </motion.span>
+      <Icon size={px} />
+    </span>
   );
 }

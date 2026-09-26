@@ -7,42 +7,15 @@ import { useLocale, useT } from "@/i18n/client";
 import { APP_NAV } from "@/lib/nav";
 import { NAV_ICONS } from "./icons";
 import { cn } from "@/components/ui/cn";
+import { loadCurriculumIndex, normalizeText, searchCurriculum } from "@/lib/search/curriculum-index";
 
 // Instant, local-first command search. Pages and the curriculum tree are
 // matched in-memory (zero network); "search everything" hands off to /search,
 // which queries the indexed database search. Loaded lazily on first open.
 
-const norm = (s) =>
-  (s || "")
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[ً-ٰٟ]/g, "") // Arabic diacritics
-    .replace(/[أإآ]/g, "ا")
-    .replace(/ة/g, "ه")
-    .replace(/ى/g, "ي")
-    .trim();
-
-let curriculumIndex = null;
-async function loadCurriculumIndex() {
-  if (curriculumIndex) return curriculumIndex;
-  const { CURRICULUM } = await import("@/lib/curriculum");
-  const out = [];
-  const walk = (nodes, path, trail) => {
-    for (const n of nodes) {
-      const p = [...path, n.id];
-      const href = `/curriculum/${p.join("/")}`;
-      const tr = [...trail, n];
-      out.push({ kind: "node", href, ar: n.name, en: n.name_en || n.name, trailAr: tr.map((x) => x.name), trailEn: tr.map((x) => x.name_en || x.name) });
-      for (const s of n.subjects || []) {
-        out.push({ kind: "subject", href: `${href}?subject=${s.id}`, ar: s.name, en: s.name_en || s.name, trailAr: tr.map((x) => x.name), trailEn: tr.map((x) => x.name_en || x.name) });
-      }
-      if (n.children) walk(n.children, p, tr);
-    }
-  };
-  walk(CURRICULUM, [], []);
-  curriculumIndex = out;
-  return out;
-}
+// Shared Arabic-aware curriculum index (diacritics/alef/ta-marbuta folding),
+// loaded as its own chunk on first open — same index as the /search page.
+const norm = (text) => normalizeText(text);
 
 export default function CommandPalette({ onClose }) {
   const t = useT("nav");
@@ -68,9 +41,7 @@ export default function CommandPalette({ onClose }) {
     const nq = norm(q);
     const pageHits = (nq ? pages.filter((p) => norm(p.label).includes(nq)) : pages.slice(0, 6)).slice(0, 6);
     const currHits = nq.length >= 2
-      ? curr
-          .filter((c) => norm(c.ar).includes(nq) || norm(c.en).includes(nq))
-          .slice(0, 8)
+      ? searchCurriculum(curr, q, { limit: 8 })
           .map((c) => ({ kind: c.kind, href: c.href, label: locale === "en" ? c.en : c.ar, sub: (locale === "en" ? c.trailEn : c.trailAr).join(" · ") }))
       : [];
     const all = q.trim().length >= 2 ? [{ kind: "all", href: `/search?q=${encodeURIComponent(q.trim())}`, label: q.trim() }] : [];

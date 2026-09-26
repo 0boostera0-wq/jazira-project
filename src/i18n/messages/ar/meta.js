@@ -49,7 +49,7 @@ const meta = {
     resetPassword: { title: "تعيين كلمة مرور جديدة", description: "اختر كلمة مرور جديدة لحسابك." },
     verifyEmail: { title: "تأكيد البريد الإلكتروني", description: "أكّد بريدك الإلكتروني لتفعيل حسابك." },
     profileSetup: { title: "إكمال الملف الشخصي", description: "أكمل بيانات ملفك الشخصي." },
-    dashboard: { title: "لوحتي", description: "تقدّمك وخطتك اليومية واختباراتك الأخيرة." },
+    dashboard: { title: "لوحتي", description: "تقدّمك واختباراتك الأخيرة وما يستحق التدرّب عليه الآن." },
     notFound: { title: "الصفحة غير موجودة", description: "الصفحة المطلوبة غير موجودة." },
   },
 };

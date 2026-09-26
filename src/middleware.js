@@ -23,14 +23,18 @@ const PROTECTED = [
   "/profile",
   "/notifications",
   "/chat",
-  "/assistant",
   "/checkout",
   "/exams/attempt",
   "/exams/history",
   "/profile-setup",
 ];
 
-const isProtected = (path) => PROTECTED.some((p) => path === p || path.startsWith(`${p}/`));
+// Public exceptions under a protected prefix: guest practice runs entirely
+// client-side against /api/exams/local/* and never touches account data.
+const PUBLIC_EXCEPTIONS = new Set(["/exams/attempt/local"]);
+
+const isProtected = (path) =>
+  !PUBLIC_EXCEPTIONS.has(path) && PROTECTED.some((p) => path === p || path.startsWith(`${p}/`));
 
 // Supabase SSR stores the session in `sb-<ref>-auth-token` (possibly chunked .0/.1).
 const hasAuthCookie = (req) =>

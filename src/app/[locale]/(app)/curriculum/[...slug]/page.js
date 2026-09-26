@@ -1,79 +1,64 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft, Home } from "lucide-react";
-import { resolveCurriculum, allCurriculumPaths, ACADEMIC_YEAR } from "@/lib/curriculum";
-import StageCard from "@/components/curriculum/StageCard";
-import SubjectBrowser from "@/components/curriculum/SubjectBrowser";
-import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
+import { setRequestLocale, getT } from "@/i18n/server";
+import { buildMetadata, breadcrumbJsonLd, jsonLd } from "@/lib/seo";
+import { YEAR, allCurriculumPaths, isAlias, isLeaf, resolveCurriculum } from "@/lib/curriculum";
+import { breadcrumbs, titleOf } from "@/components/curriculum/copy";
+import StageView from "@/components/curriculum/views/StageView";
+import HighSchoolView from "@/components/curriculum/views/HighSchoolView";
+import BranchView from "@/components/curriculum/views/BranchView";
+import LeafView from "@/components/curriculum/views/LeafView";
+import PendingView from "@/components/curriculum/views/PendingView";
 
-export const revalidate = 3600;
+// Every node of the catalog is prerendered in both languages; anything else is
+// a 404. The catalog is static data, so nothing here reads cookies or headers.
+// Alias branches (high school year 1 → the common first year) are not pages:
+// ../high-school/grade-1/route.js answers them with a real 308.
+export const dynamicParams = false;
 
-// Pre-render every branch + leaf path → sub-second navigation.
 export function generateStaticParams() {
-  return allCurriculumPaths().map((slug) => ({ slug }));
+  return allCurriculumPaths({ includePending: true }).map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }) {
+export async function generateMetadata({ params }) {
   const r = resolveCurriculum(params.slug);
-  if (!r?.node) return {};
-  const path = "/curriculum/" + params.slug.join("/");
-  return {
-    title: `${r.node.name} — المناهج والمصادر`,
-    alternates: { canonical: path },
-  };
+  if (!r?.node || isAlias(r.node)) return {};
+  const t = await getT("curriculum", params.locale);
+  const name = titleOf(r.node, params.locale);
+  const pending = Boolean(r.trail[0]?.pending);
+  return buildMetadata({
+    locale: params.locale,
+    key: "curriculumNode",
+    vars: { name },
+    description: t(pending ? "seo.pending" : "seo.node", { name, year: YEAR }),
+    path: `/curriculum/${params.slug.join("/")}`,
+    // Unverified programmes (no subjects yet) are not indexed.
+    noindex: pending,
+  });
 }
 
-export default function CurriculumNode({ params }) {
+export default async function CurriculumNodePage({ params }) {
+  setRequestLocale(params.locale);
+  const { locale } = params;
   const slug = params.slug || [];
   const r = resolveCurriculum(slug);
-  if (!r?.node) notFound();
+  if (!r?.node || isAlias(r.node)) notFound();
   const { node, trail } = r;
 
+  const t = await getT("curriculum");
+  const { ld } = breadcrumbs(t, slug, trail, locale);
+  const props = { slug, node, trail, locale };
+  const stage = trail[0];
+
+  let view;
+  if (stage.pending) view = <PendingView {...props} />;
+  else if (isLeaf(node)) view = <LeafView {...props} />;
+  else if (slug.length === 1) view = stage.id === "high-school" ? <HighSchoolView {...props} /> : <StageView {...props} />;
+  else view = <BranchView {...props} />;
+
   return (
-    <div>
-      {/* Breadcrumb */}
-      <nav className="mb-5 flex flex-wrap items-center gap-1.5 text-sm text-ink-muted">
-        <Link href="/curriculum" className="inline-flex items-center gap-1 hover:text-gold">
-          <Home size={14} /> المكتبة
-        </Link>
-        {trail.map((n, i) => {
-          const href = "/curriculum/" + slug.slice(0, i + 1).join("/");
-          const last = i === trail.length - 1;
-          return (
-            <span key={n.id} className="inline-flex items-center gap-1.5">
-              <ChevronLeft size={14} />
-              {last ? (
-                <span className="font-bold text-ink">{n.name}</span>
-              ) : (
-                <Link href={href} className="hover:text-gold">
-                  {n.name}
-                </Link>
-              )}
-            </span>
-          );
-        })}
-      </nav>
-
-      <Reveal>
-        <h1 className="text-2xl font-extrabold text-ink sm:text-3xl">{node.name}</h1>
-        <p className="mt-1 text-sm text-ink-soft">العام الدراسي {ACADEMIC_YEAR}</p>
-      </Reveal>
-
-      <div className="mt-7">
-        {node.children ? (
-          <Stagger className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {node.children.map((child) => (
-              <StaggerItem key={child.id}>
-                <Link href={"/curriculum/" + [...slug, child.id].join("/")} className="block h-full">
-                  <StageCard node={child} />
-                </Link>
-              </StaggerItem>
-            ))}
-          </Stagger>
-        ) : (
-          <SubjectBrowser subjects={node.subjects || []} />
-        )}
-      </div>
-    </div>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbJsonLd(ld, locale)) }} />
+      {view}
+    </>
   );
 }

@@ -1,4 +1,370 @@
 // Owned by the community feature. Keep keys identical in ar/community.js and en/community.js.
-const community = {};
+const community = {
+  page: {
+    name: "Learning community",
+    eyebrow: "Learning community",
+    title: "Learn alongside students on the same path",
+    lead: "Ask questions, share the resources and tips that helped you, and celebrate wins with students preparing for Qudurat, Tahsili and school subjects just like you.",
+    ways: {
+      ask: "Ask about what's hard",
+      share: "Share a win or a resource",
+      help: "Help someone with an answer",
+    },
+  },
+
+  feed: {
+    title: "Community posts",
+    newPosts: { one: "1 new post", other: "{count} new posts" },
+    loadMore: "Load more",
+    retry: "Try again",
+    end: "You're all caught up",
+    unavailable: {
+      title: "The community isn't available right now",
+      body: "We couldn't reach the community service, so posts can't be shown at the moment. Please try again in a little while.",
+    },
+    error: { title: "Couldn't load posts" },
+    empty: {
+      showAll: "Show all posts",
+      all: {
+        title: "Be the first to start the conversation",
+        body: "Ask about a lesson you're stuck on or share a study tip that worked for you — the first post gets everyone else talking.",
+        cta: "Write the first post",
+      },
+      following: {
+        title: "Nothing new from people you follow",
+        body: "When people you follow post, you'll see it here.",
+      },
+      noFollowing: {
+        title: "Follow learners to build this feed",
+        body: "Follow people whose posts you find useful and this tab will collect what they share in one place.",
+      },
+      tag: {
+        title: "No posts in {tag} yet",
+        body: "Be the first to post here — a question, a resource or a tip.",
+        cta: "Write the first post",
+      },
+      author: {
+        title: "No posts yet",
+        body: "This member hasn't posted in the community yet.",
+      },
+      authorSelf: {
+        title: "You haven't posted yet",
+        body: "Share a question or a win and it will appear here on your profile.",
+        cta: "Go to the community",
+      },
+      liked: {
+        title: "No liked posts to show",
+        body: "Posts this member likes will appear here.",
+      },
+      reposted: {
+        title: "No reposts yet",
+        body: "Posts this member reposts will appear here.",
+      },
+    },
+  },
+
+  filters: {
+    label: "Filter posts",
+    typesLabel: "By post type",
+    subjectsLabel: "By subject or exam",
+    all: "All",
+    following: "Following",
+    showing: "Showing posts in {topic}",
+    openTopic: "Open the topic page",
+    kinds: {
+      question: "Questions",
+      win: "Wins",
+      resource: "Resources",
+      tip: "Tips",
+    },
+  },
+
+  topics: {
+    qudurat: "Qudurat",
+    tahsili: "Tahsili",
+    math: "Math",
+    physics: "Physics",
+    chemistry: "Chemistry",
+    biology: "Biology",
+    english: "English",
+    studying: "Studying",
+  },
+
+  composer: {
+    label: "New post",
+    start: "What are you studying today?",
+    startTag: "Write a post in {tag}",
+    kindsLabel: "Post type",
+    kinds: {
+      question: {
+        label: "Ask a question",
+        placeholder: "What are you stuck on? Mention the subject, the lesson and what you've tried.",
+        hint: "Clear questions get faster answers — type the question out or attach a photo of it.",
+      },
+      win: {
+        label: "Share a win",
+        placeholder: "What did you achieve? A score, a finished chapter or a habit you kept.",
+        hint: "Tell others how you got there — your path might help someone else.",
+      },
+      resource: {
+        label: "Share a resource",
+        placeholder: "Which resource helped you? Say what it is, what it covers and who it suits.",
+        hint: "Add an https link if there is one, and make sure the source is trustworthy.",
+      },
+      tip: {
+        label: "Study tip",
+        placeholder: "Which tip changed the way you study?",
+        hint: "Practical, tried-and-tested tips help the most.",
+      },
+    },
+    placeholder: "Write a question, an idea or a resource that could help others…",
+    hint: "Use # to add a topic and @ to mention a member by username.",
+    topicsLabel: "Subject or exam (optional)",
+    tagsPreview: "Will be posted with:",
+    audience: "Visible to everyone in the community",
+    anonymous: {
+      badge: "Posting anonymously",
+      hint: "Your name and photo won't appear on your posts",
+      mediaWarning: "Photos and videos can reveal who you are — skip them if you want to stay anonymous.",
+    },
+    image: "Photo",
+    video: "Video",
+    addImageLong: "Add a photo (up to 5 MB)",
+    addVideoLong: "Add a video (up to 30 seconds, 50 MB)",
+    previewAlt: "Attachment preview",
+    removeMedia: "Remove attachment",
+    publish: "Post",
+    publishing: "Posting…",
+    uploading: "Uploading…",
+    published: "Your post is live.",
+    counter: "{count} / {max}",
+    rules: "By posting, you agree to follow the",
+    rulesLink: "community guidelines",
+    guest: {
+      title: "Join the conversation",
+      body: "Sign in to ask questions, share wins and help others. Anyone can read posts without an account.",
+    },
+    errors: {
+      empty: "Write something or attach a photo or video before posting.",
+      tooLong: "That's longer than the {max}-character limit.",
+      imageType: "Supported photo formats: JPG, PNG, WebP, GIF and AVIF.",
+      imageSize: "The photo is larger than 5 MB.",
+      videoType: "Supported video formats: MP4, WebM and MOV.",
+      videoSize: "The video is larger than 50 MB.",
+      videoLength: "Videos can be up to 30 seconds long.",
+      videoRead: "We couldn't read that video. Try another file.",
+      mediaType: "That file type isn't supported.",
+    },
+  },
+
+  post: {
+    anonymous: "Anonymous member",
+    anonymousYou: "You (anonymous)",
+    unknown: "Jazira member",
+    readMore: "Read more",
+    readLess: "Show less",
+    share: "Share",
+    copied: "Link copied",
+    menu: {
+      edit: "Edit text",
+      replaceMedia: "Replace attachment",
+      addMedia: "Add a photo or video",
+      removeMedia: "Remove attachment",
+      copyLink: "Copy link to post",
+      delete: "Delete post",
+      report: "Report post",
+      block: "Block {name}",
+    },
+    a11y: {
+      like: "Like ({count})",
+      dislike: "Not helpful ({count})",
+      comments: "Comments ({count})",
+      repost: "Repost ({count})",
+      share: "Share post",
+      menu: "Post options",
+      openImage: "View full-size image",
+      closeImage: "Close image",
+      video: "Video attached to the post",
+      media: "Image shared by {name}",
+      mediaAnonymous: "Image shared by an anonymous member",
+    },
+  },
+
+  comments: {
+    title: "Comments",
+    empty: "No comments yet. Be the first to help.",
+    loadEarlier: "Show earlier comments",
+    loading: "Loading…",
+    placeholder: "Write a helpful comment…",
+    send: "Send comment",
+    sending: "Sending…",
+    signIn: "Sign in",
+    signInBody: "Sign in to join the discussion.",
+    menu: "Comment options",
+    delete: "Delete comment",
+    report: "Report comment",
+    unavailable: "Comments aren't available right now.",
+  },
+
+  dialogs: {
+    edit: { title: "Edit post", label: "Post text" },
+    delete: {
+      title: "Delete this post?",
+      body: "The post, its comments and its reactions will be permanently removed. This can't be undone.",
+      confirm: "Delete",
+    },
+    deleteComment: {
+      title: "Delete this comment?",
+      body: "Your comment will be permanently removed.",
+      confirm: "Delete",
+    },
+    removeMedia: {
+      title: "Remove the attachment?",
+      body: "The photo or video will be removed from the post; the text stays.",
+      confirm: "Remove",
+    },
+    block: {
+      title: "Block {name}?",
+      body: "You won't see their posts or comments, and neither of you will be able to comment, react, follow or message the other. You can unblock them from their profile.",
+      confirm: "Block",
+    },
+    report: {
+      title: {
+        post: "Report a post",
+        comment: "Report a comment",
+        user: "Report a member",
+      },
+      body: "The Jazira team reviews reports against the community guidelines. The author won't know who reported them.",
+      reasonLabel: "What's wrong?",
+      reasons: {
+        spam: "Spam or advertising",
+        harassment: "Harassment or bullying",
+        inappropriate: "Inappropriate content",
+        misinformation: "Wrong or misleading information",
+        privacy: "Privacy violation",
+        other: "Something else",
+      },
+      noteLabel: "More details",
+      noteHint: "Briefly help us understand (up to 500 characters).",
+      submit: "Send report",
+      reasonRequired: "Choose a reason for your report.",
+      doneTitle: "Report received",
+      doneBody: "Thank you. We'll review it and take action under the community guidelines.",
+    },
+  },
+
+  errors: {
+    not_authenticated: "Your session has ended. Sign in and try again.",
+    forbidden: "You can't do that on this content.",
+    unavailable: "This isn't available right now. Please try again shortly.",
+    network: "Couldn't connect. Check your internet connection and try again.",
+    upload_failed: "The upload failed. Try again or choose a smaller file.",
+    invalid_media: "That attachment can't be used. Choose a supported photo or video.",
+    empty_post: "A post can't be empty — keep some text or an attachment.",
+    invalid_argument: "Check what you entered and try again.",
+    unknown: "Something went wrong. Please try again.",
+  },
+
+  follow: {
+    follow: "Follow",
+    followName: "Follow {name}",
+    following: "Following",
+    menu: "Follow settings",
+    menuName: "Following {name} — notification settings",
+    prefsTitle: "Notifications from this member",
+    prefs: {
+      all: "All activity",
+      posts: "Posts only",
+      off: "Off",
+    },
+    unfollow: "Unfollow",
+    failed: "Your follow change wasn't saved. Please try again.",
+  },
+
+  signIn: {
+    title: "Sign in to take part",
+    body: "Anyone can read. To take part, you need a free account.",
+    signIn: "Sign in",
+    signUp: "Create account",
+    perks: {
+      ask: "Ask questions and get answers from other students",
+      share: "Share your wins and favourite resources",
+      follow: "Follow helpful learners and react to their posts",
+    },
+  },
+
+  rail: {
+    label: "Community sidebar",
+    guidelines: {
+      title: "Community guidelines",
+      points: {
+        respect: "Be respectful, even when you disagree.",
+        useful: "Share what helps people learn; skip repetitive or promotional posts.",
+        privacy: "Protect your privacy and other people's.",
+        report: "Report content that breaks the rules so we can review it.",
+      },
+      link: "Read the full guidelines",
+      short: "Be respectful, share what helps and protect privacy.",
+    },
+    topics: {
+      title: "Most active topics",
+      subtitle: "By number of posts",
+      count: { zero: "No posts", one: "1 post", other: "{count} posts" },
+      start: {
+        title: "Start with a subject",
+        empty: "No topics are active yet. Pick a subject to read or ask the first question.",
+        unavailable: "Post counts can't be loaded right now, but you can still open any subject.",
+      },
+    },
+    people: {
+      title: "Active learners",
+      subtitle: "Most experience points earned",
+      level: "Level {level}",
+      xp: "{xp} XP",
+      empty: "Suggestions will appear here as more learners join.",
+      unavailable: "Suggestions couldn't be loaded right now.",
+    },
+  },
+
+  tag: {
+    eyebrow: "Topic",
+    breadcrumb: "Breadcrumb",
+    lead: "Questions, resources and tips students shared in {tag}.",
+    count: { zero: "No posts yet", one: "1 post", other: "{count} posts" },
+    about: {
+      question: "Students' questions across every subject. Answer one today — your explanation might save someone an hour of studying.",
+      win: "Wins big and small: scores, finished chapters and habits that stuck.",
+      resource: "Resources students tried and found useful: explanations, summaries and practice.",
+      tip: "Practical study tips tried by students like you.",
+      qudurat: "Everything about the General Aptitude Test (Qudurat), verbal and quantitative.",
+      tahsili: "Preparing for the Tahsili achievement test: math, physics, chemistry and biology.",
+      math: "Math questions, problems and explanations for every stage.",
+      physics: "Physics concepts, laws and problems.",
+      chemistry: "Chemical reactions, equations and chemistry problems.",
+      biology: "Cells, genetics and biology made simple.",
+      english: "Vocabulary, grammar and English test preparation.",
+      studying: "Time management, focus and study plans.",
+    },
+  },
+
+  thread: {
+    title: "Discussion",
+    back: "Back to the community",
+    metaTitle: "Post in the learning community",
+    metaDescription: "A post and discussion from the Jazira learning community.",
+    missing: {
+      title: "This post isn't available",
+      body: "Its author may have deleted it, or the link may be wrong.",
+    },
+    blocked: {
+      title: "You blocked this post's author",
+      body: "You won't see their posts or comments any more. You can unblock them from their profile.",
+    },
+    unavailable: {
+      title: "Couldn't load this post",
+      body: "The community service isn't available right now. Please try again shortly.",
+    },
+  },
+};
 
 export default community;

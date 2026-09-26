@@ -1,127 +1,101 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
-import { findResourceByKey } from "@/lib/curriculum";
-import { pendingPdf } from "@/lib/pendingPdf";
 
 export const runtime = "nodejs";
-// Streamed per-request; the CDN still caches via the Cache-Control header below.
 export const dynamic = "force-dynamic";
 
 // ============================================================================
-// Authorized content serving — serve YOUR OWN / licensed PDFs through your own
-// Jazira domain. The browser ALWAYS talks only to /api/content/fetch — no
-// external host or source name is ever exposed in the UI / Network tab.
+// Authorised curriculum files — served from Jazira's own store.
 // ----------------------------------------------------------------------------
-// Two stores (chosen automatically; override with CONTENT_STORE):
-//   • "public"  — files live in /public/resources/<key> on this server. Served
-//                 from local disk, so the site works even if the original source
-//                 is unavailable. Default when CONTENT_BASE_URL is not set.
-//   • "remote"  — files live in your own storage (e.g. a Supabase Storage public
-//                 bucket); CONTENT_BASE_URL points at its base. We stream them
-//                 server-side, so again only the Jazira URL is visible.
+// Serves a file ONLY when the curriculum manifest
+// (src/content/curriculum/manifest.json, built by
+// scripts/build-curriculum-manifest.mjs) marks its key `availability: "hosted"`,
+// i.e. it is registered in src/content/curriculum/hosted.js with written
+// permission (or is Jazira's own work) and exists in the store. Today no file
+// is hosted: official textbooks stay on «مقرراتي» / Madrasati, which Jazira is
+// not permitted to rehost. Everything else is a 404 JSON — never a placeholder.
 //
-// This is NOT a general URL proxy:
-//   1. the `key` must exist in YOUR curriculum catalog (allow-list),
-//   2. it must match a strict path shape (no schemes, no `..` traversal),
-//   3. remote mode pins the result to CONTENT_BASE_URL's exact host (SSRF-safe);
-//      public mode pins the resolved path inside /public/resources.
+// Stores (CONTENT_STORE, default "public" unless CONTENT_BASE_URL is set):
+//   • public — public/resources/<key> on this server (path pinned inside it)
+//   • remote — CONTENT_BASE_URL (your own bucket); the target is pinned to that
+//              exact origin, so this is never a general URL proxy (SSRF-safe)
 // ============================================================================
 
-const BASE = process.env.CONTENT_BASE_URL; // e.g. https://<proj>.supabase.co/storage/v1/object/public/curriculum
+const BASE = process.env.CONTENT_BASE_URL;
 const STORE = process.env.CONTENT_STORE || (BASE ? "remote" : "public");
 const PUBLIC_DIR = path.join(process.cwd(), "public", "resources");
 
-const KEY_RE = /^[A-Za-z0-9_\-./]+\.pdf$/;
+const KEY_RE = /^[A-Za-z0-9][A-Za-z0-9_\-./]{0,199}\.pdf$/;
+const wellFormed = (key) => typeof key === "string" && KEY_RE.test(key) && !key.includes("..") && !key.includes("//");
 
-// A key is valid only if it is well-formed AND present in the published catalog.
-function validKey(key) {
-  return Boolean(key) && KEY_RE.test(key) && !key.includes("..") && Boolean(findResourceByKey(key));
+let hostedKeys = null;
+async function hostedSet() {
+  if (!hostedKeys) {
+    const { default: manifest } = await import("@/content/curriculum/manifest.json");
+    hostedKeys = new Set((manifest.rows || []).filter((r) => r.availability === "hosted").map((r) => r.internal_key));
+  }
+  return hostedKeys;
+}
+
+function jsonError(status, error) {
+  return NextResponse.json(
+    { error },
+    { status, headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } }
+  );
 }
 
 function pdfHeaders(key, asDownload, extra = {}) {
   const headers = new Headers();
   headers.set("Content-Type", "application/pdf");
-  const filename = (key.split("/").pop() || "document.pdf").replace(/"/g, "");
+  const filename = (key.split("/").pop() || "document.pdf").replace(/[^A-Za-z0-9_.-]/g, "");
   headers.set("Content-Disposition", `${asDownload ? "attachment" : "inline"}; filename="${filename}"`);
-  // Content is versioned by its key → safe to cache hard on the edge/CDN.
+  // Keys are versioned by year/path → safe to cache on the CDN.
   headers.set("Cache-Control", "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800");
+  headers.set("X-Content-Type-Options", "nosniff");
   headers.set("Accept-Ranges", "bytes");
   for (const [k, v] of Object.entries(extra)) if (v) headers.set(k, v);
   return headers;
 }
 
-// Until the real file is imported, return a valid branded PDF so the viewer
-// always OPENS something (never the "تعذر تحميل المحتوى" failure). `?strict=1`
-// disables this so a truly-missing file can be detected (returns 404).
-function pendingResponse(key, asDownload, strict) {
-  if (strict) return NextResponse.json({ error: "not_found" }, { status: 404 });
-  const body = new Uint8Array(pendingPdf(key, findResourceByKey(key)?.title || ""));
-  const headers = pdfHeaders(key, asDownload, { "Content-Length": String(body.byteLength) });
-  // Never cache the placeholder as if it were the real file.
-  headers.set("Cache-Control", "no-store");
-  headers.set("X-Jazira-Content", "pending-import");
-  return new NextResponse(body, { status: 200, headers });
-}
-
-// ── local store: stream from /public/resources/<key> ──────────────────────
-async function serveLocal(key, asDownload, strict) {
+// ── public store: stream from public/resources/<key> ─────────────────────────
+async function serveLocal(key, asDownload) {
   const filePath = path.join(PUBLIC_DIR, key);
-  // Defense-in-depth: the resolved path must stay inside /public/resources.
   const rel = path.relative(PUBLIC_DIR, filePath);
-  if (rel.startsWith("..") || path.isAbsolute(rel)) {
-    return NextResponse.json({ error: "invalid_key" }, { status: 400 });
-  }
+  if (rel.startsWith("..") || path.isAbsolute(rel)) return jsonError(400, "invalid_key");
   try {
-    const data = await fs.readFile(filePath);
-    // Buffer → fresh Uint8Array so the body is a clean ArrayBuffer view.
-    const body = new Uint8Array(data);
-    return new NextResponse(body, {
-      status: 200,
-      headers: pdfHeaders(key, asDownload, { "Content-Length": String(body.byteLength) }),
-    });
+    const body = new Uint8Array(await fs.readFile(filePath));
+    return new NextResponse(body, { status: 200, headers: pdfHeaders(key, asDownload, { "Content-Length": String(body.byteLength) }) });
   } catch {
-    // Not imported yet → serve the branded pending PDF (still opens cleanly).
-    return pendingResponse(key, asDownload, strict);
+    return jsonError(404, "not_found");
   }
 }
 
-// ── remote store: stream from CONTENT_BASE_URL (host-pinned) ───────────────
+// ── remote store: stream from CONTENT_BASE_URL (origin-pinned) ───────────────
 function resolveRemote(key) {
   if (!BASE) return null;
-  let target;
   try {
-    target = new URL(key.replace(/^\/+/, ""), BASE.endsWith("/") ? BASE : BASE + "/");
+    const base = new URL(BASE.endsWith("/") ? BASE : `${BASE}/`);
+    if (base.protocol !== "https:") return null;
+    const target = new URL(key, base);
+    if (target.origin !== base.origin || !target.pathname.startsWith(base.pathname)) return null;
+    return target.toString();
   } catch {
     return null;
   }
-  let baseUrl;
-  try {
-    baseUrl = new URL(BASE);
-  } catch {
-    return null;
-  }
-  if (target.origin !== baseUrl.origin) return null; // host must not change
-  return target.toString();
 }
 
-async function serveRemote(key, asDownload, range, strict) {
+async function serveRemote(key, asDownload, range) {
   const url = resolveRemote(key);
-  if (!url) return NextResponse.json({ error: "unconfigured" }, { status: 400 });
-
+  if (!url) return jsonError(503, "unconfigured");
   let upstream;
   try {
-    upstream = await fetch(url, { headers: range ? { Range: range } : {}, cache: "no-store" });
+    upstream = await fetch(url, { headers: range ? { Range: range } : {}, cache: "no-store", redirect: "error" });
   } catch {
-    // Source unreachable → fall back to the pending PDF so the app keeps working
-    // even when the original source is offline.
-    return pendingResponse(key, asDownload, strict);
+    return jsonError(502, "upstream_unavailable");
   }
-  if (!upstream.ok && upstream.status !== 206) {
-    // Not uploaded yet (404) → pending PDF; other upstream errors → pending too,
-    // unless strict mode asked us to surface the miss.
-    return pendingResponse(key, asDownload, strict);
-  }
+  if (upstream.status === 404) return jsonError(404, "not_found");
+  if (!upstream.ok && upstream.status !== 206) return jsonError(502, "upstream_unavailable");
   const headers = pdfHeaders(key, asDownload, {
     "Content-Length": upstream.headers.get("content-length"),
     "Content-Range": upstream.headers.get("content-range"),
@@ -132,15 +106,10 @@ async function serveRemote(key, asDownload, range, strict) {
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const key = searchParams.get("key");
+  if (!wellFormed(key)) return jsonError(400, "invalid_key");
+  if (!(await hostedSet()).has(key)) return jsonError(404, "not_available");
+
   const asDownload = searchParams.get("download") === "1";
-  const strict = searchParams.get("strict") === "1";
-
-  if (!validKey(key)) {
-    return NextResponse.json({ error: "invalid_key" }, { status: 400 });
-  }
-
-  if (STORE === "remote") {
-    return serveRemote(key, asDownload, request.headers.get("range"), strict);
-  }
-  return serveLocal(key, asDownload, strict);
+  if (STORE === "remote") return serveRemote(key, asDownload, request.headers.get("range"));
+  return serveLocal(key, asDownload);
 }

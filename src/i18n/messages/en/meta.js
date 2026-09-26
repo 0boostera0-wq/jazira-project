@@ -49,7 +49,7 @@ const meta = {
     resetPassword: { title: "Choose a new password", description: "Set a new password for your account." },
     verifyEmail: { title: "Verify your email", description: "Confirm your email address to activate your account." },
     profileSetup: { title: "Complete your profile", description: "Complete your profile details." },
-    dashboard: { title: "My dashboard", description: "Your progress, daily plan and recent exams." },
+    dashboard: { title: "My dashboard", description: "Your progress, recent exams and what to practise next." },
     notFound: { title: "Page not found", description: "The requested page doesn't exist." },
   },
 };

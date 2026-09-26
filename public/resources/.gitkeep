@@ -1,3 +1,6 @@
-# Imported curriculum PDFs land here (key path = catalog key) when CONTENT_STORE=public.
-# Served on your own domain via /api/content/fetch?key=... and /resources/<key>.
-# For the `public` store on Vercel, commit the imported PDFs so they deploy.
+# AUTHORISED curriculum PDFs only (CONTENT_STORE=public). Key path = catalog key.
+# A file belongs here only if it is registered in src/content/curriculum/hosted.js
+# (written permission or Jazira's own work). Official MoE textbooks must NOT be
+# placed here without written permission — see docs/CURRICULUM.md.
+# Anything in public/ is also reachable at /resources/<key>, so never drop
+# unregistered files here. The app serves registered files via /api/content/fetch.
