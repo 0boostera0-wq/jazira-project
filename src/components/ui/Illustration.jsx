@@ -27,6 +27,9 @@ export default function Illustration({ id, alt = "", priority = false, sizes, as
     src: a.src,
     sizes: sizes || a.sizes,
     priority,
+    // next/image's `priority` preloads and loads eagerly but leaves the fetch at
+    // the browser's default priority; the LCP hero should jump the queue.
+    fetchPriority: priority ? "high" : undefined,
     draggable: false,
     style: { backgroundColor: a.color, objectPosition: a.focus, ...(aspect && !fill ? { aspectRatio: aspect } : null), ...style },
   };
