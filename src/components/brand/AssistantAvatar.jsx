@@ -7,7 +7,7 @@ import { cn } from "@/components/ui/cn";
  * implementation detail and is NEVER named in the interface.
  * `status="thinking"` adds a soft pulse ring.
  */
-export default function AssistantAvatar({ size = 40, status, className, alt = "" }) {
+export default function AssistantAvatar({ size = 40, status, className, alt = "", loading = "lazy" }) {
   return (
     <span className={cn("relative inline-block shrink-0 rounded-full", className)} style={{ width: size, height: size }}>
       <img
@@ -15,6 +15,8 @@ export default function AssistantAvatar({ size = 40, status, className, alt = ""
         width={size}
         height={size}
         alt={alt}
+        loading={loading}
+        decoding="async"
         className="h-full w-full rounded-full"
         draggable={false}
       />

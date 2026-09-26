@@ -28,7 +28,7 @@ export default function NavList({ onNavigate, dense = false, className }) {
             <ul className="space-y-0.5">
               {items.map((it) => {
                 const Icon = NAV_ICONS[it.icon];
-                const active = isActive(pathname, it.href, it.exact);
+                const active = isActive(pathname, it.href, it.exact, it.also);
                 return (
                   <li key={it.key}>
                     <Link

@@ -1,94 +1,74 @@
-"use client";
+import { BadgeCheck, RefreshCcw, ShieldCheck } from "lucide-react";
+import { setRequestLocale, getT } from "@/i18n/server";
+import Messages from "@/i18n/WithMessages";
+import { buildMetadata } from "@/lib/seo";
+import IconTile from "@/components/ui/IconTile";
+import PlanCard from "@/components/subscriptions/PlanCard";
+import FreePlanCard from "@/components/subscriptions/FreePlanCard";
+import FeatureBento from "@/components/subscriptions/FeatureBento";
+import PlanComparison from "@/components/subscriptions/PlanComparison";
+import BillingFaq from "@/components/subscriptions/BillingFaq";
+import ReferralPanel from "@/components/subscriptions/ReferralPanel";
+import { PolicyCard, HelpCard } from "@/components/subscriptions/TrustNotes";
+import { PAYMENT_PROVIDER } from "@/components/subscriptions/plan";
 
-import { useEffect, useState } from "react";
-import { Crown, Check, X, ShieldCheck } from "lucide-react";
-import PageHeader from "@/components/PageHeader";
-import SubscriptionCard from "@/components/SubscriptionCard";
-import ReferralProgress from "@/components/ReferralProgress";
-import { useAuthUser } from "@/context/AuthProvider";
-import { createClient } from "@/lib/supabase-client";
-
-const COMPARE = [
-  { label: "اختبارات القدرات والتحصيلي", free: "محدود", elite: "غير محدود" },
-  { label: "محادثة المساعد الذكي", free: "5 كل 8 ساعات", elite: "غير محدودة" },
-  { label: "وسام النخبة الذهبي", free: false, elite: true },
-  { label: "تحليل الأداء المتقدم", free: false, elite: true },
-  { label: "أولوية الدعم الفني", free: false, elite: true },
-];
-
-function Cell({ value }) {
-  if (value === true) return <Check size={18} className="mx-auto text-emerald-500" />;
-  if (value === false) return <X size={18} className="mx-auto text-ink-muted" />;
-  return <span className="text-sm text-ink-soft">{value}</span>;
+export async function generateMetadata({ params }) {
+  return buildMetadata({ locale: params.locale, key: "subscriptions", path: "/subscriptions" });
 }
 
-export default function SubscriptionsPage() {
-  const { isElite, userId } = useAuthUser();
-  const [periodEnd, setPeriodEnd] = useState(null);
+const POINTS = [
+  { key: "monthly", icon: RefreshCcw },
+  { key: "secure", icon: ShieldCheck },
+  { key: "verified", icon: BadgeCheck },
+];
 
-  useEffect(() => {
-    if (!userId) return;
-    (async () => {
-      try {
-        const supabase = createClient();
-        const { data } = await supabase
-          .from("subscriptions")
-          .select("current_period_end, status")
-          .eq("user_id", userId)
-          .single();
-        if (data?.current_period_end) setPeriodEnd(data.current_period_end);
-      } catch { /* table may be empty */ }
-    })();
-  }, [userId]);
+// Public pricing page. Static server render; the only client islands are the
+// plan card's action (auth-aware) and the invite panel.
+export default async function SubscriptionsPage({ params }) {
+  setRequestLocale(params.locale);
+  const t = await getT("subscriptions");
 
   return (
-    <div>
-      <PageHeader title="اشتراك النخبة" subtitle="افتح كل الميزات عبر باقة النخبة أو بدعوة أصدقائك" icon={Crown} />
+    <Messages ns={["subscriptions"]}>
+      {/* ── Hero: intro + reassurance + Free plan beside the Elite card (card spans both rows on desktop) ── */}
+      <div className="grid gap-x-10 gap-y-8 lg:grid-cols-12 lg:grid-rows-[auto_1fr] xl:gap-x-14">
+        <header className="animate-in lg:col-span-7 lg:row-start-1 lg:pt-6">
+          <p className="t-eyebrow">{t("hero.eyebrow")}</p>
+          <h1 className="t-h1 mt-2.5 max-w-[22ch] lg:max-w-none">{t("hero.title")}</h1>
+          <p className="t-lead mt-4 max-w-2xl">{t("hero.lead")}</p>
+        </header>
 
-      {/* Current status */}
-      <div className={`mb-6 flex flex-wrap items-center justify-between gap-3 rounded-3xl p-5 ${isElite ? "bg-emerald-50 border border-emerald-200" : "glass"}`}>
-        <div className="flex items-center gap-3">
-          <span className={`flex h-11 w-11 items-center justify-center rounded-2xl ${isElite ? "bg-emerald-500" : "bg-gold-gradient"} text-white shadow-gold`}>
-            {isElite ? <ShieldCheck size={22} /> : <Crown size={22} />}
-          </span>
-          <div>
-            <p className="font-extrabold text-ink">
-              {isElite ? "باقتك الحالية: النخبة ✨" : "باقتك الحالية: مجانية"}
-            </p>
-            <p className="text-sm text-ink-soft">
-              {isElite
-                ? (periodEnd ? `تتجدد في ${new Date(periodEnd).toLocaleDateString("ar-SA")}` : "اشتراك نشط")
-                : "يمكنك الترقية في أي وقت"}
-            </p>
-          </div>
+        <PlanCard priority className="animate-in lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:self-start" />
+
+        <div className="space-y-8 lg:col-span-7 lg:row-start-2">
+          <ul className="grid gap-5 sm:grid-cols-3 lg:max-w-xl lg:grid-cols-1">
+            {POINTS.map(({ key, icon }) => (
+              <li key={key} className="flex items-start gap-3.5">
+                <IconTile icon={icon} tone="gold" size="sm" />
+                <div className="min-w-0">
+                  <p className="font-medium text-ink">{t(`hero.points.${key}.title`)}</p>
+                  <p className="t-small mt-0.5 text-ink-3">{t(`hero.points.${key}.body`, { provider: PAYMENT_PROVIDER })}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <FreePlanCard />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <SubscriptionCard />
-        <ReferralProgress />
-      </div>
+      <FeatureBento className="mt-16 sm:mt-20" />
 
-      {/* Free vs Elite comparison */}
-      <div className="mt-6 glass-strong overflow-hidden rounded-3xl">
-        <div className="grid grid-cols-3 bg-white/40 px-5 py-3 text-sm font-extrabold text-ink">
-          <span>الميزة</span>
-          <span className="text-center">مجاني</span>
-          <span className="text-center gold-text">النخبة</span>
-        </div>
-        {COMPARE.map((row, i) => (
-          <div key={row.label} className={`grid grid-cols-3 items-center px-5 py-3 ${i % 2 ? "bg-white/20" : ""}`}>
-            <span className="text-sm font-semibold text-ink">{row.label}</span>
-            <span className="text-center"><Cell value={row.free} /></span>
-            <span className="text-center"><Cell value={row.elite} /></span>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6 glass rounded-3xl p-5 text-center text-sm text-ink-soft">
-        طريقتان لفتح الميزات: <b className="text-gold-dark">الاشتراك بباقة النخبة (19 ريال)</b> أو
-        <b className="text-gold-dark"> دعوة 5 أصدقاء</b> لمكافأة محدودة — والنخبة تتطلب دفعاً مؤكداً.
-      </div>
-    </div>
+      {/* ── Details: each section carries its own rail (top-aligned with its content) ── */}
+      <PlanComparison className="mt-16 sm:mt-20" aside={<ReferralPanel />} />
+      <BillingFaq
+        className="mt-16 sm:mt-20"
+        aside={
+          <>
+            <PolicyCard />
+            <HelpCard />
+          </>
+        }
+      />
+    </Messages>
   );
 }

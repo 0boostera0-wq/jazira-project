@@ -11,6 +11,8 @@ module.exports = {
   theme: {
     extend: {
       screens: { xs: "400px", "3xl": "1680px" },
+      // Design-system alpha steps (border-line/12, bg-surface-2/8…) not in Tailwind's default scale.
+      opacity: { 8: "0.08", 12: "0.12", 18: "0.18" },
       colors: {
         canvas: v("c-canvas"),
         surface: { DEFAULT: v("c-surface"), 2: v("c-surface-2"), 3: v("c-surface-3") },

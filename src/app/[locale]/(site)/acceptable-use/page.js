@@ -1,68 +1,12 @@
-import LegalPage from "@/components/LegalPage";
+import LegalDocument from "@/components/legal/LegalDocument";
+import { setRequestLocale } from "@/i18n/server";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "سياسة الاستخدام المقبول",
-  description: "القواعد التي تضمن بيئة تعليمية آمنة ومحترمة على منصة جزيرة.",
-  alternates: { canonical: "/acceptable-use" },
-};
+export function generateMetadata({ params }) {
+  return buildMetadata({ locale: params.locale, key: "acceptableUse", path: "/acceptable-use" });
+}
 
-const related = [
-  { href: "/terms", label: "شروط الخدمة" },
-  { href: "/privacy", label: "سياسة الخصوصية" },
-  { href: "/community-guidelines", label: "إرشادات المجتمع" },
-];
-
-const sections = [
-  {
-    id: "purpose",
-    h: "الغرض من السياسة",
-    body: [
-      "تهدف هذه السياسة إلى الحفاظ على بيئة تعليمية آمنة ومحترمة للجميع. باستخدامك المنصة فأنت توافق على الالتزام بها.",
-    ],
-  },
-  {
-    id: "allowed",
-    h: "الاستخدام المشروع",
-    body: [
-      [
-        "استخدام المحتوى والأدوات لأغراض التعلّم والتطوّر الشخصي.",
-        "التفاعل الإيجابي والمحترم مع بقية المستخدمين.",
-        "الاستفادة من المساعد الذكي في الفهم والمراجعة والتدريب.",
-      ],
-    ],
-  },
-  {
-    id: "prohibited",
-    h: "الممارسات الممنوعة",
-    body: [
-      [
-        "الغش الأكاديمي أو مشاركة إجابات الاختبارات بشكل مخالف.",
-        "نشر محتوى مسيء أو عنيف أو يحرّض على الكراهية.",
-        "التحرّش بأي مستخدم أو انتحال شخصيته.",
-        "محاولة اختراق المنصة أو تعطيلها أو استغلال ثغراتها.",
-        "استخدام برامج آلية لجمع البيانات أو إرسال رسائل مزعجة.",
-        "نشر روابط أو ملفات ضارة أو محتوى مخالف للأنظمة.",
-      ],
-    ],
-  },
-  {
-    id: "enforcement",
-    h: "إجراءات المخالفة",
-    body: [
-      "عند رصد أي مخالفة يحق لنا حذف المحتوى المخالف أو تقييد الحساب أو إيقافه بحسب خطورة المخالفة.",
-      "قد يتم إبلاغ الجهات المختصة في الحالات التي تستدعي ذلك نظاماً.",
-    ],
-  },
-];
-
-export default function AcceptableUsePage() {
-  return (
-    <LegalPage
-      title="سياسة الاستخدام المقبول"
-      updated="١٤٤٧هـ"
-      intro="نضع هذه القواعد لنحافظ على تجربة تعليمية آمنة ومحترمة لكل أعضاء منصة جزيرة."
-      sections={sections}
-      related={related}
-    />
-  );
+export default function AcceptableUsePage({ params }) {
+  setRequestLocale(params.locale);
+  return <LegalDocument doc="acceptableUse" locale={params.locale} />;
 }

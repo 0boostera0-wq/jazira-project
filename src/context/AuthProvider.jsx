@@ -86,8 +86,12 @@ export function AuthProvider({ children }) {
 
   const refreshUser = useCallback(async () => {
     const supabase = await getSupabase();
-    const { data: { user } } = await supabase.auth.getUser();
-    await resolve(user, supabase, { force: true });
+    if (!supabase) return;
+    const { data, error } = await supabase.auth.getUser();
+    // A transient network/auth-server error must not flip the app to signed-out;
+    // only an authoritative "no session" (no error, no user) signs the user out.
+    if (error && error.status !== 401 && error.status !== 403) return;
+    await resolve(data?.user ?? null, supabase, { force: true });
   }, [resolve]);
 
   useEffect(() => {

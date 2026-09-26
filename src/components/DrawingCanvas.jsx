@@ -1,185 +1,321 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Eraser, Trash2, Download, Palette, Check } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Check, Download, Eraser, PencilLine, Trash2 } from "lucide-react";
+import Button from "@/components/ui/Button";
+import { cn } from "@/components/ui/cn";
+import { useT } from "@/i18n/client";
 
-const LETTERS = ["أ", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ر", "س", "ص", "ع", "م", "ن", "هـ", "ي"];
-const COLORS = ["#4A3F2F", "#C9A227", "#3B7A57", "#B23A48", "#3A6EA5"];
+// Handwriting practice for Arabic letters (elementary "learning games").
+// The letters are educational content, so they stay Arabic in both locales.
+const LETTERS = ["أ", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "هـ", "و", "ي"];
+
+// Pen inks. The pad is always cream paper (like the illustration plates), so
+// these fixed colours — taken from the illustration palette — read in both themes.
+const PAPER = "#FFFDF9";
+const INKS = [
+  { id: "ink", hex: "#3A3024" },
+  { id: "gold", hex: "#A67F38" },
+  { id: "green", hex: "#3F6B4E" },
+  { id: "coral", hex: "#C9704F" },
+  { id: "blue", hex: "#446A8A" },
+];
 
 export default function DrawingCanvas() {
+  const t = useT("stages");
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
-  const [drawing, setDrawing] = useState(false);
-  const [color, setColor] = useState("#4A3F2F");
-  const [erasing, setErasing] = useState(false);
+  const drawingRef = useRef(false);
+  const letterRefs = useRef([]);
+  const pickerRef = useRef(null);
+  const [index, setIndex] = useState(0);
+  const [color, setColor] = useState(INKS[0].hex);
   const [size, setSize] = useState(8);
-  const [target, setTarget] = useState(LETTERS[0]);
+  const [erasing, setErasing] = useState(false);
   const [done, setDone] = useState(false);
+  const style = useRef({ color, size, erasing });
+  style.current = { color, size, erasing };
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ratio = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * ratio;
-    canvas.height = rect.height * ratio;
-    const ctx = canvas.getContext("2d");
-    ctx.scale(ratio, ratio);
+  const target = LETTERS[index];
+
+  const applyStyle = useCallback((ctx) => {
+    const s = style.current;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctxRef.current = ctx;
+    ctx.lineWidth = s.erasing ? s.size * 2.2 : s.size;
+    ctx.globalCompositeOperation = s.erasing ? "destination-out" : "source-over";
+    ctx.strokeStyle = s.color;
   }, []);
 
+  // Size the backing store to the element (crisp on HiDPI) and keep the
+  // drawing when the pad is resized (rotation, window resize).
+  const setup = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const ratio = window.devicePixelRatio || 1;
+    const w = Math.round(rect.width * ratio);
+    const h = Math.round(rect.height * ratio);
+    if (canvas.width === w && canvas.height === h && ctxRef.current) return;
+
+    let snapshot = null;
+    if (canvas.width && canvas.height && ctxRef.current) {
+      snapshot = document.createElement("canvas");
+      snapshot.width = canvas.width;
+      snapshot.height = canvas.height;
+      snapshot.getContext("2d").drawImage(canvas, 0, 0);
+    }
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    if (snapshot) {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.drawImage(snapshot, 0, 0, rect.width, rect.height);
+    }
+    applyStyle(ctx);
+    ctxRef.current = ctx;
+  }, [applyStyle]);
+
   useEffect(() => {
+    setup();
+    const canvas = canvasRef.current;
+    if (!canvas || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => setup());
+    ro.observe(canvas);
+    return () => ro.disconnect();
+  }, [setup]);
+
+  useEffect(() => {
+    if (ctxRef.current) applyStyle(ctxRef.current);
+  }, [color, size, erasing, applyStyle]);
+
+  // Keep the chosen letter visible in the scrollable picker (horizontal only —
+  // never scrolls the page).
+  useEffect(() => {
+    const box = pickerRef.current;
+    const el = letterRefs.current[index];
+    if (!box || !el) return;
+    const b = box.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    if (r.left < b.left) box.scrollLeft -= b.left - r.left + 8;
+    else if (r.right > b.right) box.scrollLeft += r.right - b.right + 8;
+  }, [index]);
+
+  const point = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+
+  const onDown = (e) => {
     const ctx = ctxRef.current;
     if (!ctx) return;
-    ctx.lineWidth = erasing ? size * 2.2 : size;
-    ctx.globalCompositeOperation = erasing ? "destination-out" : "source-over";
-    ctx.strokeStyle = color;
-  }, [color, size, erasing]);
-
-  const pos = (e) => {
-    const rect = canvasRef.current.getBoundingClientRect();
-    const point = e.touches ? e.touches[0] : e;
-    return { x: point.clientX - rect.left, y: point.clientY - rect.top };
-  };
-
-  const start = (e) => {
     e.preventDefault();
+    canvasRef.current.setPointerCapture?.(e.pointerId);
     setDone(false);
-    const { x, y } = pos(e);
-    ctxRef.current.beginPath();
-    ctxRef.current.moveTo(x, y);
-    setDrawing(true);
+    drawingRef.current = true;
+    const { x, y } = point(e);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + 0.01, y); // a tap leaves a dot
+    ctx.stroke();
   };
 
-  const move = (e) => {
-    if (!drawing) return;
+  const onMove = (e) => {
+    if (!drawingRef.current) return;
     e.preventDefault();
-    const { x, y } = pos(e);
+    const { x, y } = point(e);
     ctxRef.current.lineTo(x, y);
     ctxRef.current.stroke();
   };
 
-  const end = () => setDrawing(false);
+  const onUp = () => {
+    drawingRef.current = false;
+  };
 
   const clear = () => {
     const c = canvasRef.current;
-    ctxRef.current.clearRect(0, 0, c.width, c.height);
+    const ctx = ctxRef.current;
+    if (!c || !ctx) return;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, c.width, c.height);
+    ctx.restore();
     setDone(false);
   };
 
-  const nextLetter = () => {
-    const idx = LETTERS.indexOf(target);
-    setTarget(LETTERS[(idx + 1) % LETTERS.length]);
+  const pick = (i) => {
+    setIndex(i);
     clear();
   };
 
+  const nextLetter = () => pick((index + 1) % LETTERS.length);
+
   const save = () => {
-    const url = canvasRef.current.toDataURL("image/png");
+    const c = canvasRef.current;
+    if (!c) return;
+    // Flatten the strokes onto the paper colour so the image isn't transparent.
+    const out = document.createElement("canvas");
+    out.width = c.width;
+    out.height = c.height;
+    const o = out.getContext("2d");
+    o.fillStyle = PAPER;
+    o.fillRect(0, 0, out.width, out.height);
+    o.drawImage(c, 0, 0);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = `جزيرة-${target}.png`;
+    a.href = out.toDataURL("image/png");
+    a.download = `${t("games.writing.fileName", { n: index + 1 })}.png`;
     a.click();
   };
 
   return (
-    <div className="glass-strong rounded-3xl p-5">
-      {/* Letter selector */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-sm text-ink-soft">تدرّب على كتابة الحرف:</p>
-          <p className="text-5xl font-extrabold gold-text">{target}</p>
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {LETTERS.map((l) => (
-            <button
-              key={l}
-              onClick={() => {
-                setTarget(l);
-                clear();
-              }}
-              className={`h-9 w-9 rounded-xl text-lg font-bold transition-colors ${
-                target === l ? "bg-gold-gradient text-white shadow-gold" : "bg-white/60 text-ink hover:bg-champagne-100"
-              }`}
-            >
-              {l}
-            </button>
-          ))}
+    <div className="surface-flat p-4 sm:p-5">
+      {/* Prompt + letter picker */}
+      <div className="flex items-center gap-4">
+        <span
+          aria-hidden="true"
+          lang="ar"
+          dir="rtl"
+          className="grid h-16 w-16 shrink-0 place-items-center rounded-md bg-gold-50 font-ar text-4xl font-bold leading-none text-gold-700 ring-1 ring-inset ring-gold-200/70"
+        >
+          {target}
+        </span>
+        {/* The letter itself is shown in the tile; the text says where we are in
+            the alphabet so no Arabic glyph is mixed into the (possibly English) heading. */}
+        <div className="min-w-0" aria-live="polite">
+          <p className="t-caption tabular">{t("games.writing.position", { current: index + 1, total: LETTERS.length })}</p>
+          <p className="t-h4 mt-0.5">{t("games.writing.prompt")}</p>
+          <p className="sr-only">{t("games.writing.letter", { letter: target })}</p>
         </div>
       </div>
 
-      {/* Canvas with faint guide letter */}
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <span className="select-none text-[180px] font-extrabold text-champagne-200/50">{target}</span>
-        </div>
+      <div
+        ref={pickerRef}
+        role="group"
+        aria-label={t("games.writing.pickLetter")}
+        dir="rtl"
+        className="-mx-1 mt-4 flex snap-x gap-1.5 overflow-x-auto pb-1 pe-10 ps-1 [mask-image:linear-gradient(to_right,transparent,#000_2.5rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {LETTERS.map((l, i) => (
+          <button
+            key={l}
+            ref={(el) => (letterRefs.current[i] = el)}
+            type="button"
+            lang="ar"
+            onClick={() => pick(i)}
+            aria-pressed={i === index}
+            aria-label={t("games.writing.letter", { letter: l })}
+            className={cn(
+              "grid h-11 w-11 shrink-0 snap-start place-items-center rounded-md font-ar text-xl font-bold transition-colors duration-fast",
+              i === index ? "bg-primary text-primary-fg shadow-sm" : "bg-surface-2 text-ink hover:bg-surface-3"
+            )}
+          >
+            {l}
+          </button>
+        ))}
+      </div>
+
+      {/* Writing pad: cream paper with a faint guide letter */}
+      <div className="relative mt-4 overflow-hidden rounded-lg border-2 border-dashed border-[#D9BE8C]/70 bg-[#FFFDF9]">
+        <span
+          aria-hidden="true"
+          lang="ar"
+          className="pointer-events-none absolute inset-0 grid select-none place-items-center font-ar text-[10rem] font-bold leading-none text-[#E3D3B5]/60 sm:text-[12rem]"
+        >
+          {target}
+        </span>
         <canvas
           ref={canvasRef}
-          className="relative h-72 w-full touch-none rounded-2xl bg-white/70"
-          style={{ border: "2px dashed rgba(201,168,106,0.5)" }}
-          onMouseDown={start}
-          onMouseMove={move}
-          onMouseUp={end}
-          onMouseLeave={end}
-          onTouchStart={start}
-          onTouchMove={move}
-          onTouchEnd={end}
+          role="img"
+          aria-label={t("games.writing.pad", { letter: target })}
+          className="relative block h-64 w-full cursor-crosshair touch-none sm:h-80"
+          onPointerDown={onDown}
+          onPointerMove={onMove}
+          onPointerUp={onUp}
+          onPointerCancel={onUp}
+          onPointerLeave={onUp}
         />
       </div>
 
       {/* Toolbar */}
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Palette size={18} className="text-ink-soft" />
-          {COLORS.map((c) => (
-            <button
-              key={c}
-              onClick={() => {
-                setErasing(false);
-                setColor(c);
-              }}
-              className={`h-7 w-7 rounded-full transition-transform ${!erasing && color === c ? "scale-110 ring-2 ring-champagne-400 ring-offset-2" : ""}`}
-              style={{ background: c }}
-              aria-label="لون"
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <div role="radiogroup" aria-label={t("games.writing.colorsLabel")} className="flex items-center">
+            {INKS.map((ink) => {
+              const active = !erasing && color === ink.hex;
+              return (
+                <button
+                  key={ink.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  aria-label={t(`games.writing.colors.${ink.id}`)}
+                  onClick={() => {
+                    setErasing(false);
+                    setColor(ink.hex);
+                  }}
+                  className="grid h-11 w-9 place-items-center rounded-full"
+                >
+                  <span
+                    className={cn(
+                      "block h-6 w-6 rounded-full ring-offset-2 ring-offset-surface transition-transform duration-fast",
+                      active ? "scale-110 ring-2 ring-gold-400" : "ring-1 ring-line/15"
+                    )}
+                    style={{ backgroundColor: ink.hex }}
+                  />
+                </button>
+              );
+            })}
+          </div>
+          <label className="flex h-11 items-center gap-2 text-ink-3">
+            <PencilLine size={16} aria-hidden="true" />
+            <span className="sr-only">{t("games.writing.size")}</span>
+            <input
+              type="range"
+              min="3"
+              max="22"
+              value={size}
+              onChange={(e) => setSize(Number(e.target.value))}
+              className="h-1.5 w-24 cursor-pointer appearance-none rounded-full bg-surface-3 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-surface [&::-moz-range-thumb]:bg-gold-500 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-surface [&::-webkit-slider-thumb]:bg-gold-500 [&::-webkit-slider-thumb]:shadow-sm"
             />
-          ))}
-          <input
-            type="range"
-            min="3"
-            max="22"
-            value={size}
-            onChange={(e) => setSize(Number(e.target.value))}
-            className="ml-2 w-24 accent-champagne-400"
-          />
+          </label>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <button
+        <div className="flex items-center gap-2">
+          <Button
+            size="icon"
+            variant={erasing ? "soft" : "secondary"}
+            aria-pressed={erasing}
+            aria-label={t("games.writing.eraser")}
+            title={t("games.writing.eraser")}
             onClick={() => setErasing((v) => !v)}
-            className={`flex items-center gap-1.5 px-3 py-2 text-sm ${erasing ? "btn-gold" : "btn-ghost"}`}
+            className="h-11 w-11"
           >
-            <Eraser size={16} /> ممحاة
-          </button>
-          <button onClick={clear} className="btn-ghost flex items-center gap-1.5 px-3 py-2 text-sm">
-            <Trash2 size={16} /> مسح
-          </button>
-          <button onClick={save} className="btn-ghost flex items-center gap-1.5 px-3 py-2 text-sm">
-            <Download size={16} /> حفظ
-          </button>
-          <button onClick={() => setDone(true)} className="btn-gold flex items-center gap-1.5 px-3 py-2 text-sm">
-            <Check size={16} /> تم
-          </button>
+            <Eraser size={18} aria-hidden="true" />
+          </Button>
+          <Button size="icon" variant="secondary" aria-label={t("games.writing.clear")} title={t("games.writing.clear")} onClick={clear} className="h-11 w-11">
+            <Trash2 size={18} aria-hidden="true" />
+          </Button>
+          <Button size="icon" variant="secondary" aria-label={t("games.writing.save")} title={t("games.writing.save")} onClick={save} className="h-11 w-11">
+            <Download size={18} aria-hidden="true" />
+          </Button>
+          <Button variant="primary" iconStart={Check} onClick={() => setDone(true)} className="ms-1">
+            {t("games.writing.done")}
+          </Button>
         </div>
       </div>
 
-      {done && (
-        <div className="mt-4 flex items-center justify-between rounded-2xl bg-emerald-50/80 p-3 text-emerald-800" style={{ border: "1px solid rgba(16,124,86,0.25)" }}>
-          <span className="font-bold">أحسنت! 🌟 خطٌّ جميل للحرف «{target}».</span>
-          <button onClick={nextLetter} className="btn-gold px-4 py-2 text-sm">
-            الحرف التالي
-          </button>
-        </div>
-      )}
+      <div aria-live="polite">
+        {done && (
+          <div className="animate-scale mt-4 flex flex-wrap items-center justify-between gap-3 rounded-md border border-green-100 bg-green-50 p-3.5 ps-4 text-green-700">
+            <p className="font-medium">{t("games.writing.success", { letter: target })}</p>
+            <Button variant="secondary" size="sm" onClick={nextLetter}>
+              {t("games.writing.next")}
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -31,6 +31,7 @@ function getSid() {
 
 export default function SessionTracker() {
   const { userId, isSignedIn } = useAuthUser();
+  const { locale } = useLocale();
   const handledRef = useRef(false);
 
   useEffect(() => {
@@ -66,6 +67,17 @@ export default function SessionTracker() {
       } catch {}
     };
 
+    // Any active day counts toward the streak (record_daily_activity is
+    // idempotent per Riyadh day); skip the RPC if already recorded today.
+    const recordActiveDay = () => {
+      const day = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Riyadh" });
+      const key = `jazira_active_day_v1:${userId}`;
+      try { if (localStorage.getItem(key) === day) return; } catch {}
+      supabase.rpc("record_daily_activity").then(({ error }) => {
+        if (!error) { try { localStorage.setItem(key, day); } catch {} }
+      }, () => {});
+    };
+
     const register = async () => {
       supabase = await getSupabase();
       if (!supabase || cancelled) return;
@@ -80,6 +92,7 @@ export default function SessionTracker() {
       } catch {}
       await check(true);
       stampLocation();
+      recordActiveDay();
     };
 
     const check = async (skipTouch) => {

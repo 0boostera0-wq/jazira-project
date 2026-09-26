@@ -164,6 +164,9 @@ html.dark {
     overflow-x: clip;
   }
   html[lang="en"] body { line-height: 1.6; }
+  /* Arabic content inside the English UI (question stems, subject names, posts):
+     use the Arabic face — the Latin face's metric fallback (Arial) would win otherwise. */
+  html[lang="en"] :lang(ar) { font-family: var(--font-ar), system-ui, sans-serif; line-height: 1.8; }
 
   h1, h2, h3, h4, h5, h6 {
     @apply text-ink;
@@ -207,7 +210,7 @@ html.dark {
   .t-body { font-size: 1rem; line-height: 1.8; }
   .t-small { font-size: 0.875rem; line-height: 1.65; }
   .t-caption { font-size: 0.8125rem; line-height: 1.55; color: rgb(var(--c-ink-3)); }
-  .t-eyebrow { font-size: 0.8125rem; line-height: 1.4; font-weight: 600; color: rgb(var(--c-gold-600)); }
+  .t-eyebrow { font-size: 0.8125rem; line-height: 1.4; font-weight: 500; color: rgb(var(--c-gold-600)); }
   html[lang="en"] .t-eyebrow { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.75rem; }
   html[lang="en"] .t-display { line-height: 1.08; letter-spacing: -0.025em; }
   html[lang="en"] .t-h1 { line-height: 1.12; letter-spacing: -0.02em; }
@@ -260,6 +263,9 @@ html.dark {
     background: linear-gradient(120deg, rgb(var(--c-gold-600)), rgb(var(--c-gold-400)) 55%, rgb(var(--c-gold-600)));
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
   /* rotate directional icons (arrows, chevrons) in RTL */
   [dir="rtl"] .flip-rtl { transform: scaleX(-1); }
 

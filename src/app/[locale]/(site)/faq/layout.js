@@ -1,22 +1,16 @@
-import { FAQ_GROUPS } from "@/lib/faq";
-import { faqJsonLd } from "@/lib/seo";
+import { getT, setRequestLocale } from "@/i18n/server";
+import { faqJsonLd, jsonLd } from "@/lib/seo";
+import { resolveFaq } from "@/components/support/faqCatalog";
 
-export const metadata = {
-  title: "الأسئلة الشائعة",
-  description: "إجابات واضحة على أكثر الأسئلة شيوعاً حول منصة جزيرة — التسجيل واختبارات القدرات والتحصيلي وباقة النخبة والمساعد الذكي.",
-  alternates: { canonical: "/faq" },
-};
-
-// Server layout: injects FAQPage structured data (rich snippets) for the FAQ
-// route without converting the interactive client page.
-export default function FaqLayout({ children }) {
-  const items = FAQ_GROUPS.flatMap((g) => g.subs || []);
+// Server layout: FAQPage structured data (rich results) built from the active
+// locale's questions, so the interactive page below stays a thin client island.
+export default async function FaqLayout({ children, params }) {
+  setRequestLocale(params.locale);
+  const t = await getT("support");
+  const items = resolveFaq(t, params.locale).map(({ q, a }) => ({ q, a }));
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(items)) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(faqJsonLd(items)) }} />
       {children}
     </>
   );

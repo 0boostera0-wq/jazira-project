@@ -35,7 +35,7 @@ export const APP_NAV = [
   {
     section: "account",
     items: [
-      { key: "subscription", href: "/subscriptions", icon: "Crown", accent: "gold" },
+      { key: "subscription", href: "/subscriptions", icon: "Crown", accent: "gold", also: ["/checkout"] },
       { key: "settings", href: "/settings", icon: "Settings", auth: true },
     ],
   },
@@ -76,8 +76,9 @@ export const FOOTER_NAV = [
 ];
 
 /** Is `href` active for the current (unprefixed) pathname? */
-export function isActive(pathname, href, exact = false) {
+export function isActive(pathname, href, exact = false, also = []) {
   if (!href) return false;
+  if (also.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true;
   if (exact || href === "/") return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }

@@ -32,7 +32,7 @@ export default function AccountMenu({ compact = false }) {
             {tc("actions.signIn")}
           </Button>
         )}
-        <Button href="/sign-up" variant="primary" size="sm">
+        <Button href={compact ? "/sign-in" : "/sign-up"} variant="primary" size="sm">
           {compact ? tc("actions.signIn") : tc("actions.signUp")}
         </Button>
       </div>

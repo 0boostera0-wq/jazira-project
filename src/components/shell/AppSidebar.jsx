@@ -1,7 +1,7 @@
 "use client";
 
 import { Crown, Sparkles } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useT } from "@/i18n/client";
 import { useAuthUser } from "@/context/AuthProvider";
 import Logo from "@/components/brand/Logo";
@@ -13,6 +13,8 @@ export default function AppSidebar() {
   const t = useT("nav");
   const tc = useT("common");
   const { isLoaded, isSignedIn, isElite } = useAuthUser();
+  const pathname = usePathname();
+  const onPlanPages = pathname.startsWith("/subscriptions") || pathname.startsWith("/checkout");
 
   return (
     <aside className="fixed inset-y-0 start-0 z-30 hidden w-sidebar flex-col border-e border-line/10 bg-surface-2/60 lg:flex">
@@ -25,7 +27,7 @@ export default function AppSidebar() {
       <NavList className="min-h-0 flex-1 overflow-y-auto px-3 pb-4 pt-2" />
 
       <div className="shrink-0 p-3">
-        {isLoaded && isElite ? (
+        {onPlanPages ? null : isLoaded && isElite ? (
           <div className="flex items-center gap-3 rounded-lg border border-gold-200/70 bg-gold-50 p-3.5">
             <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-b from-gold-200 to-gold-300 text-[#5C431C]">
               <Crown size={17} aria-hidden="true" />

@@ -1,25 +1,84 @@
 import { createClient } from "@/lib/supabase-server";
+import { DEFAULT_LOCALE, isLocale, localizeHref } from "@/i18n/config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// Creates a Lemon Squeezy checkout for the signed-in user, passing their
-// Supabase user id as custom_data so the webhook can map the payment back.
-// If checkout env vars are not configured, returns a truthful "coming soon"
-// state — it NEVER fakes a successful payment or grants Elite.
-export async function POST() {
+// Creates a Lemon Squeezy hosted checkout for the signed-in user.
+//
+//   POST /api/checkout   body: { locale?: "ar" | "en" }
+//
+//   200 { configured: true, url }      → send the browser to `url`
+//   200 { configured: false }          → payments not set up (env missing) — truthful "coming soon"
+//   401 { error: "unauthorized" }      · 403 { error: "forbidden" } (cross-site)
+//   409 { error: "already_elite" }     · 429 { error: "rate_limited" }
+//   502 { error: "provider_error" }    · 503 { error: "not_configured" } (Supabase missing)
+//
+// The Supabase user id travels as checkout custom data so the verified webhook
+// (src/app/api/webhooks/lemonsqueezy) can map the payment back — that webhook
+// is the ONLY place Elite is granted. This route never marks anything as paid.
+// After payment the provider redirects to the localized /checkout/success page
+// on the SAME origin the request came from (never a client-supplied URL).
+
+const NO_STORE = { "Cache-Control": "no-store" };
+const reply = (body, status = 200) => Response.json(body, { status, headers: NO_STORE });
+
+// Mutating route: only accept same-origin browser requests.
+function isSameOrigin(req) {
+  const site = req.headers.get("sec-fetch-site");
+  if (site && site !== "same-origin" && site !== "none") return false;
+  const origin = req.headers.get("origin");
+  if (!origin) return true; // same-origin requests may omit Origin
+  try {
+    const host = new URL(origin).host;
+    return host === req.headers.get("host") || host === new URL(req.url).host;
+  } catch {
+    return false;
+  }
+}
+
+// Best-effort per-instance throttle (each call hits the provider's API).
+const WINDOW_MS = 60_000;
+const MAX_PER_WINDOW = 6;
+const hits = new Map();
+function rateLimited(userId) {
+  const now = Date.now();
+  const recent = (hits.get(userId) || []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  hits.set(userId, recent);
+  if (hits.size > 5000) {
+    for (const [k, v] of hits) if (!v.length || now - v[v.length - 1] > WINDOW_MS) hits.delete(k);
+  }
+  return recent.length > MAX_PER_WINDOW;
+}
+
+export async function POST(req) {
+  if (!isSameOrigin(req)) return reply({ error: "forbidden" }, 403);
+
   const supabase = await createClient();
-  if (!supabase) return Response.json({ error: "not_configured" }, { status: 503 });
+  if (!supabase) return reply({ error: "not_configured" }, 503);
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return Response.json({ error: "unauthorized" }, { status: 401 });
+  if (!user) return reply({ error: "unauthorized" }, 401);
 
   const apiKey = process.env.LEMONSQUEEZY_API_KEY;
   const storeId = process.env.LEMONSQUEEZY_STORE_ID;
   const variantId = process.env.LEMONSQUEEZY_VARIANT_ID;
+  if (!apiKey || !storeId || !variantId) return reply({ configured: false });
 
-  if (!apiKey || !storeId || !variantId) {
-    return Response.json({ configured: false, message: "سيتم تفعيل الدفع قريبًا" });
+  // Don't sell a second subscription to an active member (DB-verified flag).
+  try {
+    const { data: profile } = await supabase.from("profiles").select("is_elite").eq("id", user.id).maybeSingle();
+    if (profile?.is_elite) return reply({ error: "already_elite" }, 409);
+  } catch {
+    /* profile read failed — let the checkout proceed */
   }
+
+  if (rateLimited(user.id)) return reply({ error: "rate_limited" }, 429);
+
+  // Locale only selects which localized page to return to; validated against LOCALES.
+  const body = await req.json().catch(() => ({}));
+  const locale = isLocale(body?.locale) ? body.locale : DEFAULT_LOCALE;
+  const redirectUrl = new URL(localizeHref("/checkout/success", locale), new URL(req.url).origin).toString();
 
   try {
     const res = await fetch("https://api.lemonsqueezy.com/v1/checkouts", {
@@ -32,7 +91,10 @@ export async function POST() {
       body: JSON.stringify({
         data: {
           type: "checkouts",
-          attributes: { checkout_data: { custom: { user_id: user.id } } },
+          attributes: {
+            checkout_data: { custom: { user_id: user.id } },
+            product_options: { redirect_url: redirectUrl },
+          },
           relationships: {
             store: { data: { type: "stores", id: String(storeId) } },
             variant: { data: { type: "variants", id: String(variantId) } },
@@ -40,15 +102,15 @@ export async function POST() {
         },
       }),
     });
-    const json = await res.json();
+    const json = await res.json().catch(() => null);
     const url = json?.data?.attributes?.url;
-    if (!url) {
-      console.error("[checkout] no url in response");
-      return Response.json({ configured: false, message: "سيتم تفعيل الدفع قريبًا" });
+    if (!res.ok || typeof url !== "string" || !url.startsWith("https://")) {
+      console.error("[checkout] provider error", res.status, json?.errors?.[0]?.detail || "no checkout url");
+      return reply({ error: "provider_error" }, 502);
     }
-    return Response.json({ configured: true, url });
+    return reply({ configured: true, url });
   } catch (e) {
-    console.error("[checkout]", e?.message || e);
-    return Response.json({ configured: false, message: "سيتم تفعيل الدفع قريبًا" });
+    console.error("[checkout] request failed", e?.message || e);
+    return reply({ error: "provider_error" }, 502);
   }
 }
