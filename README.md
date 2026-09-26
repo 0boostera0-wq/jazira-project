@@ -5,7 +5,7 @@ Arabic-first learning platform for Saudi students: school curriculum resources
 every question, a learning community, and the Jazira Assistant. Arabic is the
 default locale (unprefixed URLs); English lives under `/en`.
 
-**Stack:** Next.js 14 (App Router, JavaScript) · Tailwind CSS · Supabase
+**Stack:** Next.js 15 (App Router, JavaScript, React 19) · Tailwind CSS · Supabase
 (Postgres + Auth + Storage, RLS everywhere) · Lemon Squeezy (payments, optional)
 · Vercel.
 
@@ -37,7 +37,8 @@ variable and which features it enables.
 ## Database
 
 Apply `supabase/migrations/` in filename order (0000 → latest) to a fresh
-Supabase project. That folder is the only schema source; the security model is
+Supabase project — step-by-step in [docs/DATABASE_SETUP.md](docs/DATABASE_SETUP.md)
+(project, auth settings, storage origin, Vercel variables). That folder is the only schema source; the security model is
 documented in [docs/SECURITY.md](docs/SECURITY.md).
 
 ## Read before changing anything

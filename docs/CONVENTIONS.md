@@ -1,6 +1,6 @@
 # Jazira Engineering Conventions
 
-Stack: Next.js 14 App Router (JavaScript, no TypeScript), React 18, Tailwind 3,
+Stack: Next.js 15 App Router (JavaScript, no TypeScript), React 19, Tailwind 3,
 Supabase (Postgres + Auth + Storage, RLS everywhere), deployed on Vercel.
 
 ## 1. Routing & file layout

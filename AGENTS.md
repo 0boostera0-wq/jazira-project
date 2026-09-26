@@ -2,7 +2,7 @@
 
 Arabic-first learning platform: school curriculum resources (elementary →
 high school), Qudurat/Tahsili exam practice, a learning community, and the
-Jazira Assistant. Next.js 14 App Router (JavaScript), Tailwind, Supabase
+Jazira Assistant. Next.js 15 App Router (JavaScript, React 19), Tailwind, Supabase
 (Postgres + Auth + Storage with RLS), deployed on Vercel (region `bom1`).
 
 Read these before changing anything:
@@ -14,6 +14,7 @@ Read these before changing anything:
 | [docs/DATA_API.md](docs/DATA_API.md) | tables, RPCs and client data functions (exams, notifications, search, contact, AI quota) |
 | [docs/SECURITY.md](docs/SECURITY.md) | RLS model, column grants, guard triggers, definer RPCs |
 | [docs/CURRICULUM.md](docs/CURRICULUM.md) | curriculum structure, verified sources, resource availability |
+| [docs/DATABASE_SETUP.md](docs/DATABASE_SETUP.md) | provisioning Supabase, auth settings, Vercel environment variables |
 
 ## Map
 
