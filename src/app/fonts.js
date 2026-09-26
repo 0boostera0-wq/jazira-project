@@ -15,9 +15,13 @@ import { IBM_Plex_Sans_Arabic, IBM_Plex_Sans } from "next/font/google";
 // (globals.css) is Arial size-adjusted from ARABIC text measurements, instead of
 // next/font's automatic Arial fallback, whose size-adjust comes from Latin
 // metrics and re-wrapped Arabic lines when the webfont arrived (CLS).
+// Arabic ships two weights (regular + bold). Each Plex Arabic weight costs
+// ~34KB (Arabic) + ~15KB (Latin) on a first visit; the 400→500 step is subtle
+// in this face, so medium-weight UI labels render at regular in Arabic and
+// hierarchy comes from 700 + size. Measured: 146KB → ~95KB of fonts per page.
 export const plexArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "700"],
   variable: "--font-ar",
   display: "swap",
   preload: false,
