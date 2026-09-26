@@ -14,7 +14,8 @@ import ContactChannels from "@/components/support/ContactChannels";
 import { FAQ_TOPICS, QUICK_FAQ, resolveFaq } from "@/components/support/faqCatalog";
 import { TOPIC_ICONS } from "@/components/support/topicIcons";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "support", path: "/support" });
 }
 
@@ -28,7 +29,8 @@ const POLICIES = [
 
 const TIPS = ["device", "steps", "screenshot", "email"];
 
-export default async function SupportPage({ params }) {
+export default async function SupportPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const [t, tn] = await Promise.all([getT("support"), getT("nav")]);
   const faq = resolveFaq(t, params.locale);

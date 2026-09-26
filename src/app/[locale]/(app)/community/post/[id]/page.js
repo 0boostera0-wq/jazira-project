@@ -13,7 +13,8 @@ export function generateStaticParams() {
 }
 
 // Post permalink (share links, notification targets). Member content → noindex.
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   if (!isUuid(params.id)) notFound();
   const t = await getT("community", params.locale);
   return buildMetadata({
@@ -26,7 +27,8 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default function CommunityPostPage({ params }) {
+export default async function CommunityPostPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   if (!isUuid(params.id)) notFound();
   return <PostView id={params.id} />;

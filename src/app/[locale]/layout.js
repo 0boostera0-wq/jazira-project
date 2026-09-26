@@ -15,7 +15,8 @@ export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const t = await getT("meta", params.locale);
   return {
     metadataBase: new URL(SITE_URL),
@@ -39,7 +40,13 @@ export const viewport = {
   ],
 };
 
-export default async function LocaleLayout({ children, params }) {
+export default async function LocaleLayout(props) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   const { locale } = params;
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);

@@ -5,11 +5,13 @@ import AuthShell from "@/components/shell/AuthShell";
 import AuthTips from "@/components/auth/AuthTips";
 import ProfileSetup from "@/components/auth/ProfileSetupForm";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "profileSetup", path: "/profile-setup", noindex: true });
 }
 
-export default async function ProfileSetupPage({ params }) {
+export default async function ProfileSetupPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("auth");
   return (

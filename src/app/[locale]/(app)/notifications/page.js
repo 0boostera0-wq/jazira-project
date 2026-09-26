@@ -4,13 +4,15 @@ import { buildMetadata } from "@/lib/seo";
 import NotificationsCenter from "@/components/notifications/NotificationsCenter";
 import NotificationsRail from "@/components/notifications/NotificationsRail";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "notifications", path: "/notifications", noindex: true });
 }
 
 // Private page. Title block renders on the server; the list (get_notifications,
 // keyset pages) and the preferences rail are independent client islands.
-export default async function NotificationsPage({ params }) {
+export default async function NotificationsPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("notifications");
   const header = (

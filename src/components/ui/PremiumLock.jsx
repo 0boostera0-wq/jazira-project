@@ -13,7 +13,7 @@ export default function PremiumLock({ title, body, cta, href = "/subscriptions",
   return (
     <div className={cn("relative overflow-hidden rounded-lg border border-gold-200/70 bg-surface", className)}>
       {preview && (
-        <div aria-hidden="true" inert="" className="pointer-events-none select-none p-5 opacity-60 blur-[3px]">
+        <div aria-hidden="true" inert className="pointer-events-none select-none p-5 opacity-60 blur-[3px]">
           {preview}
         </div>
       )}

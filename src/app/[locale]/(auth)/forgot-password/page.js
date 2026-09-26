@@ -5,11 +5,13 @@ import AuthShell from "@/components/shell/AuthShell";
 import AuthTips from "@/components/auth/AuthTips";
 import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "forgotPassword", path: "/forgot-password" });
 }
 
-export default async function ForgotPasswordPage({ params }) {
+export default async function ForgotPasswordPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("auth");
   return (

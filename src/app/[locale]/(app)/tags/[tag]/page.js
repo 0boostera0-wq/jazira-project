@@ -13,7 +13,8 @@ export function generateStaticParams() {
   return [];
 }
 
-export function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const tag = normalizeTag(params.tag);
   if (!tag) notFound();
   return buildMetadata({
@@ -24,7 +25,8 @@ export function generateMetadata({ params }) {
   });
 }
 
-export default function TagPage({ params }) {
+export default async function TagPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const tag = normalizeTag(params.tag);
   if (!tag) notFound();

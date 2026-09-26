@@ -5,11 +5,13 @@ import AuthShell from "@/components/shell/AuthShell";
 import AuthTips from "@/components/auth/AuthTips";
 import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "resetPassword", path: "/reset-password", noindex: true });
 }
 
-export default async function ResetPasswordPage({ params }) {
+export default async function ResetPasswordPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("auth");
   return (

@@ -16,7 +16,8 @@ export function generateStaticParams() {
   return [];
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const handle = normalizeUsername(params.username) || "";
   const path = `/u/${encodeURIComponent(handle)}`;
   const res = await getPublicProfile(params.username);
@@ -35,7 +36,8 @@ export async function generateMetadata({ params }) {
   return buildMetadata({ locale: params.locale, key: "user", vars: { name: handle ? `@${handle}` : "" }, path, noindex: true });
 }
 
-export default async function UserProfilePage({ params }) {
+export default async function UserProfilePage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const res = await getPublicProfile(params.username);
   if (res.status === "not_found") notFound();

@@ -181,15 +181,16 @@ describe("curriculum catalog (1447H)", () => {
 });
 
 describe("high school year 1 alias", () => {
-  it("is the only alias branch, and its route answers a 308 to the common first year", () => {
+  it("is the only alias branch, and its route answers a 308 to the common first year", async () => {
     const aliases = allCurriculumPaths({ includePending: true, includeAliases: true })
       .filter((p) => isAlias(resolveCurriculum(p).node))
       .map((p) => p.join("/"));
     expect(aliases).toEqual(["high-school/grade-1"]); // a new alias needs its own redirect route
-    const ar = yearOneRedirect(new Request("http://localhost/ar/curriculum/high-school/grade-1"), { params: { locale: "ar" } });
+    // Next 15: route handlers receive params as a promise.
+    const ar = await yearOneRedirect(new Request("http://localhost/ar/curriculum/high-school/grade-1"), { params: Promise.resolve({ locale: "ar" }) });
     expect(ar.status).toBe(308);
     expect(ar.headers.get("location")).toBe("http://localhost/curriculum/high-school/grade-1/first-year");
-    const en = yearOneRedirect(new Request("http://localhost/en/curriculum/high-school/grade-1?x=1"), { params: { locale: "en" } });
+    const en = await yearOneRedirect(new Request("http://localhost/en/curriculum/high-school/grade-1?x=1"), { params: Promise.resolve({ locale: "en" }) });
     expect(en.headers.get("location")).toBe("http://localhost/en/curriculum/high-school/grade-1/first-year?x=1");
   });
 });

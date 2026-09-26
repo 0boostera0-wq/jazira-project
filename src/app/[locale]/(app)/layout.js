@@ -5,7 +5,13 @@ import { setRequestLocale } from "@/i18n/server";
 
 // Authenticated-app frame. The old floating AI widget is intentionally gone —
 // the assistant now lives at /assistant (backend unchanged).
-export default function AppLayout({ children, params }) {
+export default async function AppLayout(props) {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   setRequestLocale(params.locale);
   return (
     <AppShell>

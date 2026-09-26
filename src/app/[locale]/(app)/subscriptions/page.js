@@ -12,7 +12,8 @@ import ReferralPanel from "@/components/subscriptions/ReferralPanel";
 import { PolicyCard, HelpCard } from "@/components/subscriptions/TrustNotes";
 import { PAYMENT_PROVIDER } from "@/components/subscriptions/plan";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "subscriptions", path: "/subscriptions" });
 }
 
@@ -24,7 +25,8 @@ const POINTS = [
 
 // Public pricing page. Static server render; the only client islands are the
 // plan card's action (auth-aware) and the invite panel.
-export default async function SubscriptionsPage({ params }) {
+export default async function SubscriptionsPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("subscriptions");
 

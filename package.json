@@ -19,16 +19,16 @@
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
     "lucide-react": "^0.460.0",
-    "next": "^14.2.35",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "next": "^15.5.26",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
     "autoprefixer": "^10.4.20",
     "axe-core": "^4.13.0",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.35",
+    "eslint-config-next": "^15.5.26",
     "postcss": "^8.4.49",
     "puppeteer-core": "^25.12.0",
     "svgo": "^4.1.0",
@@ -37,5 +37,10 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "^8.5.28"
+    }
   }
 }

@@ -4,7 +4,8 @@ import Messages from "@/i18n/WithMessages";
 import { buildMetadata } from "@/lib/seo";
 import SettingsLayout, { SettingsFallback } from "@/components/settings/SettingsLayout";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "settings", path: "/settings", noindex: true });
 }
 
@@ -15,7 +16,8 @@ export async function generateMetadata({ params }) {
 // The open section (?section=) is read on the client (useSearchParams inside
 // this Suspense boundary), so the route prerenders instead of rendering per
 // request just to read the query string.
-export default async function SettingsPage({ params }) {
+export default async function SettingsPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("settings");
   const header = (

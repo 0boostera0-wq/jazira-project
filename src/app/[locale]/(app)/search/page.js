@@ -10,14 +10,16 @@ import BrowseIdle from "@/components/search/BrowseIdle";
 import SuggestLinks from "@/components/search/SuggestLinks";
 import { practiceCatalog, scopeStats, stageSummaries } from "@/components/search/catalog.server";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "search", path: "/search", noindex: true });
 }
 
 // /search?q=&tab= — the shell (title, rail, browse blocks) renders on the
 // server from the catalogs; the query, tabs and results are one client island
 // that reads the URL, so the page itself stays static.
-export default async function SearchPage({ params }) {
+export default async function SearchPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const locale = params.locale;
   const [t, practice] = await Promise.all([getT("search"), practiceCatalog()]);

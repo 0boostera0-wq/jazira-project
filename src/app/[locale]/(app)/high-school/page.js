@@ -14,7 +14,8 @@ import { ArrowLink, LinkCard, TipsCard } from "@/components/stages/parts";
 import { StageEmpty, StageJsonLd, StageSection } from "@/components/stages/StageShell";
 import { academicYear, highSchoolCatalog } from "@/components/stages/catalog";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "highSchool", path: "/high-school" });
 }
 
@@ -27,7 +28,8 @@ const TAHSILI = [
 
 // Layout note: the app sidebar takes 272px from `lg`, so the content column is
 // only ~690px wide at 1024 — multi-column splits start at `xl`, not `lg`.
-export default async function HighSchoolPage({ params }) {
+export default async function HighSchoolPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const { locale } = params;
   const [t, tn, tc] = await Promise.all([getT("stages"), getT("nav"), getT("common")]);

@@ -12,7 +12,8 @@ import PrivacyTrust from "@/components/landing/PrivacyTrust";
 import FaqTeaser from "@/components/landing/FaqTeaser";
 import FinalCta from "@/components/landing/FinalCta";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "home", path: "/" });
 }
 
@@ -21,7 +22,8 @@ export async function generateMetadata({ params }) {
  * the marketing header/footer come from the (site) layout). Section rhythm
  * alternates split / bento / tinted bands so it never reads as one template.
  */
-export default function HomePage({ params }) {
+export default async function HomePage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   return (
     <>

@@ -9,7 +9,8 @@ import { resolveCurriculum } from "@/lib/curriculum";
 // The deeper paths (…/grade-1/first-year) are still served by [...slug].
 const SLUG = ["high-school", "grade-1"];
 
-export function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   const locale = isLocale(params?.locale) ? params.locale : "ar";
   const node = resolveCurriculum(SLUG)?.node;
   const target = node ? nodeHref(SLUG, node) : "/curriculum/high-school";

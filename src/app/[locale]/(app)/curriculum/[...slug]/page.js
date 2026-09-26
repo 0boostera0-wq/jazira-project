@@ -19,7 +19,8 @@ export function generateStaticParams() {
   return allCurriculumPaths({ includePending: true }).map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const r = resolveCurriculum(params.slug);
   if (!r?.node || isAlias(r.node)) return {};
   const t = await getT("curriculum", params.locale);
@@ -36,7 +37,8 @@ export async function generateMetadata({ params }) {
   });
 }
 
-export default async function CurriculumNodePage({ params }) {
+export default async function CurriculumNodePage(props0) {
+  const params = await props0.params;
   setRequestLocale(params.locale);
   const { locale } = params;
   const slug = params.slug || [];

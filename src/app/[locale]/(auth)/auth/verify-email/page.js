@@ -5,11 +5,13 @@ import AuthShell from "@/components/shell/AuthShell";
 import AuthTips from "@/components/auth/AuthTips";
 import VerifyEmailForm from "@/components/auth/VerifyEmailForm";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "verifyEmail", path: "/auth/verify-email", noindex: true });
 }
 
-export default async function VerifyEmailPage({ params }) {
+export default async function VerifyEmailPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("auth");
   return (

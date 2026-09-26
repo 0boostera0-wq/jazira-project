@@ -13,7 +13,8 @@ import { cn } from "@/components/ui/cn";
 import AssistantAvatar from "@/components/brand/AssistantAvatar";
 import SupportHero from "@/components/support/SupportHero";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "about", path: "/about" });
 }
 
@@ -63,7 +64,8 @@ function Point({ children }) {
   );
 }
 
-export default async function AboutPage({ params }) {
+export default async function AboutPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const [t, tn, tc] = await Promise.all([getT("support"), getT("nav"), getT("common")]);
 

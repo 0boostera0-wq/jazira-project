@@ -15,13 +15,15 @@ import { allSectionCount, allTopicCount } from "@/components/exams/labels";
 import { cn } from "@/components/ui/cn";
 import { SECTION_GAP } from "@/components/stages/parts";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "exams", path: "/exams" });
 }
 
 // Exam center hub. Server-rendered; client islands: bank counts (one request,
 // cached) and the viewer's activity rail.
-export default async function ExamsHubPage({ params }) {
+export default async function ExamsHubPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const { locale } = params;
   const [t, tc, local] = await Promise.all([getT("exams"), getT("common"), localBankSummary()]);

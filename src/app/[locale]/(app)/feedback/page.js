@@ -8,11 +8,13 @@ import IconTile from "@/components/ui/IconTile";
 import { PageHeader } from "@/components/ui/Layout";
 import FeedbackForm from "@/components/support/FeedbackForm";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "feedback", path: "/feedback", noindex: true });
 }
 
-export default async function FeedbackPage({ params }) {
+export default async function FeedbackPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("support");
 

@@ -6,11 +6,13 @@ import Illustration from "@/components/ui/Illustration";
 import ContactForm from "@/components/support/ContactForm";
 import ContactChannels from "@/components/support/ContactChannels";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "contact", path: "/contact" });
 }
 
-export default async function ContactPage({ params }) {
+export default async function ContactPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("support");
 

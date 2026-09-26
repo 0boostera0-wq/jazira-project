@@ -6,11 +6,13 @@ import SignInForm from "@/components/auth/SignInForm";
 import LegalNote from "@/components/auth/LegalNote";
 import AuthTips from "@/components/auth/AuthTips";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "signIn", path: "/sign-in" });
 }
 
-export default async function SignInPage({ params }) {
+export default async function SignInPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("auth");
   return (

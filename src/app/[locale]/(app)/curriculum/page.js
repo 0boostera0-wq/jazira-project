@@ -18,7 +18,8 @@ import { cn } from "@/components/ui/cn";
 import { nodeHref } from "@/components/curriculum/model";
 import { OFFICIAL_LINKS, channelsCopy } from "@/components/curriculum/copy";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   const t = await getT("curriculum", params.locale);
   return buildMetadata({ locale: params.locale, key: "curriculum", path: "/curriculum", description: t("seo.hub", { year: YEAR }) });
 }
@@ -35,7 +36,8 @@ function stageSubjectCount(stage) {
 
 // Statically rendered: the catalog is in code, the search island loads its
 // index on first use, and nothing here depends on the visitor.
-export default async function CurriculumHub({ params }) {
+export default async function CurriculumHub(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const { locale } = params;
   const en = locale === "en";

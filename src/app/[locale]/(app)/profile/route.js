@@ -15,7 +15,8 @@ export const dynamic = "force-dynamic";
  * here); no public name yet → profile setup; no handle, or the profile can't
  * be read → settings (the account page shows the profile honestly).
  */
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   const locale = params?.locale;
   const to = (path) => {
     const res = NextResponse.redirect(new URL(localizeHref(path, locale), request.url), 307);

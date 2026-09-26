@@ -4,7 +4,8 @@ import Messages from "@/i18n/WithMessages";
 import { buildMetadata } from "@/lib/seo";
 import ReviewsBoard from "@/components/support/ReviewsBoard";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   return buildMetadata({ locale: params.locale, key: "reviews", path: "/reviews" });
 }
 
@@ -14,7 +15,8 @@ const POLICY = [
   { key: "average", icon: Sigma },
 ];
 
-export default async function ReviewsPage({ params }) {
+export default async function ReviewsPage(props) {
+  const params = await props.params;
   setRequestLocale(params.locale);
   const t = await getT("support");
 
