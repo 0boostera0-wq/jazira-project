@@ -46,6 +46,7 @@ if (existsSync("public/images")) {
 
 for (const [file, text] of srcText) {
   for (const m of text.matchAll(/["'`](\/(?:images|illustrations)\/[^"'`\s)]+)["'`]/g)) {
+    if (m[1].includes("${")) continue; // template in the manifest itself
     if (!existsSync(join("public", m[1]))) problems.push(`broken reference in ${file}: ${m[1]}`);
   }
 }

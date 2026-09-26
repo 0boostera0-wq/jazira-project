@@ -1,15 +1,22 @@
 #!/usr/bin/env node
-// Visual QA screenshots with the locally installed Chrome (puppeteer-core).
+// Visual + accessibility QA with the locally installed Chrome (puppeteer-core).
 //
-//   node scripts/shot.mjs <url-or-path> <out.png> [--w=390] [--h=844] [--full] [--dark] [--wait=1500]
-//   node scripts/shot.mjs /en/exams C:/tmp/exams.png --w=1440 --h=900 --full
+//   node scripts/shot.mjs <url-or-path> <out.png> [--w=390] [--h=844] [--full] [--dark]
+//                         [--wait=1500] [--auth] [--axe]
 //
-// Paths are resolved against JZ_BASE (default http://localhost:3100). Reports
-// horizontal overflow (document wider than the viewport) and console errors,
-// which are both release blockers.
+// --full   full-page capture (scrolls through the page first so lazy images load)
+// --dark   dark theme
+// --auth   sets a dummy Supabase auth cookie so the middleware's protected-route
+//          gate lets the page render (the app still treats you as signed out —
+//          use it for shells, guards and signed-out/expired states)
+// --axe    runs axe-core (WCAG 2.2 A/AA) and prints violations
+//
+// Paths resolve against JZ_BASE (default http://localhost:3100). Prints JSON with
+// horizontalOverflowPx (must be 0) and consoleErrors (must be empty).
 import puppeteer from "puppeteer-core";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { createRequire } from "node:module";
 
 const args = process.argv.slice(2);
 const flags = Object.fromEntries(args.filter((a) => a.startsWith("--")).map((a) => {
@@ -18,7 +25,7 @@ const flags = Object.fromEntries(args.filter((a) => a.startsWith("--")).map((a) 
 }));
 const [target, out] = args.filter((a) => !a.startsWith("--"));
 if (!target || !out) {
-  console.error("usage: node scripts/shot.mjs <url|path> <out.png> [--w=390] [--h=844] [--full] [--dark] [--wait=1500]");
+  console.error("usage: node scripts/shot.mjs <url|path> <out.png> [--w=390] [--h=844] [--full] [--dark] [--wait=1500] [--auth] [--axe]");
   process.exit(2);
 }
 const base = process.env.JZ_BASE || "http://localhost:3100";
@@ -43,12 +50,39 @@ try {
   if (flags.dark) {
     await page.evaluateOnNewDocument(() => { try { localStorage.setItem("jazira_theme_v1", JSON.stringify("dark")); } catch {} });
   }
-  await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+  if (flags.auth) {
+    const { hostname } = new URL(url);
+    await page.setCookie({ name: "sb-qa-auth-token", value: "qa", domain: hostname, path: "/" });
+  }
+  await page.goto(url, { waitUntil: "networkidle2", timeout: 90000 });
   await new Promise((r) => setTimeout(r, Number(flags.wait || 1500)));
+  if (flags.full) {
+    // Walk the page so IntersectionObserver / loading="lazy" content renders.
+    await page.evaluate(async () => {
+      const step = Math.max(200, window.innerHeight * 0.8);
+      for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+        window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 120));
+      }
+      window.scrollTo(0, 0);
+    });
+    await new Promise((r) => setTimeout(r, 600));
+  }
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   mkdirSync(dirname(out), { recursive: true });
   await page.screenshot({ path: out, fullPage: Boolean(flags.full) });
-  console.log(JSON.stringify({ url: page.url(), out, width, height, horizontalOverflowPx: overflow, consoleErrors: errors.slice(0, 10) }));
+
+  let axe;
+  if (flags.axe) {
+    const require = createRequire(import.meta.url);
+    await page.addScriptTag({ content: readFileSync(require.resolve("axe-core/axe.min.js"), "utf8") });
+    const res = await page.evaluate(async () =>
+      // eslint-disable-next-line no-undef
+      axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"] }, resultTypes: ["violations"] })
+    );
+    axe = res.violations.map((v) => ({ id: v.id, impact: v.impact, help: v.help, nodes: v.nodes.slice(0, 4).map((n) => n.target.join(" ")) }));
+  }
+  console.log(JSON.stringify({ url: page.url(), out, width, height, horizontalOverflowPx: overflow, consoleErrors: errors.slice(0, 10), ...(axe ? { axe } : {}) }));
 } finally {
   await browser.close();
 }
