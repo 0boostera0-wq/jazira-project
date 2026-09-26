@@ -9,12 +9,12 @@ import { cn } from "@/components/ui/cn";
 import { useLocale, useT } from "@/i18n/client";
 import { subjectIcon } from "./icons";
 import { catalogLabel } from "./names";
-import { PLATE, SubjectChip } from "./parts";
+import { SubjectChip } from "./parts";
 
-// Track → library illustration (layout element inside the panel).
+// Track → library painting (full-bleed panel beside the track details).
 const ART = {
   general: "landing.curriculum",
-  sharia: "aptitude.verbal",
+  sharia: "high-school.sharia",
   business: "high-school.business",
   "cs-eng": "high-school.computer-science",
   health: "high-school.health",
@@ -111,8 +111,8 @@ export default function TracksExplorer({ tracks }) {
         className="overflow-hidden rounded-lg border border-line/12 bg-surface shadow-sm xl:col-span-8"
       >
         <div key={track.id} className="animate-fade grid h-full sm:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-          <div className={cn("grid place-items-center px-6 py-2 sm:px-4 sm:py-4", PLATE)}>
-            <Illustration id={ART[track.id] || "high-school.hero"} className="w-full max-w-[190px] sm:max-w-[280px]" />
+          <div aria-hidden="true" className="relative aspect-[16/9] sm:aspect-auto sm:min-h-[16rem]">
+            <Illustration id={ART[track.id] || "high-school.hero"} fill sizes="(min-width: 1280px) 300px, (min-width: 640px) 38vw, 100vw" />
           </div>
           <div className="flex min-w-0 flex-col p-5 sm:p-6">
             <div className="flex items-center gap-3">

@@ -230,7 +230,7 @@ export default function Feed({
         {state.status === "unavailable" && (
           <div className="surface">
             <EmptyState
-              image="system.offline"
+              image="support.offline"
               compact
               title={t("feed.unavailable.title")}
               description={t("feed.unavailable.body")}
@@ -393,7 +393,7 @@ function FeedEmpty({ t, scope, filter, reason, tag, locale, isSelf, onCompose, o
   return (
     <div className="surface">
       <EmptyState
-        image={big ? "community.discussion" : undefined}
+        image={big ? "community.conversation" : undefined}
         icon={big ? undefined : Users}
         compact={!big}
         title={t(`feed.empty.${key}.title`, { tag: shownTag ? tagInline(t, shownTag, locale) : "" })}

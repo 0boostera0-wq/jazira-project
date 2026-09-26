@@ -9,7 +9,6 @@ import Button from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
 import { ProgressBar, ProgressRing } from "@/components/ui/Progress";
 import { cn } from "@/components/ui/cn";
-import { PLATE } from "@/components/stages/parts";
 import { builderHref } from "./builder-logic";
 import { sectionLabel, signInHref, topicLabel } from "./labels";
 import ReviewList from "./ReviewList";
@@ -57,6 +56,10 @@ export default function ExamResults({ result, isSignedIn, path }) {
     <div className="animate-in">
       {/* ── score header ── */}
       <header className="surface overflow-hidden">
+        {/* A finished paper and a well-earned pause — a painted strip above the score. */}
+        <div aria-hidden="true" className="relative h-24 sm:h-32 lg:h-36">
+          <Illustration id="exams.results" fill sizes="(min-width: 1280px) 960px, 100vw" />
+        </div>
         <div className="grid gap-6 p-5 sm:p-8 xl:grid-cols-12 xl:items-center xl:gap-8">
           <div className="flex items-center gap-5 sm:gap-7 xl:col-span-7">
             <ProgressRing value={pct} size={116} stroke={9} tone={ringTone(pct)} label={t("results.scoreLabel", { percent: formatPercent(pct / 100, locale, 1) })} className="shrink-0">
@@ -145,8 +148,8 @@ export default function ExamResults({ result, isSignedIn, path }) {
             )}
             <section aria-labelledby="next-title" className="surface-tint overflow-hidden">
               {/* decorative: dropped on phones so the answer review comes sooner */}
-              <div className={cn("hidden border-b border-line/8 px-10 pt-2 sm:block", PLATE)}>
-                <Illustration id="ai.feedback" className="mx-auto w-full max-w-[200px]" />
+              <div aria-hidden="true" className="relative hidden aspect-[16/9] sm:block">
+                <Illustration id="assistant.summarize" fill sizes="(min-width: 1280px) 380px, (min-width: 1024px) 34vw, 90vw" />
               </div>
               <div className="p-5 sm:p-6">
                 <h2 id="next-title" className="t-h4">{t("results.next.title")}</h2>

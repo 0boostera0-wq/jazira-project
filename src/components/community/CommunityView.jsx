@@ -2,6 +2,7 @@ import { HeartHandshake, HelpCircle, Trophy } from "lucide-react";
 import { getT } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
 import Illustration from "@/components/ui/Illustration";
+import { ArtPreload } from "@/components/stages/HeroArt";
 import Feed from "./Feed";
 import GuidelinesCard from "./GuidelinesCard";
 import PopularTags from "./PopularTags";
@@ -13,6 +14,9 @@ const WAYS = [
   { key: "share", icon: Trophy },
   { key: "help", icon: HeartHandshake },
 ];
+
+// Header art: 4/12 of the content column from lg, as tall as the intro.
+const ART_SIZES = "(min-width: 1280px) 400px, 32vw";
 
 /**
  * /community — split header · feed (composer, topic filters, posts) with a
@@ -40,8 +44,9 @@ export default async function CommunityView() {
             ))}
           </ul>
         </div>
-        <div className="relative hidden items-end justify-center bg-[#F7F0E3] px-6 pt-6 dark:bg-surface-2 lg:col-span-4 lg:flex">
-          <Illustration id="community.study-group" className="w-full max-w-[320px]" />
+        <div aria-hidden="true" className="relative hidden lg:col-span-4 lg:block">
+          <ArtPreload id="community.hero" from="lg" sizes={ART_SIZES} />
+          <Illustration id="community.hero" fill sizes={ART_SIZES} />
         </div>
       </header>
 

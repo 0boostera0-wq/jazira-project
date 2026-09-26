@@ -18,14 +18,14 @@ export default async function VerifyEmailPage(props) {
     <AuthShell
       title={t("verify.title")}
       description={t("verify.description")}
-      illustration="support.contact"
+      illustration="welcome.verify-email"
       asideTitle={t("verify.aside.title")}
       asidePoints={t.raw("verify.aside.points")}
     >
       <Messages ns={["auth"]}>
         <VerifyEmailForm />
       </Messages>
-      <AuthTips title={t("verify.aside.title")} points={t.raw("verify.aside.points")} illustration="support.contact" from="sm" />
+      <AuthTips title={t("verify.aside.title")} points={t.raw("verify.aside.points")} illustration="welcome.verify-email" from="sm" />
     </AuthShell>
   );
 }

@@ -21,11 +21,11 @@ export { Chevron };
 export const SECTION_GAP = "mt-[clamp(3rem,2rem_+_3vw,5rem)]";
 
 /**
- * Cream "plate" behind library illustrations; a quiet surface in dark mode —
- * the one rule for every plate in the app (see PLATE_RING for the hairline).
+ * Cream "plate": the warm panel behind art thumbnails and their loading
+ * placeholders; a quiet surface in dark mode. (Library paintings themselves are
+ * full-bleed — see ui/Illustration and the .art-frame utility.)
  */
 export const PLATE = "bg-[#F7F0E3] dark:bg-surface-2";
-export const PLATE_RING = "ring-1 ring-inset ring-[#7A623A]/10 dark:ring-line/10";
 
 /** Catalog name, marked lang="ar" when English mode falls back to Arabic. */
 export function CatalogName({ node, locale, className }) {

@@ -16,7 +16,7 @@ import { pageList } from "../parts";
 // Card footnote when a grade adds no subject (new subjects are listed instead).
 const NOTE = { same: "node.sameAsPrev", periods: "node.samePeriodsDiffer" };
 
-const ART = { elementary: "elementary.classroom", middle: "middle.study-plan" };
+const ART = { elementary: "elementary.hero", middle: "middle.hero" };
 
 /** /curriculum/elementary · /curriculum/middle — grades, what changes between them, and the plan. */
 export default async function StageView({ slug, node, trail, locale }) {

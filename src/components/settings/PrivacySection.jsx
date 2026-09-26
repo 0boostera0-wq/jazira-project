@@ -23,8 +23,8 @@ export default function PrivacySection() {
           <p className="t-h4">{t("privacy.intro.title")}</p>
           <p className="t-small mt-1.5 max-w-xl text-ink-3">{t("privacy.intro.body")}</p>
         </div>
-        <div className="hidden h-full items-end justify-center bg-[#F7F0E3] px-4 pt-3 dark:bg-surface-3/40 sm:flex">
-          <Illustration id="landing.privacy" className="w-full max-w-[220px]" />
+        <div aria-hidden="true" className="relative hidden h-full min-h-[9rem] sm:block">
+          <Illustration id="landing.privacy" fill sizes="240px" />
         </div>
       </div>
 

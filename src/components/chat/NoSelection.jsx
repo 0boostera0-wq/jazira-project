@@ -21,8 +21,8 @@ export default function NoSelection({ about = false }) {
   return (
     <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto bg-surface-2/40 p-8">
       <div className="w-full max-w-md text-center">
-        <div className="mx-auto w-full max-w-[220px] overflow-hidden rounded-xl bg-[#F7F0E3] ring-1 ring-inset ring-[#7A623A]/10">
-          <Illustration id="community.discussion" className="w-full" />
+        <div aria-hidden="true" className="art-frame mx-auto w-full max-w-[260px] rounded-xl">
+          <Illustration id="community.conversation" aspect="4/3" sizes="260px" />
         </div>
         <h2 className="t-h3 mt-6">{t(`${copy}.title`)}</h2>
         <p className="t-small mx-auto mt-1.5 max-w-sm text-ink-3">{t(`${copy}.body`)}</p>

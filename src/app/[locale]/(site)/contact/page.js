@@ -2,7 +2,7 @@ import { Info } from "lucide-react";
 import { getT, setRequestLocale } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
 import { buildMetadata } from "@/lib/seo";
-import Illustration from "@/components/ui/Illustration";
+import HeroArt from "@/components/stages/HeroArt";
 import ContactForm from "@/components/support/ContactForm";
 import ContactChannels from "@/components/support/ContactChannels";
 
@@ -34,7 +34,7 @@ export default async function ContactPage(props) {
 
         <aside className="lg:col-span-5">
           <div className="space-y-5 lg:sticky lg:top-24">
-            <Illustration id="support.contact" priority plate className="hidden shadow-sm lg:block" />
+            <HeroArt id="support.contact" from="lg" sizes="(min-width: 1280px) 460px, 38vw" className="aspect-[4/3] object-cover" frameClassName="shadow-sm" />
             <div>
               <h2 className="t-h4">{t("contact.side.title")}</h2>
               <ContactChannels only={["whatsapp", "center", "faq"]} className="mt-3" />

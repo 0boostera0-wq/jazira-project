@@ -28,15 +28,15 @@ export default async function FeatureBento({ className }) {
       />
 
       <div className="mt-7 grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-12">
-        {/* Analytics — the wide editorial tile with its illustration beside the copy */}
+        {/* Analytics — the wide editorial tile with its painting full-bleed beside the copy */}
         <Tile className="overflow-hidden !p-0 md:col-span-2 lg:col-span-7">
           <div className="grid h-full sm:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
             <div className="flex flex-col justify-center p-5 sm:p-7">
               <h3 className="t-h3">{t("features.analytics.title")}</h3>
               <p className="t-body mt-2.5 text-ink-2">{t("features.analytics.body")}</p>
             </div>
-            <div className="flex items-end justify-center bg-[#F7F0E3] dark:bg-surface-2 px-5 pt-5 sm:px-4 sm:pt-8">
-              <Illustration id="subscriptions.analytics" className="w-full max-w-[220px] sm:max-w-[300px]" />
+            <div aria-hidden="true" className="relative aspect-[16/9] sm:aspect-auto sm:min-h-[15rem]">
+              <Illustration id="subscriptions.features" fill sizes="(min-width: 1024px) 28vw, (min-width: 640px) 45vw, 100vw" />
             </div>
           </div>
         </Tile>

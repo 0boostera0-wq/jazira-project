@@ -111,11 +111,11 @@ export default function AttemptView({ id }) {
   if (view.phase === "results") return <ExamResults result={view.result} isSignedIn={isSignedIn} path={path} />;
 
   const states = {
-    noLocal: { image: "aptitude.timed", action: <Button href="/exams" iconStart={ClipboardCheck}>{t("runner.states.noLocal.cta")}</Button> },
-    notFound: { image: "system.not-found", action: <Button href="/exams" iconStart={ClipboardCheck}>{t("runner.states.notFound.cta")}</Button> },
+    noLocal: { image: "exams.timed", action: <Button href="/exams" iconStart={ClipboardCheck}>{t("runner.states.noLocal.cta")}</Button> },
+    notFound: { image: "support.not-found", action: <Button href="/exams" iconStart={ClipboardCheck}>{t("runner.states.notFound.cta")}</Button> },
     signIn: { image: "support.empty", action: <Button href={signInHref(path)} iconStart={LogIn}>{t("runner.states.signIn.cta")}</Button> },
     failed: {
-      image: "system.offline",
+      image: "support.offline",
       action: <Button onClick={reload} iconStart={RotateCcw}>{t("runner.states.failed.retry")}</Button>,
       secondary: <Button href="/exams" variant="secondary">{t("runner.states.failed.hub")}</Button>,
     },
@@ -124,7 +124,9 @@ export default function AttemptView({ id }) {
   const key = states[view.phase] ? view.phase : "failed";
   return (
     <section role={key === "failed" ? "alert" : undefined} className="surface-flat animate-fade mx-auto flex max-w-2xl flex-col items-center px-6 py-10 text-center sm:py-14">
-      <Illustration id={s.image} className="w-full max-w-[220px]" />
+      <div aria-hidden="true" className="art-frame w-full max-w-[240px] rounded-xl">
+        <Illustration id={s.image} aspect="4/3" sizes="240px" />
+      </div>
       <h1 className="t-h3 mt-5">{t(`runner.states.${key}.title`)}</h1>
       <p className="t-body mt-2 max-w-md text-ink-3">{t(`runner.states.${key}.body`)}</p>
       <div className="mt-6 flex flex-wrap justify-center gap-2.5">

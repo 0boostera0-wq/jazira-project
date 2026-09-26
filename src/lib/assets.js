@@ -1,108 +1,188 @@
 // ============================================================================
-// Jazira illustration library — manifest.
+// Jazira image library — the central asset manifest.
 //
-// Every illustration lives in /public/images/<group>/<name>.svg, is text-free
-// (all copy is real HTML next to it), hand-authored vector art in the Jazira
-// style (see docs/DESIGN_SYSTEM.md → Illustration), optimised with SVGO.
-// SVGs are resolution-independent and small, so they are served as-is (no
-// raster variants needed) and lazy-loaded below the fold.
+// One entry per image. Raster art is text-free (every title stays real HTML,
+// so one image serves Arabic and English), follows docs/ART_DIRECTION.md, and
+// is rendered by scripts/process-illustrations.mjs from its original
+// (`source`, kept outside the repo) into public/images/<category>/<name>-<w>.webp.
+// `src` is the logical path the next/image loader (src/lib/image-loader.js)
+// resolves to those renditions — render art with <Illustration id="…" />,
+// never by hard-coding a path.
 //
-// `usedIn` documents where each asset appears so future developers can find,
-// replace or retire art safely. Keep it accurate when you move an image:
-// `node scripts/check-assets.mjs --usage` lists the files that really
-// reference each id. `npm run assets:check` verifies every entry exists, is
-// referenced and documents its use.
+// Fields
+//   id / name        "<category>.<name>" — what components reference
+//   src              logical path (see above)
+//   category         public/images/<category>/
+//   pages            where the image appears (keep accurate when moving art;
+//                    `node scripts/check-assets.mjs --usage` lists real references)
+//   purpose          what the image says on those pages
+//   languageNeutral  true: no text in the artwork, identical in ar/en and RTL/LTR
+//   sizes            default responsive `sizes` (callers override per layout)
+//   priority         "lcp" — the page hero on at least one route (pass `priority`
+//                    there, and only there); "lazy" — always below the fold or small
+//   focus            object-position used when a layout crops the 3:2 frame
+//   color            average colour, shown while the image loads (generated)
+//
+// The brand kit (kind "brand": mark, lockups, icons, social image) is listed at
+// the end. Those files are served as-is; the interface draws the same artwork
+// inline through src/components/brand (see docs/BRAND.md).
 // ============================================================================
+import COLORS from "./asset-colors.js";
 
-const A = (group, name, width, height, usedIn, brief) => ({
-  id: `${group}.${name}`,
-  src: `/images/${group}/${name}.svg`,
-  width,
-  height,
-  usedIn,
-  brief,
+// Responsive `sizes` presets (px values match the layout max-widths).
+export const SIZES = {
+  hero: "(min-width: 1280px) 620px, (min-width: 1024px) 48vw, 100vw",
+  heroSide: "(min-width: 1280px) 520px, (min-width: 768px) 42vw, 100vw",
+  panel: "(min-width: 1024px) 50vw, 100vw",
+  card: "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+  // full-height auth panel: object-cover over a tall frame is as wide as 1.5× its height
+  aside: "(min-width: 1024px) calc(150vh - 48px), 0px",
+  spot: "(min-width: 640px) 320px, 60vw",
+  thumb: "160px",
+};
+
+const A = (category, name, source, { pages, purpose, sizes = SIZES.spot, priority = "lazy", focus = "50% 50%" }) => ({
+  id: `${category}.${name}`,
+  name: `${category}/${name}`,
+  src: `/images/${category}/${name}.webp`,
+  kind: "raster",
+  category,
+  source,
+  width: 1536,
+  height: 1024,
+  pages,
+  purpose,
+  languageNeutral: true,
+  sizes,
+  priority,
+  focus,
+  color: COLORS[`${category}.${name}`] || "#E8DCC4",
+});
+
+// Brand-kit file (served as-is). `lang` marks the lockups whose wordmark is a script.
+const B = (file, { pages, purpose, lang, dir = "/images/brand" }) => ({
+  id: `brand.${file.replace(/\.\w+$/, "")}`,
+  name: `brand/${file}`,
+  src: `${dir}/${file}`,
+  kind: "brand",
+  category: "brand",
+  pages,
+  purpose,
+  languageNeutral: !lang,
+  lang,
+  priority: "lazy",
 });
 
 const LIST = [
-  // ── brand ────────────────────────────────────────────────────────────────
-  A("brand", "island-hero", 1200, 1000, ["/ (landing hero)"], "Signature scene: a lush stylised island at golden hour on calm turquoise-sage water. A terraced hill whose layers read as stacked books, a slim study tower (lighthouse-like) with a warm lit window, two palms, a tiny sailboat, soft sun disc and a few rounded clouds. Rich but calm; generous negative space at the top."),
-  A("brand", "island-education", 800, 600, ["/about", "/curriculum (hub hero)", "/sign-up"], "Island with a small open-air school pavilion (arches), a path of stepping stones leading to it, books stacked like terraces, a palm and a flag. Morning light."),
-  A("brand", "island-study", 800, 600, ["/dashboard (welcome card)", "/sign-in", "auth shell (default art)"], "Cosy study nook on the island: a wooden desk under a palm canopy, desk lamp glowing, open notebook, mug, stack of books, a small plant. Evening warmth."),
-  A("brand", "island-ai", 800, 600, ["/ (assistant section)", "/assistant (welcome)"], "The Jazira assistant (round friendly robot with a palm-leaf antenna) standing on a small island, gentle constellation lines connecting floating book / lightbulb / atom icons above it."),
-  A("brand", "island-achievement", 800, 600, ["/achievements (hero, climb card)", "/profile-setup"], "An island summit reached by a winding stepped path; a pennant flag and a small trophy at the top, stars twinkling, a proud small character mid-climb seen from behind."),
-  A("brand", "assistant-mascot", 512, 512, ["assistant avatar (chat, dashboard, landing)"], "Circular mascot badge: the Jazira assistant — a round, friendly robot head (cream body, gold rim, sage-green visor with two soft glowing eyes and a small smile), a palm-leaf antenna, inside a champagne circle with a thin gold ring. Must read clearly at 40px."),
+  // ── landing & public site ────────────────────────────────────────────────
+  A("landing", "hero", "jazira-landing-hero-v1", { pages: ["/ (hero)"], purpose: "The island of learning — the platform's signature scene", sizes: SIZES.hero, priority: "lcp", focus: "58% 50%" }),
+  A("landing", "curriculum", "jazira-curriculum-hero-v1", { pages: ["/curriculum (hero)", "/ (curriculum section)", "/high-school (general track)"], purpose: "The great library hall — every stage and subject in one place", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("landing", "progress", "jazira-progress-path-v1", { pages: ["/ (progress section)", "/dashboard (onboarding)", "/competitions (climb card)"], purpose: "A lantern-lit path up the hill — steady, visible progress", sizes: SIZES.card, focus: "50% 60%" }),
+  A("landing", "privacy", "jazira-privacy-harbor-v1", { pages: ["/ (privacy section)", "/privacy", "/settings (privacy)", "/forgot-password", "/reset-password"], purpose: "A sheltered harbor under the lighthouse — safety and care", sizes: SIZES.card, focus: "62% 50%" }),
+  A("landing", "about", "jazira-about-island-v1", { pages: ["/about (hero)"], purpose: "The whole island, stage by stage — the story of Jazira", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("landing", "reviews", "jazira-reviews-lanterns-v1", { pages: ["/reviews (hero)"], purpose: "Lanterns rising over the sea — students' voices", sizes: SIZES.heroSide, priority: "lcp" }),
 
-  // ── landing ──────────────────────────────────────────────────────────────
-  A("landing", "curriculum", 800, 600, ["/ (curriculum feature)", "stage pages (tracks explorer)"], "Books arranged as a gentle staircase with ribbon bookmarks, a tablet leaning on them showing abstract cards, a pencil cup."),
-  A("landing", "exams", 800, 600, ["/ (exams feature)", "/exams (hero)"], "Exam sheet with abstract lines and a bubble-answer grid, three check marks, a stopwatch, a sharpened pencil, a small gold star."),
-  A("landing", "community", 800, 600, ["/ (community feature)"], "Three stylised students (simple rounded forms, no facial detail beyond dots) around a round table with laptops and books; soft speech bubbles containing only dots / hearts."),
-  A("landing", "progress", 800, 600, ["/ (progress section)", "/dashboard (onboarding panel)"], "Bar chart whose bars sprout leaves like plants growing, a rising line with a star at its peak, a small watering can."),
-  A("landing", "privacy", 800, 600, ["/ (trust section)", "/privacy", "/forgot-password", "/reset-password", "auth tips", "/settings (privacy section, settings layout)"], "A calm shield with a keyhole, layered like a soft badge, surrounded by a palm leaf and a small island; conveys safety and care."),
+  // ── welcome (auth & onboarding) ──────────────────────────────────────────
+  A("welcome", "sign-in", "jazira-sign-in-nook-v1", { pages: ["/sign-in", "auth pages (default art)"], purpose: "A window seat in the tower at dusk — welcome back", sizes: SIZES.aside, priority: "lcp" }),
+  A("welcome", "sign-up", "jazira-sign-up-arrival-v1", { pages: ["/sign-up"], purpose: "Arriving at the island's open gate — a new beginning", sizes: SIZES.aside, priority: "lcp" }),
+  A("welcome", "profile-setup", "jazira-profile-setup-desk-v1", { pages: ["/profile-setup"], purpose: "A fresh desk being set up — making the space your own", sizes: SIZES.aside, priority: "lcp" }),
+  A("welcome", "verify-email", "jazira-verify-email-letter-v1", { pages: ["/auth/verify-email"], purpose: "A sealed letter on the windowsill — a message on its way", sizes: SIZES.aside, priority: "lcp" }),
+  A("welcome", "dashboard", "jazira-dashboard-sunrise-v1", { pages: ["/dashboard (welcome card)"], purpose: "Sunrise over the island from the tower — a fresh study day", sizes: SIZES.card, focus: "50% 55%" }),
 
-  // ── elementary ───────────────────────────────────────────────────────────
-  A("elementary", "numbers", 640, 480, ["/elementary (numbers)", "/curriculum math subject"], "A colourful bead abacus, counting pebbles and a friendly shape family (circle, triangle, square) — no digits."),
-  A("elementary", "reading", 640, 480, ["/elementary (games rail: reading)"], "A small child character (simple, stylised) reading a big open book under a palm tree, little birds nearby."),
-  A("elementary", "writing", 640, 480, ["/elementary (games rail: writing)"], "A ruled notebook with a pencil drawing a single smooth curly line, an eraser, a ruler and a star sticker."),
-  A("elementary", "science", 640, 480, ["/elementary (science)", "/curriculum science subject"], "A magnifying glass over a leaf with a ladybug, a sprouting seed in a pot, a small beaker."),
-  A("elementary", "games", 640, 480, ["/elementary (learning games)"], "Colourful puzzle pieces fitting together, a tablet with abstract game tiles, confetti dots."),
-  A("elementary", "classroom", 800, 600, ["/elementary (hero)", "/curriculum elementary stage", "/ (stage selector)", "/search (curriculum results)"], "A bright small classroom: a blank green board with abstract chalk shapes, two little desks, a globe, a plant, a window with the sea."),
+  // ── elementary (grades 1–6): toy-like, colourful ─────────────────────────
+  A("elementary", "hero", "jazira-elementary-hero-v1", { pages: ["/elementary (hero)", "/ (stage selector)", "/curriculum (elementary stage)", "/search (stage results)"], purpose: "A playful garden classroom by the sea", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("elementary", "math", "jazira-elementary-math-v1", { pages: ["/elementary (maths)", "elementary maths subject"], purpose: "Counting and shapes to play with" }),
+  A("elementary", "science", "jazira-elementary-science-v1", { pages: ["/elementary (science)", "elementary science subject"], purpose: "Looking closely at nature" }),
+  A("elementary", "reading", "jazira-elementary-reading-v1", { pages: ["/elementary (activities: reading)", "elementary Arabic subject"], purpose: "A picture book full of adventures" }),
+  A("elementary", "writing", "jazira-elementary-writing-v1", { pages: ["/elementary (activities: writing)"], purpose: "First strokes, crayons and practice" }),
+  A("elementary", "games", "jazira-elementary-games-v1", { pages: ["/elementary (learning games)"], purpose: "Learning through play" }),
+  A("elementary", "english", "jazira-elementary-english-v1", { pages: ["elementary English subject"], purpose: "A friendly window on the wider world" }),
+  A("elementary", "islamic", "jazira-elementary-islamic-v1", { pages: ["elementary Quran & Islamic studies subjects"], purpose: "A calm, respectful study corner" }),
+  A("elementary", "art", "jazira-elementary-art-v1", { pages: ["elementary art subject"], purpose: "Colour, brushes and creativity" }),
 
-  // ── middle ───────────────────────────────────────────────────────────────
-  A("middle", "math", 640, 480, ["/middle (math)", "/curriculum math"], "Geometric solids (cube, cone, sphere), a compass and protractor on a grid sheet with a plotted curve."),
-  A("middle", "science", 640, 480, ["/middle (science)", "/curriculum science"], "A microscope, an atom model and a small ringed planet."),
-  A("middle", "chemistry", 640, 480, ["/middle (chemistry)"], "Three flasks with softly coloured liquids and rising bubbles on a tray."),
-  A("middle", "physics", 640, 480, ["/middle (physics)"], "A horseshoe magnet with field arcs, a glowing bulb, a pendulum."),
-  A("middle", "study-plan", 640, 480, ["/middle (hero, study planning)", "/curriculum middle stage", "/ (stage selector)", "/search (curriculum results)"], "A calendar grid with a few coloured blocks, a checklist with ticks (no text), an alarm clock."),
+  // ── middle (grades 7–9): refined stylised 3D ─────────────────────────────
+  A("middle", "hero", "jazira-middle-hero-v2", { pages: ["/middle (hero)", "/ (stage selector)", "/curriculum (middle stage)", "/search (stage results)"], purpose: "Curious students at work in the library lab", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("middle", "math", "jazira-middle-math-v3", { pages: ["/middle (maths)", "middle maths subject"], purpose: "Geometry and measurement, hands-on" }),
+  A("middle", "science", "jazira-middle-science-v1", { pages: ["/middle (science)", "middle science subject"], purpose: "Observing and experimenting" }),
+  A("middle", "chemistry", "jazira-middle-chemistry-v1", { pages: ["/middle (chemistry)"], purpose: "First experiments with matter" }),
+  A("middle", "physics", "jazira-middle-physics-v1", { pages: ["/middle (physics)"], purpose: "Forces, light and energy" }),
+  A("middle", "arabic", "jazira-middle-arabic-v1", { pages: ["middle Arabic subject"], purpose: "Reading, writing and the craft of language" }),
 
-  // ── high school ──────────────────────────────────────────────────────────
-  A("high-school", "math", 640, 480, ["/high-school (math)", "/curriculum math", "exam catalog (Tahsili math)"], "An elegant function curve on a coordinate grid with a tangent line and a shaded area, a graphing tool."),
-  A("high-school", "physics", 640, 480, ["/high-school (physics)", "/curriculum physics", "exam catalog (Tahsili physics)"], "A rocket on a curved trajectory around a planet, a sine wave, a vector arrow."),
-  A("high-school", "chemistry", 640, 480, ["/high-school (chemistry)", "/curriculum chemistry", "exam catalog (Tahsili chemistry)"], "A ball-and-stick molecule, blank periodic-table-style tiles (no symbols), an Erlenmeyer flask."),
-  A("high-school", "biology", 640, 480, ["/high-school (biology)", "/curriculum biology", "exam catalog (Tahsili biology)"], "A DNA double helix, a plant cell cross-section, a leaf."),
-  A("high-school", "computer-science", 640, 480, ["/high-school (tracks explorer: CS & engineering)"], "A laptop with abstract code bars (coloured lines, no characters), a circuit trace, a small cloud and gear."),
-  A("high-school", "business", 640, 480, ["/high-school (tracks explorer: business)"], "A rising bar chart with an arrow, a briefcase, stacked coins, a pie chart."),
-  A("high-school", "health", 640, 480, ["/high-school (tracks explorer: health & life)"], "A heart with a pulse line, an apple, a stethoscope, a small dumbbell."),
-  A("high-school", "hero", 800, 600, ["/high-school (hero)", "/curriculum high-school stage", "/ (stage selector)", "/search (curriculum results)", "tracks explorer"], "Crossroads on the island: a signpost-like fork with five paths (tracks) leading to small landmarks (book, laptop, heart, chart, mosque-dome silhouette) — no text on signs."),
+  // ── high school: premium, cinematic ──────────────────────────────────────
+  A("high-school", "hero", "jazira-high-school-hero-v2", { pages: ["/high-school (hero)", "/ (stage selector)", "/curriculum (high-school stage)", "/search (stage results)"], purpose: "Looking out to the future from the library terrace", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("high-school", "math", "jazira-hs-math-v1", { pages: ["/high-school (maths)", "high-school maths subject", "Tahsili maths section"], purpose: "Functions, curves and precision" }),
+  A("high-school", "physics", "jazira-hs-physics-v1", { pages: ["/high-school (physics)", "high-school physics subject", "Tahsili physics section"], purpose: "Motion, waves and the cosmos" }),
+  A("high-school", "chemistry", "jazira-hs-chemistry-v1", { pages: ["/high-school (chemistry)", "high-school chemistry subject", "Tahsili chemistry section"], purpose: "Molecules and reactions" }),
+  A("high-school", "biology", "jazira-hs-biology-v1", { pages: ["/high-school (biology)", "high-school biology subject", "Tahsili biology section"], purpose: "Life, cells and growth" }),
+  A("high-school", "computer-science", "jazira-hs-computer-science-v1", { pages: ["/high-school (CS & engineering track)", "computing subjects"], purpose: "Computing and engineering" }),
+  A("high-school", "business", "jazira-hs-business-v1", { pages: ["/high-school (business track)", "business subjects"], purpose: "Enterprise, finance and management" }),
+  A("high-school", "health", "jazira-hs-health-v1", { pages: ["/high-school (health & life track)", "health subjects"], purpose: "Health, life sciences and fitness" }),
+  A("high-school", "sharia", "jazira-hs-sharia-v1", { pages: ["/high-school (sharia track)", "Islamic studies subjects"], purpose: "Islamic sciences and scholarship" }),
 
-  // ── aptitude (Qudurat) ───────────────────────────────────────────────────
-  A("aptitude", "quantitative", 640, 480, ["/exams/aptitude (quantitative section, via the exam catalog)"], "A balance scale weighing geometric shapes, a bar chart, a triangle ruler."),
-  A("aptitude", "verbal", 640, 480, ["/exams/aptitude (verbal section, via the exam catalog)", "tracks explorer"], "An open book with flowing calligraphic strokes rising out of it as abstract ribbons (no readable letters), a reed pen (qalam)."),
-  A("aptitude", "timed", 640, 480, ["exam section pages", "exam runner (attempt view)", "Illustration (fallback art)"], "A stopwatch with a gold progress arc and an hourglass with flowing sand."),
-  A("aptitude", "hero", 800, 600, ["/exams/aptitude (hero, via the exam catalog)", "/ (stage selector)"], "A focused student character at a desk with an exam sheet, a stopwatch and floating shapes/book symbols representing verbal and quantitative skills."),
+  // ── aptitude (Qudurat) & achievement (Tahsili) ───────────────────────────
+  A("aptitude", "hero", "jazira-aptitude-hero-v1", { pages: ["/exams/aptitude (hero)", "/ (stage selector)"], purpose: "Balance, pattern and reasoning in stone and light", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("aptitude", "quantitative", "jazira-aptitude-quantitative-v1", { pages: ["/exams/aptitude (quantitative section)"], purpose: "Quantities, comparison and logic" }),
+  A("aptitude", "verbal", "jazira-aptitude-verbal-v1", { pages: ["/exams/aptitude (verbal section)", "Arabic literature subjects"], purpose: "Words, meaning and reading" }),
+  A("achievement", "hero", "jazira-achievement-hero-v1", { pages: ["/exams/achievement (hero)", "/ (stage selector)"], purpose: "Four science pavilions around one plaza", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("achievement", "review", "jazira-achievement-review-v1", { pages: ["exam section pages", "exam review list", "/assistant (quiz me)", "notifications rail"], purpose: "Revision cards and focused review" }),
+  A("achievement", "performance", "jazira-achievement-performance-v1", { pages: ["/exams/history (empty analytics)"], purpose: "Measuring strengths over time" }),
 
-  // ── achievement (Tahsili) ────────────────────────────────────────────────
-  A("achievement", "review", 640, 480, ["exam section pages", "exam results (review list)", "/assistant (welcome)", "notifications rail"], "Flashcards fanned out with check marks, a highlighter, a bookmark."),
-  A("achievement", "performance", 640, 480, ["/exams/history (analytics)"], "A radar chart and a small trophy on a dashboard panel with a rising sparkline."),
-  A("achievement", "hero", 800, 600, ["/exams/achievement (hero, via the exam catalog)", "/ (stage selector)"], "Four subject icons (flask, atom, DNA, function curve) orbiting a central graduation cap on an island pedestal."),
+  // ── exams ────────────────────────────────────────────────────────────────
+  A("exams", "hero", "jazira-exams-hero-v1", { pages: ["/exams (hero)", "/ (exam practice section)"], purpose: "A calm exam desk in the library — practice with confidence", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("exams", "timed", "jazira-exams-timed-v1", { pages: ["exam section pages", "exam runner"], purpose: "Time, pace and focus" }),
+  A("exams", "history", "jazira-exams-observatory-v1", { pages: ["/exams/history (hero)"], purpose: "The observatory — tracing your results over time", sizes: SIZES.card }),
+  A("exams", "results", "jazira-exam-results-v1", { pages: ["exam results"], purpose: "A finished paper and a well-earned pause", sizes: SIZES.card }),
 
   // ── community ────────────────────────────────────────────────────────────
-  A("community", "study-group", 640, 480, ["/community (hero)"], "Three students with laptops and books sharing a table, a lamp overhead."),
-  A("community", "discussion", 640, 480, ["/community (empty feed)", "/tags/[tag] (empty)", "/chat (no conversation selected)"], "Overlapping soft speech bubbles with dots, a heart and a lightbulb."),
-  A("community", "motivation", 640, 480, ["/achievements (streak card)"], "A small character climbing stair-steps toward a glowing star, a flame for the streak."),
+  A("community", "hero", "jazira-community-hero-v2", { pages: ["/community (header)", "/ (community section)"], purpose: "Students studying together in the courtyard", sizes: SIZES.panel, priority: "lcp" }),
+  A("community", "achievements", "jazira-achievements-hall-v1", { pages: ["/achievements (hero)"], purpose: "A hall of honour for badges and milestones", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("community", "competitions", "jazira-competitions-regatta-v1", { pages: ["/competitions (header)"], purpose: "A friendly regatta around the island", sizes: SIZES.panel, priority: "lcp" }),
+  A("community", "streak", "jazira-community-streak-v1", { pages: ["/achievements (streak card)"], purpose: "A lantern kept alight, day after day", sizes: SIZES.thumb }),
+  A("community", "conversation", "jazira-community-conversation-v1", { pages: ["/chat (no conversation)", "/community (empty feed)", "/tags/[tag] (empty)"], purpose: "Messages carried between islands" }),
 
-  // ── assistant (AI) ───────────────────────────────────────────────────────
-  A("ai", "tutoring", 640, 480, ["/assistant (welcome: explain)"], "The Jazira assistant robot pointing at a board with an abstract diagram (shapes and arrows)."),
-  A("ai", "study-plan", 640, 480, ["/assistant (welcome: plan)", "/middle (study planning)", "/dashboard (assistant card)"], "The assistant robot holding a calendar, with a checklist of ticks floating beside it."),
-  A("ai", "feedback", 640, 480, ["/assistant (welcome: feedback)", "exam results (explanations)"], "A document with highlighted lines, sparkle marks and a check, with a magnifier."),
+  // ── assistant ────────────────────────────────────────────────────────────
+  A("assistant", "hero", "jazira-assistant-hero-v1", { pages: ["/assistant (welcome)", "/ (assistant section)"], purpose: "The guiding light in the tower study", sizes: SIZES.panel, priority: "lcp" }),
+  A("assistant", "explain", "jazira-assistant-explain-v1", { pages: ["/assistant (explain)"], purpose: "Ideas made clear" }),
+  A("assistant", "summarize", "jazira-assistant-summarize-v1", { pages: ["/assistant (summarise)", "exam results (explanations)"], purpose: "The essentials of a lesson, distilled" }),
+  A("assistant", "plan", "jazira-assistant-plan-v1", { pages: ["/assistant (plan)", "/middle (study plan)", "/dashboard (assistant card)"], purpose: "A study plan taking shape" }),
 
-  // ── subscriptions ────────────────────────────────────────────────────────
-  A("subscriptions", "premium", 800, 600, ["/subscriptions (plan card, included card, activation status)", "premium upgrade dialog", "/settings (subscription section)"], "A golden crown resting on a cream cushion atop a small island pedestal, soft sparkles and a gentle gold glow."),
-  A("subscriptions", "analytics", 640, 480, ["/subscriptions (feature bento)", "/checkout/success"], "An elegant analytics panel: area chart, donut and KPI tiles with gold highlights."),
+  // ── subscriptions & payment ──────────────────────────────────────────────
+  A("subscriptions", "hero", "jazira-subscriptions-hall-v1", { pages: ["/subscriptions (Elite plan card, the page's hero)"], purpose: "The doors of the premium reading hall opening", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("subscriptions", "features", "jazira-premium-study-v2", { pages: ["/subscriptions (features)"], purpose: "Premium tools for serious study", sizes: SIZES.card }),
+  A("subscriptions", "premium", "jazira-subscriptions-premium-v1", { pages: ["upgrade dialog", "/settings (subscription)", "activation status (checkout return)"], purpose: "The golden key to premium" }),
+  A("payment", "checkout", "jazira-checkout-secure-v1", { pages: ["/checkout"], purpose: "A secure, sealed transaction", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("payment", "success", "jazira-checkout-success-v1", { pages: ["/checkout/success"], purpose: "The gates open — welcome to premium", sizes: SIZES.heroSide, priority: "lcp" }),
 
-  // ── support ──────────────────────────────────────────────────────────────
-  A("support", "help", 640, 480, ["/support (hero)", "/faq", "legal pages (help card)"], "A lifebuoy and a headset resting on a small island dock, a friendly lighthouse behind."),
-  A("support", "contact", 640, 480, ["/contact (hero)", "/verify-email"], "A paper plane gliding over gentle waves from the island, an envelope and a seagull."),
-  A("support", "empty", 640, 480, ["empty states (EmptyState default)", "leaderboard, subject explorer, pending curriculum, exam runner, notifications, stage shell, reviews"], "A calm small island with an empty hammock between two palms; peaceful, nothing happening."),
+  // ── support & system states ──────────────────────────────────────────────
+  A("support", "hero", "jazira-support-lighthouse-v1", { pages: ["/support (hero)", "legal pages (help card)"], purpose: "The lighthouse guiding a boat home", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("support", "contact", "jazira-contact-post-v1", { pages: ["/contact"], purpose: "Paper planes leaving the post pavilion", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("support", "faq", "jazira-faq-catalog-v1", { pages: ["/faq (hero)"], purpose: "A card catalogue — every answer in its place", sizes: SIZES.heroSide, priority: "lcp" }),
+  A("support", "empty", "jazira-state-empty-v1", { pages: ["empty states (EmptyState)", "leaderboard, subject explorer, curriculum pending, notifications, reviews"], purpose: "A quiet mooring — nothing here yet" }),
+  A("support", "not-found", "jazira-state-not-found-v1", { pages: ["404 page", "profile not found", "exam attempt not found", "/search (no results)"], purpose: "A message in a bottle — off the map" }),
+  A("support", "offline", "jazira-state-offline-v1", { pages: ["error & unavailable states (ErrorView)", "community, notifications, reviews, exam runner"], purpose: "Sails down, waiting for the wind" }),
 
-  // ── system ───────────────────────────────────────────────────────────────
-  A("system", "not-found", 640, 480, ["404 page", "profile not found", "exam attempt not found", "/search (no results)"], "A tiny island with a wooden signpost whose arrows point in different directions (blank boards), a message-in-a-bottle floating nearby."),
-  A("system", "offline", 640, 480, ["error / offline states (ErrorView)", "community feed, thread and profile (unavailable)", "exam runner", "notifications", "reviews"], "A small boat with its sail down on still water, a cloud partly covering the sun."),
+  // ── legal ────────────────────────────────────────────────────────────────
+  A("legal", "hero", "jazira-legal-scroll-v1", { pages: ["/terms", "/refund", "/acceptable-use", "/community-guidelines"], purpose: "A sealed charter on the library desk", sizes: SIZES.heroSide }),
+
+  // ── brand kit (built by the brand-kit tool, see docs/BRAND.md; the UI draws
+  //    the same artwork inline via src/components/brand) ─────────────────────
+  B("jazira-mark.svg", { pages: ["brand kit — light backgrounds"], purpose: "Primary mark: the letter ج as one stroke with the gold island" }),
+  B("jazira-mark-on-dark.svg", { pages: ["brand kit — dark backgrounds"], purpose: "Primary mark, ivory for dark backgrounds" }),
+  B("jazira-icon.svg", { pages: ["favicon (same artwork as src/app/icon.svg)", "brand kit"], purpose: "Small icon: ivory mark on the teal tile" }),
+  B("jazira-icon-192.png", { pages: ["web app manifest"], purpose: "App icon 192px" }),
+  B("jazira-icon-512.png", { pages: ["web app manifest", "Organization logo (JSON-LD)"], purpose: "App icon 512px" }),
+  B("jazira-icon-maskable-512.png", { pages: ["web app manifest (maskable)"], purpose: "Maskable app icon, mark inside the safe zone" }),
+  B("jazira-lockup-ar.svg", { lang: "ar", pages: ["brand kit — Arabic lockup, light backgrounds"], purpose: "Full lockup: mark + «جزيرة»" }),
+  B("jazira-lockup-ar-on-dark.svg", { lang: "ar", pages: ["brand kit — Arabic lockup, dark backgrounds"], purpose: "Full lockup: mark + «جزيرة», ivory" }),
+  B("jazira-lockup-en.svg", { lang: "en", pages: ["brand kit — English lockup, light backgrounds"], purpose: "Full lockup: mark + «Jazira»" }),
+  B("jazira-lockup-en-on-dark.svg", { lang: "en", pages: ["brand kit — English lockup, dark backgrounds"], purpose: "Full lockup: mark + «Jazira», ivory" }),
+  B("jazira-og.jpg", { dir: "/og", pages: ["Open Graph / Twitter card (every page)"], purpose: "Social preview: the island painting + the bilingual lockup" }),
 ];
 
 export const ASSETS = Object.fromEntries(LIST.map((a) => [a.id, a]));
 export const ASSET_LIST = LIST;
 
-/** Look up an asset by id ("aptitude.timed"). Throws in dev on unknown ids. */
+/** Look up an asset by id ("aptitude.hero"). Throws in development on unknown ids. */
 export function asset(id) {
   const a = ASSETS[id];
   if (!a && process.env.NODE_ENV !== "production") throw new Error(`[assets] unknown asset "${id}"`);

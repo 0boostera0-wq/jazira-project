@@ -3,15 +3,13 @@ import { Link } from "@/i18n/navigation";
 import Button from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
 import { SectionHeader } from "@/components/ui/Layout";
-import { cn } from "@/components/ui/cn";
-import { PLATE, PLATE_RING } from "@/components/stages/parts";
 import { CURRICULUM, YEAR } from "@/lib/curriculum";
 import NodeHeader from "../NodeHeader";
 import OfficialChannels from "../OfficialChannels";
 import { Chevron } from "../parts";
 import { OFFICIAL_LINKS, breadcrumbs, channelsCopy, nameOf } from "../copy";
 
-const ART = { elementary: "elementary.classroom", middle: "middle.study-plan", "high-school": "high-school.hero" };
+const ART = { elementary: "elementary.hero", middle: "middle.hero", "high-school": "high-school.hero" };
 
 /**
  * A programme with its own official plan that has not been verified yet
@@ -39,8 +37,8 @@ export default async function PendingView({ slug, node, trail, locale }) {
                 <Button href="/curriculum" variant="primary">{t("pending.back")}</Button>
               </div>
             </div>
-            <div aria-hidden="true" className={cn("hidden overflow-hidden rounded-lg sm:block", PLATE, PLATE_RING)}>
-              <Illustration id="support.empty" />
+            <div aria-hidden="true" className="art-frame hidden rounded-lg sm:block">
+              <Illustration id="support.empty" aspect="1/1" sizes="176px" />
             </div>
           </div>
         </section>
@@ -58,8 +56,8 @@ export default async function PendingView({ slug, node, trail, locale }) {
                   className="group flex h-full items-center gap-4 rounded-lg border border-line/15 bg-surface p-3 pe-4 shadow-xs transition-[transform,box-shadow,border-color] duration ease-out hover:-translate-y-0.5 hover:border-line/20 hover:shadow-md"
                 >
                   {ART[s.id] && (
-                    <span aria-hidden="true" className={cn("grid h-16 w-20 shrink-0 place-items-center overflow-hidden rounded-md", PLATE, PLATE_RING)}>
-                      <Illustration id={ART[s.id]} className="h-full object-contain p-1" />
+                    <span aria-hidden="true" className="relative h-16 w-20 shrink-0 overflow-hidden rounded-md">
+                      <Illustration id={ART[s.id]} fill sizes="80px" />
                     </span>
                   )}
                   <span className="min-w-0 flex-1">

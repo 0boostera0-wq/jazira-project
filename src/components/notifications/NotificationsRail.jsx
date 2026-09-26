@@ -95,8 +95,8 @@ function TipCard() {
   const t = useT("notifications");
   return (
     <section aria-labelledby="notif-tip-title" className="surface overflow-hidden">
-      <div className="bg-[#F7F0E3] px-6 pt-4 dark:bg-surface-2">
-        <Illustration id="achievement.review" className="mx-auto w-full max-w-[230px]" />
+      <div aria-hidden="true" className="relative aspect-[16/9]">
+        <Illustration id="achievement.review" fill sizes="(min-width: 1280px) 360px, (min-width: 1024px) 30vw, 90vw" />
       </div>
       <div className="p-5">
         <h2 id="notif-tip-title" className="t-h4">{t("rail.tip.title")}</h2>

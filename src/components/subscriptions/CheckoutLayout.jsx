@@ -78,7 +78,7 @@ export default async function CheckoutLayout({ pay }) {
         </div>
 
         <aside className="space-y-5 lg:col-span-5">
-          <IncludedCard title={t("checkout.included.title")} />
+          <IncludedCard title={t("checkout.included.title")} art="payment.checkout" />
           <TrustNotes as="h2" support only={["provider", "cancel"]} />
         </aside>
       </div>

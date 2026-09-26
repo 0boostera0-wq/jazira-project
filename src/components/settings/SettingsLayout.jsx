@@ -173,8 +173,8 @@ function GuestCard() {
           <p className="t-body mt-2 max-w-xl text-ink-3">{t("guest.body")}</p>
           <Button href="/sign-in?next=%2Fsettings" iconStart={LogIn} className="mt-6">{t("guest.cta")}</Button>
         </div>
-        <div className="hidden items-end justify-center bg-[#F7F0E3] px-6 pt-5 dark:bg-surface-2 md:flex">
-          <Illustration id="landing.privacy" className="w-full max-w-[260px]" />
+        <div aria-hidden="true" className="relative hidden min-h-[12rem] md:block">
+          <Illustration id="landing.privacy" fill sizes="(min-width: 1024px) 320px, 260px" />
         </div>
       </section>
 

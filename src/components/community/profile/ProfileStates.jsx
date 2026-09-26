@@ -74,8 +74,8 @@ export async function ProfileUnavailable() {
               <Button href="/search" variant="secondary" iconStart={Search}>{t("notFound.search")}</Button>
             </div>
           </div>
-          <div className="order-1 mx-auto w-full max-w-[300px] md:order-2">
-            <Illustration id="system.offline" />
+          <div aria-hidden="true" className="art-frame order-1 mx-auto w-full max-w-[320px] rounded-xl md:order-2">
+            <Illustration id="support.offline" aspect="4/3" sizes="320px" />
           </div>
         </section>
         <CommunityRails />
@@ -103,8 +103,8 @@ export async function ProfileNotFound() {
               <Button href="/search" variant="secondary" iconStart={Search}>{t("notFound.search")}</Button>
             </div>
           </div>
-          <div className="order-1 mx-auto w-full max-w-[300px] md:order-2">
-            <Illustration id="system.not-found" />
+          <div aria-hidden="true" className="art-frame order-1 mx-auto w-full max-w-[320px] rounded-xl md:order-2">
+            <Illustration id="support.not-found" aspect="4/3" sizes="320px" />
           </div>
         </section>
         <CommunityRails />

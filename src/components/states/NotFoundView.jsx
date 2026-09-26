@@ -41,8 +41,8 @@ export default async function NotFoundView({ locale }) {
             <Button href="/search" variant="secondary" iconStart={Search}>{tn("items.search")}</Button>
           </div>
         </div>
-        <div className="order-1 mx-auto w-full max-w-md lg:order-2 lg:max-w-lg">
-          <Illustration id="system.not-found" priority />
+        <div aria-hidden="true" className="art-frame order-1 mx-auto w-full max-w-md rounded-2xl shadow-md lg:order-2 lg:max-w-lg">
+          <Illustration id="support.not-found" priority sizes="(min-width: 1024px) 512px, (min-width: 480px) 448px, 100vw" aspect="4/3" />
         </div>
       </main>
     </div>

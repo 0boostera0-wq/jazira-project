@@ -179,8 +179,8 @@ function StatusCard({ eyebrow, visual, title, body, steps, children, footer, art
       className={cn("surface overflow-hidden", art && "animate-scale")}
     >
       {art && (
-        <div className="bg-[#F7F0E3] dark:bg-surface-2 px-6 pt-6">
-          <Illustration id="subscriptions.premium" className="mx-auto w-full max-w-[210px] sm:max-w-[300px]" />
+        <div aria-hidden="true" className="relative aspect-[16/9]">
+          <Illustration id="subscriptions.premium" fill sizes="(min-width: 768px) 640px, 100vw" />
         </div>
       )}
       <div className="p-6 sm:p-8">

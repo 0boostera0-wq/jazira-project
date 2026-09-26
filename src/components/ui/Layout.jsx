@@ -48,7 +48,7 @@ export function SectionHeader({ eyebrow, title, description, actions, align = "s
  * Standard in-app page header — the one place page titles are composed.
  *
  *   <PageHeader eyebrow title description actions />               default
- *   <PageHeader … media={<Illustration id="…" plate />} />          split hero (media at the inline end, lg+)
+ *   <PageHeader … media={<Illustration id="…" sizes="…" />} />     split hero (media at the inline end, lg+)
  *   <PageHeader … variant="card" stats={<StatList …/>} />          card hero (tinted surface)
  *   <PageHeader … variant="compact" />                              workspace pages (assistant, chat)
  *

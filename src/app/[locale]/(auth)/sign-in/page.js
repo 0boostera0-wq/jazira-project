@@ -19,7 +19,7 @@ export default async function SignInPage(props) {
     <AuthShell
       title={t("signIn.title")}
       description={t("signIn.description")}
-      illustration="brand.island-study"
+      illustration="welcome.sign-in"
       asideTitle={t("signIn.aside.title")}
       asidePoints={t.raw("signIn.aside.points")}
     >
@@ -29,7 +29,7 @@ export default async function SignInPage(props) {
       <div className="mt-7 text-center">
         <LegalNote />
       </div>
-      <AuthTips title={t("signIn.aside.title")} points={t.raw("signIn.aside.points")} illustration="brand.island-study" from="sm" />
+      <AuthTips title={t("signIn.aside.title")} points={t.raw("signIn.aside.points")} illustration="welcome.sign-in" from="sm" />
     </AuthShell>
   );
 }

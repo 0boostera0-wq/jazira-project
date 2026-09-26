@@ -112,9 +112,8 @@ export default async function ProgressBento() {
                 <IconTile icon={Star} tone="gold" size="sm" />
               </div>
             </div>
-            {/* width lives on the wrapper: the <img> itself is always w-full */}
-            <div className="-my-2 w-24 shrink-0 sm:w-40 lg:w-32 xl:w-40">
-              <Illustration id="landing.progress" />
+            <div aria-hidden="true" className="relative min-h-[7rem] w-28 shrink-0 self-stretch overflow-hidden rounded-md sm:w-44 lg:w-36 xl:w-44">
+              <Illustration id="landing.progress" fill sizes="176px" />
             </div>
           </div>
         </div>

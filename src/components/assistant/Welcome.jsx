@@ -5,10 +5,10 @@ import Illustration from "@/components/ui/Illustration";
 
 // Capability → illustration (src/lib/assets.js: ai.* + achievement.review).
 const CAPABILITIES = [
-  { key: "explain", art: "ai.tutoring" },
-  { key: "summarize", art: "ai.feedback" },
+  { key: "explain", art: "assistant.explain" },
+  { key: "summarize", art: "assistant.summarize" },
   { key: "quiz", art: "achievement.review" },
-  { key: "plan", art: "ai.study-plan" },
+  { key: "plan", art: "assistant.plan" },
 ];
 
 /**
@@ -23,13 +23,13 @@ export default function Welcome({ name, showSuggestions = true, disabled = false
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col py-5 sm:py-7">
-      <div className="grid items-center gap-4 md:grid-cols-[minmax(0,1fr)_170px] lg:grid-cols-[minmax(0,1fr)_190px]">
+      <div className="grid items-center gap-4 md:grid-cols-[minmax(0,1fr)_200px] lg:grid-cols-[minmax(0,1fr)_240px]">
         <div className="animate-in">
           <h2 className="t-h2">{first ? t("welcome.greeting", { name: first }) : t("welcome.greetingGuest")}</h2>
           <p className="t-body mt-2 max-w-xl text-ink-3">{t("welcome.lead")}</p>
         </div>
-        <div className="hidden md:block">
-          <Illustration id="brand.island-ai" priority className="w-full" />
+        <div aria-hidden="true" className="art-frame hidden rounded-lg md:block">
+          <Illustration id="assistant.hero" priority sizes="(min-width: 768px) 240px, 0px" aspect="4/3" />
         </div>
       </div>
 
@@ -43,8 +43,8 @@ export default function Welcome({ name, showSuggestions = true, disabled = false
               onClick={() => onTemplate(t(`welcome.capabilities.${key}.template`))}
               className="group flex h-full w-full flex-col rounded-md border border-line/15 bg-surface p-2 text-start transition-[border-color,box-shadow,transform] duration ease-out enabled:hover:-translate-y-0.5 enabled:hover:border-gold-300/70 enabled:hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-60 sm:p-2.5"
             >
-              <span className="flex h-16 items-center justify-center overflow-hidden rounded-sm bg-[#F7F0E3] ring-1 ring-inset ring-[#7A623A]/10 sm:h-[88px]">
-                <Illustration id={art} className="h-full w-auto max-w-none" />
+              <span aria-hidden="true" className="relative block h-16 overflow-hidden rounded-sm sm:h-[88px]">
+                <Illustration id={art} fill sizes="(min-width: 1024px) 170px, 45vw" className="transition-transform duration-slow ease-out group-enabled:group-hover:scale-[1.04]" />
               </span>
               <span className="mt-2 block px-1 text-sm font-medium leading-snug text-ink sm:mt-2.5 sm:text-[0.9375rem]">
                 {t(`welcome.capabilities.${key}.title`)}

@@ -11,8 +11,8 @@
     "test": "vitest run tests/unit",
     "test:db": "vitest run tests/db",
     "assets:check": "node scripts/check-assets.mjs",
-    "assets:optimize": "node scripts/optimize-svgs.mjs",
-    "import:curriculum": "node scripts/import-curriculum.mjs"
+    "import:curriculum": "node scripts/import-curriculum.mjs",
+    "assets:process": "node scripts/process-illustrations.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
@@ -31,7 +31,7 @@
     "eslint-config-next": "^15.5.26",
     "postcss": "^8.4.49",
     "puppeteer-core": "^25.12.0",
-    "svgo": "^4.1.0",
+    "sharp": "^0.35.4",
     "tailwindcss": "^3.4.15",
     "vitest": "^4.1.0"
   },

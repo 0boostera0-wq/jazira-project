@@ -1,16 +1,14 @@
 import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
-import { PLATE } from "./parts";
 
 /**
- * Subject highlight with its library illustration as a layout element.
- *   layout="row"    illustration panel at the start, text at the end
- *   layout="stack"  illustration on top, text below (from `sm`)
- * Phones always get the compact row (small art beside the text) so the
- * illustrations don't turn into full-width banners.
- * The art sits on a plate (cream; a quiet surface in dark mode).
+ * Subject highlight with its library painting as a full-bleed panel.
+ *   layout="row"    painting panel at the start, text at the end
+ *   layout="stack"  painting on top, text below (from `sm`)
+ * Phones always get the compact row (a cropped panel beside the text) so the
+ * paintings don't turn into full-width banners.
  *   grow="text"  (default) extra height goes to the text block, so titles line up across a row
- *   grow="art"   extra height goes to the art panel (cards stretched beside a taller neighbour)
+ *   grow="art"   extra height goes to the painting (cards stretched beside a taller neighbour)
  */
 export default function SubjectFeature({ illustration, title, body, tag, action, layout = "stack", compact = false, grow = "text", as: H = "h3", className }) {
   const artGrows = grow === "art";
@@ -24,13 +22,15 @@ export default function SubjectFeature({ illustration, title, body, tag, action,
       )}
     >
       <div
+        aria-hidden="true"
         className={cn(
-          "grid w-[36%] shrink-0 place-items-center px-2 py-3",
-          PLATE,
-          row ? "sm:w-[44%] sm:px-4" : cn("sm:w-auto sm:py-0 sm:pt-3", artGrows && "sm:flex-1", compact ? "sm:px-6" : "sm:px-5")
+          "relative min-h-[7.5rem] w-[36%] shrink-0 overflow-hidden",
+          row
+            ? cn("sm:w-[44%]", compact ? "sm:min-h-[9rem]" : "sm:min-h-[11rem]")
+            : cn("sm:w-auto", artGrows ? "sm:min-h-[12rem] sm:flex-1" : "sm:aspect-[16/10] sm:min-h-0")
         )}
       >
-        <Illustration id={illustration} className={cn("w-full", compact ? "sm:max-w-[220px]" : "sm:max-w-[300px]")} />
+        <Illustration id={illustration} fill sizes={row ? "(min-width: 1280px) 280px, (min-width: 640px) 44vw, 36vw" : "(min-width: 1280px) 360px, (min-width: 640px) 50vw, 36vw"} />
       </div>
       <div className={cn("flex min-w-0 flex-1 flex-col justify-center p-4", compact ? "sm:p-5" : "sm:p-6", !row && (artGrows ? "sm:flex-none sm:justify-start" : "sm:justify-start"))}>
         {tag && <p className="t-caption mb-1 font-medium text-green-700">{tag}</p>}

@@ -27,7 +27,7 @@ const DATE_OPTS = { day: "numeric", month: "long", year: "numeric", timeZone: "U
  *
  * All copy comes from the `legal` namespace: legal.<doc>.{title,intro,summary,sections}.
  */
-export default async function LegalDocument({ doc, locale, art }) {
+export default async function LegalDocument({ doc, locale, art = "legal.hero" }) {
   const meta = legalDoc(doc);
   const t = await getT("legal", locale);
   const content = t.raw(doc);
@@ -107,13 +107,11 @@ export default async function LegalDocument({ doc, locale, art }) {
               aria-labelledby="legal-summary"
               className="relative rounded-xl border border-line/[.12] bg-surface p-6 shadow-sm sm:p-7 lg:col-span-5"
             >
-              {art && (
-                <div aria-hidden="true" className="pointer-events-none absolute -top-9 end-4 hidden w-32 sm:block">
-                  <Illustration id={art} />
-                </div>
-              )}
-              {/* The art overhangs the card's top edge (bottom ≈ 60px in); the list starts below it, so only the heading needs room. */}
-              <h2 id="legal-summary" className={cn("t-h4", art && "sm:pe-36")}>{t("ui.summaryTitle")}</h2>
+              {/* The document's painting as a full-bleed strip across the top of the card. */}
+              <div aria-hidden="true" className="relative -mx-6 -mt-6 mb-6 aspect-[16/7] overflow-hidden rounded-t-xl sm:-mx-7 sm:-mt-7">
+                <Illustration id={art} fill sizes="(min-width: 1024px) 40vw, 100vw" />
+              </div>
+              <h2 id="legal-summary" className="t-h4">{t("ui.summaryTitle")}</h2>
               <ul className="mt-4 space-y-3">
                 {content.summary.map((line, i) => (
                   <li key={i} className="flex gap-3 text-[0.9375rem] text-ink-2">
@@ -199,8 +197,8 @@ export default async function LegalDocument({ doc, locale, art }) {
                     <Inline text={t("ui.help.more")} />
                   </p>
                 </div>
-                <div className="hidden w-44 sm:block lg:w-52">
-                  <Illustration id="support.help" />
+                <div aria-hidden="true" className="art-frame hidden w-44 rounded-lg sm:block lg:w-56">
+                  <Illustration id="support.hero" aspect="4/3" sizes="224px" />
                 </div>
               </div>
             </section>

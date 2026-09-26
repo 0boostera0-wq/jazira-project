@@ -57,14 +57,21 @@ const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
   reactStrictMode: true,
   poweredByHeader: false,
-  // The Image Optimization API (/_next/image) is switched off. Nothing renders
-  // next/image: library art is text-free SVG served as-is (ui/Illustration) and
-  // user media uses plain <img>/<video> with explicit dimensions. Keeping the
-  // optimizer on — with remote patterns for *.supabase.co and AVIF decoding —
-  // exposed next@14's unpatched optimizer advisories (GHSA-2xp9-vwfh-vxw4 AVIF
-  // RCE and the SSRF/DoS family) to anyone who can host an image. With
-  // unoptimized: true, /_next/image returns 404 when self-hosted.
-  images: { unoptimized: true },
+  // The Image Optimization API (/_next/image) stays switched off: with a custom
+  // loader it answers 404 when self-hosted and Vercel provisions no optimizer.
+  // Keeping the optimizer on — with remote patterns for *.supabase.co and AVIF
+  // decoding — exposed next@14's optimizer advisories (GHSA-2xp9-vwfh-vxw4 AVIF
+  // RCE and the SSRF/DoS family) to anyone who can host an image.
+  // Library art (ui/Illustration → next/image) is pre-rendered at build time by
+  // scripts/process-illustrations.mjs; the loader only maps a logical src + the
+  // requested width to one of those files. The widths below must equal
+  // IMAGE_WIDTHS in src/lib/image-loader.js. User media uses plain <img>/<video>.
+  images: {
+    loader: "custom",
+    loaderFile: "./src/lib/image-loader.js",
+    deviceSizes: [640, 960, 1280, 1536],
+    imageSizes: [256, 384],
+  },
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
@@ -72,7 +79,7 @@ const nextConfig = {
     return [
       { source: "/:path*", headers: securityHeaders },
       // Illustrations keep their file names when the art is redrawn
-      // (scripts/optimize-svgs.mjs rewrites in place), so they are NOT
+      // (scripts/process-illustrations.mjs rewrites in place), so they are NOT
       // immutable: a day fresh, then served stale while revalidating.
       { source: "/images/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }] },
     ];

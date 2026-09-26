@@ -283,6 +283,14 @@ html.dark {
   .glass-chrome { background: rgb(var(--c-canvas) / 0.82); backdrop-filter: saturate(160%) blur(14px); -webkit-backdrop-filter: saturate(160%) blur(14px); }
   @media (max-width: 767px) { .glass-chrome { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgb(var(--c-canvas) / 0.97); } }
 
+  /* Frame for library art (ui/Illustration): clips the painting to the radius and
+     draws a hairline OVER it (an inset ring on the wrapper would sit under the image). */
+  .art-frame { position: relative; isolation: isolate; overflow: hidden; }
+  .art-frame::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    border-radius: inherit; box-shadow: inset 0 0 0 1px rgb(var(--c-line) / 0.1);
+  }
+
   .hairline { border-color: rgb(var(--c-line) / 0.12); }
   .divider { height: 1px; background: rgb(var(--c-line) / 0.12); }
 

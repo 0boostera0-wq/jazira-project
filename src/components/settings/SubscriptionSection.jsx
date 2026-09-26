@@ -80,9 +80,9 @@ export default function SubscriptionSection() {
             )}
           </div>
         </div>
-        {/* The plan's art as the card's end column (both plans; the crown is the Elite mark). */}
-        <div className="hidden items-center justify-center bg-[#F7F0E3] p-5 dark:bg-surface-2 md:flex">
-          <Illustration id="subscriptions.premium" className="w-full max-w-[230px]" />
+        {/* The plan's art as the card's full-bleed end column (both plans). */}
+        <div aria-hidden="true" className="relative hidden min-h-[12rem] md:block">
+          <Illustration id="subscriptions.premium" fill sizes="(min-width: 1024px) 300px, 260px" />
         </div>
       </section>
 

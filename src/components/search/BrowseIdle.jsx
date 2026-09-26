@@ -31,8 +31,8 @@ export default async function BrowseIdle({ locale, stages, practice }) {
                   data-result
                   className="group flex h-full items-center gap-3.5 overflow-hidden rounded-lg border border-line/12 bg-surface p-3 shadow-sm transition-[box-shadow,border-color] duration ease-out hover:border-line/20 hover:shadow-md focus-visible:[box-shadow:var(--ring)] sm:flex-col sm:items-stretch sm:gap-0 sm:p-0"
                 >
-                  <span aria-hidden="true" className="hidden h-28 items-end justify-center overflow-hidden bg-[#F7F0E3] px-4 pt-3 ring-1 ring-inset ring-[#7A623A]/10 sm:flex xl:h-32">
-                    <Illustration id={STAGE_ART[s.id]} className="h-full w-auto max-w-full object-contain" />
+                  <span aria-hidden="true" className="relative hidden h-28 overflow-hidden sm:block xl:h-32">
+                    <Illustration id={STAGE_ART[s.id]} fill sizes="(min-width: 640px) 33vw, 0px" className="transition-transform duration-slow ease-out group-hover:scale-[1.04]" />
                   </span>
                   <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-md bg-gold-50 text-gold-600 ring-1 ring-inset ring-gold-200/60 sm:hidden">
                     <Icon size={20} />

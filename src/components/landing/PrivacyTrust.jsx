@@ -11,7 +11,7 @@ const POINTS = [
   ["delete", UserRoundX],
 ];
 
-/** Privacy & trust — one wide card: shield art at the start, commitments at the end. */
+/** Privacy & trust — one wide card: the sheltered-harbor painting at the start, commitments at the end. */
 export default async function PrivacyTrust() {
   const t = await getT("landing");
   return (
@@ -19,8 +19,8 @@ export default async function PrivacyTrust() {
       <Container>
         <div className="grid items-center gap-8 rounded-xl border border-line/15 bg-surface p-6 shadow-sm sm:p-10 lg:grid-cols-12 lg:gap-12 lg:p-12">
           <div className="lg:col-span-4">
-            <div className="mx-auto max-w-[168px] rounded-xl bg-surface-2 p-3 ring-1 ring-inset ring-line/10 sm:max-w-[260px] sm:p-4 lg:max-w-none lg:p-6">
-              <Illustration id="landing.privacy" className="w-full" />
+            <div className="art-frame rounded-xl">
+              <Illustration id="landing.privacy" sizes="(min-width: 1024px) 30vw, 100vw" className="aspect-[16/9] object-cover lg:aspect-[4/5]" />
             </div>
           </div>
           <div className="lg:col-span-8">

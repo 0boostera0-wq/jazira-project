@@ -47,8 +47,8 @@ export default function UpgradeDialog({ open, onClose, feature }) {
         </>
       }
     >
-      <div className="-mx-5 -mt-5 mb-5 bg-[#F7F0E3] dark:bg-surface-2 px-6 pt-4 sm:-mx-6">
-        <Illustration id="subscriptions.premium" className="mx-auto w-full max-w-[200px]" />
+      <div aria-hidden="true" className="relative -mx-5 -mt-5 mb-5 aspect-[16/7] sm:-mx-6">
+        <Illustration id="subscriptions.premium" fill sizes="(min-width: 640px) 480px, 100vw" />
       </div>
       <p className="t-body text-ink-2">{body}</p>
       {perks.length > 0 && <PerkList perks={perks} className="mt-4" />}

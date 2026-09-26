@@ -4,13 +4,12 @@ import Button from "@/components/ui/Button";
 import IconTile from "@/components/ui/IconTile";
 import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
-import { PLATE } from "@/components/stages/parts";
 import { EXAMS, SECTIONS } from "@/lib/exams/catalog";
 import { BankNumber } from "./BankProvider";
 import { examIcon, sectionColor, sectionIcon } from "./labels";
 
 /**
- * Hub card for one exam: art plate · tag · title · body · its sections with
+ * Hub card for one exam: painting · tag · title · body · its sections with
  * live question counts · CTA. The title is a link; the CTA is a real
  * button-link for touch users.
  *
@@ -29,11 +28,13 @@ export default function ExamTypeCard({ exam, t, eagerArt = false }) {
   const rows = def.sections.length <= 2;
   return (
     <article className="group grid h-full overflow-hidden rounded-xl border border-line/12 bg-surface shadow-sm transition-[box-shadow,border-color] duration ease-out hover:border-line/20 hover:shadow-md md:grid-cols-12 xl:flex xl:flex-col">
-      <div className={cn("relative grid place-items-center px-6 pt-5 sm:px-10 md:col-span-5 md:px-6 md:py-6 xl:block xl:px-10 xl:pb-0 xl:pt-5", PLATE)}>
+      <div aria-hidden="true" className="relative aspect-[16/9] overflow-hidden md:col-span-5 md:aspect-auto md:min-h-[16rem] xl:aspect-[16/9] xl:min-h-0">
         <Illustration
           id={def.illustration}
+          fill
+          sizes="(min-width: 1280px) 50vw, (min-width: 768px) 42vw, 100vw"
           loading={eagerArt ? "eager" : "lazy"}
-          className="mx-auto w-full max-w-[380px] transition-transform duration-slow ease-out group-hover:-translate-y-1"
+          className="transition-transform duration-slow ease-out group-hover:scale-[1.03]"
         />
       </div>
       <div className="flex flex-1 flex-col p-5 sm:p-7 md:col-span-7">

@@ -38,7 +38,7 @@ export default async function SupportPage(props) {
 
   return (
     <>
-      <SupportHero eyebrow={t("center.eyebrow")} title={t("center.title")} lead={t("center.lead")} art="support.help">
+      <SupportHero eyebrow={t("center.eyebrow")} title={t("center.title")} lead={t("center.lead")} art="support.hero">
         <Messages ns={["support"]}>
           <HelpSearch />
         </Messages>

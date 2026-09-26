@@ -1,15 +1,13 @@
 import Illustration from "@/components/ui/Illustration";
-import { cn } from "@/components/ui/cn";
-import { PLATE } from "@/components/stages/parts";
 
-/** Tips card for the builder rail: art plate on top, numbered advice below. */
+/** Tips card for the builder rail: the painting on top (beside the tips from sm to xl), numbered advice below. */
 export default function StrategyTips({ title, items = [], illustration }) {
   return (
     <section aria-label={title} className="surface-tint overflow-hidden sm:grid sm:grid-cols-5 xl:block">
       {illustration && (
         // decorative: dropped on phones (the tips are what matter there)
-        <div className={cn("hidden place-items-center border-b border-line/8 px-10 pt-2 sm:col-span-2 sm:grid sm:border-b-0 sm:border-e sm:px-6 xl:border-b xl:border-e-0 xl:px-10", PLATE)}>
-          <Illustration id={illustration} className="mx-auto w-full max-w-[220px]" />
+        <div aria-hidden="true" className="relative hidden sm:col-span-2 sm:block xl:aspect-[16/9]">
+          <Illustration id={illustration} fill sizes="(min-width: 1280px) 30vw, 40vw" />
         </div>
       )}
       <div className="p-5 sm:col-span-3 sm:p-6">

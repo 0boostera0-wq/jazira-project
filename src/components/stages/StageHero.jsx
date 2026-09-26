@@ -1,19 +1,17 @@
 import { CalendarDays } from "lucide-react";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
-import { cn } from "@/components/ui/cn";
 import { formatNumber } from "@/i18n/format";
 import HeroArt from "./HeroArt";
-import { PLATE, PLATE_RING } from "./parts";
 
 /**
  * Split hero for a school stage.
  *   top row      breadcrumbs · curriculum-year chip (full width, chip at the far end)
  *   text column  eyebrow · h1 · lead · actions · key facts
- *   art column   the stage illustration on a plate
+ *   art column   the stage painting, framed (preloaded for md+ screens only)
  * Column split: 8/4 from `md` (the content column is only ~690–720px wide
  * between md and xl because of the sidebar), 7/5 from `xl`.
- * Phones: text and the primary action first; the illustration is dropped
- * (and only preloaded from md up — see HeroArt).
+ * Phones: text and the primary action first, then the painting as a lazy
+ * 16:9 banner (see HeroArt).
  *
  * facts: [{ value: number, label: string }] — values come from the catalog.
  */
@@ -51,10 +49,14 @@ export default function StageHero({ crumbs, crumbsLabel, year, eyebrow, title, l
           )}
         </div>
 
-        <div className="animate-in hidden md:col-span-4 md:block xl:col-span-5">
-          <div className={cn("overflow-hidden rounded-xl", PLATE, PLATE_RING)}>
-            <HeroArt id={illustration} from="md" />
-          </div>
+        <div aria-hidden="true" className="animate-in md:col-span-4 xl:col-span-5">
+          <HeroArt
+            id={illustration}
+            from="md"
+            sizes="(min-width: 1280px) 460px, 30vw"
+            className="object-cover md:aspect-[4/5] lg:aspect-[1/1] xl:aspect-[5/4]"
+            banner
+          />
         </div>
       </div>
     </section>

@@ -47,7 +47,7 @@ Shadows: `shadow-xs/sm/md/lg/gold` — warm, low-contrast. Cards default to
 `shadow-sm`; hover lift to `shadow-md`; overlays `shadow-lg`.
 
 Dark mode: `html.dark` swaps every variable. Never hardcode hex in components
-(exceptions: illustration plates and the gold button text `#261F14`).
+(exceptions: art plates and the gold button text `#261F14`).
 
 ## 3. Typography
 
@@ -113,7 +113,7 @@ Rules: body ≥ 16px on mobile; nothing below 12px; paragraphs ≤ 72ch; heading
 | `PasswordInput`, `Switch`, `Tabs`, `Dialog` (native `<dialog>`, `variant="sheet"`) | interactive (client) |
 | `Breadcrumbs`, `PageHeader`, `SectionHeader`, `Section`, `Container`, `Grid` | layout. `PageHeader` variants `default · card · compact` with `eyebrow`, `meta`, `stats`, `actions`, `media` slots; its `<h1>` is the page title (t-h1, t-h3 for compact workspace pages) |
 | `PremiumLock` | locked preview + upgrade CTA (never render real premium data behind it) |
-| `Illustration` | library art by manifest id |
+| `Illustration` | library painting by manifest id (next/image; `sizes`, `priority`, `aspect`, `fill`) |
 | Brand: `Logo`, `IslandMark`, `AssistantAvatar` | src/components/brand |
 
 Icons: `lucide-react`, 18–20px in UI, stroke default. Directional icons: always
@@ -131,31 +131,32 @@ Never fade in above-the-fold text. Durations 140/220/420ms, `ease-out`. Animate 
 `opacity`. Respect `prefers-reduced-motion` (automatic). No framer-motion in
 new code.
 
-## 7. Illustration style (public/images/**)
+## 7. Imagery (public/images/**) and brand
 
-All 50 illustrations share one hand-authored vector language:
+**Paintings.** Every page's art comes from one painted world — the island of
+learning — generated as 1536×1024 originals, quality-checked one by one and
+registered in `src/lib/assets.js` (the central manifest: path, category, pages,
+purpose, language neutrality, responsive `sizes`, priority). Style, palette and
+the per-audience tiers (toy-like elementary, refined middle school, cinematic
+high school / exams) are in [ART_DIRECTION.md](ART_DIRECTION.md).
 
-- **Canvas**: the manifest `width × height` viewBox, transparent background.
-  The scene sits on a soft organic ground shape (cream/sand blob or a small
-  island) — never a full-bleed rectangle.
-- **Palette (fixed hex — looks right on cream and on the cream "plate" in dark
-  mode)**: cream `#FFFDF9` `#F7F0E3` · beige `#EFE4D0` · sand `#E3D3B5` ·
-  champagne `#D9BE8C` · gold `#C9A45C` · deep gold `#A67F38` · bronze `#7A5A2B` ·
-  ink details `#3A3024` (sparingly) · sage `#9DBEA6` · green `#5E8C6A` · deep
-  green `#3F6B4E` · water `#CFE3E4` `#A9CBCF` · sky `#EAF2F1` · coral accent
-  `#E39B7B` (small doses) · white highlights.
-- **Form**: flat editorial vector with soft depth — layered rounded shapes,
-  2-stop same-hue linear gradients, soft contact shadows (ellipse, ink at
-  8–12% opacity), occasional 1.5–2px bronze/ink detail strokes with round
-  caps. Light from the top-left.
-- **Characters**: stylised and friendly, simple geometric bodies, faces at most
-  two dot eyes and a small smile — never realistic or identifiable people.
-  The Jazira assistant is a round cream robot with a gold rim, sage visor and a
-  palm-leaf antenna.
-- **Never**: text, letters, digits, logos, UI copy, watermarks, raster images,
-  external fonts, `<foreignObject>`, scripts.
-- **Performance**: ≤ 25 KB after SVGO (hero ≤ 45 KB), ≤ ~150 elements, no
-  filters except at most one `feGaussianBlur` for a soft glow.
+- **Never text in the art** — titles stay HTML, so one image serves Arabic and
+  English, RTL and LTR. No real or photorealistic people.
+- **Rendering**: `<Illustration id="…" />` (next/image with the library
+  loader — pre-rendered WebP at 256–1536px, no runtime optimizer). Pass a
+  `sizes` that matches the slot; `priority` only on a page's LCP hero;
+  everything else is lazy. Art that only shows from a breakpoint up uses
+  `HeroArt` / `ArtPreload` (media-gated preload, never fetched on phones).
+- **Framing**: paintings are full-bleed — edge to edge in a panel (`fill` + a
+  positioned parent), or in an `.art-frame` with a radius (a hairline drawn
+  over the image) and an `aspect` crop around the manifest's `focus`. No padded
+  plates around paintings; no huge empty areas.
+- **Budgets**: 1536w ≤ 320 KB, 640w ≤ 100 KB (enforced by `npm run assets:check`).
+
+**Brand.** The mark (the letter ج drawn as one stroke — horizon, sheltering
+sea, golden island), the lockups and the icons are specified in
+[BRAND.md](BRAND.md); in the UI use `Logo`, `IslandMark` and `AssistantAvatar`
+(inline SVG, theme-aware).
 
 ## 8. Accessibility
 

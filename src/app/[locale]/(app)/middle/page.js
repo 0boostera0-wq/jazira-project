@@ -9,7 +9,7 @@ import StageHero from "@/components/stages/StageHero";
 import GradeCard from "@/components/stages/GradeCard";
 import SubjectFeature from "@/components/stages/SubjectFeature";
 import SubjectIndex from "@/components/stages/SubjectIndex";
-import { ArrowLink, LinkCard, PLATE } from "@/components/stages/parts";
+import { ArrowLink, LinkCard } from "@/components/stages/parts";
 import { StageEmpty, StageJsonLd, StageSection } from "@/components/stages/StageShell";
 import { hasEnglishName } from "@/components/stages/names";
 import { academicYear, flatStageGrades, stageSubjects, termCount } from "@/components/stages/catalog";
@@ -69,7 +69,7 @@ export default async function MiddlePage(props) {
         lead={t("middle.hero.lead")}
         facts={grades.length ? facts : []}
         factsLabel={t("shared.factsLabel")}
-        illustration="middle.study-plan"
+        illustration="middle.hero"
         actions={
           <>
             <Button href="#grades" variant="primary" size="lg" iconEnd={ArrowDown}>
@@ -195,8 +195,8 @@ export default async function MiddlePage(props) {
 
           <aside aria-labelledby="plan-assistant" className="xl:col-span-5">
             <div className="overflow-hidden rounded-lg border border-line/12 bg-surface shadow-sm sm:flex xl:block">
-              <div className={cn("grid place-items-center px-6 pt-3 sm:w-2/5 sm:py-3 xl:w-auto xl:py-0 xl:pt-3", PLATE)}>
-                <Illustration id="ai.study-plan" className="w-full max-w-[170px] sm:max-w-[240px] xl:max-w-[280px]" />
+              <div aria-hidden="true" className="relative aspect-[16/9] sm:aspect-auto sm:min-h-[12rem] sm:w-2/5 xl:aspect-[16/9] xl:min-h-0 xl:w-auto">
+                <Illustration id="assistant.plan" fill sizes="(min-width: 1280px) 420px, (min-width: 640px) 40vw, 100vw" />
               </div>
               <div className="p-5 sm:flex sm:flex-1 sm:flex-col sm:justify-center sm:p-6">
                 <h3 id="plan-assistant" className="t-h4">{t("middle.plan.assistant.title")}</h3>

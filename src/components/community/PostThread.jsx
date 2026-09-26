@@ -43,7 +43,7 @@ export default function PostThread({ id, source, viewer: viewerOverride }) {
     return (
       <div className="surface">
         <EmptyState
-          image={key === "unavailable" ? "system.offline" : undefined}
+          image={key === "unavailable" ? "support.offline" : undefined}
           icon={key === "missing" ? MessageSquareOff : key === "blocked" ? ShieldOff : undefined}
           compact
           title={t(`thread.${key}.title`)}

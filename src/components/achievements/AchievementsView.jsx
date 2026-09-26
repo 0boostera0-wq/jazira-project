@@ -1,8 +1,7 @@
 import { getT } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
-import { cn } from "@/components/ui/cn";
-import HeroArt from "@/components/stages/HeroArt";
-import { PLATE } from "@/components/stages/parts";
+import Illustration from "@/components/ui/Illustration";
+import { ArtPreload } from "@/components/stages/HeroArt";
 import ProgressProvider from "./ProgressProvider";
 import ProgressSummary from "./ProgressSummary";
 import StreakCard from "./StreakCard";
@@ -16,11 +15,14 @@ import RelatedLinks from "./RelatedLinks";
  * server; one client provider loads the member's progress once and feeds the
  * small islands.
  *
- * Layout: split hero (7/5, art from lg) · badges (8) + sticky rail (4) from xl
+ * Layout: split hero (7/5, the hall-of-honour painting full-bleed from lg) · badges (8) + sticky rail (4) from xl
  * (at lg the app sidebar leaves too little width for a third column).
  * md–lg: the rail's two cards sit side by side above the gallery.
  * Phone: hero → streak → badges (tabbed) → related.
  */
+// Hero panel: 5/12 of the content column from lg, as tall as the summary.
+const ART_SIZES = "(min-width: 1280px) 520px, 40vw";
+
 export default async function AchievementsView() {
   const t = await getT("achievements");
 
@@ -36,8 +38,9 @@ export default async function AchievementsView() {
             <ProgressSummary className="mt-7" />
           </div>
           {/* Art from lg only, so it is preloaded for lg+ screens only (HeroArt). */}
-          <div className={cn("relative hidden lg:col-span-5 lg:flex lg:items-center lg:justify-center lg:p-8", PLATE)}>
-            <HeroArt id="brand.island-achievement" from="lg" className="w-full max-w-[460px]" />
+          <div aria-hidden="true" className="relative hidden lg:col-span-5 lg:block">
+            <ArtPreload id="community.achievements" from="lg" sizes={ART_SIZES} />
+            <Illustration id="community.achievements" fill sizes={ART_SIZES} />
           </div>
         </section>
 

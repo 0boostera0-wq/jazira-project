@@ -2,8 +2,11 @@ import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
 import HeroArt from "@/components/stages/HeroArt";
-import { PLATE, PLATE_RING } from "@/components/stages/parts";
 import { Facts, YearChip } from "./parts";
+
+// The art column is 4/12 from md and 5/12 from xl; a taller crop keeps it level with the copy.
+const ART_SIZES = "(min-width: 1280px) 460px, 30vw";
+const ART_CROP = "object-cover md:aspect-[4/5] lg:aspect-[1/1] xl:aspect-[5/4]";
 
 /** Breadcrumbs · school-year chip (full width). */
 export function HeaderTopRow({ crumbs, crumbsLabel, year, className }) {
@@ -19,10 +22,10 @@ export function HeaderTopRow({ crumbs, crumbsLabel, year, className }) {
  * Header for every curriculum page (server-safe; all copy arrives as props).
  *   top row     breadcrumbs · school-year chip
  *   text        eyebrow · h1 · lead · children (search, switchers) · facts
- *   art         optional stage illustration on a cream plate (md+ only; with
- *               artPriority it is preloaded for md+ screens only, see HeroArt)
+ *   art         optional stage painting, framed from md (with artPriority it is
+ *               preloaded there only and phones get a lazy 16:9 banner, see HeroArt)
  * The content column is ~690px at 1024 (the app sidebar), so the split is
- * 8/4 from md and 7/5 from xl. Phones get the text and controls only.
+ * 8/4 from md and 7/5 from xl.
  */
 export default function NodeHeader({
   crumbs,
@@ -54,10 +57,14 @@ export default function NodeHeader({
         </div>
 
         {art && (
-          <div aria-hidden="true" className="animate-in hidden md:col-span-4 md:block xl:col-span-5">
-            <div className={cn("overflow-hidden rounded-xl", PLATE, PLATE_RING)}>
-              {artPriority ? <HeroArt id={art} from="md" /> : <Illustration id={art} />}
-            </div>
+          <div aria-hidden="true" className={cn("animate-in md:col-span-4 xl:col-span-5", !artPriority && "hidden md:block")}>
+            {artPriority ? (
+              <HeroArt id={art} from="md" sizes={ART_SIZES} className={ART_CROP} banner />
+            ) : (
+              <div className="art-frame rounded-xl">
+                <Illustration id={art} sizes={ART_SIZES} className={ART_CROP} />
+              </div>
+            )}
           </div>
         )}
       </div>

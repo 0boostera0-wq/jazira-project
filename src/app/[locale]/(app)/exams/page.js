@@ -38,7 +38,7 @@ export default async function ExamsHubPage(props) {
           eyebrow={t("hub.eyebrow")}
           title={t("hub.title")}
           lead={t("hub.lead")}
-          illustration="landing.exams"
+          illustration="exams.hero"
           factsLabel={t("hub.factsLabel")}
           facts={
             <>

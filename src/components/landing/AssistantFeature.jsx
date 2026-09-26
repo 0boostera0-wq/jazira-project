@@ -17,7 +17,7 @@ const POINTS = [
 /**
  * Jazira Assistant — a contained, softly tinted panel (id="assistant" is the
  * target of the header's "Assistant" link). Copy + honest usage limits at the
- * start; the assistant art with an illustrative chat at the end.
+ * start; the tower-study painting with an illustrative chat at the end.
  */
 export default async function AssistantFeature() {
   const t = await getT("landing");
@@ -52,7 +52,9 @@ export default async function AssistantFeature() {
           </div>
 
           <div className="lg:col-span-6">
-            <Illustration id="brand.island-ai" className="mx-auto w-full max-w-[300px] sm:max-w-[440px]" />
+            <div className="art-frame mx-auto max-w-[34rem] rounded-xl shadow-md lg:max-w-none">
+              <Illustration id="assistant.hero" sizes="(min-width: 1280px) 560px, (min-width: 1024px) 42vw, 100vw" className="aspect-[4/3] object-cover" />
+            </div>
             <ChatMock t={t} />
           </div>
         </div>
@@ -63,7 +65,7 @@ export default async function AssistantFeature() {
 
 function ChatMock({ t }) {
   return (
-    <figure className="relative mx-auto -mt-10 max-w-[30rem] sm:-mt-14">
+    <figure className="relative mx-3 -mt-10 max-w-[30rem] sm:mx-auto sm:-mt-14">
       <figcaption className="sr-only">{t("assistant.chat.caption")}</figcaption>
       <div aria-hidden="true" className="rounded-lg border border-line/15 bg-surface p-4 shadow-lg sm:p-5">
         <div className="flex items-center justify-between gap-3">

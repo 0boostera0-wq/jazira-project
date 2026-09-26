@@ -47,7 +47,7 @@ export default async function SuccessLayout({ status }) {
         </div>
 
         <aside className="space-y-5 lg:col-span-5">
-          <IncludedCard title={t("hero.includes")} art="subscriptions.analytics" />
+          <IncludedCard title={t("hero.includes")} art="payment.success" />
           <HelpCard as="h2" />
         </aside>
       </div>

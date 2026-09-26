@@ -1,52 +1,57 @@
-import { useId } from "react";
+import { cn } from "@/components/ui/cn";
+import { BRAND_COLORS, MARK } from "./geometry";
 
 /**
- * The Jazira mark: an island (growth) carrying an open book (education) from
- * which a sprout rises, a spark above (intelligence) and waves below
- * (exploration) — on a champagne-gold tile. Pure inline SVG, crisp from 16px up.
- * Mirrors public/icon.svg (favicon) — keep them in sync.
+ * Transform that fits the stroked mark's tight bounds into a `size` square at
+ * (x, y) — the same placement the brand-kit builder uses for every file
+ * (src/app/icon.svg, public/images/brand/*), so inline and static marks match.
  */
-export default function IslandMark({ size = 36, className, title }) {
-  const uid = useId().replace(/:/g, "");
-  const g = `jzm-g-${uid}`;
-  const s = `jzm-s-${uid}`;
+export function markTransform(x, y, size) {
+  const { box } = MARK;
+  const s = size / Math.max(box.w, box.h);
+  const ox = x + (size - box.w * s) / 2 - box.x * s;
+  const oy = y + (size - box.h * s) / 2 - box.y * s;
+  return `translate(${ox.toFixed(2)} ${oy.toFixed(2)}) scale(${s.toFixed(4)})`;
+}
+
+/** The mark's stroke (currentColor) and gold dot, on its 64-unit grid. */
+export function MarkShape({ dot = BRAND_COLORS.gold }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 48 48"
-      className={className}
-      role={title ? "img" : undefined}
-      aria-label={title}
-      aria-hidden={title ? undefined : true}
-    >
-      <defs>
-        <linearGradient id={g} x1="8" y1="2" x2="40" y2="46" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#E9D3A0" />
-          <stop offset="0.55" stopColor="#CFA85E" />
-          <stop offset="1" stopColor="#A87E36" />
-        </linearGradient>
-        <linearGradient id={s} x1="24" y1="28" x2="24" y2="37" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#4F7A5E" />
-          <stop offset="1" stopColor="#2F4D3A" />
-        </linearGradient>
-      </defs>
-      <rect width="48" height="48" rx="13" fill={`url(#${g})`} />
-      <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="12.25" fill="none" stroke="#FFF6E2" strokeOpacity="0.45" strokeWidth="1.5" />
-      {/* waves */}
-      <path d="M9 39.5c2.2-1.6 4.4-1.6 6.6 0s4.4 1.6 6.6 0 4.4-1.6 6.6 0 4.4 1.6 6.6 0 3.3-1.2 4.6-.6" fill="none" stroke="#FFF8EA" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.9" />
-      {/* island */}
-      <path d="M10.5 35.5c3.6-5.6 23.4-5.6 27 0z" fill={`url(#${s})`} />
-      {/* open book */}
-      <path d="M24 31.2c-3.2-2.1-6.9-2.6-10.6-1.7v-4.9c3.7-1 7.4-.5 10.6 1.6z" fill="#FFF8EA" />
-      <path d="M24 31.2c3.2-2.1 6.9-2.6 10.6-1.7v-4.9c-3.7-1-7.4-.5-10.6 1.6z" fill="#F3E6C8" />
-      <path d="M24 26.2v5" stroke="#A87E36" strokeWidth="1" strokeLinecap="round" />
-      {/* sprout */}
-      <path d="M24 26.4V17.6" stroke="#2F4D3A" strokeWidth="1.9" strokeLinecap="round" />
-      <path d="M24 22.2c-1.1-3.4-4-5.1-7.4-4.7.5 3.3 3.6 5.4 7.4 4.7z" fill="#5E8C6A" />
-      <path d="M24 19.6c1-3.7 4.1-5.9 7.9-5.4-.4 3.6-3.8 6-7.9 5.4z" fill="#4F7A5E" />
-      {/* spark */}
-      <path d="M36 8.2l1.05 2.75 2.75 1.05-2.75 1.05L36 15.8l-1.05-2.75-2.75-1.05 2.75-1.05z" fill="#FFF8EA" />
+    <>
+      <path d={MARK.d} fill="none" stroke="currentColor" strokeWidth={MARK.strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={MARK.dot.cx} cy={MARK.dot.cy} r={MARK.dot.r} fill={dot} />
+    </>
+  );
+}
+
+const TONE = { auto: "text-[#1F4F45] dark:text-[#F3ECDD]", onDark: "text-[#F3ECDD]", onLight: "text-[#1F4F45]" };
+
+/**
+ * The Jazira mark — the letter ج (the first letter of جزيرة) drawn as one
+ * stroke: its head is the horizon, its bowl the sea's sheltering curve, and
+ * the gold dot the island at its heart. See docs/BRAND.md.
+ * Inline SVG (no request, crisp from 16px). The stroke follows currentColor;
+ * the dot is always gold.
+ *   tone  "auto" (teal; ivory in dark mode) · "onDark" (always ivory: dark bands) · "onLight" (always teal)
+ *   tile  the app-icon form: ivory mark on the teal rounded tile (= favicon).
+ */
+export default function IslandMark({ size = 36, tile = false, tone = "auto", className, title }) {
+  const a11y = title ? { role: "img", "aria-label": title } : { "aria-hidden": true };
+  if (tile) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 64 64" className={cn("shrink-0", className)} {...a11y}>
+        <rect width="64" height="64" rx="14.4" fill={BRAND_COLORS.teal} />
+        <g transform={markTransform(12, 12, 40)} style={{ color: BRAND_COLORS.ivory }}>
+          <MarkShape />
+        </g>
+      </svg>
+    );
+  }
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className={cn("shrink-0", TONE[tone] || TONE.auto, className)} {...a11y}>
+      <g transform={markTransform(0, 0, 64)}>
+        <MarkShape />
+      </g>
     </svg>
   );
 }

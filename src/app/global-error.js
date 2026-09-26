@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import arCommon from "@/i18n/messages/ar/common";
 import enCommon from "@/i18n/messages/en/common";
+import IslandMark from "@/components/brand/IslandMark";
 
 // Last-resort boundary: replaces the whole document when the locale root
 // layout itself fails (so there is no I18nProvider, no stylesheet guarantee
@@ -41,6 +42,10 @@ export default function GlobalError({ error, reset }) {
     <html lang="ar" dir="rtl">
       <body style={{ margin: 0, minHeight: "100vh", display: "grid", alignContent: "center", gap: 40, padding: "48px 0", background: "#FAF7F0", color: "#4A4032", fontFamily: "system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif", lineHeight: 1.7 }}>
         <main style={{ display: "grid", gap: 40 }}>
+          {/* The mark inherits its colour from this wrapper: no stylesheet is guaranteed here. */}
+          <span style={{ display: "flex", justifyContent: "center", color: "#1F4F45" }}>
+            <IslandMark size={52} />
+          </span>
           <Block locale="ar" messages={arCommon} reset={reset} />
           <hr aria-hidden="true" style={{ width: 80, border: 0, borderTop: "1px solid rgba(122,98,58,.2)", margin: "0 auto" }} />
           <Block locale="en" messages={enCommon} reset={reset} heading="h2" />

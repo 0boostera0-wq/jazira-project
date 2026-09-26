@@ -90,8 +90,8 @@ export default function OnboardingPanel() {
       </div>
       {/* Phones: a compact row (art beside the text); md+: a centred column beside the checklist. */}
       <div className={cn("flex items-center gap-4 rounded-md p-4 md:flex-col md:justify-center md:gap-0 md:px-5 md:py-6 md:text-center", PLATE)}>
-        <div className="w-28 shrink-0 xs:w-32 md:w-full md:max-w-[15rem]">
-          <Illustration id="landing.progress" />
+        <div aria-hidden="true" className="art-frame w-28 shrink-0 rounded-md xs:w-32 md:w-full md:max-w-[15rem]">
+          <Illustration id="landing.progress" aspect="4/3" sizes="(min-width: 768px) 240px, 128px" />
         </div>
         <div className="min-w-0 md:mt-4">
           <p className="font-medium text-ink">{t("onboarding.analyticsTitle")}</p>

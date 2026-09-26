@@ -24,7 +24,7 @@ export async function generateMetadata(props) {
   return buildMetadata({ locale: params.locale, key: "curriculum", path: "/curriculum", description: t("seo.hub", { year: YEAR }) });
 }
 
-const ART = { elementary: "elementary.classroom", middle: "middle.study-plan", "high-school": "high-school.hero" };
+const ART = { elementary: "elementary.hero", middle: "middle.hero", "high-school": "high-school.hero" };
 
 /** Distinct subjects (official names) across a stage's leaves. */
 function stageSubjectCount(stage) {
@@ -104,7 +104,7 @@ export default async function CurriculumHub(props) {
         facts={facts}
         factsLabel={t("facts.label")}
         locale={locale}
-        art="brand.island-education"
+        art="landing.curriculum"
       >
         <Messages ns={["curriculum"]}>
           <CurriculumFinder className="max-w-xl" />

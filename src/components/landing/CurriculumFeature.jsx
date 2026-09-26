@@ -14,7 +14,7 @@ const RESOURCES = [
   { key: "exams", icon: ClipboardList },
 ];
 
-/** Curriculum feature — text at the start, illustration + resource card at the end. */
+/** Curriculum feature — text at the start, the library painting + resource card at the end. */
 export default async function CurriculumFeature() {
   const t = await getT("landing");
   const year = ACADEMIC_YEAR.replace(/\D/g, "");
@@ -57,8 +57,8 @@ export default async function CurriculumFeature() {
         </div>
 
         <div className="relative lg:col-span-7">
-          <div className="rounded-xl bg-surface-2 px-6 pb-16 pt-6 ring-1 ring-inset ring-line/10 sm:px-12 sm:pb-32 sm:pt-8 lg:pb-36">
-            <Illustration id="landing.curriculum" className="mx-auto w-full max-w-[280px] sm:max-w-[380px] lg:max-w-[460px]" />
+          <div className="art-frame rounded-xl shadow-sm">
+            <Illustration id="landing.curriculum" sizes="(min-width: 1280px) 700px, (min-width: 1024px) 56vw, 100vw" className="aspect-[4/3] object-cover sm:aspect-[16/11]" />
           </div>
 
           {/* resource card — mirrors the real resource structure of every subject */}

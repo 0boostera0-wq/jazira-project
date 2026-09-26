@@ -73,7 +73,7 @@ export default async function ElementaryPage(props) {
         lead={t("elementary.hero.lead")}
         facts={grades.length ? facts : []}
         factsLabel={t("shared.factsLabel")}
-        illustration="elementary.classroom"
+        illustration="elementary.hero"
         actions={
           <>
             <Button href="#grades" variant="primary" size="lg" iconEnd={ArrowDown}>
@@ -144,7 +144,7 @@ export default async function ElementaryPage(props) {
           <div className="mt-8 grid gap-4 xl:grid-cols-12 xl:gap-5">
             <div className="grid gap-4 sm:grid-cols-2 xl:col-span-7 xl:gap-5">
               {byId.math && (
-                <SubjectFeature grow="art" illustration="elementary.numbers" title={t("elementary.subjects.items.math.title")} body={t("elementary.subjects.items.math.body")} />
+                <SubjectFeature grow="art" illustration="elementary.math" title={t("elementary.subjects.items.math.title")} body={t("elementary.subjects.items.math.body")} />
               )}
               {byId.science && (
                 <SubjectFeature grow="art" illustration="elementary.science" title={t("elementary.subjects.items.science.title")} body={t("elementary.subjects.items.science.body")} />
@@ -172,8 +172,10 @@ export default async function ElementaryPage(props) {
             title={t("elementary.games.title")}
             description={t("elementary.games.lead")}
           />
-          <div className="hidden xl:col-span-4 xl:block">
-            <Illustration id="elementary.games" className="-mb-2 ms-auto max-w-[240px]" />
+          <div aria-hidden="true" className="hidden xl:col-span-4 xl:block">
+            <div className="art-frame ms-auto max-w-[300px] rounded-lg">
+              <Illustration id="elementary.games" sizes="300px" />
+            </div>
           </div>
         </div>
         <div className="mt-8 grid gap-6 xl:grid-cols-12">

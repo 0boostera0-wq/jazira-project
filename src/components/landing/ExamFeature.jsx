@@ -31,8 +31,8 @@ export default async function ExamFeature() {
           {/* try-it module: the exam art sits inside the card, next to the action it illustrates.
               Below 360px there's no room beside the art for the button, so it takes its own full-width row. */}
           <div className="mt-9 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 rounded-lg border border-line/12 bg-surface p-3 pe-4 shadow-xs sm:gap-x-5 sm:pe-6 max-[359px]:gap-x-3 max-[359px]:pe-3">
-            <div aria-hidden="true" className="row-span-2 grid w-24 place-items-center rounded-md bg-gold-50/70 ring-1 ring-inset ring-gold-200/50 sm:w-32 max-[359px]:row-span-1 max-[359px]:w-20">
-              <Illustration id="landing.exams" />
+            <div aria-hidden="true" className="relative row-span-2 min-h-[5.5rem] w-24 self-stretch overflow-hidden rounded-md sm:w-32 max-[359px]:row-span-1 max-[359px]:h-20 max-[359px]:min-h-0 max-[359px]:w-20">
+              <Illustration id="exams.hero" fill sizes="128px" />
             </div>
             <div className="min-w-0 pt-1.5">
               <p className="font-medium leading-snug text-ink">{t("exams.try")}</p>

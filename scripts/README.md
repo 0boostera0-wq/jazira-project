@@ -4,8 +4,8 @@ Node scripts (no build step; run from the repository root).
 
 | Script | What it does | Usage |
 |---|---|---|
-| `check-assets.mjs` | Illustration manifest (`src/lib/assets.js`) ↔ files ↔ usages: files exist, aspect ratios match, art is text-free, every id is referenced and documents its `usedIn`, no broken `/images` paths | `npm run assets:check` · `node scripts/check-assets.mjs --usage` (also lists the files that reference each id) |
-| `optimize-svgs.mjs` | SVGO over `public/images` (in place) + size-budget report | `npm run assets:optimize` · `node scripts/optimize-svgs.mjs public/images/brand/island-hero.svg` |
+| `check-assets.mjs` | Image library manifest (`src/lib/assets.js`) ↔ files ↔ usages: every rendition exists at the right size and within budget, entries document their pages/purpose/sizes/priority, no orphan or retired files in `public/images`, every id is referenced, no broken `/images` paths | `npm run assets:check` · `node scripts/check-assets.mjs --usage` (also lists the files that reference each id) |
+| `process-illustrations.mjs` | Renders the library from its originals (1536×1024 PNG, kept outside the repo in `design-source/raw/`): WebP renditions at every loader width into `public/images/<category>/` + the placeholder colours (`src/lib/asset-colors.js`) — see docs/ART_DIRECTION.md | `npm run assets:process` · `node scripts/process-illustrations.mjs landing.hero` · `--src <dir>` |
 | `find-orphans.mjs` | Modules under `src/` that nothing imports (dead code) | `node scripts/find-orphans.mjs` |
 | `shot.mjs` | Visual + accessibility QA with the local Chrome: screenshot, horizontal overflow measured against the requested width, console errors, axe-core (plus a computed contrast scan on Arabic pages) | `node scripts/shot.mjs /en/exams out.png --w=390 --h=844 [--full] [--dark] [--auth] [--axe]` |
 | `build-question-seed.mjs` | Validates `src/content/questions/*.json` and writes the deterministic SQL seed `supabase/migrations/0011_seed_questions.sql` | `node scripts/build-question-seed.mjs` · `--check` (validate only, writes nothing) · `--in` / `--file` / `--out` / `--stdout` — see docs/DATA_API.md |

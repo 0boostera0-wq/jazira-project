@@ -15,7 +15,7 @@ export const SITE_URL = (
   "http://localhost:3000"
 ).replace(/\/$/, "");
 
-export const OG_IMAGE = "/og/jazira-og.png"; // 1200×630, text-free brand artwork
+export const OG_IMAGE = "/og/jazira-og.jpg"; // 1200×630: the island painting + the bilingual lockup (docs/BRAND.md)
 
 /** Absolute URL for a path in a locale. */
 export const absoluteUrl = (path, locale = "ar") => `${SITE_URL}${localizeHref(path, locale)}`;
@@ -74,7 +74,7 @@ export function organizationJsonLd({ name, description, locale }) {
         name,
         url: SITE_URL,
         description,
-        logo: `${SITE_URL}/icon.svg`,
+        logo: `${SITE_URL}/images/brand/jazira-icon-512.png`,
         areaServed: "SA",
       },
       {

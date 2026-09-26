@@ -681,7 +681,9 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
 
   const zeroAll = (
     <div className="surface animate-fade px-5 py-8 text-center sm:px-8 sm:py-10">
-      <Illustration id="system.not-found" className="mx-auto w-full max-w-[180px]" />
+      <div aria-hidden="true" className="art-frame mx-auto w-full max-w-[220px] rounded-xl">
+        <Illustration id="support.not-found" aspect="4/3" sizes="220px" />
+      </div>
       <h2 className="t-h3 mx-auto mt-4 max-w-md break-words">{t(remoteBlocked ? "empty.titleLocal" : "empty.title", { query: isolate(q) })}</h2>
       <p className="t-body mx-auto mt-2 max-w-md text-ink-3">{t("empty.body")}</p>
       {remoteBlocked && <div className="mx-auto mt-5 max-w-lg text-start">{remoteNotice}</div>}

@@ -16,7 +16,7 @@ import StrategyTips from "./StrategyTips";
 import { BuilderSkeleton } from "./skeletons";
 import { topicCount } from "./labels";
 
-const TIPS_ART = { aptitude: "aptitude.timed", achievement: "achievement.review" };
+const TIPS_ART = { aptitude: "exams.timed", achievement: "achievement.review" };
 
 /**
  * /exams/aptitude and /exams/achievement: split hero → builder (client island)

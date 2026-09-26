@@ -20,7 +20,7 @@ export default async function FinalCta() {
 
           <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
             <div className="flex max-w-2xl flex-col gap-5 sm:flex-row sm:items-start">
-              <IslandMark size={52} className="shrink-0" />
+              <IslandMark size={52} tone="onDark" className="shrink-0" />
               <div>
                 <h2 id="cta-title" className="t-h2 text-primary-fg">{t("cta.title")}</h2>
                 <p className="t-lead mt-3 text-primary-fg/75">{t("cta.body")}</p>

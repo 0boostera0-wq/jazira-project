@@ -16,7 +16,7 @@ export default async function FaqPage(props) {
 
   return (
     <>
-      <SupportHero compact eyebrow={t("faq.eyebrow")} title={t("faq.title")} lead={t("faq.lead")} art="support.help" />
+      <SupportHero compact eyebrow={t("faq.eyebrow")} title={t("faq.title")} lead={t("faq.lead")} art="support.faq" />
       <section className="pb-16 pt-2 sm:pb-20 lg:pb-24">
         <Messages ns={["support"]}>
           <FaqExplorer />

@@ -34,7 +34,7 @@ src/lib                   data access (lib/data/*), catalogs (curriculum, exams)
 src/content               question bank JSON + curriculum source manifest
 supabase/migrations       apply in filename order to a fresh project (0000 → latest)
 tests/unit, tests/db      vitest; DB tests run migrations on PGlite with a Supabase shim
-public/images             50 text-free SVG illustrations (see src/lib/assets.js)
+public/images             the painted image library (WebP renditions) + brand kit — manifest: src/lib/assets.js
 ```
 
 ## Commands
@@ -44,7 +44,7 @@ npm run dev            # http://127.0.0.1:3000 (bound to loopback only)
 npm run build          # production build (runs ESLint)
 npm test               # unit tests (i18n parity, pure logic)
 npm run test:db        # database schema/RLS/RPC tests (no Docker needed)
-npm run assets:check   # illustration manifest ↔ files ↔ usages
+npm run assets:check   # image manifest ↔ files ↔ usages (renditions, budgets, orphans)
 node scripts/shot.mjs /en/exams out.png --w=390 --h=844   # visual QA with local Chrome
 ```
 

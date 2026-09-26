@@ -19,7 +19,11 @@ export default function ErrorView({ error, reset, compact = false, titleAs: Titl
   }, [error]);
   return (
     <div role="alert" className={compact ? "py-10 text-center" : "mx-auto flex max-w-xl flex-col items-center py-12 text-center sm:py-16"}>
-      {!compact && <Illustration id="system.offline" className="w-full max-w-[260px]" />}
+      {!compact && (
+        <div aria-hidden="true" className="art-frame w-full max-w-[280px] rounded-xl">
+          <Illustration id="support.offline" aspect="4/3" sizes="280px" />
+        </div>
+      )}
       <Title className="t-h3 mt-6">{t("errors.genericTitle")}</Title>
       <p className="t-body mt-2 text-ink-3">{t("errors.genericBody")}</p>
       {error?.digest && <p className="t-caption mt-2">{t("errors.code")}: <span className="num">{error.digest}</span></p>}

@@ -2,14 +2,12 @@ import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { formatNumber } from "@/i18n/format";
 import { cn } from "@/components/ui/cn";
 import HeroArt from "@/components/stages/HeroArt";
-import { PLATE, PLATE_RING } from "@/components/stages/parts";
 
 /**
  * Split hero for the exam pages: breadcrumbs · eyebrow · h1 · lead · actions ·
- * a key-facts row (7 cols) beside the exam illustration on a cream plate
- * (5 cols). Mobile: text and the primary action first, art dropped (the
- * cards below carry their own art — so the art is preloaded only from md up,
- * never competing with the phone LCP).
+ * a key-facts row (7 cols) beside the exam painting, framed (5 cols; preloaded
+ * only from md up). Mobile: text and the primary action first, then the
+ * painting as a lazy 16:9 banner that never competes with the phone LCP.
  *
  * facts: React nodes, each a <div> with <dt>/<dd> (use <Fact/> or <BankFact/>).
  */
@@ -32,10 +30,8 @@ export default function ExamHero({ id = "exam-title", crumbs, crumbsLabel, eyebr
         )}
         {aside}
       </div>
-      <div className="animate-in hidden md:col-span-5 md:block">
-        <div className={cn("overflow-hidden rounded-xl", PLATE, PLATE_RING)}>
-          <HeroArt id={illustration} from="md" />
-        </div>
+      <div aria-hidden="true" className="animate-in md:col-span-5">
+        <HeroArt id={illustration} from="md" sizes="(min-width: 1280px) 470px, 38vw" className="object-cover md:aspect-[1/1] xl:aspect-[5/4]" banner />
       </div>
     </section>
   );

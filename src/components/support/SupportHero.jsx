@@ -1,11 +1,12 @@
-import Illustration from "@/components/ui/Illustration";
+import HeroArt from "@/components/stages/HeroArt";
 import { cn } from "@/components/ui/cn";
 
 /**
- * Split hero for the help & company pages: copy on the start side, a library
- * illustration on a cream plate on the end side (7/5 on desktop; 8/4 when
- * `compact`, for pages whose real content should start above the fold).
- * On phones the art is dropped (primary content first) unless `mobileArt`.
+ * Split hero for the help & company pages: copy on the start side, a framed
+ * library painting on the end side (7/5 on desktop; 8/4 when `compact`, for
+ * pages whose real content should start above the fold), preloaded for lg+
+ * screens only. Below lg the art is dropped (primary content first) unless
+ * `mobileArt`, which shows it as a lazy banner under the copy.
  */
 export default function SupportHero({ eyebrow, title, lead, actions, children, footer, art, mobileArt = false, compact = false, className }) {
   return (
@@ -25,13 +26,15 @@ export default function SupportHero({ eyebrow, title, lead, actions, children, f
           {footer && <div className="mt-8">{footer}</div>}
         </div>
         {art && (
-          <div
-            className={cn(
-              compact ? "lg:col-span-4" : "lg:col-span-5",
-              mobileArt ? "mx-auto w-full max-w-[320px] sm:max-w-[420px] lg:max-w-none" : "hidden lg:block"
-            )}
-          >
-            <Illustration id={art} priority plate className={cn("w-full shadow-sm", compact && "ms-auto max-w-[340px]")} />
+          <div aria-hidden="true" className={cn(compact ? "lg:col-span-4" : "lg:col-span-5", !mobileArt && "hidden lg:block")}>
+            <HeroArt
+              id={art}
+              from="lg"
+              sizes={compact ? "(min-width: 1280px) 380px, 30vw" : "(min-width: 1280px) 480px, 38vw"}
+              className="aspect-[4/3] object-cover"
+              frameClassName={cn("shadow-md", compact && "ms-auto max-w-[380px]")}
+              banner={mobileArt}
+            />
           </div>
         )}
       </div>

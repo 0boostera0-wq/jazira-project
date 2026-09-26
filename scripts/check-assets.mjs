@@ -1,19 +1,29 @@
 #!/usr/bin/env node
-// Asset integrity check:
-//  1. every manifest entry has a file on disk with a matching viewBox aspect,
-//  2. no file in public/images is missing from the manifest (orphans),
-//  3. every manifest id is referenced somewhere in src/ (unused art),
-//  4. no source file references a missing /images/ or /illustrations/ path,
-//  5. SVGs contain no <text>, <image>, <script>, <foreignObject> or fonts,
-//  6. every manifest entry documents where it is used (`usedIn` not empty).
+// Image library integrity check (src/lib/assets.js):
+//  1. every raster entry has all renditions (public/images/<category>/<name>-<w>.webp
+//     for each IMAGE_WIDTHS width) with the right pixel size, within the size budget,
+//  2. every brand-kit file exists; its SVGs hold no <text>, raster, script or font
+//     (wordmarks are outlined) and it is referenced in src/ or documented in docs/,
+//  3. every entry documents itself: category/folder, pages, purpose, sizes,
+//     priority, languageNeutral, and a generated placeholder colour,
+//  4. no file in public/images is missing from the manifest (orphans / retired art),
+//  5. every id is referenced somewhere in src/ (unused art),
+//  6. no source file references a missing /images/ path.
 //
 //   node scripts/check-assets.mjs            → the checks above (exit 1 on problems)
 //   node scripts/check-assets.mjs --usage    → also print, per asset id, the source
 //                                              files that actually reference it
-//                                              (compare with `usedIn` when moving art)
+//                                              (compare with `pages` when moving art)
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import sharp from "sharp";
 import { ASSET_LIST } from "../src/lib/assets.js";
+import { IMAGE_WIDTHS } from "../src/lib/image-loader.js";
+import COLORS from "../src/lib/asset-colors.js";
+
+const CATEGORIES = ["brand", "landing", "welcome", "elementary", "middle", "high-school", "aptitude", "achievement", "exams", "community", "assistant", "subscriptions", "payment", "support", "legal"];
+// Per-rendition byte budgets (KB): generous for painterly art, strict enough to catch a bad encode.
+const BUDGET_KB = (w) => (w >= 1536 ? 320 : w >= 1280 ? 240 : w >= 960 ? 170 : w >= 640 ? 100 : 50);
 
 const showUsage = process.argv.includes("--usage");
 const problems = [];
@@ -24,16 +34,15 @@ const walk = (dir, exts) =>
   });
 
 const MANIFEST = join("src", "lib", "assets.js");
-const srcFiles = walk("src", [".js", ".jsx", ".css"]);
-const srcText = srcFiles.map((f) => [f, readFileSync(f, "utf8")]);
-// References outside the manifest itself (its own ids and src template don't count).
-const refText = srcText.filter(([f]) => f !== MANIFEST);
+const GENERATED = join("src", "lib", "asset-colors.js");
+const srcText = walk("src", [".js", ".jsx", ".css"]).map((f) => [f, readFileSync(f, "utf8")]);
+const refText = srcText.filter(([f]) => f !== MANIFEST && f !== GENERATED);
+const docText = walk("docs", [".md"]).map((f) => [f, readFileSync(f, "utf8")]);
 
 function referencesOf(a) {
   const out = [];
   for (const [file, text] of refText) {
-    const lines = text.split("\n");
-    lines.forEach((line, i) => {
+    text.split("\n").forEach((line, i) => {
       if (line.includes(`"${a.id}"`) || line.includes(`'${a.id}'`) || line.includes(a.src)) {
         out.push(`${file.replace(/\\/g, "/").replace(/^src\//, "")}:${i + 1}`);
       }
@@ -42,36 +51,68 @@ function referencesOf(a) {
   return out;
 }
 
-const manifestSrcs = new Set();
+const expected = new Set(); // every file public/images may contain, as URL paths
+const logical = new Set(); // raster `src` values (resolved by the loader, not files)
 const usage = [];
+let bytes = 0;
+
 for (const a of ASSET_LIST) {
-  manifestSrcs.add(a.src);
-  const file = join("public", a.src);
-  if (!existsSync(file)) { problems.push(`missing file: ${a.src} (${a.id})`); continue; }
-  const svg = readFileSync(file, "utf8");
-  const vb = svg.match(/viewBox="([\d.\s-]+)"/);
-  if (!vb) problems.push(`no viewBox: ${a.src}`);
-  else {
-    const [, , w, h] = vb[1].trim().split(/\s+/).map(Number);
-    if (Math.abs(w / h - a.width / a.height) > 0.01) problems.push(`aspect mismatch: ${a.src} viewBox ${w}x${h} vs manifest ${a.width}x${a.height}`);
+  const where = `${a.id}:`;
+  if (!CATEGORIES.includes(a.category)) problems.push(`${where} unknown category "${a.category}"`);
+  if (a.id !== `${a.category}.${a.src.split("/").pop().replace(/\.(webp|svg|png|jpg)$/, "")}`) problems.push(`${where} id does not match its file name`);
+  if (a.kind !== "brand" && !a.src.startsWith(`/images/${a.category}/`)) problems.push(`${where} src ${a.src} is not under /images/${a.category}/`);
+  if (!Array.isArray(a.pages) || !a.pages.length) problems.push(`${where} pages is empty`);
+  if (!a.purpose) problems.push(`${where} purpose is empty`);
+  if (a.kind === "raster" && a.languageNeutral !== true) problems.push(`${where} art must be language-neutral (no text in the image)`);
+  if (a.kind === "brand" && a.languageNeutral !== !a.lang) problems.push(`${where} a lockup with a script wordmark must name its lang`);
+  if (!["lcp", "lazy"].includes(a.priority)) problems.push(`${where} priority must be "lcp" or "lazy"`);
+
+  if (a.kind === "raster") {
+    logical.add(a.src);
+    if (!a.sizes) problems.push(`${where} sizes is empty`);
+    if (!COLORS[a.id]) problems.push(`${where} no placeholder colour — run \`npm run assets:process ${a.id}\``);
+    const stem = a.src.slice(0, -".webp".length);
+    for (const w of IMAGE_WIDTHS) {
+      const url = `${stem}-${w}.webp`;
+      expected.add(url);
+      const file = join("public", url);
+      if (!existsSync(file)) { problems.push(`${where} missing rendition ${url}`); continue; }
+      const kb = statSync(file).size / 1024;
+      bytes += kb;
+      if (kb > BUDGET_KB(w)) problems.push(`${where} ${url} is ${kb.toFixed(0)} KB (budget ${BUDGET_KB(w)} KB)`);
+      const m = await sharp(file).metadata();
+      const h = Math.round((w * a.height) / a.width);
+      if (m.format !== "webp" || m.width !== w || Math.abs(m.height - h) > 1) problems.push(`${where} ${url} is ${m.format} ${m.width}×${m.height}, expected webp ${w}×${h}`);
+    }
+  } else if (a.kind === "brand") {
+    expected.add(a.src);
+    const file = join("public", a.src);
+    if (!existsSync(file)) { problems.push(`${where} missing file ${a.src}`); continue; }
+    bytes += statSync(file).size / 1024;
+    if (a.src.endsWith(".svg")) {
+      const svg = readFileSync(file, "utf8");
+      if (/<(text|image|script|foreignObject)\b/i.test(svg) || /font-family|@font-face/i.test(svg)) problems.push(`${where} forbidden element (text/image/script/font) in ${a.src}`);
+    }
+  } else {
+    problems.push(`${where} unknown kind "${a.kind}"`);
   }
-  if (/<(text|image|script|foreignObject)\b/i.test(svg) || /font-family|@font-face/i.test(svg)) problems.push(`forbidden element (text/image/script/font): ${a.src}`);
+
   const refs = referencesOf(a);
-  if (!refs.length) problems.push(`unused asset (not referenced in src/): ${a.id}`);
-  if (!Array.isArray(a.usedIn) || !a.usedIn.length) problems.push(`usedIn is empty: ${a.id}`);
+  const documented = a.kind === "brand" && docText.some(([, t]) => t.includes(a.src));
+  if (!refs.length && !documented) problems.push(`${where} unused (not referenced in src/${a.kind === "brand" ? " nor documented in docs/" : ""})`);
   usage.push([a.id, refs]);
 }
 
 if (existsSync("public/images")) {
-  for (const f of walk("public/images", [".svg", ".png", ".jpg", ".jpeg", ".webp", ".avif"])) {
+  for (const f of walk("public/images", [""])) {
     const url = "/" + f.replace(/\\/g, "/").replace(/^public\//, "");
-    if (!manifestSrcs.has(url)) problems.push(`orphan file not in manifest: ${url}`);
+    if (!expected.has(url)) problems.push(`orphan file not in the manifest: ${url}`);
   }
 }
 
 for (const [file, text] of srcText) {
-  for (const m of text.matchAll(/["'`](\/(?:images|illustrations)\/[^"'`\s)]+)["'`]/g)) {
-    if (m[1].includes("${")) continue; // template in the manifest itself
+  for (const m of text.matchAll(/["'`](\/images\/[^"'`\s)]+)["'`]/g)) {
+    if (m[1].includes("${") || logical.has(m[1])) continue;
     if (!existsSync(join("public", m[1]))) problems.push(`broken reference in ${file}: ${m[1]}`);
   }
 }
@@ -87,4 +128,9 @@ if (problems.length) {
   console.error(`\n${problems.length} problem(s)`);
   process.exit(1);
 }
-console.log(`✓ ${ASSET_LIST.length} assets OK — all present, referenced, documented, text-free, no broken paths`);
+const raster = ASSET_LIST.filter((a) => a.kind === "raster").length;
+const brand = ASSET_LIST.length - raster;
+console.log(
+  `✓ ${ASSET_LIST.length} assets OK (${raster} paintings × ${IMAGE_WIDTHS.length} renditions + ${brand} brand-kit files, ${(bytes / 1024).toFixed(1)} MB) — ` +
+    "all present, sized, within budget, referenced, documented, no orphans or broken paths"
+);

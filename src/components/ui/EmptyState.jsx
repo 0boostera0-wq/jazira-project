@@ -13,7 +13,9 @@ export default function EmptyState({ image, icon: Icon, title, titleAs: Title = 
   return (
     <div className={cn("flex flex-col items-center text-center", compact ? "px-4 py-8" : "px-6 py-12 sm:py-16", className)}>
       {image ? (
-        <Illustration id={image} className={cn(compact ? "max-w-[160px]" : "max-w-[240px]")} />
+        <div aria-hidden="true" className={cn("art-frame w-full rounded-xl", compact ? "max-w-[180px]" : "max-w-[260px]")}>
+          <Illustration id={image} aspect="4/3" sizes={compact ? "180px" : "260px"} />
+        </div>
       ) : Icon ? (
         <span className="grid h-14 w-14 place-items-center rounded-lg bg-gold-50 text-gold-600">
           <Icon size={26} aria-hidden="true" />

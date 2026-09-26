@@ -2,7 +2,7 @@ import IconTile from "@/components/ui/IconTile";
 import Illustration from "@/components/ui/Illustration";
 import { SECTIONS } from "@/lib/exams/catalog";
 import { cn } from "@/components/ui/cn";
-import { ArrowLink, PLATE } from "@/components/stages/parts";
+import { ArrowLink } from "@/components/stages/parts";
 import { BankNumber } from "./BankProvider";
 import { builderHref } from "./builder-logic";
 import { sectionColor, sectionIcon } from "./labels";
@@ -19,8 +19,8 @@ export default function SectionCard({ exam, section, t, wide = false }) {
   const titleId = `sec-${section}`;
   return (
     <article aria-labelledby={titleId} className={wide ? "surface-flat grid overflow-hidden md:grid-cols-5" : "surface-flat flex flex-col overflow-hidden"}>
-      <div className={cn(wide ? "grid place-items-center px-6 py-4 md:col-span-2" : "px-8 pt-3", PLATE)}>
-        <Illustration id={def.illustration} className={wide ? "w-full max-w-[260px]" : "mx-auto w-full max-w-[180px] sm:max-w-[240px]"} />
+      <div aria-hidden="true" className={cn("relative overflow-hidden", wide ? "aspect-[16/9] md:col-span-2 md:aspect-auto md:min-h-[12rem]" : "aspect-[16/9]")}>
+        <Illustration id={def.illustration} fill sizes={wide ? "(min-width: 768px) 40vw, 100vw" : "(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"} />
       </div>
       <div className={wide ? "flex flex-col p-5 sm:p-6 md:col-span-3" : "flex flex-1 flex-col p-5 sm:p-6"}>
         <div className="flex items-center gap-3">

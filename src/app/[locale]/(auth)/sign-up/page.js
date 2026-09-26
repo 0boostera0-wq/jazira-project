@@ -19,14 +19,14 @@ export default async function SignUpPage(props) {
     <AuthShell
       title={t("signUp.title")}
       description={t("signUp.description")}
-      illustration="brand.island-education"
+      illustration="welcome.sign-up"
       asideTitle={t("signUp.aside.title")}
       asidePoints={t.raw("signUp.aside.points")}
     >
       <Messages ns={["auth"]}>
         <SignUpForm legal={<LegalNote messageKey="signUp.legal" />} />
       </Messages>
-      <AuthTips title={t("signUp.aside.title")} points={t.raw("signUp.aside.points")} illustration="brand.island-education" from="sm" />
+      <AuthTips title={t("signUp.aside.title")} points={t.raw("signUp.aside.points")} illustration="welcome.sign-up" from="sm" />
     </AuthShell>
   );
 }

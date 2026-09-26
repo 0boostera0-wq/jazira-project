@@ -24,11 +24,12 @@ export default async function PlanCard({ className, priority = false }) {
   return (
     <section aria-label={t("hero.cardLabel")} className={cn("surface overflow-hidden", className)}>
       <div className="md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:block">
-        <div className="flex justify-center bg-[#F7F0E3] dark:bg-surface-2 px-6 pt-4 sm:pt-5 md:items-center md:py-6 lg:block lg:py-0 lg:pt-5">
+        <div aria-hidden="true" className="relative aspect-[16/9] md:aspect-auto md:min-h-[15rem] lg:aspect-[16/10] lg:min-h-0">
           <Illustration
-            id="subscriptions.premium"
+            id="subscriptions.hero"
+            fill
             priority={priority}
-            className="mx-auto w-full max-w-[150px] sm:max-w-[250px] md:max-w-[230px] lg:max-w-[250px]"
+            sizes="(min-width: 1280px) 480px, (min-width: 1024px) 40vw, (min-width: 768px) 42vw, 100vw"
           />
         </div>
 

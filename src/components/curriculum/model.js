@@ -198,16 +198,35 @@ export function toClientSubject(s, { practice = null, tag = null, art = null } =
 const ORDER = ["student_book", "activity_book", "exam_samples"];
 const order = (type) => ORDER.indexOf(type);
 
+// High-school subjects share their track's art (src/lib/assets.js).
+const HS_ART = {
+  "high-school.computer-science": ["cs", "data-science", "iot", "engineering", "digital"],
+  "high-school.business": ["business", "intro-business", "decision-making", "economics", "finance", "financial-literacy", "management", "marketing", "events", "secretarial"],
+  "high-school.health": ["health", "health-sciences", "fitness", "pe"],
+  "high-school.sharia": ["islamic", "quran", "quran-sciences", "tafsir", "tawhid", "hadith", "hadith-terminology", "fiqh", "usul-fiqh", "faraid", "qiraat"],
+  "aptitude.verbal": ["arabic", "linguistic-studies", "rhetoric"],
+};
+
 /** Library illustration for a subject detail, when one fits (src/lib/assets.js). */
 export function subjectArt(stage, subjectId) {
   const MAP = {
-    elementary: { math: "elementary.numbers", science: "elementary.science" },
-    middle: { math: "middle.math", science: "middle.science" },
+    elementary: {
+      math: "elementary.math",
+      science: "elementary.science",
+      arabic: "elementary.reading",
+      english: "elementary.english",
+      islamic: "elementary.islamic",
+      quran: "elementary.islamic",
+      tajweed: "elementary.islamic",
+      art: "elementary.art",
+    },
+    middle: { math: "middle.math", science: "middle.science", arabic: "middle.arabic" },
     "high-school": {
       math: "high-school.math",
       physics: "high-school.physics",
       chemistry: "high-school.chemistry",
       biology: "high-school.biology",
+      ...Object.fromEntries(Object.entries(HS_ART).flatMap(([art, ids]) => ids.map((id) => [id, art]))),
     },
   };
   return MAP[stage]?.[subjectId] || null;

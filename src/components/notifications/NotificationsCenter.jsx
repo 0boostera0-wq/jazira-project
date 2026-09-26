@@ -243,7 +243,7 @@ export default function NotificationsCenter({ header }) {
             <ListSkeleton />
           ) : state.status === "error" ? (
             <EmptyState
-              image="system.offline"
+              image="support.offline"
               compact
               title={t("states.error.title")}
               description={t("states.error.body")}
@@ -251,7 +251,7 @@ export default function NotificationsCenter({ header }) {
               className="surface"
             />
           ) : !state.available && state.items.length === 0 ? (
-            <EmptyState image="system.offline" compact title={t("states.unavailable.title")} description={t("states.unavailable.body")} className="surface" />
+            <EmptyState image="support.offline" compact title={t("states.unavailable.title")} description={t("states.unavailable.body")} className="surface" />
           ) : state.items.length === 0 ? (
             <EmptyState
               image="support.empty"

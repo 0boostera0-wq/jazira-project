@@ -414,7 +414,7 @@ export default function ReviewsBoard() {
         ) : list.state === "error" ? (
           <Card tone="flat" pad="none">
             <EmptyState
-              image="system.offline"
+              image="support.offline"
               title={t("reviews.list.errorTitle")}
               description={t("reviews.list.errorBody")}
               action={<Button onClick={() => { loadFirst(client); loadStats(client); }} iconStart={RotateCcw}>{tc("actions.retry")}</Button>}

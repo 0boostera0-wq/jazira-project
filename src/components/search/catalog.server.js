@@ -6,8 +6,8 @@ import { EXAMS, SECTIONS } from "@/lib/exams/catalog";
 import { getT } from "@/i18n/server";
 
 export const STAGE_ART = {
-  elementary: "elementary.classroom",
-  middle: "middle.study-plan",
+  elementary: "elementary.hero",
+  middle: "middle.hero",
   "high-school": "high-school.hero",
 };
 

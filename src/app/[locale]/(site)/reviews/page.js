@@ -2,6 +2,7 @@ import { BadgeCheck, ListOrdered, Sigma } from "lucide-react";
 import { getT, setRequestLocale } from "@/i18n/server";
 import Messages from "@/i18n/WithMessages";
 import { buildMetadata } from "@/lib/seo";
+import HeroArt from "@/components/stages/HeroArt";
 import ReviewsBoard from "@/components/support/ReviewsBoard";
 
 export async function generateMetadata(props) {
@@ -23,22 +24,26 @@ export default async function ReviewsPage(props) {
   return (
     <>
       <section className="bg-aura">
-        <div className="container-jz grid gap-8 pb-8 pt-8 sm:pb-10 sm:pt-12 lg:grid-cols-12 lg:items-end lg:gap-12 lg:pt-14">
+        <div className="container-jz grid gap-8 pb-8 pt-8 sm:pb-10 sm:pt-12 lg:grid-cols-12 lg:items-center lg:gap-12 lg:pt-14">
           <div className="animate-in lg:col-span-7">
             <p className="t-eyebrow mb-3">{t("reviews.eyebrow")}</p>
             <h1 className="t-h1">{t("reviews.title")}</h1>
             <p className="t-lead mt-4 max-w-[56ch]">{t("reviews.lead")}</p>
           </div>
-          <div className="hidden rounded-lg border border-line/15 bg-surface/80 p-5 lg:col-span-5 lg:block">
-            <h2 className="text-sm font-medium text-ink">{t("reviews.policy.title")}</h2>
-            <ul className="mt-3 space-y-2.5">
-              {POLICY.map(({ key, icon: Icon }) => (
-                <li key={key} className="flex items-start gap-2.5">
-                  <Icon size={16} className="mt-1 shrink-0 text-green-600" aria-hidden="true" />
-                  <span className="t-small text-ink-2">{t(`reviews.policy.${key}`)}</span>
-                </li>
-              ))}
-            </ul>
+          {/* The lanterns painting (lg+: framed, preloaded; below: a lazy banner) with the review policy over its lower edge. */}
+          <div className="lg:col-span-5">
+            <HeroArt id="landing.reviews" from="lg" sizes="(min-width: 1280px) 460px, 38vw" className="aspect-[4/3] object-cover" frameClassName="shadow-md" banner />
+            <div className="relative mx-4 -mt-16 hidden rounded-lg border border-line/15 bg-surface p-5 shadow-lg lg:block">
+              <h2 className="text-sm font-medium text-ink">{t("reviews.policy.title")}</h2>
+              <ul className="mt-3 space-y-2.5">
+                {POLICY.map(({ key, icon: Icon }) => (
+                  <li key={key} className="flex items-start gap-2.5">
+                    <Icon size={16} className="mt-1 shrink-0 text-green-600" aria-hidden="true" />
+                    <span className="t-small text-ink-2">{t(`reviews.policy.${key}`)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </section>

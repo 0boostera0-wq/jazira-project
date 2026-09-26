@@ -7,8 +7,8 @@ import { cn } from "@/components/ui/cn";
 import { ArrowLink, Intro } from "./parts";
 
 const SCHOOL = [
-  { key: "elementary", href: "/elementary", art: "elementary.classroom" },
-  { key: "middle", href: "/middle", art: "middle.study-plan" },
+  { key: "elementary", href: "/elementary", art: "elementary.hero" },
+  { key: "middle", href: "/middle", art: "middle.hero" },
   { key: "highSchool", href: "/high-school", art: "high-school.hero" },
 ];
 const EXAMS = [
@@ -18,7 +18,7 @@ const EXAMS = [
 
 /**
  * Stage & goal selector.
- *   md+: three tall school-stage cards (art on a sage plate, copy below) and two
+ *   md+: three tall school-stage cards (painting header, copy below) and two
  *        wide gold exam cards (art at the start, copy beside it).
  *   <md: one compact list of rows with a small art thumbnail — quick to scan
  *        and tap, no oversized decoration.
@@ -82,22 +82,19 @@ function StageCard({ t, item, exam = false }) {
           : "border-line/15 bg-surface hover:border-line/25 md:flex-col md:items-stretch md:gap-0 md:p-0"
       )}
     >
-      {/* art plate: thumbnail on phones, full-width header (school) / side panel (exam) from md */}
+      {/* painting: cropped thumbnail on phones, full-width header (school) / side panel (exam) from md */}
       <div
         aria-hidden="true"
         className={cn(
-          "grid w-[5.5rem] shrink-0 place-items-center rounded-md p-1",
-          exam
-            ? "bg-surface ring-1 ring-inset ring-gold-200/50 md:w-40 md:p-2 xl:w-48"
-            : "bg-green-50/70 md:w-full md:rounded-none md:px-8 md:pb-1 md:pt-5 lg:px-12 lg:pt-6"
+          "relative h-20 w-[5.5rem] shrink-0 overflow-hidden rounded-md",
+          exam ? "md:h-auto md:min-h-[8.5rem] md:w-44 md:self-stretch xl:w-52" : "md:aspect-[16/10] md:h-auto md:w-full md:rounded-none"
         )}
       >
         <Illustration
           id={item.art}
-          className={cn(
-            "w-full transition-transform duration-slow ease-out group-hover:-translate-y-1",
-            !exam && "md:max-w-[15rem]"
-          )}
+          fill
+          sizes={exam ? "(min-width: 1280px) 208px, (min-width: 768px) 176px, 88px" : "(min-width: 768px) 33vw, 88px"}
+          className="transition-transform duration-slow ease-out group-hover:scale-[1.04]"
         />
       </div>
 

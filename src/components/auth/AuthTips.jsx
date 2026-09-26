@@ -26,11 +26,9 @@ export default function AuthTips({ title, points = [], illustration, from = "bas
     >
       <div className="flex items-center gap-4 sm:gap-5">
         {illustration && (
-          // A cropped tile: the art is scaled past its own margins so the scene reads at this size.
-          <div className="hidden w-32 shrink-0 overflow-hidden rounded-md bg-surface ring-1 ring-inset ring-line/10 sm:block" aria-hidden="true">
-            <div className="scale-[1.4]">
-              <Illustration id={illustration} />
-            </div>
+          // A square crop of the page's painting (the full scene is the lg+ aside).
+          <div className="art-frame hidden w-32 shrink-0 rounded-md sm:block" aria-hidden="true">
+            <Illustration id={illustration} aspect="1/1" sizes="128px" />
           </div>
         )}
         <div className="min-w-0 flex-1">

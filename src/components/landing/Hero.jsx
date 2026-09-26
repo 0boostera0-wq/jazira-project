@@ -3,6 +3,7 @@ import { getT } from "@/i18n/server";
 import Button from "@/components/ui/Button";
 import IconTile from "@/components/ui/IconTile";
 import Illustration from "@/components/ui/Illustration";
+import { SIZES } from "@/lib/assets";
 import { Container } from "@/components/ui/Layout";
 import AssistantAvatar from "@/components/brand/AssistantAvatar";
 import IslandMark from "@/components/brand/IslandMark";
@@ -11,8 +12,8 @@ import { PRESETS } from "@/lib/exams/catalog";
 const TRUST = ["free", "arabic", "stages"];
 
 /**
- * Split hero: copy + CTAs at the start, the signature island (LCP image) at the
- * end, sitting on a soft aura panel it overlaps. Two anchored product chips
+ * Split hero: copy + CTAs at the start, the signature island painting (the LCP
+ * image) at the end in a large rounded frame. Two anchored product chips
  * preview real features (the quick-test preset and the assistant) from sm up.
  */
 export default async function Hero() {
@@ -54,15 +55,10 @@ export default async function Hero() {
         </div>
 
         {/* art */}
-        <div className="relative mx-auto w-full max-w-[520px] lg:col-span-6 lg:max-w-none">
-          <div
-            aria-hidden="true"
-            className="absolute inset-x-0 bottom-[3%] top-[15%] overflow-hidden rounded-[2rem] bg-gradient-to-b from-gold-100/80 via-gold-50/70 to-surface-2 ring-1 ring-inset ring-gold-200/50 sm:rounded-[2.5rem]"
-          >
-            <div className="absolute inset-0 bg-dots opacity-70 [mask-image:linear-gradient(to_bottom,black,transparent_65%)]" />
+        <div className="relative mx-auto w-full max-w-[560px] sm:px-6 lg:col-span-6 lg:max-w-none lg:px-0">
+          <div className="art-frame rounded-[1.75rem] shadow-lg sm:rounded-[2.25rem]">
+            <Illustration id="landing.hero" priority sizes={SIZES.hero} className="aspect-[4/3] object-cover lg:aspect-[5/4]" />
           </div>
-
-          <Illustration id="brand.island-hero" priority className="relative mx-auto w-[94%]" />
 
           {/* anchored product chips (decorative previews of real features) */}
           <div aria-hidden="true" className="absolute bottom-[9%] start-0 hidden items-center gap-3 rounded-lg border border-line/10 bg-surface py-2.5 pe-4 ps-2.5 shadow-md sm:flex xl:-start-4">

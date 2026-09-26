@@ -13,7 +13,7 @@ const POINTS = [
   ["photo", ImagePlus],
 ];
 
-/** Community — sage art panel + illustrative post at the start, copy at the end. */
+/** Community — courtyard painting + illustrative post at the start, copy at the end. */
 export default async function CommunityFeature() {
   const t = await getT("landing");
   return (
@@ -34,8 +34,8 @@ export default async function CommunityFeature() {
         </div>
 
         <div className="relative lg:order-1 lg:col-span-6">
-          <div className="rounded-xl bg-green-50/80 px-6 pb-20 pt-6 ring-1 ring-inset ring-green-100 sm:px-10 sm:pb-24 sm:pt-8 lg:pb-28">
-            <Illustration id="landing.community" className="mx-auto w-full max-w-[300px] sm:max-w-[480px]" />
+          <div className="art-frame rounded-xl shadow-sm">
+            <Illustration id="community.hero" sizes="(min-width: 1280px) 600px, (min-width: 1024px) 48vw, 100vw" className="aspect-[4/3] object-cover" />
           </div>
           <PostMock t={t} />
         </div>

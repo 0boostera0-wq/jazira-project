@@ -141,7 +141,9 @@ export default function StreakCard({ className }) {
   return (
     <section aria-labelledby="streak-title" className={cn("surface p-5 sm:p-6", className)}>
       {/* Floated so long copy (guest / empty states) wraps under the art instead of squeezing beside it. */}
-      <Illustration id="community.motivation" className="float-end -mt-1 mb-2 ms-3 w-[104px] sm:w-[120px] xl:w-[96px] 2xl:w-[120px]" />
+      <div aria-hidden="true" className="art-frame float-end -mt-1 mb-2 ms-3 w-[104px] rounded-md sm:w-[120px] xl:w-[96px] 2xl:w-[120px]">
+        <Illustration id="community.streak" aspect="1/1" sizes="120px" />
+      </div>
       <h2 id="streak-title" className="flex items-center gap-2 t-h4">
         <Flame size={18} aria-hidden="true" className="text-gold-600" />
         {t("streak.title")}

@@ -18,14 +18,14 @@ export default async function ProfileSetupPage(props) {
     <AuthShell
       title={t("profileSetup.title")}
       description={t("profileSetup.description")}
-      illustration="brand.island-achievement"
+      illustration="welcome.profile-setup"
       asideTitle={t("profileSetup.aside.title")}
       asidePoints={t.raw("profileSetup.aside.points")}
     >
       <Messages ns={["auth"]}>
         <ProfileSetup />
       </Messages>
-      <AuthTips title={t("profileSetup.aside.title")} points={t.raw("profileSetup.aside.points")} illustration="brand.island-achievement" />
+      <AuthTips title={t("profileSetup.aside.title")} points={t.raw("profileSetup.aside.points")} illustration="welcome.profile-setup" />
     </AuthShell>
   );
 }

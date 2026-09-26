@@ -75,7 +75,7 @@ export default async function AboutPage(props) {
         eyebrow={t("about.eyebrow")}
         title={t("about.title")}
         lead={t("about.lead")}
-        art="brand.island-education"
+        art="landing.about"
         mobileArt
         actions={
           <>

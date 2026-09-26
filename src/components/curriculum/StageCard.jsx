@@ -1,7 +1,6 @@
 import { Link } from "@/i18n/navigation";
 import Illustration from "@/components/ui/Illustration";
 import { cn } from "@/components/ui/cn";
-import { PLATE, PLATE_RING } from "@/components/stages/parts";
 import { subjectGlyph } from "./SubjectIcon";
 import { Chevron } from "./parts";
 
@@ -11,10 +10,11 @@ import { Chevron } from "./parts";
 const chip =
   "relative z-10 inline-flex h-11 min-w-11 items-center justify-center whitespace-nowrap rounded-full border border-line/15 bg-surface px-3 text-sm font-medium text-ink-2 transition-colors duration-fast hover:border-gold-300 hover:bg-gold-50 hover:text-ink sm:h-9 sm:min-w-9";
 
-function ArtBand({ art, className }) {
+// Full-bleed painting band (the card clips it to its radius).
+function ArtBand({ art, sizes, className }) {
   return (
-    <div aria-hidden="true" className={cn("flex items-end justify-center overflow-hidden px-6 pt-5", PLATE, PLATE_RING, className)}>
-      <Illustration id={art} className="h-full max-w-full object-contain" />
+    <div aria-hidden="true" className={cn("relative overflow-hidden", className)}>
+      <Illustration id={art} fill sizes={sizes} />
     </div>
   );
 }
@@ -23,7 +23,7 @@ function ArtBand({ art, className }) {
 export default function StageCard({ href, art, name, range, body, meta, gradesLabel, grades, className }) {
   return (
     <article className={cn("group relative flex h-full flex-col overflow-hidden rounded-xl border border-line/15 bg-surface shadow-sm transition-[box-shadow,border-color] duration ease-out hover:border-line/20 hover:shadow-md", className)}>
-      <ArtBand art={art} className="h-32 sm:h-48" />
+      <ArtBand art={art} sizes="(min-width: 1024px) 50vw, 100vw" className="h-36 sm:h-52" />
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
@@ -65,7 +65,7 @@ export default function StageCard({ href, art, name, range, body, meta, gradesLa
 export function HighSchoolCard({ href, art, name, range, body, meta, common, yearHeads, trackLabel, tracks, className }) {
   return (
     <article className={cn("group relative grid overflow-hidden rounded-xl border border-line/15 bg-surface shadow-sm transition-[box-shadow,border-color] duration ease-out hover:border-line/20 hover:shadow-md md:grid-cols-12", className)}>
-      <ArtBand art={art} className="h-36 sm:h-52 md:col-span-4 md:h-full md:items-center md:py-6" />
+      <ArtBand art={art} sizes="(min-width: 768px) 34vw, 100vw" className="h-40 sm:h-56 md:col-span-4 md:h-full md:min-h-[18rem]" />
       <div className="flex flex-col p-5 sm:p-6 md:col-span-8 lg:p-7">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">

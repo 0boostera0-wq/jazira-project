@@ -23,8 +23,13 @@ export async function localizedManifest(locale) {
     background_color: "#FAF7F0",
     theme_color: "#FAF7F0",
     categories: ["education"],
+    // The Jazira app icon (docs/BRAND.md): SVG for modern browsers, PNGs for
+    // install surfaces, and a maskable variant with the mark inside the safe zone.
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+      { src: "/images/brand/jazira-icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/images/brand/jazira-icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/images/brand/jazira-icon-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
       { src: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
   };
