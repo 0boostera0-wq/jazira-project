@@ -71,9 +71,9 @@ from the catalog — never typed by hand.
 | What | Status | Source |
 |---|---|---|
 | Subjects per grade / track, official Arabic names, annual periods | **verified** | «دليل الخطط الدراسية – الإصدار الخامس», National Curriculum Center, on moe.gov.sa — <https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf> (listed on <https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx>). K–9: pp.19, 21, 23. Secondary: pp.25–40. |
-| Two terms in 1447H | **verified** | MoE news 11/02/1447 — <https://www.moe.gov.sa/ar/mediacenter/MOEnews/Pages/news1_05082025.aspx>; SPA <https://spa.gov.sa/N2373796> |
-| Which term each subject runs in | **unverified** (per subject) | The plan gives annual periods only. The 1448 books on iEN are published as parts («الجزء الأول / الثاني من المقرر») and **no cover read so far names a term**. See the term policy (§8). |
-| Where the textbooks are published | **verified** | MoE e-service «خدمة مقرراتي» — <https://www.moe.gov.sa/ar/knowledgecenter/eservices/pages/courses.aspx> → منصة مدرستي <https://schools.madrasati.sa/> (active account required); «عين» <https://www.ien.edu.sa/> — a **public** official portal (no account), named on the MoE study-plans page for viewing the course books. |
+| Two terms per year, 1447H and the three following years (so 1448H too) | **verified** | Cabinet decision reported by SPA <https://spa.gov.sa/N2373796> («إقرار فصلين دراسيين … في الأعوام الأربعة القادمة»); MoE news 11/02/1447 — <https://www.moe.gov.sa/ar/mediacenter/MOEnews/Pages/news1_05082025.aspx> |
+| Which term each subject runs in | **unverified** (per subject) | The plan gives annual periods only. The 1448 books on iEN are split into parts («الجزء الأول / الثاني من المقرر»; secondary courses numbered x-1 / x-2) and **no cover read so far names a term**. "Part N = term N" is an **inference** (only non-official sites label books that way), never verified. See the term policy (§8). |
+| Where the textbooks are published | **verified** | MoE e-service «خدمة مقرراتي» — <https://www.moe.gov.sa/ar/knowledgecenter/eservices/pages/courses.aspx> → منصة مدرستي <https://schools.madrasati.sa/> (active account required); «عين» <https://www.ien.edu.sa/> — a **public** official portal (no account, books at `iencontent.ien.edu.sa`), **linked from the MoE study-plans page** (<https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx>, «للاطلاع على المقررات الدراسية – عين الإثرائية»), so it is the Ministry-endorsed public source for the books. Recorded as claim `ien-is-official-course-source` in `data/staging/sources/research/term-evidence.json`. |
 | Which books exist per subject | **verified from iEN** (crawl 2026-09-26) | 315 listed files (311 `1448-…`, one `1488-…` anomaly, 3 zip files), 10,102 lessons in 2,126 units. Per-book deep links (`https://iencontent.ien.edu.sa/books/<file>`) are in the outline layer. Subjects without an iEN book (the graduation project) are listed `catalog_only` in `data/staging/curriculum/ien-mapping.json`. |
 | Elective-field options (general track, year 3) | **verified** | Guide p.30; SPA <https://www.spa.gov.sa/N2383308> |
 | Tahfeez (Quran memorisation) schools | not modelled | Guide pp.20, 22, 24 — a separate plan; mentioned on the hub, not in the tree. |
@@ -248,7 +248,14 @@ and are **never added to the catalog**.
 
 **Term policy.**
 
-- Two terms in 1447/1448: **verified** (official decision).
+- Two terms in 1447/1448: **verified** (Cabinet decision via SPA, research
+  claim `two-terms-1447-1450`).
+- The 1448 books are **split into parts** (claim `books-in-two-parts`);
+  "part N = term N" is an **inference** (claim `part-to-term-inferred`,
+  `confidence: unverified`). It can reach `inferred`, never `verified`: a
+  term is verified only by an official statement (a cover or title page
+  naming «الفصل الدراسي …», a TOC marker, or an official per-term
+  distribution), never by the part number.
 - Term membership comes only from evidence: a cover or title page stating
   «الفصل الدراسي الأول/الثاني» (strict regex; «الفصل الثاني» alone is a chapter
   heading), TOC markers, two agreeing vision reads — all `verified`; the

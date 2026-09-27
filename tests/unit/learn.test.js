@@ -15,6 +15,8 @@ import ResourceState from "@/components/learn/ResourceState";
 import SubjectOutline from "@/components/learn/SubjectOutline";
 import { contentLang } from "@/components/learn/ContentText";
 import ResourceList from "@/components/learn/ResourceList";
+import ExamEntryPoints from "@/components/learn/ExamEntryPoints";
+import LearnPathLayout from "@/app/[locale]/(app)/learn/[...path]/layout";
 import { createOutlineTree, loadOutline } from "@/lib/curriculum-outline";
 import { createRuntimeBank } from "@/lib/exams/engine/runtime-bank.server";
 import { parseScope, resolveScope } from "@/lib/exams/engine/scope";
@@ -24,8 +26,12 @@ import { createTranslator } from "@/i18n/translator";
 // Link needs the app router; a plain anchor is enough to render the outline rows.
 vi.mock("@/i18n/navigation", async () => {
   const { createElement: h } = await import("react");
-  return { Link: ({ href, children, ...rest }) => h("a", { href, ...rest }, children) };
+  return { Link: ({ href, children, ...rest }) => h("a", { href, ...rest }, children), useRouter: () => ({ push() {} }) };
 });
+// The ExamEntryPoints island reads the UI language and the viewer tier from hooks.
+const ui = vi.hoisted(() => ({ locale: "en", t: (k) => k }));
+vi.mock("@/i18n/client", () => ({ useLocale: () => ({ locale: ui.locale }), useT: () => ui.t }));
+vi.mock("@/components/exams/useTier", () => ({ useTier: () => ({ isLoaded: true, tier: "guest" }) }));
 
 const ROOT = path.resolve(import.meta.dirname, "..", "..");
 const FIXTURE = JSON.parse(readFileSync(path.join(ROOT, "tests/fixtures/content/outline-tree.json"), "utf8"));
@@ -420,6 +426,43 @@ describe("content titles take their language from the data (§7)", () => {
     expect(file).toMatch(/<p lang="en" dir="ltr" class="[^"]*">Super Goal 1 \/ Student&#x27;s Book<\/p>/);
     const ar = renderToStaticMarkup(createElement(ResourceState, { item: resourceView(RESOURCES[0]), t, locale: "en" }));
     expect(ar).toMatch(/<p lang="ar" dir="rtl" class="[^"]*font-ar/);
+  });
+
+  it("names the quiz scope in the UI language when the outline has an English title (ExamEntryPoints)", async () => {
+    const entry = (title, title_en) => ({
+      key: `subject-quiz:${M}`, template: "subject-quiz", scope: M, title, title_en, term: null, timed: true, feedback: "end",
+      offers: { guest: { offered: false, reason: "insufficient_pool", required: 10, available: 0 } },
+    });
+    const render = async (locale, e) => {
+      ui.locale = locale;
+      ui.t = createTranslator(locale, await loadMessages(locale, ["learn"]), "learn");
+      return renderToStaticMarkup(createElement(ExamEntryPoints, { primary: [e] }));
+    };
+    const en = await render("en", entry("الرياضيات", "Mathematics"));
+    expect(en).toMatch(/<span lang="en" dir="ltr" class="[^"]*font-en[^"]*">Mathematics<\/span>/);
+    expect(en).not.toContain("الرياضيات");
+    // No English title: the listed Arabic title, marked with its own language and direction.
+    const fallback = await render("en", entry("التجويد (التحفيظ)", null));
+    expect(fallback).toMatch(/<span lang="ar" dir="rtl" class="[^"]*font-ar[^"]*">التجويد \(التحفيظ\)<\/span>/);
+    const ar = await render("ar", entry("الرياضيات", "Mathematics"));
+    expect(ar).toMatch(/<span lang="ar" dir="rtl" class="[^"]*">الرياضيات<\/span>/);
+    expect(ar).not.toContain("Mathematics");
+  });
+});
+
+describe("unknown learn paths are a real 404 (layout.js, outside the loading boundary)", () => {
+  const layout = (path) => LearnPathLayout({ children: "page", params: Promise.resolve({ locale: "en", path }) });
+
+  it("renders the page for every kind of outline node", async () => {
+    expect(await layout(["middle", "grade-1", "math"])).toBe("page");
+    expect(await layout(["middle", "grade-1", "math", "n91"])).toBe("page");
+    expect(await layout(["middle", "grade-1", "math", "n54"])).toBe("page");
+  });
+
+  it("calls notFound() for malformed, unknown-leaf, unknown-subject and unknown-node paths", async () => {
+    for (const path of [["nonsense"], ["middle", "grade-1", "nonsense"], ["middle", "grade-9", "math"], ["middle", "grade-1", "math", "zzz"], ["..", "x"]]) {
+      await expect(layout(path), path.join("/")).rejects.toMatchObject({ digest: "NEXT_HTTP_ERROR_FALLBACK;404" });
+    }
   });
 });
 

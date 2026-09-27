@@ -3,8 +3,16 @@
 //
 //   bandTargets(n, mix)                         t_b = largest remainder of n over the mix
 //   distribute(total, cells, seed)              capped largest remainder with redistribution
-//   allocate({ n, mix, strata, seed, … })       coverage pre-pass + proportional + reuse pass
+//   fill(total, cells, seed)                    distribute, then any leftover by free room
+//   allocate({ n, mix, strata, seed, … })       coverage pre-pass + proportional + reuse passes
 //   retakeAllocation({ stored, strata, … })     a retake reuses the stored per-cell quotas
+//
+// Reuse (§5.3 step 7, retake avoidance): unseen items always come first. The
+// CONTROLLED reuse pass places seen items up to ceil(n·max_reuse_share/100)
+// with the distribution of the session; only when no unseen item is left in
+// the whole pool does FORCED reuse fill the rest from seen items (oldest seen
+// first, step 8). With retry.allow_reuse the session is therefore short (or
+// insufficient_pool) only when the pool itself holds fewer items than asked.
 //
 // A cell is (stratum, band); its id is `${stratum}#${band}`. Every tie is
 // broken by keyed draws u(seed, tag, key) and then by the id in C order, so
@@ -89,6 +97,26 @@ export function distribute(total, cells, seed) {
 }
 
 /**
+ * Weighted distribute, then any leftover over the free room of every cell
+ * (weight = cap = room), so capacity in a zero-weight cell (a band with mix 0,
+ * a stratum with error rate 0) is used before a session is left short.
+ * @param {number} total
+ * @param {{id:string, weight:number, cap:number}[]} cells
+ * @returns {{ quotas: Map<string, number>, placed: number }}
+ */
+export function fill(total, cells, seed) {
+  const first = distribute(total, cells, seed);
+  const left = Math.max(0, total) - first.placed;
+  if (left <= 0) return first;
+  const rest = distribute(left, roomCells(cells.map((c) => ({ id: c.id, room: c.cap - first.quotas.get(c.id) }))), seed);
+  for (const [id, q] of rest.quotas) first.quotas.set(id, first.quotas.get(id) + q);
+  return { quotas: first.quotas, placed: first.placed + rest.placed };
+}
+
+/** Cells weighted by their free room. */
+const roomCells = (list) => list.map(({ id, room }) => ({ id, weight: Math.max(0, room), cap: Math.max(0, room) }));
+
+/**
  * Normalize stratum weights: an all-zero weighting (e.g. error rates with no
  * history) falls back to equal weights.
  */
@@ -160,11 +188,12 @@ export function allocate({ n, mix, strata, seed, minPerStratum = 1, allowReuse =
     }
     return out;
   };
-  const prop = distribute(n - pre, cellList(capU, unseen), seed);
+  const prop = fill(n - pre, cellList(capU, unseen), seed);
   for (const [id, q] of prop.quotas) unseen.set(id, unseen.get(id) + q);
   const placedUnseen = pre + prop.placed;
 
-  // Step 7: reuse pass over the seen capacity, up to ceil(n·share/100).
+  // Step 7: controlled reuse over the seen capacity, up to ceil(n·share/100),
+  // then forced reuse up to n (every unseen item is already placed here).
   const seen = new Map([...capS.keys()].map((k) => [k, 0]));
   let reused = 0;
   if (placedUnseen < n && allowReuse) {
@@ -172,6 +201,11 @@ export function allocate({ n, mix, strata, seed, minPerStratum = 1, allowReuse =
     const r = distribute(Math.min(n - placedUnseen, budget), cellList(capS, null), seed);
     for (const [id, q] of r.quotas) seen.set(id, q);
     reused = r.placed;
+    if (placedUnseen + reused < n) {
+      const f = fill(n - placedUnseen - reused, cellList(capS, seen), seed);
+      for (const [id, q] of f.quotas) seen.set(id, seen.get(id) + q);
+      reused += f.placed;
+    }
   }
   const cells = new Map();
   for (const id of capU.keys()) {
@@ -184,9 +218,17 @@ export function allocate({ n, mix, strata, seed, minPerStratum = 1, allowReuse =
 
 /**
  * Retake (§5.3 step 4): the stored per-cell quotas are reused, capped by the
- * current capacity. Unseen items fill each cell first; the shortfall is
- * filled from seen items up to ceil(n·share/100), distributed over the cells
- * by their shortfall (capped largest remainder).
+ * current capacity, in this order of preference:
+ *   a. unseen items of the cell;
+ *   b. controlled reuse: seen items of the short cells, up to
+ *      ceil(n·share/100), by shortfall (capped largest remainder) — the
+ *      distribution of the original stays identical;
+ *   c. unseen items of any cell, by free room (freshness before distribution);
+ *   d. forced reuse, only once no unseen item is left: seen items of the
+ *      short cells, by remaining shortfall;
+ *   e. forced reuse of seen items of any cell, by free room.
+ * b, d and e need allow_reuse. The result is short only when the pool holds
+ * fewer than n items.
  * @param {{ stored: [string, number][], strata, seed, allowReuse?, maxReuseShare? }} o
  */
 export function retakeAllocation({ stored, strata, seed, allowReuse = true, maxReuseShare = 30 }) {
@@ -198,32 +240,50 @@ export function retakeAllocation({ stored, strata, seed, allowReuse = true, maxR
       capS.set(cellId(s.id, b), s.cap[b]?.seen ?? 0);
     }
   }
+  const all = [...new Set([...capU.keys(), ...stored.map(([id]) => id)])].sort(compareC);
+  const unseen = new Map(all.map((id) => [id, 0]));
+  const seen = new Map(all.map((id) => [id, 0]));
+  const roomU = (id) => (capU.get(id) ?? 0) - unseen.get(id);
+  const roomS = (id) => (capS.get(id) ?? 0) - seen.get(id);
+  const add = (map, quotas) => {
+    let placed = 0;
+    for (const [id, q] of quotas) {
+      map.set(id, map.get(id) + q);
+      placed += q;
+    }
+    return placed;
+  };
   const n = stored.reduce((acc, [, q]) => acc + q, 0);
-  const unseen = new Map();
-  const shortCells = [];
-  let placedUnseen = 0;
+  const shortOf = new Map();
+  let placed = 0;
+  // a. unseen items of each stored cell
   for (const [id, q] of [...stored].sort((a, b) => compareC(a[0], b[0]))) {
-    const take = Math.min(q, capU.get(id) ?? 0);
-    unseen.set(id, take);
-    placedUnseen += take;
-    const short = q - take;
-    if (short > 0) shortCells.push({ id, weight: short, cap: Math.min(short, capS.get(id) ?? 0) });
+    const take = Math.min(q, roomU(id));
+    unseen.set(id, unseen.get(id) + take);
+    placed += take;
+    if (q > take) shortOf.set(id, (shortOf.get(id) ?? 0) + q - take);
   }
-  const seen = new Map();
+  const shortCells = () => [...shortOf.entries()]
+    .map(([id, sh]) => ({ id, weight: sh - seen.get(id), cap: Math.min(sh - seen.get(id), roomS(id)) }))
+    .filter((c) => c.weight > 0);
   let reused = 0;
-  if (allowReuse && shortCells.length) {
+  // b. controlled reuse in the short cells
+  if (allowReuse && placed < n) {
     const budget = Math.ceil((n * maxReuseShare) / 100);
-    const r = distribute(Math.min(budget, n - placedUnseen), shortCells, seed);
-    for (const [id, q] of r.quotas) seen.set(id, q);
-    reused = r.placed;
+    reused += add(seen, distribute(Math.min(budget, n - placed), shortCells(), seed).quotas);
   }
+  // c. unseen items of any cell
+  if (placed + reused < n) placed += add(unseen, distribute(n - placed - reused, roomCells(all.map((id) => ({ id, room: roomU(id) }))), seed).quotas);
+  // d, e. forced reuse
+  if (allowReuse && placed + reused < n) reused += add(seen, distribute(n - placed - reused, shortCells(), seed).quotas);
+  if (allowReuse && placed + reused < n) reused += add(seen, distribute(n - placed - reused, roomCells(all.map((id) => ({ id, room: roomS(id) }))), seed).quotas);
   const cells = new Map();
-  for (const [id] of stored) {
-    const a = unseen.get(id) ?? 0;
-    const b = seen.get(id) ?? 0;
+  for (const id of all) {
+    const a = unseen.get(id);
+    const b = seen.get(id);
     if (a || b) cells.set(id, { unseen: a, seen: b });
   }
-  return { n, targets: null, cells, placed: placedUnseen + reused, reused, lowerBound: false, prepass: [] };
+  return { n, targets: null, cells, placed: placed + reused, reused, lowerBound: false, prepass: [] };
 }
 
 /** Storable form of an allocation (meta.allocation / token `al`): per-cell quotas, C order. */

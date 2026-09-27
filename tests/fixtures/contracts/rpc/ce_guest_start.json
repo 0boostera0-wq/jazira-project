@@ -445,7 +445,7 @@
    }
   },
   {
-   "name": "the same scope with those items seen (reuse within 30 %)",
+   "name": "the same scope with those items seen (controlled, then forced reuse keeps the count)",
    "match": "exact",
    "args": {
     "p_template": "chapter-quiz",
@@ -472,7 +472,7 @@
      "kind": "chapter"
     },
     "scope": "middle/grade-1/math/n91",
-    "question_count": 9,
+    "question_count": 10,
     "allocation": [
      [
       "middle/grade-1/math/n53#1",
@@ -500,7 +500,7 @@
      ],
      [
       "middle/grade-1/math/n55#2",
-      1
+      2
      ],
      [
       "middle/grade-1/math/n55#3",
@@ -508,7 +508,7 @@
      ]
     ],
     "reused": true,
-    "short": true,
+    "short": false,
     "lower_bound": false,
     "items": [
      {
@@ -824,6 +824,48 @@
         {
          "id": "o5c61af",
          "text": "لا يمكن"
+        }
+       ],
+       "fixed_order_reason": null
+      },
+      "shuffle_options": true,
+      "fixed_order_reason": null,
+      "time_limit_seconds": 60,
+      "band": 2,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات",
+       "term": "t1"
+      },
+      "topic": null
+     },
+     {
+      "key": "q-m1-math-9c0abe51c6",
+      "revision": 1,
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c2؟",
+      "stimulus": {
+       "id": "st-149a822f4d",
+       "text": "سجل متجر مبيعات أسبوع: 12 قطعة يوم الأحد و18 قطعة يوم الاثنين."
+      },
+      "public": {
+       "options": [
+        {
+         "id": "o48e27d",
+         "text": "12"
+        },
+        {
+         "id": "o37d268",
+         "text": "18"
+        },
+        {
+         "id": "o6b96a2",
+         "text": "30"
+        },
+        {
+         "id": "o2add1a",
+         "text": "6"
         }
        ],
        "fixed_order_reason": null

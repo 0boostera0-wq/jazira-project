@@ -1245,7 +1245,8 @@ Both implement the same algorithm, and a conformance fixture
    `cap_unseen(c)` and `cap_seen(c)` count the representatives. An item is
    seen if it is in the last `avoid_last_attempts` attempts on the same
    template kind and a scope that overlaps this one, or was seen within
-   `avoid_days`. Guests send their seen list (≤ 300 keys, most recent last).
+   `avoid_days`. Guests echo back the sealed seen list `/start` issued
+   (`s1.` blob, ≤ 300 keys, most recent last, §5.8); the server opens it.
 4. **Band targets.** `t_b = largest_remainder(n, mix)`, where mix is
    integer percentages.
    **Retake:** when `retake_of` is set, steps 4–7 are skipped and the
@@ -1312,8 +1313,12 @@ How the permutation is applied:
 - For `matching`, both columns are permuted (`u("optl:"+key, id)`,
   `u("optr:"+key, id)`), stored in `display_map.left` / `display_map.right`.
 - For `ordering`, items are shown sorted by `u`, stored in
-  `display_map.items`. If that equals the answer order, the first two are
-  swapped.
+  `display_map.items`. There is **no** swap rule: display maps depend on the
+  seed, the key and the public ids only, never on the answer. (The removed
+  rule swapped the first two items when the shuffle equalled the answer
+  order; that made the answer the one arrangement never shown, so collecting
+  displays of an item leaked it. A shown order may now equal the answer with
+  probability 1/n!, like a guess.)
 - `choice_order[display] = canonical` (mcq/true_false). For every type the
   client receives options, columns and items **without ids**, only display
   indexes, and sends only display indexes (`{option_index}`,
@@ -1391,7 +1396,9 @@ questions:
 - `{position, key, type, language, stem, stimulus?, options[{index, text}]`
   in display order, `public` (matching columns / ordering items / numeric
   unit and input rules / short-answer max chars), `time_limit_seconds`,
-  `lesson {id, title}}`;
+  `lesson {id, title}}`. For guests `key` is the per-session opaque handle
+  `h-…` (§5.8), never the canonical question key, in `/start` and `/submit`
+  alike;
 - no answer, explanation, objective, source pages, provenance or hashes;
 - timing: `started_at`, `expires_at`, `server_now`, `seconds_remaining`.
 
@@ -1408,28 +1415,50 @@ It also carries `by_lesson`, `by_band`, `by_term` (full-year) and `by_topic`
 **Errors** (new; P0001 codes and HTTP `{error}`): `template_not_found`,
 `scope_not_found`, `insufficient_pool {available, required}`,
 `feedback_not_allowed`, `invalid_response {position, reason}` (reasons
-include `ambiguous_separator`), `item_locked`, `scope_too_large`,
+include `ambiguous_separator`), `item_locked` (409 for guests: another
+response was already checked at that position), `scope_too_large`,
 `seed_not_allowed`, `not_found` (e.g. a `retake_of` that is not the
-caller's), `key_reveal_limit`, `token_invalid`, `token_expired`,
-`bank_changed`. They are added to
+caller's), `key_reveal_limit` (a result flag, not a failure),
+`rate_limited` (429; also past the per-IP daily grading cap),
+`token_invalid`, `token_expired`, `bank_changed`. They are added to
 `EXAM_ERROR_CODES` and to DATA_API.md.
 
 ### 5.8 Server authority for guests and for signed-in users
 
 **Guests (stateless):**
 - **Token v2** (`src/lib/exams/engine/session-token.js`):
-  `base64url(JSON).base64url(HMAC-SHA256(k_v2, payloadB64))`.
-  The payload is `{v:2, sid, tpl, tv, sc, sd (seed), q:[keys], r:[revision
-  int of each item], iat, dl (deadline ms), g (grace s), fb, lim}`.
-  It holds no keys, no answers and **nothing derived from an answer** (no
-  `content_hash`, which includes the answer and could be brute-forced
-  against the few candidate responses). Maximum size 16 KiB (100 keys ≈
-  7 KiB). Constant-time verification.
-- **Keys:** v2 and receipts use keys derived with
-  `HKDF-SHA256(secret, salt = "", info = "jz.exam.v2" | "jz.exam.receipt")`;
+  `base64url(header JSON).base64url(HMAC-SHA256(k_v2, headerB64))`.
+  The clear header is `{v:2, sid, tpl, tv, sc, iat, dl (deadline ms),
+  g (grace s), fb, tm, lim, al?, x}`; `x` is
+  `AES-256-GCM(k_enc, iv, aad = "jz.exam.v2|" + sid)` of `{sd (seed),
+  q:[question keys], r:[revision int of each item]}`, stored as
+  `base64url(iv | ciphertext | tag)`. The browser can read the header but
+  **never the question list or the seed**; the AAD binds the sealed part to
+  its session id, so it cannot be moved into another token. Nothing in the
+  token is derived from an answer (no `content_hash`, which includes the
+  answer and could be brute-forced against the few candidate responses).
+  Maximum size 16 KiB. Constant-time signature check, then decryption.
+- **Opaque handles:** towards the browser an item is named only by
+  `itemHandle(sid, key) = "h-" + base64url(HMAC(k_handle, sid|key))[0..16)`:
+  per session (the same item has another handle in another session) and
+  keyed, so it cannot be computed from or tested against a canonical key.
+  `/start` and `/submit` return handles in `key`; `/check` addresses items by
+  `position`. Canonical ids are answer-free anyway (`questionIdMaterial`,
+  §2.2), but they are not exposed.
+- **Sealed seen list:** `/start` returns `seen = "s1." +
+  base64url(iv | AES-256-GCM(k_seen, deflate(JSON [keys…])) | tag)`
+  (aad `"jz.exam.seen.v1"`, ≤ 300 keys, ≤ 12 KiB) and the browser echoes it
+  on the next `/start`. A blob that does not open (forged, truncated, another
+  secret) is ignored: it only steers selection and grants nothing. A retake
+  adds the original session's keys server-side.
+- **Keys:** `k_v2`, `k_enc`, `k_handle`, `k_seen`, `k_receipt` =
+  `HKDF-SHA256(secret, salt = "", info = "jz.exam.v2" | "jz.exam.v2.enc" |
+  "jz.exam.handle" | "jz.exam.seen" | "jz.exam.receipt")`;
   v1 keeps its current key unchanged (so live v1 tokens keep verifying), and
   since no v2 key equals the v1 key, a v1 token never verifies as v2 and vice
-  versa (tested both ways).
+  versa (tested both ways). With `LOCAL_EXAM_SECRET_PREVIOUS`, every key is
+  also derived from the previous secret for verification and decryption;
+  new tokens, blobs and receipts use the current one.
 - **Secret:** `LOCAL_EXAM_SECRET`. Today it is **not set** on Vercel and
   `main` auto-deploys, so a hard requirement would take live practice down.
   Behaviour:
@@ -1452,7 +1481,9 @@ caller's), `key_reveal_limit`, `token_invalid`, `token_expired`,
 - **Deadline:**
   - `/submit` grades against the server clock:
     - `now ≤ dl + g`: graded as submitted;
-    - later: `status: expired`, answers ignored, as in DB mode.
+    - later: `status: expired`, answers ignored (receipted positions keep
+      their checked score), as in DB mode;
+    - more than a day after `dl + g`: `410 token_expired`.
   - `/check` refuses after `dl + g`.
   - Untimed sessions have `dl = iat + 7 days` (same as DB sessions, §2.13).
 - **Answer keys:**
@@ -1461,19 +1492,39 @@ caller's), `key_reveal_limit`, `token_invalid`, `token_expired`,
     It also returns a signed **receipt** `{sid, pos, resp_hash, score}`
     (HMAC with the receipt key); `/submit` requires the receipts back and,
     for each receipted position, takes the score from the receipt and
-    ignores any submitted response for it. Without server state this lock is **advisory for a
-    client that drops receipts**: such a client gets those positions graded
-    as unanswered, so changing an answer after checking never gains score.
+    ignores any submitted response for it. In an immediate-feedback
+    session a position without a receipt is graded as unanswered, so
+    dropping receipts never gains score.
+  - **Server-side check lock** (`src/lib/exams/engine/check-lock.js`): the
+    first checked response of each (session, position) is recorded by
+    `ce_guest_check_lock(p_sid, p_position, p_resp_hash, p_expires_at)` in
+    `ce_guest_check_locks` (0014, service role only; rows live until the
+    session's `dl + g`, capped at 8 days, with opportunistic cleanup). The
+    result is `first` (now locked), `repeat` (the same response again, a
+    retry after a lost reply: same verdict and receipt) or `locked` (another
+    response was checked first → `409 item_locked`, no verdict). This stops
+    check-wrong, read key, check-right, keep the better receipt. Without a
+    service role or before 0014, a per-instance in-memory map (≤ 50,000
+    entries) is used and a warning is logged once, the same policy as the
+    rate limiter; across instances that fallback is best-effort.
   - `/submit` returns keys with the result.
   - **Key-reveal cap:** keys revealed by `/check` and `/submit` count
     against a per-IP daily budget (shared limiter bucket
-    `exams.keys`, default 400 items/day); past it, results show verdicts
-    without the correct response and explanation (`key_reveal_limit`). This
-    bounds scraping of the bank through start + empty submit.
+    `exams.keys`, default 400 items/day, `EXAM_KEY_REVEAL_DAILY`); past it,
+    results show verdicts without the correct response and explanation
+    (`key_reveal_limit`). This bounds scraping through start + empty submit.
+  - **Grading cap:** a verdict is itself an answer oracle (a stateless
+    `/submit` can be replayed with option 0, 1, 2 … for every item). Every
+    graded submitted answer (a `/check`, or a `/submit` position graded from
+    a response) is one hit in the per-IP daily bucket `exams.grades`
+    (default twice the key-reveal cap, `EXAM_GRADE_DAILY`, 10..100000).
+    Receipted and unanswered positions are free. Past it the route answers
+    `429 rate_limited` and grades nothing.
 
   Because nothing is saved and guest scores are not ranked, a replayed
-  submit gains nothing beyond the learner's own feedback. This is stated in
-  DATA_API.md; guest results are always labelled "not saved".
+  submit gains no score; the verdicts it could collect are bounded by the
+  grading cap. This is stated in DATA_API.md; guest results are always
+  labelled "not saved".
 - **Bank revision:** if an item's current `revision` differs from `r[i]`, the
   item is voided. It is excluded from the score and shown with a "question
   updated" note.
@@ -1497,10 +1548,14 @@ caller's), `key_reveal_limit`, `token_invalid`, `token_expired`,
       File names are resolved **only** through this whitelist map; a scope
       string is never concatenated into a path.
     - selection indexes `sel/<file id>.json` (`runtime-bank-sel@1`) per
-      subject: rows `[key, lesson, band, component, type, stimulus, premium, revision, content chunk id]`;
+      subject: 10-column rows `[key, lesson, band, component, type, stimulus, premium, revision, content chunk id, objective]`
+      (`SEL_COLUMNS` in `runtime-bank.server.js`). `objective` feeds the
+      `lesson-quiz` stratification (`stratify_by: objective`, §2.12); a
+      9-column row from an older bank reads `objective: null`, and the
+      stratum then falls back to the lesson;
     - content chunks `c/<chunk id>.json` (`runtime-bank-content@1`, ≤ 256 KB,
       public fields) and key chunks `k/<chunk id>.json` (answers,
-      explanations), loaded **only for the picked keys**.
+      explanations, objectives, sources), loaded **only for the picked keys**.
     - Files are read with `fs` through `outputFileTracingIncludes` for
       `/api/exams/session/**` and cached in a **byte-bounded LRU of 64 MB**
       per instance (size = file bytes × 3 as a heap estimate).
@@ -1603,6 +1658,7 @@ convergence test).
 | `content_import_runs` | `id uuid pk`, `target`, `manifest_sha`, `started_at`, `finished_at`, `status`, `counts jsonb`, `report jsonb` | — | none |
 | `content_import_batches` | `run_id`, `entity`, `batch_no`, `first_key`, `last_key`, `rows`, `inserted`, `updated`, `unchanged`, `rejected`, `status`, `error`, `finished_at`, pk (run, entity, batch) | — | none |
 | `content_import_errors` | `run_id`, `entity`, `key`, `code`, `detail`, `at` | `(run_id)` | none |
+| `ce_guest_check_locks` | `sid text` (`g-…`), `position smallint` (1–100), `resp_hash text` (sha256 hex), `expires_at timestamptz`, pk (sid, position) | `(expires_at)` | RLS on, no policies, all revoked from anon/authenticated; written only by `ce_guest_check_lock` (§5.8) |
 | `question_revisions` | `question_id uuid fk`, `revision int`, `stem`, `stimulus_id`, `payload_public jsonb`, `answer jsonb`, `explanation jsonb`, `created_at`, pk (question, revision); append-only (update/delete trigger raises) | — | **no client grants**; read by `_exam_result` for the answered revision |
 
 **Normalization v2.** 0014 creates a new IMMUTABLE
@@ -1670,6 +1726,7 @@ A test runs Appendix A cases through both JS and SQL.
 | `search_content(p_q text, p_kinds text[] default null, p_node text default null, p_limit int default 10, p_offset int default 0) → jsonb` | authenticated, service_role (anon goes through the rate-limited `GET /api/content/search` route, which calls it with the service role and `p_anon = true`) | Groups `node`, `resource`, `exam`, and `question` for signed-in users only. `p_q` must be ≥ 2 chars (≥ 3 for the question group) so the trigram GIN is always usable. Question hits are **lesson-level only** (`{lesson, count, href}`), never stems, and exclude premium, non-published and inactive items. Filtered by subtree (`p_node` prefix on the denormalized stage/grade/subject columns); totals capped at 100; `set statement_timeout = '500ms'` on the function. |
 | `ce_import_begin(p_manifest jsonb) → uuid`, `ce_import_batch(p_run uuid, p_entity text, p_batch_no int, p_rows jsonb) → jsonb`, `ce_import_retire(p_run uuid, p_keys text[]) → jsonb` (refuses per §6.3 step 6), `ce_import_finish(p_run uuid) → jsonb`, `ce_refresh_aggregates() → void` | service_role only | §6.3 |
 | `ce_guest_start(p_template text, p_scope text, p_seed text, p_seen text[], p_count int) → jsonb`, `ce_guest_items(p_keys text[], p_with_keys boolean) → jsonb` | service_role only | Guest selection in SQL, returning only the picked public rows; content/keys for check and submit (§5.8). Premium excluded. |
+| `ce_guest_check_lock(p_sid text, p_position int, p_resp_hash text, p_expires_at timestamptz) → text` | service_role only | Records the first checked response of a guest (session, position) in `ce_guest_check_locks`; returns `first`, `repeat` or `locked` (§5.8). |
 
 Internal helpers (revoked from API roles): `_ce_u(seed, tag, key) → bigint`,
 `_ce_scope_lessons(scope) → setof text`, `_ce_pool`, `_ce_allocate`,
@@ -2173,9 +2230,13 @@ gaps, the commit hash) are listed in the final report on the branch.
    owner records `owner_decision` rows or the plan guide corroborates.
 2b. **iEN throttling** limits R3/R4 to what the queue budget allows; full
    front-matter coverage may take days. Coverage is reported as n/315.
-2c. **Guest locks are advisory** without server state; receipts make
-   check-then-change useless for score, and a per-IP key-reveal cap bounds
-   scraping, but a determined guest can still see keys up to that cap.
+2c. **Guest check locks are server-side** (`ce_guest_check_locks`, §5.8), so
+   one check per (session, position); receipts make check-then-change
+   useless for score. Remaining gaps: without a service role (or before
+   0014) the lock falls back to per-instance memory, which a guest could
+   evade by hitting another instance; a guest can still see keys up to the
+   per-IP key-reveal cap and verdicts up to the grading cap (`exams.grades`),
+   and IP-based caps are weaker against many addresses.
 2d. **The runtime bank is a pre-DB fallback** capped at ~60k items / 40 MB.
    The "hundreds of thousands" target needs the DB.
 3. **Publishing derived questions from iEN textbooks** needs the owner's
@@ -2284,7 +2345,7 @@ CDN throttling, `catalog-map.jsonl`). Ids below are the finding order
 | C3 | major | Check-then-submit and mid-attempt score reads | Locked positions ignored in submit/finalize; `score`/`is_correct` null until lock/finalize; tests (§5.8, §6.2). |
 | C4 | major | In-place import re-grades old attempts | `question_revisions` (append-only, no grants); revision guard voids mismatched items; history shows answered revision (§5.8, §6.1, §6.3). |
 | C5 | major | Retire mass-deactivates on partial runs; retire/dedup order | Explicit `removed[]`, scoped to fully covered (shard, subject); refused for `--only`/errors/filtered sets; retire runs before inserts; dedup vs manifest (§6.3). |
-| C6 | major | Guest gaps (lock, scraping, premium, seed) | Signed check receipts (lock advisory, documented), per-IP key-reveal cap, premium excluded everywhere, server-only seed (§5.2, §5.8, §10). |
+| C6 | major | Guest gaps (lock, scraping, premium, seed) | Signed check receipts (lock advisory then; enforced server-side since S4), per-IP key-reveal cap, premium excluded everywhere, server-only seed (§5.2, §5.8, §10). |
 | C7 | major | Runtime bank memory, multi-shard scopes, capacity, path traversal | Selection indexes + content chunks loaded per pick, 64 MB byte-bounded LRU, guest scope caps, whitelist index, documented ~60k cap (§3, §5.3, §5.8). |
 | C8 | major | Whole pools to Node; `u()` over the bank | `ce_guest_start` selects in SQL and returns n rows; `scope_pool_members`; scope cap 5,000; PGlite perf test at 200k (§5.8, §6.2, WP7). |
 | C9 | major | Lam-ligature swaps, split letters, font garbage | Repair passes validated by a lexicon, `font_garbage` flag, `text_quality`, vision fallback, `lam_order_fold` for matching, P004 as char-5-grams (§4.2, App. B). Same as C27. |
@@ -2332,8 +2393,25 @@ CDN throttling, `catalog-map.jsonl`). Ids below are the finding order
 Rejected or partly adopted:
 - C6 option "guest lock enforced": without server state it cannot be
   enforced. Receipts remove any score gain, and the lock is documented as
-  advisory.
+  advisory. *Superseded by Security round 3 (below): the lock is now
+  enforced server-side.*
 - C7 "hundreds of thousands in the runtime bank": rejected. The bank is a
   capped fallback, and that scale needs the DB.
 - C23 "HKDF for v1": not adopted, because it would invalidate live v1
   tokens. Domain separation holds because v2 keys differ from the v1 key.
+
+### Security round 3 (2026-09-27)
+
+Guest-session hardening; the code is the reference, §5.4, §5.7, §5.8 and §10
+describe it.
+
+| Id | Finding | Resolution |
+|---|---|---|
+| S1 | The token's clear payload listed canonical keys and the seed, so a browser could recompute displays and correlate items across sessions | `sd`, `q`, `r` sealed with AES-256-GCM under an HKDF key (`jz.exam.v2.enc`), AAD `"jz.exam.v2|" + sid`; only the header stays readable (§5.8). |
+| S2 | Canonical question keys reached the browser | Per-session opaque handles `h-…` (HMAC under `jz.exam.handle`) in `/start` and `/submit`; `/check` uses positions (§5.7, §5.8). |
+| S3 | Ids and hashes could test candidate answers | Question ids hash answer-free `questionIdMaterial` only (`questionIdHash` refuses `answer`); `content_hash` includes the answer and stays server-only (never in tokens or client grants) (§2.2, §6.1). |
+| S4 | Check-wrong, read key, check-right, keep the better receipt | The first `/check` per (session, position) is locked server-side: `ce_guest_check_locks` + `ce_guest_check_lock()` (service role), in-memory fallback; a different response → `409 item_locked`. No longer advisory (§5.8, §10 2c). |
+| S5 | Verdicts past the key-reveal cap are an answer oracle via replayed `/submit` | Per-IP daily grading budget, bucket `exams.grades`, `EXAM_GRADE_DAILY` (default 2 × key-reveal cap); past it `429 rate_limited`, nothing graded (§5.8). |
+| S6 | The ordering swap rule made the answer the one order never shown | Removed; display maps never depend on the answer (§5.4). |
+| S7 | The guest seen list was plain keys from the browser | Sealed `s1.` blob (AES-256-GCM, deflate, `jz.exam.seen`), issued by `/start` and echoed back; an unopenable blob is ignored (§5.3, §5.8). |
+| S8 | Runtime bank lacked objectives, so `lesson-quiz` could not stratify by objective | Selection rows have 10 columns incl. `objective`; `lesson-quiz` stratifies by objective, falling back to the lesson when null (§5.8). |

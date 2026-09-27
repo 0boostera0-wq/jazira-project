@@ -76,6 +76,35 @@ const LATIN_RE = /[A-Za-z]/;
 const ARABIC_RE = /[؀-ۿ]/;
 /** An English (Latin-only) source title is also its `title_en`; Arabic titles never get a machine translation. */
 const sourceTitleEn = (title) => (LATIN_RE.test(title) && !ARABIC_RE.test(title) ? title : null);
+/** A catalog English name only when it really is English (the catalog falls back to the Arabic name). */
+const latinOnly = (s) => (typeof s === "string" && LATIN_RE.test(s) && !ARABIC_RE.test(s) ? s : null);
+
+/**
+ * normalized Arabic title → the catalog's English name (`name_en`, and each plan
+ * label's `labels_en`), from every catalog subject. Jazira's own renderings
+ * (§2.5 "or the catalog has it"), never a machine translation. A title the
+ * catalog renders two different ways is ambiguous and left out.
+ */
+export function catalogTitlesEn(leaves) {
+  const out = new Map();
+  const bad = new Set();
+  const add = (ar, en) => {
+    const k = ar ? normalizeTitle(ar) : "";
+    const v = latinOnly(en);
+    if (!k || !v || bad.has(k)) return;
+    if (out.has(k) && out.get(k) !== v) {
+      out.delete(k);
+      bad.add(k);
+    } else out.set(k, v);
+  };
+  for (const { subjects } of leaves) {
+    for (const s of subjects ?? []) {
+      add(s.name, s.name_en);
+      (s.labels ?? []).forEach((l, i) => add(l, s.labels_en?.[i]));
+    }
+  }
+  return out;
+}
 const clip = (s, n) => String(s ?? "").trim().slice(0, n);
 const byC = (f) => (a, b) => compareC(f(a), f(b));
 
@@ -138,6 +167,9 @@ function buildStructure(ctx) {
   };
   const planRef = () => [ref("moe-plan-guide-5", { retrieved_at: sourceDates["moe-plan-guide-5"] })];
   const ienNodeFor = (leaf, types) => crawlNodes.find((n) => types.includes(n.code_type) && leafOfIenNode(n) === leaf) ?? null;
+  // English titles of subjects and units: the source's own English title, else the catalog's.
+  const catalogEn = catalogTitlesEn(leaves);
+  const titleEnOf = (title) => sourceTitleEn(title) ?? catalogEn.get(normalizeTitle(title)) ?? null;
 
   const stages = catalog.CURRICULUM.filter((s) => !s.pending);
   stages.forEach((s, i) => put(node({ id: s.id, kind: "stage", stage: s.id, order: i + 1, title_ar: s.name, title_en: s.name_en, source_refs: planRef() })));
@@ -173,13 +205,13 @@ function buildStructure(ctx) {
       const id = `${leaf}/${s.id}`;
       const m = recon.mapping.get(id);
       const ids = m?.ien_subject_ids ?? [];
-      put(node({ ...base, id, parent_id: leaf, kind: "subject", subject: id, order: ++order, title_ar: s.name, title_en: s.name_en,
+      put(node({ ...base, id, parent_id: leaf, kind: "subject", subject: id, order: ++order, title_ar: s.name, title_en: latinOnly(s.name_en) ?? titleEnOf(s.name),
         source_refs: ids.length ? ids.slice(0, 20).map((x) => ref("ien", { ien_id: x, code_id: recon.subById.get(x)?.code_id || null, retrieved_at: at })) : planRef(),
         in_plan: true, status: m?.status ?? "needs_review" }));
       subjectInfo.set(id, { ienIds: ids, status: m?.status ?? "needs_review", inPlan: true, leaf, base });
     }
     for (const so of recon.sourceOnly.filter((x) => x.leaf === leaf)) {
-      put(node({ ...base, id: so.subject_node_id, parent_id: leaf, kind: "subject", subject: so.subject_node_id, order: ++order, title_ar: so.title, title_en: sourceTitleEn(so.title),
+      put(node({ ...base, id: so.subject_node_id, parent_id: leaf, kind: "subject", subject: so.subject_node_id, order: ++order, title_ar: so.title, title_en: titleEnOf(so.title),
         source_refs: [ref("ien", { ien_id: so.ien_id, code_id: so.code_id, retrieved_at: at })], in_plan: false, status: "source_only" }));
       subjectInfo.set(so.subject_node_id, { ienIds: [so.ien_id], status: "source_only", inPlan: false, leaf, base });
     }
@@ -215,7 +247,7 @@ function buildStructure(ctx) {
         ? registry.resolve({ kind: "x_node", scope: subjectId, nodeKind: "unit", title: `${u.title} (iEN unit ${u.unit})`, taken }).id
         : `${subjectId}/n${u.unit}`;
       if (collides) idCollisions.push({ subject: subjectId, unit: u.unit, id: uid });
-      put(node({ ...info.base, id: uid, parent_id: subjectId, kind: "unit", subject: subjectId, order: i + 1, title_ar: u.title, title_en: sourceTitleEn(u.title),
+      put(node({ ...info.base, id: uid, parent_id: subjectId, kind: "unit", subject: subjectId, order: i + 1, title_ar: u.title, title_en: titleEnOf(u.title),
         source_refs: [ref("ien", { ien_id: u.unit, retrieved_at: at })], in_plan: info.inPlan, status: childStatus }));
       unitNodes.set(u.unit, uid);
       u.rows.forEach((r, j) => {

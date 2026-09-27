@@ -2,11 +2,11 @@ import { notFound } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { getT, setRequestLocale } from "@/i18n/server";
 import { breadcrumbJsonLd, buildMetadata, jsonLd } from "@/lib/seo";
-import { leafOf, loadOutline } from "@/lib/curriculum-outline";
 import { getRuntimeBank } from "@/lib/exams/engine/runtime-bank.server";
 import { SUPABASE_KEY, SUPABASE_URL, isSupabaseConfigured } from "@/lib/supabase-env";
 import LearnView from "@/components/learn/LearnView";
-import { learnHref, learnPageModel, loadSubjectPool, parseLearnPath, resolveLearnNode } from "@/components/learn/learn-logic";
+import { learnHref, learnPageModel, loadSubjectPool } from "@/components/learn/learn-logic";
+import { resolveLearn as resolve } from "./resolve";
 
 // /learn/<subject node id>[/<unit|chapter|lesson local id>] (docs/CONTENT_ENGINE.md §7).
 // Dynamic with ISR: any outline node renders on first visit and is cached for
@@ -32,22 +32,14 @@ function publicClient() {
   return publicDb;
 }
 
-async function resolve(path) {
-  const parsed = parseLearnPath(path);
-  if (!parsed) return null;
-  const leaf = leafOf(parsed.nodeId);
-  const tree = leaf ? await loadOutline(leaf) : null;
-  const ctx = tree ? resolveLearnNode(tree, parsed.nodeId) : null;
-  return ctx ? { tree, ctx } : null;
-}
-
 const titleIn = (n, locale) => (locale === "en" && n.title_en ? n.title_en : n.title_ar) || "";
 const META_KEY = { subject: "learnSubject", unit: "learnUnit", chapter: "learnUnit", lesson: "learnLesson" };
 
 export async function generateMetadata(props) {
   const params = await props.params;
   const r = await resolve(params.path);
-  if (!r) return {};
+  // Unknown paths are answered by layout.js (a real 404, outside the loading boundary).
+  if (!r) notFound();
   const { node, subject } = r.ctx;
   const name = node.kind === "subject" ? titleIn(node, params.locale) : `${titleIn(node, params.locale)} · ${titleIn(subject, params.locale)}`;
   return buildMetadata({

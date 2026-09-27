@@ -1239,6 +1239,44 @@ begin
 end
 $$;
 
+-- fill (allocate.js): _ce_distribute, then any leftover over the free room of
+-- every cell (weight = cap = room), so capacity in a zero-weight cell is used
+-- before a session is left short.
+create or replace function public._ce_fill(p_total int, p_ids text[], p_weights bigint[], p_caps int[], p_seed text)
+returns int[]
+language plpgsql
+immutable
+parallel safe
+set search_path = ''
+as $$
+declare
+  n    int := coalesce(cardinality(p_ids), 0);
+  q    int[];
+  q2   int[];
+  room int[];
+  lft  int;
+  i    int;
+begin
+  if n = 0 then
+    return '{}'::int[];
+  end if;
+  q := public._ce_distribute(p_total, p_ids, p_weights, p_caps, p_seed);
+  lft := greatest(0, coalesce(p_total, 0));
+  for i in 1 .. n loop
+    lft := lft - q[i];
+  end loop;
+  if lft <= 0 then
+    return q;
+  end if;
+  room := array(select greatest(0, coalesce(p_caps[g], 0) - q[g]) from generate_series(1, n) g);
+  q2 := public._ce_distribute(lft, p_ids, room::bigint[], room, p_seed);
+  for i in 1 .. n loop
+    q[i] := q[i] + q2[i];
+  end loop;
+  return q;
+end
+$$;
+
 -- Fresh allocation (§5.3 steps 4–7). Strata are given in any order with
 -- flattened capacities (index (s-1)*3 + band). Returns
 -- {targets, cells:[[cell, unseen, seen]…] (C order), stored:[[cell, q]…],
@@ -1320,14 +1358,15 @@ begin
       caps := caps || (coalesce(p_cap_u[(s - 1) * 3 + b], 0) - unseen[(s - 1) * 3 + b]);
     end loop;
   end loop;
-  q := public._ce_distribute(p_n - pre, ids, wts, caps, p_seed);
+  q := public._ce_fill(p_n - pre, ids, wts, caps, p_seed);
   placed_u := pre;
   for k in 1 .. coalesce(cardinality(q), 0) loop
     unseen[k] := unseen[k] + q[k];
     placed_u := placed_u + q[k];
   end loop;
 
-  -- step 7: reuse pass over the seen capacity, up to ceil(n·share/100)
+  -- step 7: controlled reuse over the seen capacity, up to ceil(n·share/100),
+  -- then forced reuse up to n (every unseen item is already placed here)
   if placed_u < p_n and coalesce(p_allow_reuse, true) then
     budget := ceil((p_n * coalesce(p_share, 0))::numeric / 100);
     caps := array(select coalesce(p_cap_s[g], 0) from generate_series(1, ns * 3) g);
@@ -1336,6 +1375,14 @@ begin
       seen[k] := q[k];
       reused := reused + q[k];
     end loop;
+    if placed_u + reused < p_n then
+      caps := array(select coalesce(p_cap_s[g], 0) - seen[g] from generate_series(1, ns * 3) g);
+      q := public._ce_fill(p_n - placed_u - reused, ids, wts, caps, p_seed);
+      for k in 1 .. coalesce(cardinality(q), 0) loop
+        seen[k] := seen[k] + q[k];
+        reused := reused + q[k];
+      end loop;
+    end if;
   end if;
 
   select coalesce(jsonb_agg(jsonb_build_array(c.id, c.u, c.s) order by c.id collate "C"), '[]'::jsonb),
@@ -1351,8 +1398,15 @@ begin
 end
 $$;
 
--- Retake (§5.3 step 4): the stored per-cell quotas, capped by the current
--- capacity; unseen first, the shortfall from seen items up to ceil(n·share/100).
+-- Retake (§5.3 step 4, mirror of retakeAllocation): the stored per-cell quotas,
+-- capped by the current capacity, in this order of preference:
+--   a. unseen items of the cell;
+--   b. controlled reuse: seen items of the short cells up to ceil(n·share/100),
+--      by shortfall (the distribution of the original stays identical);
+--   c. unseen items of any cell, by free room;
+--   d. forced reuse (no unseen item left): seen items of the short cells;
+--   e. forced reuse of seen items of any cell, by free room.
+-- b, d and e need allow_reuse; the retake is short only when the pool is.
 create or replace function public._ce_retake_allocation(
   p_stored jsonb, p_strata text[], p_cap_u int[], p_cap_s int[], p_seed text,
   p_allow_reuse boolean default true, p_share int default 30)
@@ -1363,65 +1417,109 @@ parallel safe
 set search_path = ''
 as $$
 declare
-  n        int := 0;
-  r        record;
-  s        int;
-  cu       int;
-  cs       int;
-  take     int;
-  short    int;
-  placed_u int := 0;
-  reused   int := 0;
-  ids      text[] := '{}';
-  qs       int[] := '{}';
-  us       int[] := '{}';
-  sh_ids   text[] := '{}';
-  sh_w     bigint[] := '{}';
-  sh_c     int[] := '{}';
-  q        int[];
-  budget   int;
-  seen     jsonb := '{}';
-  k        int;
-  cells    jsonb;
+  allow   boolean := coalesce(p_allow_reuse, true);
+  ids     text[];
+  m       int;
+  cu      int[];
+  cs      int[];
+  us      int[];
+  ss      int[];
+  sh      int[];
+  n       int := 0;
+  placed  int := 0;
+  reused  int := 0;
+  r       record;
+  s       int;
+  b       int;
+  i       int;
+  j       int;
+  ph      int;
+  take    int;
+  budget  int;
+  q       int[];
+  sub_ix  int[];
+  sub_ids text[];
+  sub_w   bigint[];
+  sub_c   int[];
+  cells   jsonb;
 begin
+  -- every cell of the current strata plus the stored ones, C order
+  ids := array(select t.x from (
+                 select p_strata[g] || '#' || bb x
+                   from generate_series(1, coalesce(cardinality(p_strata), 0)) g cross join generate_series(1, 3) bb
+                 union
+                 select e ->> 0 from jsonb_array_elements(coalesce(p_stored, '[]')) e) t
+               order by t.x collate "C");
+  m := coalesce(cardinality(ids), 0);
+  cu := array_fill(0, array[greatest(m, 1)]);
+  cs := array_fill(0, array[greatest(m, 1)]);
+  us := array_fill(0, array[greatest(m, 1)]);
+  ss := array_fill(0, array[greatest(m, 1)]);
+  sh := array_fill(0, array[greatest(m, 1)]);
+  for i in 1 .. m loop
+    s := array_position(p_strata, left(ids[i], length(ids[i]) - strpos(reverse(ids[i]), '#')));
+    b := right(ids[i], 1)::int;
+    if s is not null then
+      cu[i] := coalesce(p_cap_u[(s - 1) * 3 + b], 0);
+      cs[i] := coalesce(p_cap_s[(s - 1) * 3 + b], 0);
+    end if;
+  end loop;
+
+  -- a. unseen items of each stored cell
   for r in select e ->> 0 as id, (e ->> 1)::int as q
              from jsonb_array_elements(coalesce(p_stored, '[]')) e
             order by (e ->> 0) collate "C" loop
     n := n + r.q;
-    s := array_position(p_strata, left(r.id, length(r.id) - strpos(reverse(r.id), '#')));
-    k := right(r.id, 1)::int;
-    cu := case when s is null then 0 else coalesce(p_cap_u[(s - 1) * 3 + k], 0) end;
-    cs := case when s is null then 0 else coalesce(p_cap_s[(s - 1) * 3 + k], 0) end;
-    take := least(r.q, cu);
-    ids := ids || r.id;
-    us := us || take;
-    placed_u := placed_u + take;
-    short := r.q - take;
-    if short > 0 then
-      sh_ids := sh_ids || r.id;
-      sh_w := sh_w || short::bigint;
-      sh_c := sh_c || least(short, cs);
+    i := array_position(ids, r.id);
+    take := least(r.q, cu[i] - us[i]);
+    us[i] := us[i] + take;
+    placed := placed + take;
+    if r.q > take then
+      sh[i] := sh[i] + r.q - take;
     end if;
   end loop;
-  if coalesce(p_allow_reuse, true) and cardinality(sh_ids) > 0 then
-    budget := ceil((n * coalesce(p_share, 0))::numeric / 100);
-    q := public._ce_distribute(least(budget, n - placed_u), sh_ids, sh_w, sh_c, p_seed);
-    for k in 1 .. cardinality(q) loop
-      seen := seen || jsonb_build_object(sh_ids[k], q[k]);
-      reused := reused + q[k];
+
+  -- b..e (ph 1..4)
+  budget := ceil((n * coalesce(p_share, 0))::numeric / 100);
+  for ph in 1 .. 4 loop
+    exit when placed + reused >= n;
+    continue when ph <> 2 and not allow;
+    sub_ix := case when ph in (1, 3) then array(select g from generate_series(1, m) g where sh[g] - ss[g] > 0 order by g)
+                   else array(select g from generate_series(1, m) g order by g) end;
+    sub_ids := array(select ids[x.i] from unnest(sub_ix) with ordinality x (i, o) order by x.o);
+    sub_w := array(select (case ph when 2 then greatest(0, cu[x.i] - us[x.i])
+                                   when 4 then greatest(0, cs[x.i] - ss[x.i])
+                                   else sh[x.i] - ss[x.i] end)::bigint
+                     from unnest(sub_ix) with ordinality x (i, o) order by x.o);
+    sub_c := array(select case ph when 2 then greatest(0, cu[x.i] - us[x.i])
+                                  when 4 then greatest(0, cs[x.i] - ss[x.i])
+                                  else least(sh[x.i] - ss[x.i], cs[x.i] - ss[x.i]) end
+                     from unnest(sub_ix) with ordinality x (i, o) order by x.o);
+    q := public._ce_distribute(case when ph = 1 then least(budget, n - placed - reused) else n - placed - reused end,
+                               sub_ids, sub_w, sub_c, p_seed);
+    for j in 1 .. coalesce(cardinality(q), 0) loop
+      if ph = 2 then
+        us[sub_ix[j]] := us[sub_ix[j]] + q[j];
+        placed := placed + q[j];
+      else
+        ss[sub_ix[j]] := ss[sub_ix[j]] + q[j];
+        reused := reused + q[j];
+      end if;
     end loop;
-  end if;
-  select coalesce(jsonb_agg(jsonb_build_array(c.id, c.u, c.s) order by c.id collate "C"), '[]'::jsonb)
+  end loop;
+
+  select coalesce(jsonb_agg(jsonb_build_array(ids[g], us[g], ss[g]) order by ids[g] collate "C"), '[]'::jsonb)
     into cells
-    from (select ids[g] id, us[g] u, coalesce((seen ->> ids[g])::int, 0) s from generate_series(1, cardinality(ids)) g) c
-   where c.u > 0 or c.s > 0;
+    from generate_series(1, m) g
+   where us[g] > 0 or ss[g] > 0;
   return jsonb_build_object('n', n, 'targets', null, 'cells', cells, 'stored', coalesce(p_stored, '[]'::jsonb),
-                            'placed', placed_u + reused, 'reused', reused, 'lower_bound', false, 'prepass', '[]'::jsonb);
+                            'placed', placed + reused, 'reused', reused, 'lower_bound', false, 'prepass', '[]'::jsonb);
 end
 $$;
 
 revoke all on function public._ce_band_targets(int, int[])                                  from public, anon, authenticated;
 revoke all on function public._ce_distribute(int, text[], bigint[], int[], text)            from public, anon, authenticated;
+revoke all on function public._ce_fill(int, text[], bigint[], int[], text)                  from public, anon, authenticated;
 revoke all on function public._ce_allocate(int, int[], text[], bigint[], int[], int[], text, int, boolean, int)
   from public, anon, authenticated;
 revoke all on function public._ce_retake_allocation(jsonb, text[], int[], int[], text, boolean, int)

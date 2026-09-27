@@ -547,12 +547,35 @@ describe("POST /api/exams/session/check and /submit", () => {
       expect(bare.status).toBe(200);
       expect(serverView(bare.body.token).q.filter((k) => t1.q.includes(k))).toEqual([]);
     }
-    // a lesson too small for a fresh retake reuses within 30 % of n, and refuses below the minimum
+    // a lesson too small for a fresh retake reuses seen items (controlled, then forced) instead of
+    // answering insufficient_pool: the retake keeps the original's size and per-cell quotas
     useBank(BANK_DIR);
     const small = await doStart({ template: "lesson-quiz", scope: "middle/grade-1/math/n53" });
     const ts = serverView(small.body.token);
-    expect(await doStart({ template: "lesson-quiz", scope: "middle/grade-1/math/n53", seen: small.body.seen, retake_of: small.body.token }))
-      .toEqual({ status: 422, body: { error: "insufficient_pool", available: Math.ceil((ts.q.length * 30) / 100), required: 3 } });
+    expect(ts.q.length).toBeLessThan(10); // the lesson pool is smaller than the default count
+    const smallRetake = await doStart({ template: "lesson-quiz", scope: "middle/grade-1/math/n53", seen: small.body.seen, retake_of: small.body.token });
+    expect(smallRetake.status).toBe(200);
+    expect(smallRetake.body).toMatchObject({ question_count: ts.q.length, reused: true, short: false, retake_of: ts.sid });
+    const tr = serverView(smallRetake.body.token);
+    expect(tr.al).toEqual(ts.al);
+    expect([...tr.q].sort()).toEqual([...ts.q].sort()); // the whole lesson again, in a new order and seed
+    expect(tr.sd).not.toBe(ts.sd);
+    // a retake of the retake still works (never below the template minimum while the pool holds it)
+    const third = await doStart({ template: "lesson-quiz", scope: "middle/grade-1/math/n53", seen: smallRetake.body.seen, retake_of: smallRetake.body.token });
+    expect(third.body).toMatchObject({ question_count: ts.q.length, short: false });
+    // a unit quiz of 15 on a 17-item unit: the retake refills from seen items up to 15 (it returned 6)
+    const tight = JSON.parse(JSON.stringify(roomy));
+    tight.questions = tight.questions.filter((_, i) => i % 3 === 0).slice(0, 17); // ≤ 2 per (lesson, band)
+    useBank(packTemp(tight));
+    const unitFirst = await doStart({ template: "chapter-quiz", scope: "middle/grade-1/math/n91", count: 15 });
+    expect(unitFirst.body).toMatchObject({ question_count: 15, short: false });
+    const tu = serverView(unitFirst.body.token);
+    const unitRetake = await doStart({ template: "chapter-quiz", scope: "middle/grade-1/math/n91", seen: unitFirst.body.seen, retake_of: unitFirst.body.token });
+    expect(unitRetake.status).toBe(200);
+    expect(unitRetake.body).toMatchObject({ question_count: 15, reused: true, short: false, limited: false });
+    const tu2 = serverView(unitRetake.body.token);
+    expect(tu2.al).toEqual(tu.al);
+    expect(tu2.q.filter((k) => !tu.q.includes(k))).toHaveLength(2); // both unseen items first, then 13 reused
     expect((await doStart({ template: "chapter-quiz", scope: "middle/grade-1/math/n92", retake_of: first.body.token })).body).toEqual({ error: "invalid_argument", field: "retake_of" });
     expect((await doStart({ template: "chapter-quiz", scope: "middle/grade-1/math/n91", retake_of: "forged.token" })).body).toEqual({ error: "token_invalid" });
   });
@@ -670,12 +693,15 @@ describe("client data layer: src/lib/data/exams.js (mode guest) over src/lib/dat
       expect(exams.EXAM_ERROR_CODES).toEqual(expect.arrayContaining(["template_not_found", "scope_not_found", "insufficient_pool", "feedback_not_allowed", "invalid_response", "item_locked", "scope_too_large", "seed_not_allowed", "not_found", "key_reveal_limit", "token_invalid", "token_expired", "bank_changed"]));
       // a guest retake names the earlier session id
       const again = await exams.startExam({ template: "chapter-quiz", scope: "middle/grade-1/math/n91", count: 5 });
-      // the fixture unit is too small for a fresh retake of these quotas: the route answers honestly
-      await expect(exams.startExam({ template: "chapter-quiz", scope: "middle/grade-1/math/n91", retakeOf: again.attempt_id })).rejects.toMatchObject({ code: "insufficient_pool" });
+      // the fixture unit is too small for a fresh retake of these quotas: seen items are reused, the size is kept
+      const seenBefore = seenBlob();
+      const retaken = await exams.startExam({ template: "chapter-quiz", scope: "middle/grade-1/math/n91", retakeOf: again.attempt_id });
+      expect(retaken).toMatchObject({ mode: "guest", status: "in_progress", question_count: 5 });
       const [, body] = sent.at(-1);
       expect(body.retake_of).toBe(JSON.parse(localStorage.getItem(`jz:exam-guest:${again.attempt_id}`)).token);
-      expect(body.seen).toBe(seenBlob());
+      expect(body.seen).toBe(seenBefore);
       expect(openSeen(body.seen)).toEqual(expect.arrayContaining(serverView(body.retake_of).q));
+      expect(openSeen(seenBlob())).toEqual(expect.arrayContaining(serverView(body.retake_of).q)); // the retake's own items are recorded too
       await expect(exams.startExam({ template: "chapter-quiz", scope: "middle/grade-1/math/n91", retakeOf: "g-AAAAAAAAAAAAAAAAAAAAAA" })).rejects.toMatchObject({ code: "not_found" });
     } finally {
       vi.unstubAllGlobals();

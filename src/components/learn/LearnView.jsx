@@ -24,7 +24,6 @@ export default function LearnView({ model, t, tc, locale }) {
     ...model.trail.map((n) => ({ label: isolate(nameOf(n, locale)), href: n.href || undefined })),
   ];
   const kindLabel = t(`kinds.${node.kind}`);
-  const eyebrow = node.kind === "subject" ? t("subject.eyebrow") : `${kindLabel} · ${nameOf(subject, locale)}`;
   const lead =
     node.kind === "subject"
       ? t("subject.lead", { units: t("count.units", { count: model.counts.units }), lessons: t("count.lessons", { count: model.counts.lessons }) })
@@ -37,7 +36,15 @@ export default function LearnView({ model, t, tc, locale }) {
       <HeaderTopRow crumbs={crumbs} crumbsLabel={tc("a11y.breadcrumb")} />
 
       <header className="animate-in mt-5 min-w-0 sm:mt-7">
-        <p className="t-eyebrow">{eyebrow}</p>
+        <p className="t-eyebrow">
+          {node.kind === "subject" ? (
+            t("subject.eyebrow")
+          ) : (
+            <>
+              {kindLabel} · <ContentText text={subject.title} textEn={subject.title_en} locale={locale} />
+            </>
+          )}
+        </p>
         <h1 className="t-h1 mt-2 max-w-[32ch] break-words">
           <ContentText text={node.title} textEn={node.title_en} locale={locale} />
         </h1>

@@ -11,7 +11,7 @@ import { useTier } from "@/components/exams/useTier";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
-import { contentProps } from "./ContentText";
+import ContentText from "./ContentText";
 
 const TIER = { guest: "guest", free: "free", elite: "premium" };
 const KNOWN_ERRORS = new Set(["insufficient_pool", "premium_required", "daily_limit_reached", "scope_too_large", "rate_limited", "network", "unavailable"]);
@@ -76,7 +76,8 @@ export default function ExamEntryPoints({ primary = [], related = [], titleId = 
             )}
           </p>
           <p className="t-caption mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-            <span {...contentProps(e.title, "min-w-0 truncate")}>{e.title}</span>
+            {/* The scope title in the UI language when the outline has one, else the listed title in its own lang/dir. */}
+            <ContentText text={e.title} textEn={e.title_en} locale={locale} className="min-w-0 truncate" />
             {offer?.count ? <span className="tabular">· {t("entry.count", { count: offer.count })}</span> : null}
             <span className="inline-flex items-center gap-1">
               · {e.timed ? <Timer size={12} aria-hidden="true" /> : null}

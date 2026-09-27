@@ -153,7 +153,14 @@ describe("allocation (§5.3 steps 4–7) — conformance fixtures", () => {
     const r = retakeAllocation({ stored: c.stored, strata: c.strata, seed: c.seed, allowReuse: c.allow_reuse, maxReuseShare: c.max_reuse_share });
     const cells = [...r.cells.entries()].map(([id, q]) => [id, q.unseen, q.seen]).sort((a, b) => (a[0] < b[0] ? -1 : 1));
     expect({ n: r.n, cells, placed: r.placed, reused: r.reused }).toEqual(c.expected);
-    expect(r.reused).toBeLessThanOrEqual(Math.ceil((r.n * c.max_reuse_share) / 100));
+    // reuse beyond ceil(n·share/100) is forced only once every unseen item is placed
+    const unseenCap = c.strata.reduce((s, st) => s + [1, 2, 3].reduce((t, b) => t + (st.cap[b]?.unseen ?? 0), 0), 0);
+    const placedUnseen = r.placed - r.reused;
+    if (r.reused > Math.ceil((r.n * c.max_reuse_share) / 100)) expect(placedUnseen).toBe(unseenCap);
+    if (!c.allow_reuse) expect(r.reused).toBe(0);
+    // short only when the pool itself is too small
+    const seenCap = c.strata.reduce((s, st) => s + [1, 2, 3].reduce((t, b) => t + (st.cap[b]?.seen ?? 0), 0), 0);
+    expect(r.placed).toBe(Math.min(r.n, unseenCap + (c.allow_reuse ? seenCap : 0)));
   });
 
   it("stored allocations are validated before reuse", () => {
@@ -217,15 +224,61 @@ describe("selection (§5.3 steps 2–10) — conformance fixtures", () => {
     const bandOf = new Map(pool.map((r) => [r.key, r.band]));
     const bands = (keys) => [1, 2, 3].map((b) => keys.filter((k) => bandOf.get(k) === b).length);
     expect(bands(retake.keys)).toEqual(bands(first.keys));                // identical distribution
-    // a third attempt: everything seen → reuse capped at ceil(10 × 30 %) = 3
+    // a third attempt: everything seen → controlled reuse (ceil(10 × 30 %) = 3), then forced
+    // reuse keeps the session whole, with the same distribution
     const seen2 = new Map([...seen, ...retake.keys.map((k, i) => [k, 100 + i])]);
     const third = selectSession({ template: t, n: 10, minRequired: 3, seed: seed(13), pool, history: { seen: seen2 }, retake: first.stored });
-    expect(third.reusedCount).toBe(3);
-    expect(third.short).toBe(true);
-    expect(third.keys.filter((k) => seen2.has(k))).toHaveLength(3);
+    expect(third).toMatchObject({ ok: true, reusedCount: 10, reused: true, short: false });
+    expect(bands(third.keys)).toEqual(bands(first.keys));
+    // forced reuse takes the oldest-seen items: the first attempt's, never the retake's
+    expect(third.keys.filter((k) => seen.has(k))).toHaveLength(10);
     // within a cell the oldest-seen item is reused first (seen_rank before u(sel))
-    const single = selectSession({ template: t, n: 3, minRequired: 1, seed: seed(14), pool: pool.slice(0, 2), history: { seen: new Map([[pool[0].key, 5], [pool[1].key, 1]]) } });
+    const single = selectSession({ template: t, n: 1, minRequired: 1, seed: seed(14), pool: pool.slice(0, 2), history: { seen: new Map([[pool[0].key, 5], [pool[1].key, 1]]) } });
     expect(single.keys).toEqual([pool[1].key]);
+  });
+
+  it("small pools: a retake reuses seen items instead of failing, and is short only when the pool is", () => {
+    const lesson = getTemplate("lesson-quiz");
+    const small = POOLS["lesson-6"];
+    expect(small).toHaveLength(6);
+    for (let i = 0; i < 20; i++) {
+      // browser bug 1: a guest lesson-quiz retake on a 6-item lesson answered 422 insufficient_pool
+      const first = selectSession({ template: lesson, n: 10, minRequired: 3, seed: seed(100 + i), pool: small });
+      expect(first).toMatchObject({ ok: true, short: true });
+      expect(first.keys).toHaveLength(6);
+      const n = first.stored.reduce((s, [, q]) => s + q, 0);
+      const seen = new Map(first.keys.map((k, j) => [k, j + 1]));
+      const again = selectSession({ template: lesson, n, minRequired: Math.min(lesson.count.min, n), seed: seed(200 + i), pool: small, history: { seen }, retake: first.stored });
+      expect(again).toMatchObject({ ok: true, short: false, reused: true, reusedCount: 6, stored: first.stored });
+      expect(new Set(again.keys)).toEqual(new Set(first.keys));
+    }
+    // browser bug 2: a unit-quiz retake returned 6 of 15 although reuse is allowed
+    const chapter = getTemplate("chapter-quiz");
+    const unit = POOLS["unit-n91"];
+    for (let i = 0; i < 20; i++) {
+      const first = selectSession({ template: chapter, n: 15, minRequired: 5, seed: seed(300 + i), pool: unit });
+      expect(first.keys).toHaveLength(15);
+      const seen = new Map(first.keys.map((k, j) => [k, j + 1]));
+      const fresh = new Set(unit.filter((r) => !seen.has(r.key) && !r.premium && chapter.types.includes(r.type)).map((r) => r.component ?? r.key)).size; // exclusion groups with an unseen member
+      const again = selectSession({ template: chapter, n: 15, minRequired: 5, seed: seed(400 + i), pool: unit, history: { seen }, retake: first.stored });
+      expect(again).toMatchObject({ ok: true, short: false, stored: first.stored });
+      expect(again.keys).toHaveLength(15);
+      // every fresh item of the unit is used before any seen one is repeated
+      expect(again.keys.filter((k) => !seen.has(k)).length).toBe(Math.min(fresh, 15));
+      // a fresh start with that history fills up to the requested count too
+      const next = selectSession({ template: chapter, n: 15, minRequired: 5, seed: seed(500 + i), pool: unit, history: { seen } });
+      expect(next).toMatchObject({ ok: true, short: false });
+      expect(next.keys).toHaveLength(15);
+    }
+    // short (never insufficient_pool) only when the whole pool is below n but at least the minimum
+    const all = new Map(small.map((r, j) => [r.key, j + 1]));
+    expect(selectSession({ template: lesson, n: 10, minRequired: 3, seed: seed(9), pool: small, history: { seen: all } })).toMatchObject({ ok: true, short: true, reusedCount: 6 });
+    expect(selectSession({ template: lesson, n: 10, minRequired: 3, seed: seed(9), pool: small.slice(0, 2), history: { seen: all } }))
+      .toEqual({ ok: false, error: "insufficient_pool", available: 2, required: 3 });
+    // allow_reuse off: never a seen item, so the session is short
+    const strict = { ...JSON.parse(JSON.stringify(lesson)), retry: { ...lesson.retry, allow_reuse: false } };
+    expect(selectSession({ template: strict, n: 10, minRequired: 3, seed: seed(9), pool: small, history: { seen: new Map([...all].slice(0, 2)) } }))
+      .toMatchObject({ ok: true, short: true, reusedCount: 0, keys: expect.any(Array) });
   });
 
   it("insufficient_pool when fewer than the minimum can be placed", () => {

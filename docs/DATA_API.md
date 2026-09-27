@@ -50,7 +50,7 @@ try {
 | `not_enough_questions` | no question matches the filters (`details = { available, requested }`) | loosen filters |
 | `attempt_not_found` | not yours, or does not exist | 404 state |
 | `attempt_closed` | already submitted / expired; `details.status` | reload with `getAttempt()` |
-| `rate_limited` | abuse limit (contact form, local API) | try later |
+| `rate_limited` | abuse limit (contact form, local API, guest exam routes incl. the daily grading budget) | try later |
 | `forbidden` | RLS / privilege refusal | generic error |
 | `unavailable` | Supabase not configured, table/RPC not deployed, DB unreachable | honest "not available yet" |
 | `network` | fetch failed | retry |
@@ -379,8 +379,9 @@ Changed tables (additive):
 **Question handles.** In every template payload (`start_template_attempt`,
 `get_exam_attempt`, `check_exam_item`, results) `questions[].key` / `items[].key`
 is an opaque per-attempt handle (`h-` + 20 hex), stable within the attempt and
-different across attempts — never the question key, which is derived from the
-answer (§2.2 of docs/CONTENT_ENGINE.md). Identify items by `position`.
+different across attempts — never the question key (current keys are
+answer-free, §2.2 of docs/CONTENT_ENGINE.md, but keys minted under the earlier
+rule hashed the answer, so none is exposed). Identify items by `position`.
 
 Errors are `P0001` with the code as `message` and JSON `details`. New codes:
 `template_not_found`, `scope_not_found`, `insufficient_pool {available, required}`,
@@ -407,18 +408,54 @@ plus the existing `daily_limit_reached` (now with `quota`), `premium_required`,
 
 ### Guest sessions and secrets
 
-Guests use `POST /api/exams/session/{start,check,submit}` (stateless signed
-tokens v2; nothing is saved and results say so). With a service role the
-routes select in SQL:
+Guests use `POST /api/exams/session/{start,check,submit}` (stateless tokens
+v2; nothing is saved and results say so). All three: same origin only,
+`exams.session` limit 60 / 300 s per IP, strict body whitelists, responses
+`Cache-Control: no-store`, errors as `{error, …}`.
+
+- **Token:** HMAC-signed clear header (template, scope, timing, deadline,
+  feedback, tier) plus an AES-256-GCM sealed part holding the question keys,
+  revisions and seed; the browser cannot read which questions it holds.
+- **Handles:** `questions[].key` / `items[].key` are per-session opaque handles
+  `h-` + 16 base64url, never canonical question keys.
+- **Seen list:** `/start` returns `seen`, an opaque sealed blob (`s1.…`,
+  ≤ 12 KiB). Keep it (per browser) and send it back as `seen` on the next
+  `/start`; a blob that does not open is ignored.
+
+| Route | Body | 200 | Errors |
+|---|---|---|---|
+| `/start` | `{template, version?, scope, count?, timing?, feedback?, seen?, retake_of?}` (≤ 16 KiB; `seed` → `seed_not_allowed`) | `{mode:"guest", session_id, token, template, scope, …, seen, questions[{position, key (handle), type, language, stem, stimulus, options[{index,text}], choices, public, time_limit_seconds, lesson}]}` | 400 `invalid_argument {field}`, `seed_not_allowed`, `feedback_not_allowed`, `token_invalid` (retake) · 403 `forbidden` · 404 `template_not_found`, `scope_not_found` · 409 `use_database` · 413 · 422 `insufficient_pool {available, required}`, `scope_too_large`, `premium_required` · 429 `rate_limited` · 503 `unavailable` |
+| `/check` | `{token, position, response}` (≤ 8 KiB; response in display indexes) | `{position, verdict, score, correct_response, explanation, objective, lesson, source, receipt, key_reveal_limit}` | 400 `invalid_argument`, `invalid_response {position, reason}`, `token_invalid`, `feedback_not_allowed` · 403 · 409 `bank_changed {position}`, **`item_locked {position}`** · 410 `token_expired` · 413 · **429 `rate_limited`** · 503 |
+| `/submit` | `{token, answers[{position, response, time_spent_seconds?, flagged?}], receipts?}` (≤ 48 KiB) | `{mode:"guest", saved:false, status: submitted\|expired, …, key_reveal_limit, items[{position, key (handle), …, verdict, score, correct_response, explanation, voided, locked}]}` | 400 `invalid_argument`, `invalid_response`, `token_invalid` · 403 · 410 `token_expired` (> 1 day past the deadline) · 413 · **429 `rate_limited`** · 503 |
+
+- **One check per position** (immediate-feedback templates only): the first
+  checked response of a (session, position) is locked on the server
+  (`ce_guest_check_lock`, below). The same response again returns the same
+  verdict and receipt (safe to retry); another response gets
+  `409 item_locked` with no verdict. `/submit` takes a receipted position's
+  score from its receipt; without a receipt, an immediate-feedback position is
+  unanswered.
+- **Daily per-IP budgets:** revealed keys (`exams.keys`,
+  `EXAM_KEY_REVEAL_DAILY`, default 400): past it results carry verdicts only
+  and `key_reveal_limit: true`. Graded submitted answers (`exams.grades`,
+  `EXAM_GRADE_DAILY`, default twice the key cap; one per `/check`, one per
+  `/submit` position graded from a response; receipted and unanswered
+  positions free): past it `429 rate_limited` and nothing is graded.
+- **Deadline:** `/check` refuses after deadline + grace (`410`); `/submit`
+  then answers `status: "expired"` (answers ignored, receipts kept) for one
+  more day, and `410 token_expired` after that.
+
+With a service role the routes select and lock in SQL:
 
 | RPC | grants | notes |
 |---|---|---|
 | `ce_guest_start(p_template, p_scope, p_seed, p_seen text[], p_count) → jsonb` | service_role | Guest tier and scope caps, premium never included, `p_seen` ≤ 300 keys. Returns only the picked content rows (canonical ids stay server side; the route turns them into display indexes) and the stored allocation. |
 | `ce_guest_items(p_keys text[], p_with_keys boolean) → jsonb` | service_role | Content (and at check/submit time the key: canonical payload, explanation, objective, source) of published non-premium keys, in `p_keys` order. |
+| `ce_guest_check_lock(p_sid text, p_position int, p_resp_hash text, p_expires_at timestamptz) → text` | service_role | Inserts into `ce_guest_check_locks` (pk sid, position; no client grants) → `first` \| `repeat` \| `locked`; rows expire at deadline + grace (≤ 8 days). Without a service role the route uses a per-instance memory fallback. |
 
 Environment (see `docs/DATABASE_SETUP.md`): `LOCAL_EXAM_SECRET` signs guest
 tokens (≥ 32 chars for v2); `LOCAL_EXAM_SECRET_PREVIOUS` is accepted during a
-rotation; with `EXAM_SECRET_REQUIRED=1` the guest routes answer
+rotation (verification and decryption only); with `EXAM_SECRET_REQUIRED=1` the guest routes answer
 `503 {error: "unavailable"}` when the secret is missing. Without the flag a
 missing secret is derived from the existing server-only secrets (a warning is
 logged), so live practice never goes down.

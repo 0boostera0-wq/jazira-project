@@ -281,11 +281,12 @@
      "q-m1-math-0012a3fa00",
      "q-m1-math-76a8277347",
      "q-m1-math-82f3e9c695",
+     "q-m1-math-7c1c97df17",
+     "q-m1-math-9c0abe51c6",
      "q-m1-math-2c3a4249d7",
      "q-m1-math-d0bf3e6ee1",
      "q-m1-math-8b53639f15",
      "q-m1-math-ac0f09c0f8",
-     "q-m1-math-9c0abe51c6",
      "q-m1-math-2f5da6e992",
      "q-m1-math-486bacc5c2"
     ],
@@ -296,7 +297,7 @@
      ],
      [
       "middle/grade-1/math/n91#2",
-      5
+      6
      ],
      [
       "middle/grade-1/math/n91#3",
@@ -316,8 +317,8 @@
      ]
     ],
     "reused": true,
-    "reused_count": 6,
-    "short": true,
+    "reused_count": 7,
+    "short": false,
     "lower_bound": false
    }
   },
@@ -534,7 +535,7 @@
    }
   },
   {
-   "name": "all seen: reuse capped at 30 %",
+   "name": "all seen: controlled then forced reuse fills the session (oldest seen first)",
    "template": "lesson-quiz",
    "pool": "lesson-20",
    "n": 10,
@@ -545,27 +546,34 @@
    "expected": {
     "ok": true,
     "keys": [
+     "q-m1-math-a000000012",
+     "q-m1-math-a000000010",
      "q-m1-math-a000000009",
+     "q-m1-math-a000000018",
+     "q-m1-math-a000000003",
+     "q-m1-math-a000000011",
      "q-m1-math-a000000017",
-     "q-m1-math-a000000001"
+     "q-m1-math-a000000001",
+     "q-m1-math-a000000002",
+     "q-m1-math-a000000004"
     ],
     "stored": [
      [
       "middle/grade-1/math/n54#1",
-      1
+      4
      ],
      [
       "middle/grade-1/math/n54#2",
-      1
+      4
      ],
      [
       "middle/grade-1/math/n54#3",
-      1
+      2
      ]
     ],
     "reused": true,
-    "reused_count": 3,
-    "short": true,
+    "reused_count": 10,
+    "short": false,
     "lower_bound": false
    }
   },
@@ -819,11 +827,15 @@
    "expected": {
     "ok": true,
     "keys": [
+     "q-m1-math-730bea4ff1",
      "q-m1-math-4539e4b488",
      "q-m1-math-76a8277347",
      "q-m1-math-7c1c97df17",
+     "q-m1-math-9c0abe51c6",
      "q-m1-math-2c3a4249d7",
      "q-m1-math-d0bf3e6ee1",
+     "q-m1-math-2f5da6e992",
+     "q-m1-math-66220e7159",
      "q-m1-math-4814d92093"
     ],
     "stored": [
@@ -857,8 +869,8 @@
      ]
     ],
     "reused": true,
-    "reused_count": 3,
-    "short": true,
+    "reused_count": 4,
+    "short": false,
     "lower_bound": false
    }
   },
@@ -914,6 +926,97 @@
     ],
     "reused": false,
     "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "lesson-quiz on a 6-item lesson (short first attempt)",
+   "template": "lesson-quiz",
+   "pool": "lesson-6",
+   "n": 10,
+   "min_required": 3,
+   "seed": "00000000000000000000000000000006",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-a000000010",
+     "q-m1-math-a000000017",
+     "q-m1-math-a000000009",
+     "q-m1-math-a000000018",
+     "q-m1-math-a000000001",
+     "q-m1-math-a000000002"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n54#1",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#3",
+      2
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": true,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "retake: lesson-quiz on a 6-item lesson, everything seen (forced reuse, never insufficient_pool)",
+   "template": "lesson-quiz",
+   "pool": "lesson-6",
+   "n": 6,
+   "min_required": 3,
+   "seed": "00000000000000000000000000000007",
+   "history": "retake-of:lesson-quiz on a 6-item lesson (short first attempt)",
+   "retake": [
+    [
+     "middle/grade-1/math/n54#1",
+     2
+    ],
+    [
+     "middle/grade-1/math/n54#2",
+     2
+    ],
+    [
+     "middle/grade-1/math/n54#3",
+     2
+    ]
+   ],
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-a000000018",
+     "q-m1-math-a000000001",
+     "q-m1-math-a000000009",
+     "q-m1-math-a000000010",
+     "q-m1-math-a000000002",
+     "q-m1-math-a000000017"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n54#1",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#3",
+      2
+     ]
+    ],
+    "reused": true,
+    "reused_count": 6,
     "short": false,
     "lower_bound": false
    }

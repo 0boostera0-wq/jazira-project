@@ -18,7 +18,8 @@ import {
   evidenceFromCourseCode,
 } from "../../scripts/content/lib/term-resolve.mjs";
 import { reconcileCatalogMap, leafOfIenNode, subjectTitleKey } from "../../scripts/content/lib/ien-mapping.mjs";
-import { buildCurriculum, catalogLeaves, loadInputs, writeOutputs, isUnitOpener, bookKind, serializeOutline } from "../../scripts/content/build-curriculum.mjs";
+import { buildCurriculum, catalogLeaves, catalogTitlesEn, loadInputs, writeOutputs, isUnitOpener, bookKind, serializeOutline } from "../../scripts/content/build-curriculum.mjs";
+import { normalizeTitle } from "@/lib/content/normalize";
 import { IdRegistry } from "../../scripts/content/lib/id-registry.mjs";
 import { validateRecord } from "../../scripts/content/lib/schemas.mjs";
 import { diffCrawls, changesText, crawlDate } from "../../scripts/content/crawl-diff.mjs";
@@ -323,6 +324,32 @@ function miniInput(registryEntries = []) {
     cachePages: null,
   };
 }
+
+describe("catalog English titles (subject and unit title_en)", () => {
+  it("maps catalog names and plan labels, never an Arabic fallback or an ambiguous title", () => {
+    const m = catalogTitlesEn([
+      { subjects: [
+        { name: "الرياضيات", name_en: "Mathematics", labels: ["الرياضيات 1"], labels_en: ["Mathematics 1"] },
+        { name: "مادة بلا ترجمة", name_en: "مادة بلا ترجمة" },
+        { name: "الفنون", name_en: "Arts" },
+      ] },
+      { subjects: [{ name: "الفنون", name_en: "Fine Arts" }, { name: "الفنون", name_en: "Arts" }, { name: "العلوم", name_en: "Science", labels: null }] },
+    ]);
+    expect(m.get(normalizeTitle("الرياضيات"))).toBe("Mathematics");
+    expect(m.get(normalizeTitle("الرياضيات 1"))).toBe("Mathematics 1");
+    expect(m.get(normalizeTitle("العلوم"))).toBe("Science");
+    expect(m.has(normalizeTitle("مادة بلا ترجمة"))).toBe(false);
+    expect(m.has(normalizeTitle("الفنون"))).toBe(false);
+  });
+
+  it("titles catalog subjects from the catalog and leaves an unmatched source-only subject without one", () => {
+    const r = buildCurriculum(miniInput());
+    const node = (id) => r.nodes.find((n) => n.id === id);
+    expect(node("middle/grade-1/math").title_en).toBe("Mathematics");
+    expect(node("middle/grade-1/ien-999")).toMatchObject({ status: "source_only", title_en: null });
+    expect(node("middle/grade-1/math/n91").title_en).toBeNull(); // «الجبر و الدوال» is no catalog name
+  });
+});
 
 describe("buildCurriculum on a synthetic crawl", () => {
   let input;

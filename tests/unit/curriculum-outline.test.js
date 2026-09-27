@@ -112,6 +112,23 @@ describe("generated outlines (src/content/curriculum/outline)", () => {
     }
   });
 
+  it("carries the catalog's English names into subject and unit titles (never Arabic in title_en)", async () => {
+    const AR = /[؀-ۿ]/;
+    for (const leaf of OUTLINE_LEAVES) {
+      const tree = await loadOutline(leaf);
+      for (const s of resolveCurriculum(leaf.split("/")).node.subjects) {
+        const n = tree.nodeById(`${leaf}/${s.id}`);
+        expect(n.title_en, n.id).toBe(AR.test(s.name_en) ? null : s.name_en);
+      }
+      for (const n of tree.nodes()) if (n.title_en) expect(n.title_en, n.id).not.toMatch(AR);
+    }
+    // A unit or source-only subject titled like a catalog subject or plan label takes its English name.
+    expect(await nodeById("middle/grade-1/math/n4225")).toMatchObject({ kind: "unit", title_ar: "الإحصاء", title_en: "Statistics" });
+    expect(await nodeById("high-school/grade-1/first-year/ien-31578")).toMatchObject({ kind: "subject", status: "source_only", title_en: "Health and PE 2" });
+    // None in the catalog: no English title (the UI falls back to the Arabic one with its own lang/dir).
+    expect((await nodeById("middle/grade-1/ien-54709")).title_en).toBeNull();
+  });
+
   it("applies the same page rules to the interface fixture", () => {
     for (const n of fixture.nodes) {
       for (const p of n.pages) expect(p.pdf_start).toBeLessThanOrEqual(p.pdf_end);

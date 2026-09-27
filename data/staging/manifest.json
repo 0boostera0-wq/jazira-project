@@ -34,9 +34,9 @@
     {
       "path": "curriculum/nodes/elementary/grade-2.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "d95608b50953e1c2a8a28aad31f62ae48cf1a94d7fb69885a0d7152be9bed940",
+      "sha256": "c4fdedfd762da5bc6525d13dafccd3cea12180a4f0666464cc2d9b5b6977eb91",
       "lines": 451,
-      "bytes": 245675
+      "bytes": 245683
     },
     {
       "path": "curriculum/nodes/elementary/grade-3.jsonl",
@@ -48,9 +48,9 @@
     {
       "path": "curriculum/nodes/elementary/grade-4.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "f567f1d45de64f164d38aecdd21cfaca83cb192c51c9d93b1876850fbcddfb40",
+      "sha256": "356ee0c669407fb64aac1733e6ebfaa6ccf75a22b62549c744f2ac47103d086e",
       "lines": 668,
-      "bytes": 369902
+      "bytes": 369914
     },
     {
       "path": "curriculum/nodes/elementary/grade-5.jsonl",
@@ -62,16 +62,16 @@
     {
       "path": "curriculum/nodes/elementary/grade-6.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "91329a4a2b72f2f6937d14d5ac79df42385a222365d7ee1e55d16187f2f37a7a",
+      "sha256": "95724cc9a18f722c88a58c1c450d4f4c1d8e898def16b6bfb09746ea19fb634e",
       "lines": 718,
-      "bytes": 400717
+      "bytes": 400722
     },
     {
       "path": "curriculum/nodes/high-school/grade-1-first-year.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "cf20099dd4e5bd4245d5a853ca5357ef2ce6925ca0e01d8fd74d7585a2658101",
+      "sha256": "347074aec0f1117093fd1cc5c0a501d93049dddad71e63aca68cfda04b021848",
       "lines": 662,
-      "bytes": 415101
+      "bytes": 415114
     },
     {
       "path": "curriculum/nodes/high-school/grade-1.jsonl",
@@ -83,9 +83,9 @@
     {
       "path": "curriculum/nodes/high-school/grade-2-business.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "b564cc8770afec01be0cea6ee3e556bc2ade2dda87bbf714b0309d259e16063e",
+      "sha256": "2950ef92062fa7749624ccf7459762e2afc1a5db0ca35efb0d30f3867509a82c",
       "lines": 460,
-      "bytes": 286125
+      "bytes": 286156
     },
     {
       "path": "curriculum/nodes/high-school/grade-2-cs-eng.jsonl",
@@ -97,23 +97,23 @@
     {
       "path": "curriculum/nodes/high-school/grade-2-general.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "7fcd25cbdfc4ce7244373819d5ce99fe6d9a00e9d15b3cb275dda4c14cc7c93e",
+      "sha256": "113e9fc67cbb344ee5be03dbdf35543c81fa6693723843c89f4d5abf2eb197de",
       "lines": 584,
-      "bytes": 358758
+      "bytes": 358789
     },
     {
       "path": "curriculum/nodes/high-school/grade-2-health.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "319dbdd35256483902455b54ac1f7d5363460e7df410872afbf5e3ac502dab7b",
+      "sha256": "993e37c21f9eb3422dd7c69e19b9904fabdddc71c00f5ec03dce5bf27df27b80",
       "lines": 545,
-      "bytes": 332562
+      "bytes": 332593
     },
     {
       "path": "curriculum/nodes/high-school/grade-2-sharia.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "977ea62f3bf140d459082e5f7394253cdcd834383e9becf7593c716a1e6e85d3",
+      "sha256": "9451b9180392659895a1a7e1d1f1c622ded0fbeb41526343e45c077ba7e2544f",
       "lines": 538,
-      "bytes": 329025
+      "bytes": 329056
     },
     {
       "path": "curriculum/nodes/high-school/grade-2.jsonl",
@@ -167,23 +167,23 @@
     {
       "path": "curriculum/nodes/middle/grade-1.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "40ee1c5e398f1349b6bbf0b6530e17bf6c13c3d3bf6cb436be6b9a0e42029b3f",
+      "sha256": "93caf3f3feed33b2e0d529ca26829446e53444b992d9a8847fd5da6efb9da0b5",
       "lines": 847,
-      "bytes": 453032
+      "bytes": 453068
     },
     {
       "path": "curriculum/nodes/middle/grade-2.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "f0e86e2900775e2707e5cc4055224e64d186ba19e2f9f33849e587aa0e3b330c",
+      "sha256": "055f4ad43f6061a2ec4c89c58576eca341a43a024a1b350dbc02d7843370674d",
       "lines": 856,
-      "bytes": 458499
+      "bytes": 458523
     },
     {
       "path": "curriculum/nodes/middle/grade-3.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "7470fd39515a901541c2a8ef69bc7432486aaae3f22ccda3dd861e0a7e9ac121",
+      "sha256": "8c5ee12f4dbfad2236cfdb7982f927d0ff64f531c43cdf735d92ac0129766271",
       "lines": 827,
-      "bytes": 443697
+      "bytes": 443717
     },
     {
       "path": "curriculum/prep-alignment.jsonl",
@@ -413,7 +413,7 @@
   "totals": {
     "files": 58,
     "lines": 26877,
-    "bytes": 12252264
+    "bytes": 12252506
   },
   "published": {},
   "removed": []

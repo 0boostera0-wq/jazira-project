@@ -1,6 +1,6 @@
 {
  "schema": "engine-allocations@1",
- "description": "allocate() conformance (§5.3 steps 4–7): cells are [cell id, unseen quota, seen quota] in C order; 'hand:' cases were computed by hand (see the design's largest-remainder rule).",
+ "description": "allocate() conformance (§5.3 steps 4–7): cells are [cell id, unseen quota, seen quota] in C order; 'hand:' cases were computed by hand (see the design's largest-remainder rule). Reuse: controlled up to ceil(n·max_reuse_share/100), then forced up to n once no unseen item is left.",
  "cases": [
   {
    "name": "hand: one stratum, no caps hit (5/3/2)",
@@ -129,7 +129,7 @@
    }
   },
   {
-   "name": "hand: reuse pass capped at ceil(10·30/100) = 3",
+   "name": "hand: controlled reuse of ceil(10·30/100) = 3, then forced reuse fills the session",
    "n": 10,
    "mix": {
     "easy": 50,
@@ -170,12 +170,12 @@
      [
       "s#1",
       2,
-      1
+      2
      ],
      [
       "s#2",
       2,
-      1
+      2
      ],
      [
       "s#3",
@@ -183,8 +183,8 @@
       1
      ]
     ],
-    "placed": 8,
-    "reused": 3,
+    "placed": 10,
+    "reused": 5,
     "lower_bound": false,
     "prepass": [
      "s"
@@ -615,6 +615,153 @@
     "prepass": [
      "a",
      "b"
+    ]
+   }
+  },
+  {
+   "name": "a small pool, everything seen: forced reuse keeps the whole session",
+   "n": 6,
+   "mix": {
+    "easy": 40,
+    "medium": 40,
+    "hard": 20
+   },
+   "strata": [
+    {
+     "id": "o1",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 0,
+       "seen": 2
+      },
+      "2": {
+       "unseen": 0,
+       "seen": 2
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 1
+      }
+     }
+    },
+    {
+     "id": "o2",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 0,
+       "seen": 1
+      },
+      "2": {
+       "unseen": 0,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 0
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "min_per_stratum": 1,
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "targets": [
+     2,
+     3,
+     1
+    ],
+    "cells": [
+     [
+      "o1#1",
+      0,
+      2
+     ],
+     [
+      "o1#2",
+      0,
+      2
+     ],
+     [
+      "o1#3",
+      0,
+      1
+     ],
+     [
+      "o2#1",
+      0,
+      1
+     ]
+    ],
+    "placed": 6,
+    "reused": 6,
+    "lower_bound": false,
+    "prepass": []
+   }
+  },
+  {
+   "name": "zero-weight capacity is used before the session is short",
+   "n": 6,
+   "mix": {
+    "easy": 50,
+    "medium": 50,
+    "hard": 0
+   },
+   "strata": [
+    {
+     "id": "s",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 2,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 2,
+       "seen": 1
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "min_per_stratum": 1,
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "targets": [
+     3,
+     3,
+     0
+    ],
+    "cells": [
+     [
+      "s#1",
+      1,
+      0
+     ],
+     [
+      "s#2",
+      2,
+      0
+     ],
+     [
+      "s#3",
+      2,
+      1
+     ]
+    ],
+    "placed": 6,
+    "reused": 1,
+    "lower_bound": false,
+    "prepass": [
+     "s"
     ]
    }
   }
