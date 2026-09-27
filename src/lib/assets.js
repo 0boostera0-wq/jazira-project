@@ -102,38 +102,38 @@ const LIST = [
   A("elementary", "games", "v2-elem-games", { pages: ["/elementary (learning games)"], purpose: "Puzzle pieces, a learning tablet and stacking toys — learning through play" }),
   A("elementary", "english", "v2-elem-english", { pages: ["elementary English subject"], purpose: "Toy letters A B C with a globe and a toy plane" }),
   A("elementary", "islamic", "v2-elem-islamic", { pages: ["elementary Quran & Islamic studies subjects"], purpose: "A Quran stand, a lantern and a prayer rug — a calm, respectful corner" }),
-  A("elementary", "art", "jazira-elementary-art-v1", { pages: ["elementary art subject"], purpose: "Colour, brushes and creativity" }),
+  A("elementary", "art", "v2-elem-art", { pages: ["elementary art subject"], purpose: "A paint palette, brushes and an easel with a rainbow painting" }),
 
   // ── middle (grades 7–9): refined stylised 3D ─────────────────────────────
   A("middle", "hero", "v2-middle-hero-cA", { pages: ["/middle (hero)", "/ (stage selector)", "/curriculum (middle stage)", "/search (stage results)"], purpose: "Students building a robot in a bright maker lab", sizes: SIZES.heroSide, priority: "lcp", focus: "45% 48%" }),
-  A("middle", "math", "jazira-middle-math-v3", { pages: ["/middle (maths)", "middle maths subject"], purpose: "Geometry and measurement, hands-on" }),
-  A("middle", "science", "jazira-middle-science-v1", { pages: ["/middle (science)", "middle science subject"], purpose: "Observing and experimenting" }),
-  A("middle", "chemistry", "jazira-middle-chemistry-v1", { pages: ["/middle (chemistry)"], purpose: "First experiments with matter" }),
-  A("middle", "physics", "jazira-middle-physics-v1", { pages: ["/middle (physics)"], purpose: "Forces, light and energy" }),
-  A("middle", "arabic", "jazira-middle-arabic-v1", { pages: ["middle Arabic subject"], purpose: "Reading, writing and the craft of language" }),
+  A("middle", "math", "v2-mid-math", { pages: ["/middle (maths)", "middle maths subject"], purpose: "Translucent geometric solids and a compass over a glowing grid" }),
+  A("middle", "science", "v2-mid-science", { pages: ["/middle (science)", "middle science subject"], purpose: "A microscope beside a glowing plant-cell model and petri dishes" }),
+  A("middle", "chemistry", "v2-mid-chemistry", { pages: ["/middle (chemistry)"], purpose: "Flasks of bubbling violet, green and blue liquids with a molecule model" }),
+  A("middle", "physics", "v2-mid-physics", { pages: ["/middle (physics)"], purpose: "A magnet's field lines of light, a simple circuit and a Newton's cradle" }),
+  A("middle", "arabic", "v2-mid-arabic", { pages: ["middle Arabic subject"], purpose: "An open book with arabesque borders, a reed pen and an inkwell" }),
 
   // ── high school: realistic, editorial ──────────────────────────────────────
   A("high-school", "hero", "v2-high-school-hero-b", { pages: ["/high-school (hero)", "/ (stage selector)", "/curriculum (high-school stage)", "/search (stage results)"], purpose: "A multi-storey library atrium in the morning — ambition and depth", sizes: SIZES.heroSide, priority: "lcp" }),
-  A("high-school", "math", "jazira-hs-math-v1", { pages: ["/high-school (maths)", "high-school maths subject", "Tahsili maths section"], purpose: "Functions, curves and precision" }),
-  A("high-school", "physics", "jazira-hs-physics-v1", { pages: ["/high-school (physics)", "high-school physics subject", "Tahsili physics section"], purpose: "Motion, waves and the cosmos" }),
-  A("high-school", "chemistry", "jazira-hs-chemistry-v1", { pages: ["/high-school (chemistry)", "high-school chemistry subject", "Tahsili chemistry section"], purpose: "Molecules and reactions" }),
-  A("high-school", "biology", "jazira-hs-biology-v1", { pages: ["/high-school (biology)", "high-school biology subject", "Tahsili biology section"], purpose: "Life, cells and growth" }),
-  A("high-school", "computer-science", "jazira-hs-computer-science-v1", { pages: ["/high-school (CS & engineering track)", "/curriculum/high-school/grade-2|3/cs-eng (hero)", "computing subjects"], purpose: "Computing and engineering" }),
-  A("high-school", "business", "jazira-hs-business-v1", { pages: ["/high-school (business track)", "/curriculum/high-school/grade-2|3/business (hero)", "business subjects"], purpose: "Enterprise, finance and management" }),
-  A("high-school", "health", "jazira-hs-health-v1", { pages: ["/high-school (health & life track)", "/curriculum/high-school/grade-2|3/health (hero)", "health subjects"], purpose: "Health, life sciences and fitness" }),
-  A("high-school", "sharia", "jazira-hs-sharia-v1", { pages: ["/high-school (sharia track)", "/curriculum/high-school/grade-2|3/sharia (hero)", "Islamic studies subjects"], purpose: "Islamic sciences and scholarship" }),
+  A("high-school", "math", "v2-hs-math", { pages: ["/high-school (maths)", "high-school maths subject", "Tahsili maths section"], purpose: "A glass board of geometric constructions with a compass and set square" }),
+  A("high-school", "physics", "v2-hs-physics", { pages: ["/high-school (physics)", "high-school physics subject", "Tahsili physics section"], purpose: "A laser through a prism on an optical rail in a dark lab" }),
+  A("high-school", "chemistry", "v2-hs-chemistry", { pages: ["/high-school (chemistry)", "high-school chemistry subject", "Tahsili chemistry section"], purpose: "A titration: a burette dripping into a flask turning magenta" }),
+  A("high-school", "biology", "v2-hs-biology", { pages: ["/high-school (biology)", "high-school biology subject", "Tahsili biology section"], purpose: "Seedlings under grow lights and a microscope in a greenhouse lab" }),
+  A("high-school", "computer-science", "v2-hs-cs", { pages: ["/high-school (CS & engineering track)", "/curriculum/high-school/grade-2|3/cs-eng (hero)", "computing subjects"], purpose: "A computing and robotics lab at dusk with node-graph screens", priority: "lcp" }),
+  A("high-school", "business", "v2-hs-business", { pages: ["/high-school (business track)", "/curriculum/high-school/grade-2|3/business (hero)", "business subjects"], purpose: "A bright meeting room with rising charts on a tablet and screen", priority: "lcp" }),
+  A("high-school", "health", "v2-hs-health", { pages: ["/high-school (health & life track)", "/curriculum/high-school/grade-2|3/health (hero)", "health subjects"], purpose: "An anatomical heart model, stethoscope and heart-rate monitor", priority: "lcp" }),
+  A("high-school", "sharia", "v2-hs-sharia", { pages: ["/high-school (sharia track)", "/curriculum/high-school/grade-2|3/sharia (hero)", "Islamic studies subjects"], purpose: "A serene Islamic studies library with mashrabiya light", priority: "lcp" }),
 
   // ── aptitude (Qudurat) & achievement (Tahsili) ───────────────────────────
   A("aptitude", "hero", "v2-aptitude-gallery", { pages: ["/exams/aptitude (hero)", "/ (stage selector)"], purpose: "Geometric sculptures and pattern tiles in a gallery — reasoning and challenge", sizes: SIZES.heroSide, priority: "lcp", focus: "50% 62%" }),
-  A("aptitude", "quantitative", "jazira-aptitude-quantitative-v1", { pages: ["/exams/aptitude (quantitative section)"], purpose: "Quantities, comparison and logic" }),
-  A("aptitude", "verbal", "jazira-aptitude-verbal-v1", { pages: ["/exams/aptitude (verbal section)", "Arabic literature subjects"], purpose: "Words, meaning and reading" }),
+  A("aptitude", "quantitative", "v2-apt-quant", { pages: ["/exams/aptitude (quantitative section)"], purpose: "A balance scale weighing a sphere against cubes — quantitative reasoning" }),
+  A("aptitude", "verbal", "v2-apt-verbal", { pages: ["/exams/aptitude (verbal section)", "Arabic literature subjects"], purpose: "Open books with fanning pages and ribbon bookmarks — verbal reasoning" }),
   A("achievement", "hero", "v2-achievement-lab", { pages: ["/exams/achievement (hero)", "/ (stage selector)"], purpose: "A modern science lab: microscope, glassware and a DNA model", sizes: SIZES.heroSide, priority: "lcp" }),
-  A("achievement", "review", "jazira-achievement-review-v1", { pages: ["exam section pages", "exam review list", "/assistant (quiz me)", "notifications rail"], purpose: "Revision cards and focused review" }),
-  A("achievement", "performance", "jazira-achievement-performance-v1", { pages: ["/exams/history (empty analytics)"], purpose: "Measuring strengths over time" }),
+  A("achievement", "review", "v2-review-cards", { pages: ["exam section pages", "exam review list", "/assistant (quiz me)", "notifications rail"], purpose: "Blank revision cards in teal, coral and violet — focused review" }),
+  A("achievement", "performance", "v2-performance-glass", { pages: ["/exams/history (empty analytics)"], purpose: "Rising frosted-glass bars from teal to violet — progress over time" }),
 
   // ── exams ────────────────────────────────────────────────────────────────
   A("exams", "hero", "v2-exams-hall-b", { pages: ["/exams (hero)", "/ (exam practice section)"], purpose: "A quiet exam hall, a paper and pencil on the front desk", sizes: SIZES.heroSide, priority: "lcp" }),
-  A("exams", "timed", "jazira-exams-timed-v1", { pages: ["exam section pages", "exam runner"], purpose: "Time, pace and focus" }),
+  A("exams", "timed", "v2-exams-timed", { pages: ["exam section pages", "exam runner"], purpose: "A numberless clock, an hourglass and a coral pencil — time and pace" }),
   A("exams", "history", "v2-history-observatory", { pages: ["/exams/history (hero)"], purpose: "An observatory under star trails — tracing your results over time", sizes: SIZES.card, priority: "lcp" }),
   A("exams", "results", "v2-exam-results", { pages: ["exam results"], purpose: "A finished answer sheet, pencil and eraser — a well-earned pause", sizes: SIZES.card }),
 
@@ -141,19 +141,19 @@ const LIST = [
   A("community", "hero", "v2-community-commons", { pages: ["/community (hero)", "/ (community section)"], purpose: "A green atrium where students study together (distant figures)", sizes: SIZES.panel, priority: "lcp" }),
   A("community", "achievements", "v2-achievements-display", { pages: ["/achievements (hero)"], purpose: "Trophies and medals in a lit display case — a hall of honour", sizes: SIZES.heroSide, priority: "lcp" }),
   A("community", "competitions", "v2-competitions-stage", { pages: ["/competitions (hero)"], purpose: "A podium under stage lights and confetti", sizes: SIZES.panel, priority: "lcp", focus: "50% 60%" }),
-  A("community", "streak", "jazira-community-streak-v1", { pages: ["/achievements (streak card)"], purpose: "A lantern kept alight, day after day", sizes: SIZES.thumb }),
-  A("community", "conversation", "jazira-community-conversation-v1", { pages: ["/chat (no conversation)", "/community (empty feed)", "/tags/[tag] (empty)"], purpose: "Messages carried between islands" }),
+  A("community", "streak", "v2-streak-pots", { pages: ["/achievements (streak card)"], purpose: "Five pots of a plant growing day by day — a streak", sizes: SIZES.thumb }),
+  A("community", "conversation", "v2-conversation-bubbles", { pages: ["/chat (no conversation)", "/community (empty feed)", "/tags/[tag] (empty)"], purpose: "Soft felt speech bubbles — conversations and questions" }),
 
   // ── assistant ────────────────────────────────────────────────────────────
   A("assistant", "hero", "v2-assistant-orb", { pages: ["/assistant (welcome)", "/ (assistant section)"], purpose: "A glowing orb of ideas over a desk at night — the AI study companion", sizes: SIZES.panel, priority: "lcp", focus: "42% 26%" }),
-  A("assistant", "explain", "jazira-assistant-explain-v1", { pages: ["/assistant (explain)"], purpose: "Ideas made clear" }),
-  A("assistant", "summarize", "jazira-assistant-summarize-v1", { pages: ["/assistant (summarise)", "exam results (explanations)"], purpose: "The essentials of a lesson, distilled" }),
-  A("assistant", "plan", "jazira-assistant-plan-v1", { pages: ["/assistant (plan)", "/middle (study plan)", "/dashboard (assistant card)"], purpose: "A study plan taking shape" }),
+  A("assistant", "explain", "v2-ai-explain", { pages: ["/assistant (explain)"], purpose: "A glowing solid unfolding into its net — ideas made clear" }),
+  A("assistant", "summarize", "v2-ai-summarize", { pages: ["/assistant (summarise)", "exam results (explanations)"], purpose: "A stack of pages distilled into one glowing card" }),
+  A("assistant", "plan", "v2-ai-plan", { pages: ["/assistant (plan)", "/middle (study plan)", "/dashboard (assistant card)"], purpose: "A glowing weekly planner grid — a study plan taking shape" }),
 
   // ── subscriptions & payment ──────────────────────────────────────────────
   A("subscriptions", "hero", "v2-subscriptions-lounge-b", { pages: ["/subscriptions (hero)"], purpose: "A premium reading lounge at blue hour", sizes: SIZES.heroSide, priority: "lcp", focus: "50% 58%" }),
-  A("subscriptions", "features", "jazira-premium-study-v2", { pages: ["/subscriptions (features)"], purpose: "Premium tools for serious study", sizes: SIZES.card }),
-  A("subscriptions", "premium", "jazira-subscriptions-premium-v1", { pages: ["/subscriptions (Elite plan card)", "upgrade dialog", "/settings (subscription)", "activation status (checkout return)", "included-features card"], purpose: "The golden key to premium" }),
+  A("subscriptions", "features", "v2-premium-tools", { pages: ["/subscriptions (features)"], purpose: "A navy study desk with analytics on laptop and tablet", sizes: SIZES.card }),
+  A("subscriptions", "premium", "v2-premium-book", { pages: ["/subscriptions (Elite plan card)", "upgrade dialog", "/settings (subscription)", "activation status (checkout return)", "included-features card"], purpose: "A plum book opening like a door of light — everything unlocked" }),
   A("payment", "checkout", "v2-checkout-vault", { pages: ["/checkout (hero)"], purpose: "A steel vault door and a key on a white plinth — a secure payment", sizes: SIZES.heroSide, priority: "lcp", focus: "55% 62%" }),
   A("payment", "success", "v2-success-terrace", { pages: ["/checkout/success (hero)"], purpose: "Glass doors opening onto a sunny terrace — welcome to premium", sizes: SIZES.heroSide, priority: "lcp" }),
 
@@ -161,9 +161,9 @@ const LIST = [
   A("support", "hero", "v2-support-desk", { pages: ["/support (hero)", "legal pages (help card)"], purpose: "A calm, bright help desk with a laptop and headset — we're here to help", sizes: SIZES.heroSide, priority: "lcp" }),
   A("support", "contact", "v2-contact-flatlay", { pages: ["/contact (hero)"], purpose: "Envelopes, paper and a pen on linen — write to us", sizes: SIZES.heroSide, priority: "lcp" }),
   A("support", "faq", "v2-faq-reading-room", { pages: ["/faq (hero)"], purpose: "A quiet reference reading room — every answer in its place", sizes: SIZES.heroSide, priority: "lcp" }),
-  A("support", "empty", "jazira-state-empty-v1", { pages: ["empty states (EmptyState)", "leaderboard, subject explorer, curriculum pending, notifications, reviews"], purpose: "A quiet mooring — nothing here yet" }),
-  A("support", "not-found", "jazira-state-not-found-v1", { pages: ["404 page", "profile not found", "exam attempt not found", "/search (no results)"], purpose: "A message in a bottle — off the map" }),
-  A("support", "offline", "jazira-state-offline-v1", { pages: ["error & unavailable states (ErrorView)", "community, notifications, reviews, exam runner"], purpose: "Sails down, waiting for the wind" }),
+  A("support", "empty", "v2-state-empty", { pages: ["empty states (EmptyState)", "leaderboard, subject explorer, curriculum pending, notifications, reviews"], purpose: "An empty shelf with one small plant — nothing here yet" }),
+  A("support", "not-found", "v2-state-notfound", { pages: ["404 page", "profile not found", "exam attempt not found", "/search (no results)"], purpose: "A compass pointing off a blank map — off the map" }),
+  A("support", "offline", "v2-state-offline", { pages: ["error & unavailable states (ErrorView)", "community, notifications, reviews, exam runner"], purpose: "A closed laptop by a rainy window, cable unplugged — connection lost" }),
 
   // ── legal ────────────────────────────────────────────────────────────────
   A("legal", "hero", "v2-legal-library", { pages: ["/terms (hero)", "/refund (hero)", "/acceptable-use (hero)", "/community-guidelines (hero)"], purpose: "A law-library desk in deep green and walnut — calm and professional", sizes: SIZES.heroSide, priority: "lcp" }),
