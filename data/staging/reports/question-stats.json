@@ -1,0 +1,206 @@
+{
+  "schema": "report-question-stats@1",
+  "generated_at": "2026-09-27T17:23:05Z",
+  "manifest_sha256": "34ee874b2802ff0ff2c6f0f12a1226e3fcb82479ff8c0830e7f31bffed52d297",
+  "manifest_status": "current",
+  "counting_rules": [
+    "candidates = every question record in questions/** and question-variants/** (any status)",
+    "validated = validation.status = validated",
+    "published = status = published",
+    "canonical = published, not a variant, and dedup.class = UNIQUE or the canonical of a dedup cluster",
+    "variants = published records with variant ≠ null (template and rewrite variants; never canonical)",
+    "legacy items (the 300) are counted in the totals and also reported in their own section by validation outcome",
+    "sources = rows in sources/registry.json",
+    "PDFs = resources with file_type = pdf, split by availability and by extraction.status",
+    "pages processed = page-map rows with text_method text or vision (split by method); 'front-matter only' is the subset whose resource has extraction.status frontmatter_done; a book's page_count is never counted",
+    "Term 1 / Term 2: a subject is listed under a term only when subject-terms.jsonl says verified or inferred; per-term figures count nodes, resources and questions whose term is that term or both",
+    "exam-template figures are per template × scope (combinatorics.js); they are never summed across templates or overlapping scopes",
+    "sessions are never added to question counts"
+  ],
+  "projection_note": "Full-bank figures are a projection from measured runs, never done work (§9.3).",
+  "by": {
+    "origin": {
+      "generated_practice": {
+        "candidates": 2122,
+        "published": 0
+      },
+      "internal_authored": {
+        "candidates": 300,
+        "published": 294
+      },
+      "source_derived": {
+        "candidates": 283,
+        "published": 0
+      },
+      "transformed": {
+        "candidates": 957,
+        "published": 0
+      }
+    },
+    "type": {
+      "matching": {
+        "candidates": 82,
+        "published": 0
+      },
+      "mcq": {
+        "candidates": 2701,
+        "published": 294
+      },
+      "numeric": {
+        "candidates": 630,
+        "published": 0
+      },
+      "ordering": {
+        "candidates": 83,
+        "published": 0
+      },
+      "true_false": {
+        "candidates": 166,
+        "published": 0
+      }
+    },
+    "style": {
+      "application": {
+        "candidates": 1565,
+        "published": 156
+      },
+      "computation": {
+        "candidates": 1313,
+        "published": 0
+      },
+      "conceptual": {
+        "candidates": 232,
+        "published": 0
+      },
+      "definition": {
+        "candidates": 105,
+        "published": 0
+      },
+      "reasoning": {
+        "candidates": 410,
+        "published": 138
+      },
+      "review": {
+        "candidates": 7,
+        "published": 0
+      },
+      "scenario": {
+        "candidates": 30,
+        "published": 0
+      }
+    },
+    "difficulty": {
+      "1": {
+        "candidates": 232,
+        "published": 0
+      },
+      "2": {
+        "candidates": 1288,
+        "published": 103
+      },
+      "3": {
+        "candidates": 1710,
+        "published": 133
+      },
+      "4": {
+        "candidates": 350,
+        "published": 58
+      },
+      "5": {
+        "candidates": 82,
+        "published": 0
+      }
+    },
+    "band": {
+      "1": {
+        "candidates": 1520,
+        "published": 103
+      },
+      "2": {
+        "candidates": 1710,
+        "published": 133
+      },
+      "3": {
+        "candidates": 432,
+        "published": 58
+      }
+    },
+    "language": {
+      "ar": {
+        "candidates": 3662,
+        "published": 294
+      }
+    },
+    "subject": {
+      "middle/grade-1/math": {
+        "candidates": 2972,
+        "published": 0
+      },
+      "middle/grade-1/science": {
+        "candidates": 390,
+        "published": 0
+      },
+      "prep:achievement/biology": {
+        "candidates": 40,
+        "published": 39
+      },
+      "prep:achievement/chemistry": {
+        "candidates": 40,
+        "published": 39
+      },
+      "prep:achievement/math": {
+        "candidates": 40,
+        "published": 39
+      },
+      "prep:achievement/physics": {
+        "candidates": 40,
+        "published": 39
+      },
+      "prep:aptitude/quantitative": {
+        "candidates": 80,
+        "published": 78
+      },
+      "prep:aptitude/verbal": {
+        "candidates": 60,
+        "published": 60
+      }
+    }
+  },
+  "generator_runs": [
+    {
+      "run_id": "run-20260927-gen-01",
+      "source": "manifest",
+      "generated": 15,
+      "accepted": 15,
+      "yield": 1,
+      "records_in_staging": 1241
+    }
+  ],
+  "repair": {
+    "revised_items": 11,
+    "candidates": 3662,
+    "rate": 0.003,
+    "repair_decisions": 0
+  },
+  "explanation": {
+    "items_with": 3662,
+    "avg_chars": 180.5
+  },
+  "mcq_answer_position": {
+    "published_mcq": 294,
+    "positions": {
+      "1": 71,
+      "2": 74,
+      "3": 75,
+      "4": 74
+    }
+  },
+  "throughput": [],
+  "projection": {
+    "label": "projection",
+    "lessons_total": 10102,
+    "measured_runs": [],
+    "available": false,
+    "reason": "no measured generation run with accepted items, lessons and wall time (run manifests need a throughput block)"
+  }
+}

@@ -12,7 +12,7 @@ import {
   displaySeed, displayView, exportBatches, languageNeed, main as exchangeMain, planSampling, readResponse, resolverNeed, sampled, toCanonical,
 } from "../../scripts/content/exchange.mjs";
 import {
-  addPrimaryRecords, main as resolveMain, resolveQuestion,
+  addPrimaryRecords, evidenceOverlaps, main as resolveMain, resolveQuestion,
 } from "../../scripts/content/resolve-validation.mjs";
 
 const REPO = resolve(__dirname, "../..");
@@ -246,6 +246,13 @@ describe("resolve-validation", () => {
     expect(rec.issues).toContainEqual({ code: "evidence_extractor", span: "overlap", suggestion: null });
     const [miss] = addPrimaryRecords(b, [primaryLine(b, ids.mcq)], { runId: VAL, spans: [{ question_id: q.id, revision: 1, spans: [{ pdf_page: 14, quote: "الأس يدل على عدد مرات ضرب" }] }], pages, evidence: store });
     expect(miss.support).toBe("unsupported");
+    // a short generator quote inside the extractor's longer span overlaps (both directions)
+    const short = "مح = 2 ل + 2 ض";
+    const qs = { ...q, source: { ...q.source, evidence: [{ pdf_page: 99, quote_sha256: sha256Hex(short), char_offsets: [0, 0], quote_kind: "fact" }] } };
+    const ev = { get: () => [{ question_id: q.id, revision: 1, pdf_page: 99, quote_sha256: sha256Hex(short), quote_kind: "fact", quote: short }] };
+    expect(evidenceOverlaps(qs, [{ pdf_page: 99, quote: "مح = ل + ل + ض + ض = 2 ل + 2 ض" }], { pages: null, evidence: ev })).toBe(false); // differs after «=»: not the same text
+    expect(evidenceOverlaps(qs, [{ pdf_page: 99, quote: "المحيط مح = 2 ل + 2 ض للمستطيل" }], { pages: null, evidence: ev })).toBe(true);
+    expect(evidenceOverlaps(qs, [{ pdf_page: 98, quote: "المحيط مح = 2 ل + 2 ض للمستطيل" }], { pages: null, evidence: ev })).toBe(false); // another page
     expect(() => addPrimaryRecords(b, [{ ...primaryLine(b, ids.mcq), revision: 2 }], { runId: VAL })).toThrow(/revision/);
     expect(() => addPrimaryRecords(b, [{ ...primaryLine(b, ids.mcq), run_id: "run-20260928-val-09" }], { runId: VAL })).toThrow(/run/);
     expect(() => addPrimaryRecords(b, [{ ...primaryLine(b, ids.mcq), blind_answer: { option_id: "o123456" } }], { runId: VAL })).toThrow(/display form/);

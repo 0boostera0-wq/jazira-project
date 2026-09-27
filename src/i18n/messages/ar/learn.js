@@ -99,7 +99,14 @@ const learn = {
       invalid_argument: "غير متاح",
     },
     reasonHint: {
-      insufficient_pool: "يحتاج إلى {required} سؤالًا مختلفًا، والمتاح حتى الآن {available}.",
+      insufficient_pool: {
+        zero: "لا يحتاج إلى أسئلة، والمتاح حتى الآن {available}.",
+        one: "يحتاج إلى سؤال واحد، والمتاح حتى الآن {available}.",
+        two: "يحتاج إلى سؤالين مختلفين، والمتاح حتى الآن {available}.",
+        few: "يحتاج إلى {count} أسئلة مختلفة، والمتاح حتى الآن {available}.",
+        many: "يحتاج إلى {count} سؤالًا مختلفًا، والمتاح حتى الآن {available}.",
+        other: "يحتاج إلى {count} سؤال مختلف، والمتاح حتى الآن {available}.",
+      },
       term_unverified: "لا تؤكّد الكتب الرسمية أيّ الدروس تتبع هذا الفصل الدراسي.",
     },
     guestNote: "لم تسجّل دخولك: تظهر النتيجة لكنها لا تُحفظ.",

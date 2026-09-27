@@ -39,6 +39,10 @@ describe("publishBlocker", () => {
     expect(P.publishBlocker(validated(base, { source: null, status: "candidate" }), s)).toBe("status candidate");
     expect(P.publishBlocker(validated(base, { source: null, validation: { ...base.validation, status: "validated", checked_revision: base.revision + 1 } }), s)).toBe("validation is for an older revision");
     expect(P.publishBlocker(validated(base, { source: { ...base.source, source_id: "nowhere" } }), s)).toBe("source nowhere is not registered");
+    const variant = validated(base, { source: null, variant: { kind: "template", template_id: "t-m1-math-0000000000", variant_no: 1, params: {} } });
+    expect(P.publishBlocker(variant, s, new Map([["t-m1-math-0000000000", { status: "review_required" }]]))).toBe("template t-m1-math-0000000000 is review_required");
+    expect(P.publishBlocker(variant, s, new Map([["t-m1-math-0000000000", { status: "validated" }]]))).toBe("ok");
+    expect(P.publishBlocker(variant, s, new Map())).toBe("template t-m1-math-0000000000 is missing");
   });
 });
 

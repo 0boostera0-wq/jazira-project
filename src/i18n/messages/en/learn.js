@@ -99,7 +99,10 @@ const learn = {
       invalid_argument: "Not available",
     },
     reasonHint: {
-      insufficient_pool: "Needs {required} distinct questions; {available} available so far.",
+      insufficient_pool: {
+        one: "Needs {count} question; {available} available so far.",
+        other: "Needs {count} distinct questions; {available} available so far.",
+      },
       term_unverified: "The official books don't confirm which lessons belong to this term.",
     },
     guestNote: "You're not signed in: results are shown but not saved.",

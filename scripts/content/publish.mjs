@@ -12,6 +12,7 @@
 //     (validation.checked_revision = revision);
 //   - dedup has classified it (dedup.class set) and it is not a duplicate of
 //     another item (no dedup.duplicate_of): the cluster canonical or UNIQUE;
+//   - a template variant's template is validated (or published);
 //   - its source may be published: no source (internal authored), a source of
 //     kind `internal`, or a source whose publish_policy is
 //     `derived_questions_allowed` (sources/registry.json). A policy of
@@ -27,12 +28,18 @@ import { pathToFileURL } from "node:url";
 import { DEFAULT_STAGING, isoNow, loadStaging, saveQuestions } from "./check-questions.mjs";
 
 /** "ok" or the reason an item cannot be published now. */
-export function publishBlocker(q, sources) {
+export function publishBlocker(q, sources, templates = null) {
   if (q.status !== "validated" && q.status !== "published") return `status ${q.status}`;
   if (q.validation?.status !== "validated") return `validation ${q.validation?.status}`;
   if (q.validation?.checked_revision !== null && q.validation?.checked_revision !== undefined && q.validation.checked_revision !== q.revision) return "validation is for an older revision";
   if (!q.dedup?.class) return "not deduplicated yet";
   if (q.dedup.duplicate_of) return `duplicate of ${q.dedup.duplicate_of}`;
+  // A variant is served only under a validated template (a preview can pass on
+  // its own numbers while its template is in review, e.g. T003).
+  if (q.variant?.kind === "template" && templates) {
+    const t = templates.get(q.variant.template_id);
+    if (!t || (t.status !== "validated" && t.status !== "published")) return `template ${q.variant.template_id} is ${t?.status ?? "missing"}`;
+  }
   const sid = q.source?.source_id ?? null;
   if (!sid) return "ok";
   const src = sources.get(sid);
@@ -47,7 +54,7 @@ export function publishBank(bank, { now }) {
   const noLonger = [];
   for (const q of bank.questions.values()) {
     if (q.status !== "validated" && q.status !== "published") continue;
-    const why = publishBlocker(q, bank.sources);
+    const why = publishBlocker(q, bank.sources, bank.templates);
     if (q.status === "published") {
       counts.already_published++;
       if (why !== "ok") {

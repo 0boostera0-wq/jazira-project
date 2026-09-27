@@ -91,3 +91,17 @@ describe("locale routing helpers", () => {
     expect(safeNextPath(undefined, "/x")).toBe("/x");
   });
 });
+
+describe("learn pool hint agrees with the number", () => {
+  it("uses the Arabic plural categories for the required count", async () => {
+    const [ar, en] = await Promise.all([loadMessages("ar", ["learn"]), loadMessages("en", ["learn"])]);
+    const ta = createTranslator("ar", ar, "learn");
+    const te = createTranslator("en", en, "learn");
+    const hint = (t, count) => t("entry.reasonHint.insufficient_pool", { count, available: "0" });
+    expect(hint(ta, 3)).toContain("أسئلة مختلفة");
+    expect(hint(ta, 12)).toContain("سؤالًا مختلفًا");
+    expect(hint(ta, 100)).toContain("سؤال مختلف");
+    expect(hint(ta, 1)).toContain("سؤال واحد");
+    expect(hint(te, 5)).toBe("Needs 5 distinct questions; 0 available so far.");
+  });
+});

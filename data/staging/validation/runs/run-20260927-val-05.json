@@ -1,0 +1,23 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260927-val-05",
+  "kind": "val",
+  "tool": "make-packets@1",
+  "packets_at": "2026-09-27T17:09:22Z",
+  "prompt_version": "validate.v1",
+  "scope": {
+    "subject": null,
+    "prep": null,
+    "lessons": 67,
+    "questions": 161
+  },
+  "counts": {
+    "packets": 161,
+    "pages": 293,
+    "missing_images": 0
+  },
+  "agents": {
+    "claude_subagent": "available",
+    "deepseek": "unavailable"
+  }
+}

@@ -1,0 +1,2353 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260927-var-03",
+  "kind": "var",
+  "generated_at": "2026-09-27T17:10:21Z",
+  "params": {
+    "seed": "sha256(template_id|revision) → sfc32",
+    "max_tries_per_variant": 1000,
+    "default_max_variants": 12,
+    "cap": 50,
+    "only": null
+  },
+  "inputs": [
+    {
+      "path": "question-variants/templates/middle/grade-1/math.jsonl",
+      "sha256": "a3579fda6e292a16958d05baea6c4f28880afb72a52a41b4568adc5727614577"
+    }
+  ],
+  "counts": {
+    "templates": 153,
+    "processed": 153,
+    "variants": 2121,
+    "shortfall": 0,
+    "failed_tuples": 0,
+    "invalid_templates": 0,
+    "warnings": 81
+  },
+  "templates": [
+    {
+      "template_id": "t-m1-math-0011a17a47",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 191,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 176,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-004337d175",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 308,
+      "duplicate_tuples": 7,
+      "constraint_rejects": 287,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-0145087803",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 244,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 228,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-028501cdc0",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 14,
+      "tries": 32,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 18,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-03d2871cbb",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 19,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-03d6d19740",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 48,
+      "duplicate_tuples": 8,
+      "constraint_rejects": 28,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-05321577e7",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 18,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 5,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-05f9f0205a",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 319,
+      "duplicate_tuples": 8,
+      "constraint_rejects": 296,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-09b922ec9a",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 20,
+      "tries": 24,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 4,
+      "check_failures": {},
+      "produced": 20,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-09d55f2ef8",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 221,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 209,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-0ccaafac53",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 628,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 616,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-0cfed6e3f7",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 1194,
+      "duplicate_tuples": 58,
+      "constraint_rejects": 1124,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-0dc569412d",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 58,
+      "duplicate_tuples": 2,
+      "constraint_rejects": 44,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-1090c99f92",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 20,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 5,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-10ae1ff68c",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 101,
+      "duplicate_tuples": 7,
+      "constraint_rejects": 82,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-13315c52ff",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 14,
+      "tries": 925,
+      "duplicate_tuples": 325,
+      "constraint_rejects": 586,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 14 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-17d7b7fae8",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 8,
+      "tries": 94,
+      "duplicate_tuples": 28,
+      "constraint_rejects": 58,
+      "check_failures": {},
+      "produced": 8,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 8 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-1c0d0456fc",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 16,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 1,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-1fa106de0d",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 28,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 15,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-1fb471b5fe",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 47,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 34,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-2024c19bab",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 208,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 192,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-2066591218",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 12,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-2238832a51",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 14,
+      "tries": 871,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 854,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 14 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-22796401e3",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 16,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 1,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-238ef49abe",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 43,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 28,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-2504b1c790",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 61,
+      "duplicate_tuples": 29,
+      "constraint_rejects": 16,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-2685968270",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 126,
+      "duplicate_tuples": 10,
+      "constraint_rejects": 102,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 14 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-2808203ba6",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 114,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 99,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-2ce72c469c",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 362,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 346,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-2e57aa4967",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 10,
+      "tries": 230,
+      "duplicate_tuples": 110,
+      "constraint_rejects": 110,
+      "check_failures": {},
+      "produced": 10,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-30ee9b28e7",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 110,
+      "duplicate_tuples": 10,
+      "constraint_rejects": 85,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-343e5c3703",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 20,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 5,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-34ef6139cd",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 112,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 97,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-36caa8f448",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 20,
+      "duplicate_tuples": 6,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-39fd213350",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 12,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-3b61204ca4",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 1254,
+      "duplicate_tuples": 63,
+      "constraint_rejects": 1176,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-3fb2d957fd",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 30,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 16,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-42fe0b2340",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 17,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 2,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-4438f6640a",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 20,
+      "tries": 20,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 20,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-460a337b0f",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 481,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 463,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-4966ba5e60",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 20,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 5,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-4a39ac495c",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 15,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-4b44475a16",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 30,
+      "duplicate_tuples": 18,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-4b5261a606",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 15,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-4bc7fa5bd8",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 1167,
+      "duplicate_tuples": 7,
+      "constraint_rejects": 1148,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-4cf4767a2a",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 19,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 4,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-4e793bf802",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 13,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-4ed9bb4a6f",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 51,
+      "duplicate_tuples": 5,
+      "constraint_rejects": 31,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-50ce1871c9",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 20,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 5,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-5168c830e1",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 63,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 50,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-5175b6c124",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 21,
+      "duplicate_tuples": 5,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-522f696f89",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 43,
+      "duplicate_tuples": 11,
+      "constraint_rejects": 18,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 14 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-52ab5f560d",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 17,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 2,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-54ba051e49",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 753,
+      "duplicate_tuples": 60,
+      "constraint_rejects": 677,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-57a5adc18c",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 294,
+      "duplicate_tuples": 7,
+      "constraint_rejects": 275,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-5c2856f557",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 591,
+      "duplicate_tuples": 17,
+      "constraint_rejects": 559,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-60548fac4c",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 107,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 92,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-619fbf0510",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 195,
+      "duplicate_tuples": 16,
+      "constraint_rejects": 164,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-66fc551219",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 8,
+      "tries": 18,
+      "duplicate_tuples": 10,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 8,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 8 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-67266f0d43",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 15,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-68f4abf205",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 14,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 2,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-6a99c4e7b9",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 13,
+      "tries": 142,
+      "duplicate_tuples": 73,
+      "constraint_rejects": 56,
+      "check_failures": {},
+      "produced": 13,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-6b55e9667d",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 18,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 3,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-6cf42ad089",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 132,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 117,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-704d6967f5",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 15,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-78119c00fa",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 16,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 4,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-7b9bc42a89",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 528,
+      "duplicate_tuples": 11,
+      "constraint_rejects": 505,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-7c69475384",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 468,
+      "duplicate_tuples": 85,
+      "constraint_rejects": 371,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-7cd439975d",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 237,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 221,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-7cfc53cfe3",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 10,
+      "tries": 10,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 10,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-7d27cb6c96",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 1137,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 1122,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-7d57d4e1ca",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 14,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-7d9c7fe9b7",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 24,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 7,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-7dfa348ebe",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 69,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 57,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-7ebf8721ab",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 13,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-80f00df21a",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 12,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-816090100d",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 10,
+      "tries": 259,
+      "duplicate_tuples": 165,
+      "constraint_rejects": 84,
+      "check_failures": {},
+      "produced": 10,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 10 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-83202af8cd",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 201,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 186,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-86ae1a370c",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 24,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 8,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-87f4708182",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 29,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 13,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-885c585e8d",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 22,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 9,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-89d7993071",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 16,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-8c9d4c82de",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 104,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 89,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-8fac252229",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 21,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 9,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-92a5086b7e",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 474,
+      "duplicate_tuples": 15,
+      "constraint_rejects": 443,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-946cf5b5de",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 17,
+      "duplicate_tuples": 4,
+      "constraint_rejects": 1,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-94ae1971b7",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 15,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-95e135aaaa",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 200,
+      "duplicate_tuples": 48,
+      "constraint_rejects": 137,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-9680777c60",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 41,
+      "duplicate_tuples": 29,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-9a46a86414",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 16,
+      "tries": 19,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-9a4ea8a151",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 214,
+      "duplicate_tuples": 28,
+      "constraint_rejects": 171,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-9c05061889",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 47,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 31,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-9c63e9463c",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 320,
+      "duplicate_tuples": 7,
+      "constraint_rejects": 298,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-9cccfb43a9",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 10,
+      "tries": 134,
+      "duplicate_tuples": 36,
+      "constraint_rejects": 88,
+      "check_failures": {},
+      "produced": 10,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 10 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-9cfd3666cc",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 318,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 302,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-9d3cc1b87d",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 15,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-9d4529091e",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 16,
+      "tries": 25,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 9,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-9e36cfcd1e",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 472,
+      "duplicate_tuples": 288,
+      "constraint_rejects": 172,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-9e8b85e497",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 357,
+      "duplicate_tuples": 7,
+      "constraint_rejects": 335,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-a1b4dbc6c8",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 1083,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 1071,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-a4bd87484d",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 93,
+      "duplicate_tuples": 13,
+      "constraint_rejects": 64,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-a4d06ed725",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 788,
+      "duplicate_tuples": 82,
+      "constraint_rejects": 692,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 14 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-a66dff6a01",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 158,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 143,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-a6f3c172a1",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 108,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 96,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-a6f3d42a46",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 26,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 10,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-a92b33714d",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 34,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 17,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-a96a82742c",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 136,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 124,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-abd23a0308",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 18,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 6,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-acf4708811",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 19,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 4,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-ad905d1c81",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 22,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 6,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-ae4993c60b",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 239,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 224,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-afe932cfa5",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 16,
+      "tries": 18,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 2,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-b0189933e3",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 16,
+      "tries": 65,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 49,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-b0dd538103",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 19,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 1,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-b664132586",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 252,
+      "duplicate_tuples": 5,
+      "constraint_rejects": 232,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-b6bb3006a7",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 15,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-b933178488",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 14,
+      "tries": 14,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 14 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-baa6a6ea5f",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 13,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-bb666f19a3",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 16,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 2,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 14 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-bc98de9bba",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 3040,
+      "duplicate_tuples": 38,
+      "constraint_rejects": 2987,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-c28364b5db",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 238,
+      "duplicate_tuples": 10,
+      "constraint_rejects": 216,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-c37bb4e69e",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 129,
+      "duplicate_tuples": 10,
+      "constraint_rejects": 104,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-c38d8ae410",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 12,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-c57cf4041d",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 222,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 207,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-c5c498c5b9",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 76,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 60,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-c6367a8519",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 207,
+      "duplicate_tuples": 12,
+      "constraint_rejects": 180,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-c9f6ad1285",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 32,
+      "duplicate_tuples": 16,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-cafadd8fa7",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 58,
+      "duplicate_tuples": 26,
+      "constraint_rejects": 20,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-cc21487d55",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 157,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 141,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-cf884c14f7",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 145,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 130,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-d14bc6e521",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 127,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 109,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-d767caa3a3",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 825,
+      "duplicate_tuples": 61,
+      "constraint_rejects": 752,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-d7c1057ae7",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 31,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 16,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-dbee98d8d8",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 145,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 130,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-dc821b98db",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 13,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 1,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-dd67cf5588",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 16,
+      "tries": 35,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 19,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-debd9916ac",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 71,
+      "duplicate_tuples": 26,
+      "constraint_rejects": 30,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-e0d02a9c89",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 10,
+      "tries": 24,
+      "duplicate_tuples": 14,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 10,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-e7c2470af0",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 795,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 780,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-e904f326c5",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 429,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 414,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-eb63c9dee6",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 8,
+      "tries": 26,
+      "duplicate_tuples": 10,
+      "constraint_rejects": 8,
+      "check_failures": {},
+      "produced": 8,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-ec142fa6b8",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 1572,
+      "duplicate_tuples": 368,
+      "constraint_rejects": 1190,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-eeef2da97b",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 1501,
+      "duplicate_tuples": 25,
+      "constraint_rejects": 1461,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-efa3fa9ee2",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 552,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 539,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-f151ee2158",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 16,
+      "tries": 23,
+      "duplicate_tuples": 7,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-f48fadb46a",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 14,
+      "tries": 16,
+      "duplicate_tuples": 1,
+      "constraint_rejects": 1,
+      "check_failures": {},
+      "produced": 14,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 1 in all 14 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-f787597eb3",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 60,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 48,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-f8ca253799",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 866,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 854,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0
+    },
+    {
+      "template_id": "t-m1-math-f8d605cba4",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 16,
+      "tries": 91,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 75,
+      "check_failures": {},
+      "produced": 16,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 16 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-fb47f74f2b",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 15,
+      "tries": 44,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 29,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 4 in all 15 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-fbeb201e7f",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 12,
+      "tries": 12,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 0,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 3 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-fe97fbdd60",
+      "revision": 1,
+      "status": "validated",
+      "max_variants": 12,
+      "tries": 1442,
+      "duplicate_tuples": 3,
+      "constraint_rejects": 1427,
+      "check_failures": {},
+      "produced": 12,
+      "shortfall": 0,
+      "warnings": [
+        {
+          "code": "answer_position_constant",
+          "detail": "answer is option 2 in all 12 variants"
+        }
+      ]
+    },
+    {
+      "template_id": "t-m1-math-ffadad0389",
+      "revision": 1,
+      "status": "review_required",
+      "max_variants": 15,
+      "tries": 16,
+      "duplicate_tuples": 0,
+      "constraint_rejects": 1,
+      "check_failures": {},
+      "produced": 15,
+      "shortfall": 0
+    }
+  ],
+  "errors": []
+}

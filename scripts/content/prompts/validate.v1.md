@@ -79,3 +79,9 @@ objective and pages, never the question. Return the span that supports the
 objective as one JSON line to its `output`:
 `{ "question_id": "<id>", "revision": 1, "spans": [{ "pdf_page": 14, "quote": "…" }] }`
 (each quote ≤ 200 chars, copied exactly from the page text or the image).
+
+A packet with a `claim` (the item's stem and its correct answer; used when the
+lesson has no objectives) asks for the span that states or directly supports
+that claim instead. You still never see the generator's evidence. If nothing on
+the listed pages supports the claim, write `"spans": []`: never invent a
+quote.

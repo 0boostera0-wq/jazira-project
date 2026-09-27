@@ -55,7 +55,7 @@ export default function ExamEntryPoints({ primary = [], related = [], titleId = 
     const disabled = !offer?.offered;
     const reason = disabled ? offer?.reason || "insufficient_pool" : null;
     const hint = reason && (reason === "insufficient_pool" || reason === "term_unverified")
-      ? t(`entry.reasonHint.${reason}`, { required: formatNumber(offer?.required ?? 0, locale), available: formatNumber(offer?.available ?? 0, locale) })
+      ? t(`entry.reasonHint.${reason}`, { count: offer?.required ?? 0, available: formatNumber(offer?.available ?? 0, locale) })
       : null;
     const errId = `${titleId}-${e.key.replace(/[^a-z0-9-]/gi, "-")}-err`;
     return (

@@ -6,16 +6,16 @@
     {
       "path": "curriculum/audit.jsonl",
       "schema": "curriculum-audit@1",
-      "sha256": "936f14845ae8e645f9172298acfdbe2e48e3970e2a2c085e5e4939a2bf25a233",
-      "lines": 50,
-      "bytes": 12235
+      "sha256": "73f462a2e8fe6e2c1685ec4e106e27ebaab8b8dbe7a77f5e3631f57ce8816f14",
+      "lines": 85,
+      "bytes": 20134
     },
     {
       "path": "curriculum/id-registry.jsonl",
       "schema": "id-registry@1",
-      "sha256": "04276eb12ff67b61043303b198134a10a1f3b1bf811d7943c8cf628452b255ec",
-      "lines": 14,
-      "bytes": 3220
+      "sha256": "fbf0348dfa53af610ab9c96b72c72f8bf0279588420db2bb788c7f4f4e18c705",
+      "lines": 20,
+      "bytes": 4609
     },
     {
       "path": "curriculum/ien-mapping.json",
@@ -167,9 +167,9 @@
     {
       "path": "curriculum/nodes/middle/grade-1.jsonl",
       "schema": "curriculum-node@1",
-      "sha256": "93caf3f3feed33b2e0d529ca26829446e53444b992d9a8847fd5da6efb9da0b5",
-      "lines": 847,
-      "bytes": 453068
+      "sha256": "1c4b705bbccd96d108fcac0ddebdbcf3c4a1e1a372131b649e92f19ee6a19cf7",
+      "lines": 853,
+      "bytes": 470558
     },
     {
       "path": "curriculum/nodes/middle/grade-2.jsonl",
@@ -200,6 +200,13 @@
       "bytes": 79362
     },
     {
+      "path": "exams/blueprints/prep.jsonl",
+      "schema": "exam-blueprint@1",
+      "sha256": "c1e4cbb2eda19ffd06e6394501dddecd7210956951cabc7836f049c38c23b910",
+      "lines": 167,
+      "bytes": 183867
+    },
+    {
       "path": "exams/templates.json",
       "schema": "exam-template@1",
       "sha256": "a30dc1ffb842cf3def4d515c8c13dd46d794a182b3d486260436c8eda8ac277a",
@@ -207,95 +214,200 @@
       "bytes": 15651
     },
     {
+      "path": "question-variants/middle/grade-1/math.p01.jsonl",
+      "schema": "question@1",
+      "sha256": "8810a79800568d079e858d8c09fc81494eba54782fed880bd779d427c4417f63",
+      "lines": 1432,
+      "bytes": 4193773
+    },
+    {
+      "path": "question-variants/middle/grade-1/math.p02.jsonl",
+      "schema": "question@1",
+      "sha256": "334988a3d08cc562275c803402afd2949d013c4f1e02cae4ef987dd07495f392",
+      "lines": 689,
+      "bytes": 2005446
+    },
+    {
+      "path": "question-variants/templates/middle/grade-1/math.jsonl",
+      "schema": "question-template@1",
+      "sha256": "a3579fda6e292a16958d05baea6c4f28880afb72a52a41b4568adc5727614577",
+      "lines": 153,
+      "bytes": 422564
+    },
+    {
+      "path": "questions/middle/grade-1/math.jsonl",
+      "schema": "question@1",
+      "sha256": "a1e3d148de9de8c961ac10313cf1834d914c43d735f332f7a360ae7367b6ccc5",
+      "lines": 851,
+      "bytes": 2692457
+    },
+    {
+      "path": "questions/middle/grade-1/science.jsonl",
+      "schema": "question@1",
+      "sha256": "7683b78da434bde410ea1f363e3e78c6657f0f293b3cb53c20d037df71ad9d52",
+      "lines": 390,
+      "bytes": 1437920
+    },
+    {
+      "path": "questions/prep/achievement-biology.jsonl",
+      "schema": "question@1",
+      "sha256": "79f672e1176b0695e9a8e5c41b49cf7336f8366083dcd3e649df55e111df428f",
+      "lines": 40,
+      "bytes": 90730
+    },
+    {
+      "path": "questions/prep/achievement-chemistry.jsonl",
+      "schema": "question@1",
+      "sha256": "4e958aa5a3669c50edba1526855132b48b6b26b8c622d0c5abf5e439db7a90fe",
+      "lines": 40,
+      "bytes": 82725
+    },
+    {
+      "path": "questions/prep/achievement-math.jsonl",
+      "schema": "question@1",
+      "sha256": "df2cfa2720e611a5151600443264d80d44d25f0f1b3ac9fcbe7cfa347672b7d7",
+      "lines": 40,
+      "bytes": 73152
+    },
+    {
+      "path": "questions/prep/achievement-physics.jsonl",
+      "schema": "question@1",
+      "sha256": "a6bebe043dd15a6d20f945384acc3211a6274142afe760f77b5e162624b9503d",
+      "lines": 40,
+      "bytes": 81349
+    },
+    {
+      "path": "questions/prep/aptitude-quantitative.jsonl",
+      "schema": "question@1",
+      "sha256": "57a4858b7245d3ee076ea036186c944ee6db4bd4ba56e2beb0d9e5e15eaf30a2",
+      "lines": 80,
+      "bytes": 148472
+    },
+    {
+      "path": "questions/prep/aptitude-verbal.jsonl",
+      "schema": "question@1",
+      "sha256": "37b3db894d926a8c1d4cb4efb4c4a5192660583265023310b2da362616dcc813",
+      "lines": 60,
+      "bytes": 126242
+    },
+    {
+      "path": "questions/stimuli/middle/grade-1/math.jsonl",
+      "schema": "stimulus@1",
+      "sha256": "c1e4c83d1d613b2a7afd2b8e691eace8ce39faf47ea45311573b4724313105b3",
+      "lines": 50,
+      "bytes": 15306
+    },
+    {
+      "path": "questions/stimuli/middle/grade-1/science.jsonl",
+      "schema": "stimulus@1",
+      "sha256": "eb0dd5c81f249a313b4df7a64f39d29b17911baa4fbf4d832318f27ec43f3b96",
+      "lines": 9,
+      "bytes": 3751
+    },
+    {
+      "path": "questions/stimuli/prep/aptitude-verbal.jsonl",
+      "schema": "stimulus@1",
+      "sha256": "78669ddb8d2b282f5c4ada8e5929a783fdb1c7d2c134dcac919f7cae008ebfdb",
+      "lines": 5,
+      "bytes": 5826
+    },
+    {
+      "path": "resources/exercise-index/ien-120606.jsonl",
+      "schema": "exercise-index@1",
+      "sha256": "6925ff9264714e6b75206f487ca617d4aeced8b38602705f6e640233c2c028b5",
+      "lines": 3,
+      "bytes": 445
+    },
+    {
       "path": "resources/exercise-index/ien-120607.jsonl",
       "schema": "exercise-index@1",
-      "sha256": "590283c44de3e7b228076d92b019a33d601f003af8f96d6a5110996c21a43d6d",
-      "lines": 75,
-      "bytes": 11204
+      "sha256": "f3d7fb11c0cf8fb3288d2ac63d1290dbdf6ec878a979cb819681aeeba16297dd",
+      "lines": 90,
+      "bytes": 15271
     },
     {
       "path": "resources/exercise-index/ien-120617.jsonl",
       "schema": "exercise-index@1",
-      "sha256": "e1c77fd7d09cc8935854850c103c072a2828db6550444d3b07335179c3b8b6bd",
-      "lines": 2,
-      "bytes": 304
+      "sha256": "aec51568d66c95728b6eca263874b025b40d4780438c3d64d25ffa3607ac0c0c",
+      "lines": 18,
+      "bytes": 2959
     },
     {
       "path": "resources/exercise-index/ien-121330.jsonl",
       "schema": "exercise-index@1",
-      "sha256": "a0695bdc32671e02cdcc93d8d7f4d3617ff55dfc1cd79ea5fbb91c614ae71131",
-      "lines": 4,
-      "bytes": 598
+      "sha256": "8b40568b7c9c008bacdf1005f327f8a50bead1837b1353c1d7310c6533d2aedb",
+      "lines": 32,
+      "bytes": 5278
     },
     {
       "path": "resources/exercise-index/ien-121390.jsonl",
       "schema": "exercise-index@1",
-      "sha256": "11071e1d721dfff4b246f50e4cb9df68611f22c39832017ccbbe203daddb8577",
-      "lines": 1,
-      "bytes": 145
+      "sha256": "5c7dc5646c490717cfc66e72b8127c122c1ab52e90db83036fc84bf3f2676f78",
+      "lines": 8,
+      "bytes": 1182
     },
     {
       "path": "resources/exercise-index/ien-121391.jsonl",
       "schema": "exercise-index@1",
-      "sha256": "8801ce6cdb9aef5e97f57a112b7cb122abf57c7def6172a06a16c356f56debd5",
-      "lines": 58,
-      "bytes": 9308
+      "sha256": "a9343ed8b7bb731f726c26b3ccfaa62210f09499b68d2a2a0576d9ce63654f02",
+      "lines": 341,
+      "bytes": 61072
     },
     {
       "path": "resources/extraction.jsonl",
       "schema": "extraction@1",
-      "sha256": "ee9b3c66c0c8721cccdbffaa630faf987ba9c57a2ddbcc5f384ff9146614f4f2",
+      "sha256": "412ee0034dc7401959ace5382b1927dcabe5a052d22f8a0d1c6c2471ae4a1a40",
       "lines": 6,
-      "bytes": 2514
+      "bytes": 2520
     },
     {
       "path": "resources/page-maps/ien-120606.jsonl",
       "schema": "page-map@1",
-      "sha256": "f5a5fca20ef34febb0ae0ec358d77a2487b3d171c20b40939f2f0c92f55c68bb",
+      "sha256": "44524803994f2200825506f02afb2c78780e12d770a0f10b60bbd9c8389a33aa",
       "lines": 234,
-      "bytes": 98945
+      "bytes": 103489
     },
     {
       "path": "resources/page-maps/ien-120607.jsonl",
       "schema": "page-map@1",
-      "sha256": "417098dc895925721dc3bf0c7f5f3e84f994404064eaa20f30f43f1e5799b63e",
+      "sha256": "9ea262cc501c38306377a12edb79cf64d3e8bec59385aa2b77da7fea0c625bdf",
       "lines": 183,
-      "bytes": 107264
+      "bytes": 108743
     },
     {
       "path": "resources/page-maps/ien-120617.jsonl",
       "schema": "page-map@1",
-      "sha256": "5c43265d186f56cc20265388ef6ae19ac204adcf516791ad5686306e094bd86f",
+      "sha256": "691b936706bccb5d8bd18bead1ac3a6cabba7e53947e7b9efc0b81858ec65458",
       "lines": 226,
-      "bytes": 80492
+      "bytes": 105846
     },
     {
       "path": "resources/page-maps/ien-121330.jsonl",
       "schema": "page-map@1",
-      "sha256": "c156eac3a59c96d922b802d5cf0a436295d4d36dd36a5745069c1014d058cccc",
+      "sha256": "c2873c332cf215ddab03759c1d28e339d66b6bb9f869ac9bfee3e04166df35b5",
       "lines": 228,
-      "bytes": 78393
+      "bytes": 104711
     },
     {
       "path": "resources/page-maps/ien-121390.jsonl",
       "schema": "page-map@1",
-      "sha256": "9033c2825499ed01d4bbd0701f9854a2844fb003ea10809b1feab292b51620b0",
+      "sha256": "fbe7b6e19a063b4029e3fb448ef94bca25f6943f4107f035a1b3728f662a49e8",
       "lines": 242,
-      "bytes": 110481
+      "bytes": 109245
     },
     {
       "path": "resources/page-maps/ien-121391.jsonl",
       "schema": "page-map@1",
-      "sha256": "a7b980aebdb934a998f78ea07524b63ff0fd272d11d62e0dec44d37065e7a5c6",
+      "sha256": "b5652c3d0bb4960bc39577a3352fef649ad930a69606f412be52401b94a74874",
       "lines": 201,
-      "bytes": 114763
+      "bytes": 94967
     },
     {
       "path": "resources/resources.jsonl",
       "schema": "resource@1",
-      "sha256": "d8791b394d10f85b14f8b65db0431ed9fb95b7f35072adca2759a519248b160c",
+      "sha256": "dcba7b02ca04cfa428d86399ad66346401f4ecd75e133f8418ac7e618fd98e2f",
       "lines": 584,
-      "bytes": 736137
+      "bytes": 736134
     },
     {
       "path": "resources/term-evidence.jsonl",
@@ -307,44 +419,44 @@
     {
       "path": "resources/toc/ien-120606.json",
       "schema": "toc@1",
-      "sha256": "5602599f51ab0b8ce3648b0a192783145754d2b46b72b3a1283731030eb6868a",
+      "sha256": "3bcc7a6cac875a32d9c2c7ba59a61c9a256eaf0961b8b0cd57d3477441464e5f",
       "lines": 1,
-      "bytes": 179
+      "bytes": 9489
     },
     {
       "path": "resources/toc/ien-120607.json",
       "schema": "toc@1",
-      "sha256": "19ce3bdd943aabc34fa41502b12416a9103eb7ce1541d1d5d9cc441c94fd7e51",
+      "sha256": "9b2ec4b7c222e2faff8dce427721a941d9dea5f73cd781570786987fe5f53643",
       "lines": 1,
-      "bytes": 193
+      "bytes": 15196
     },
     {
       "path": "resources/toc/ien-120617.json",
       "schema": "toc@1",
-      "sha256": "0ad4f1f97ea970d57d6f63bbab9b55e00511e776d9654648b2c02349bf1a2047",
+      "sha256": "65815549e3f56e6374e56c2ee023df5a43c32cd181ab245ee24081418d76ece3",
       "lines": 1,
-      "bytes": 179
+      "bytes": 14414
     },
     {
       "path": "resources/toc/ien-121330.json",
       "schema": "toc@1",
-      "sha256": "ebabf98986f4a9670a773afae68eb820aed4be35e9b503ea220bdc698dbf73b1",
+      "sha256": "527759917acfab923c0a43e1f31c9f0014af9ad75dbf5ee9309d6c670319de8c",
       "lines": 1,
-      "bytes": 179
+      "bytes": 14871
     },
     {
       "path": "resources/toc/ien-121390.json",
       "schema": "toc@1",
-      "sha256": "23925e8b8eef712e5f70a64ec515c64c5a2f0a7fadbaf8b08050ed2d27a89065",
+      "sha256": "4dea8ec312606d925d36425c6423628882db83ebb8485569b4b8ee83254b3e0c",
       "lines": 1,
-      "bytes": 179
+      "bytes": 9129
     },
     {
       "path": "resources/toc/ien-121391.json",
       "schema": "toc@1",
-      "sha256": "348a170771b78f4cf3c4a6b6c8c39104606d686871ad98dce30d10043e7874c9",
+      "sha256": "e4badd3f232a6949c10affcda1183e3b34ef406801ca0cd5efecc8c2f2b6426f",
       "lines": 1,
-      "bytes": 5529
+      "bytes": 17500
     },
     {
       "path": "sources/ien/book-frontmatter.jsonl",
@@ -403,18 +515,549 @@
       "bytes": 3681
     },
     {
+      "path": "validation/dedup-clusters.jsonl",
+      "schema": "dedup-cluster@1",
+      "sha256": "40f14ca0024c423d425d2f76dd96dc19656d2d42e792841d92fdf31b78851674",
+      "lines": 339,
+      "bytes": 166638
+    },
+    {
+      "path": "validation/records/middle/grade-1/math.p01.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "fb42595a222f7f919b69114f9859f0fb1ef43e8b8ec85881be08fbc0da3072e2",
+      "lines": 2208,
+      "bytes": 4193196
+    },
+    {
+      "path": "validation/records/middle/grade-1/math.p02.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "e73aaf845f8653de96dab1e6696ee83f8c8d2d3c6d1b790bcd085638bbe8f846",
+      "lines": 1552,
+      "bytes": 1331540
+    },
+    {
+      "path": "validation/records/middle/grade-1/science.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "ceaedff2ecb5556c0bac9ca62c8a21e6742b61ab991d8524ce171a3e2be0dc57",
+      "lines": 1019,
+      "bytes": 1555435
+    },
+    {
+      "path": "validation/records/prep/achievement-biology.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "af1a2e2c659f7c11a73d84a5ee7c2658facf6d190d5d32bade1efa42e59007bb",
+      "lines": 120,
+      "bytes": 155789
+    },
+    {
+      "path": "validation/records/prep/achievement-chemistry.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "8a537fe6b17d384cbaf8db30834c11b9726093180d5c617d348021f5d0f055bc",
+      "lines": 129,
+      "bytes": 155040
+    },
+    {
+      "path": "validation/records/prep/achievement-math.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "b12543e9ba4b65816940d5007530972e934eee79cb34fa5a96471a3877391f4c",
+      "lines": 125,
+      "bytes": 151410
+    },
+    {
+      "path": "validation/records/prep/achievement-physics.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "5ef56b7da1e8904777c9c5d549636f00cc99aa61f96cafdef7ab14856fb74187",
+      "lines": 132,
+      "bytes": 157385
+    },
+    {
+      "path": "validation/records/prep/aptitude-quantitative.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "984bd8400472cf55e711ca7f44105a3d5abb70acfe251fe1ee4d78a661efb022",
+      "lines": 253,
+      "bytes": 293995
+    },
+    {
+      "path": "validation/records/prep/aptitude-verbal.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "08620793228613b13c04d70591d0cfa9d49d931970ff4f8830908e248de35a39",
+      "lines": 219,
+      "bytes": 253956
+    },
+    {
+      "path": "validation/review-queue.jsonl",
+      "schema": "review-queue@1",
+      "sha256": "473cbe9df75fd62a971e9464c7725ced307c69dd35a4ae3b80d6f5d6e5787db6",
+      "lines": 120,
+      "bytes": 36489
+    },
+    {
       "path": "validation/runs/run-20260926-extract-01.json",
       "schema": "run-manifest@1",
       "sha256": "510191d2a3854df0afd6b043c5fc7a68b8524c5b27fbfcebc11a46c060816158",
       "lines": 1,
       "bytes": 637
+    },
+    {
+      "path": "validation/runs/run-20260927-check-01.json",
+      "schema": "run-manifest@1",
+      "sha256": "1ac7abecdfa22120b97d0155aeee5843164af8e0554eeb9ee61023e1064bdf00",
+      "lines": 1,
+      "bytes": 533
+    },
+    {
+      "path": "validation/runs/run-20260927-check-02.json",
+      "schema": "run-manifest@1",
+      "sha256": "cb075340392a94b65c31d30e3551a039411661d0745c90a1a36f764a57c5318d",
+      "lines": 1,
+      "bytes": 2279
+    },
+    {
+      "path": "validation/runs/run-20260927-check-03.json",
+      "schema": "run-manifest@1",
+      "sha256": "9110c8642b1def16e46d2798cfb4c2556016a0a34c16619cf2cba3f4e2f4342a",
+      "lines": 1,
+      "bytes": 1489
+    },
+    {
+      "path": "validation/runs/run-20260927-check-04.json",
+      "schema": "run-manifest@1",
+      "sha256": "e56c3c3f7098f29b5cb7f38627420cb6efdf6bb932f3dc570715054198faef44",
+      "lines": 1,
+      "bytes": 895
+    },
+    {
+      "path": "validation/runs/run-20260927-check-05.json",
+      "schema": "run-manifest@1",
+      "sha256": "8ead1f211772e8daa1120eb582c4847fa18b5d15494ac7844321a4de801870ae",
+      "lines": 1,
+      "bytes": 853
+    },
+    {
+      "path": "validation/runs/run-20260927-check-06.json",
+      "schema": "run-manifest@1",
+      "sha256": "dbfbc9b88c17196cc7d4e4982ea23312c351c9d47c165eec0fcb874dc3c1dea1",
+      "lines": 1,
+      "bytes": 773
+    },
+    {
+      "path": "validation/runs/run-20260927-check-07.json",
+      "schema": "run-manifest@1",
+      "sha256": "c98feffa32a47bdd1dc07fe4bbdd245b1e9dcc125daa99a98140b593458911d4",
+      "lines": 1,
+      "bytes": 883
+    },
+    {
+      "path": "validation/runs/run-20260927-check-08.json",
+      "schema": "run-manifest@1",
+      "sha256": "38e3e4037a8142901292917bc99ac23a3b8b82de7054cf9c3e244716c3c3981e",
+      "lines": 1,
+      "bytes": 775
+    },
+    {
+      "path": "validation/runs/run-20260927-dedup-01.json",
+      "schema": "run-manifest@1",
+      "sha256": "4e7fb1e7188ebbba70a8693d31a0b6d4b468a7a8c114376cf36a06e643ae5f94",
+      "lines": 1,
+      "bytes": 212289
+    },
+    {
+      "path": "validation/runs/run-20260927-gen-01.json",
+      "schema": "run-manifest@1",
+      "sha256": "5478abb4babd2795cd8a99cbca7039bf6863eefcb933634171c70b088d8aaed9",
+      "lines": 1,
+      "bytes": 676
+    },
+    {
+      "path": "validation/runs/run-20260927-val-01.json",
+      "schema": "run-manifest@1",
+      "sha256": "5705d51e127fc0053137e875aea22b082b3ed7e95b5dd142de23baa799ae28d1",
+      "lines": 1,
+      "bytes": 474
+    },
+    {
+      "path": "validation/runs/run-20260927-val-02.json",
+      "schema": "run-manifest@1",
+      "sha256": "c1c835c0a4c376c96aebf406c4905c53e7dcb1e9831517282b9478c94c40adba",
+      "lines": 1,
+      "bytes": 716
+    },
+    {
+      "path": "validation/runs/run-20260927-val-03.json",
+      "schema": "run-manifest@1",
+      "sha256": "2f934ab4982ec6ea55c3c0a683715409c462b14cb94bae2c31155cbf0f07cd24",
+      "lines": 1,
+      "bytes": 479
+    },
+    {
+      "path": "validation/runs/run-20260927-val-04.json",
+      "schema": "run-manifest@1",
+      "sha256": "8443cf893e5b6ac17b4f497c2f04c5c2c95ffe68f4b05ec6bf7ae76cf48dfc84",
+      "lines": 1,
+      "bytes": 727
+    },
+    {
+      "path": "validation/runs/run-20260927-val-05.json",
+      "schema": "run-manifest@1",
+      "sha256": "304c07813daf2dd65991117ffe4108733a1f39f73ab167783a7dbb006faed4ed",
+      "lines": 1,
+      "bytes": 451
+    },
+    {
+      "path": "validation/runs/run-20260927-var-01.json",
+      "schema": "run-manifest@1",
+      "sha256": "d75dc4031b9a8596d41fe15e0c395c086b209b2a40b5cff8e1f9b906ca26631b",
+      "lines": 1,
+      "bytes": 321
+    },
+    {
+      "path": "validation/runs/run-20260927-var-02.json",
+      "schema": "run-manifest@1",
+      "sha256": "0b2141d48cea75f968b19cefc8ba888889f936b27da6398e36e900dd29526215",
+      "lines": 1,
+      "bytes": 56972
+    },
+    {
+      "path": "validation/runs/run-20260927-var-03.json",
+      "schema": "run-manifest@1",
+      "sha256": "26b3104b60b75e628c0a3ef99a255bdaa4de52d8ebdc7976271c31724f1453e4",
+      "lines": 1,
+      "bytes": 57212
+    },
+    {
+      "path": "validation/runs/run-20260927-xval-01.json",
+      "schema": "run-manifest@1",
+      "sha256": "5ddb16516ccdefd6ba14c61fd851ba991c7c18cdfa8dc8fac28922915b0523b8",
+      "lines": 1,
+      "bytes": 802
+    },
+    {
+      "path": "validation/runs/run-20260927-xval-02.json",
+      "schema": "run-manifest@1",
+      "sha256": "55c200915844006429a9d7af61298fdc8956e02ca26276493ec0ec624209c330",
+      "lines": 1,
+      "bytes": 810
+    },
+    {
+      "path": "validation/runs/run-20260927-xval-03.json",
+      "schema": "run-manifest@1",
+      "sha256": "88116e137c962f96d0024dab5521c811042f727bacf84213861cfa7556fa7c55",
+      "lines": 1,
+      "bytes": 812
     }
   ],
   "totals": {
-    "files": 58,
-    "lines": 26877,
-    "bytes": 12252506
+    "files": 106,
+    "lines": 37559,
+    "bytes": 32810433
   },
-  "published": {},
+  "published": {
+    "questions/prep/achievement-biology.jsonl": [
+      "ab-001",
+      "ab-002",
+      "ab-003",
+      "ab-004",
+      "ab-005",
+      "ab-006",
+      "ab-007",
+      "ab-008",
+      "ab-009",
+      "ab-010",
+      "ab-011",
+      "ab-012",
+      "ab-013",
+      "ab-014",
+      "ab-015",
+      "ab-016",
+      "ab-017",
+      "ab-018",
+      "ab-019",
+      "ab-020",
+      "ab-021",
+      "ab-022",
+      "ab-023",
+      "ab-024",
+      "ab-025",
+      "ab-026",
+      "ab-028",
+      "ab-029",
+      "ab-030",
+      "ab-031",
+      "ab-032",
+      "ab-033",
+      "ab-034",
+      "ab-035",
+      "ab-036",
+      "ab-037",
+      "ab-038",
+      "ab-039",
+      "ab-040"
+    ],
+    "questions/prep/achievement-chemistry.jsonl": [
+      "ac-001",
+      "ac-002",
+      "ac-003",
+      "ac-004",
+      "ac-005",
+      "ac-006",
+      "ac-007",
+      "ac-008",
+      "ac-009",
+      "ac-010",
+      "ac-011",
+      "ac-012",
+      "ac-013",
+      "ac-014",
+      "ac-015",
+      "ac-016",
+      "ac-017",
+      "ac-018",
+      "ac-019",
+      "ac-021",
+      "ac-022",
+      "ac-023",
+      "ac-024",
+      "ac-025",
+      "ac-026",
+      "ac-027",
+      "ac-028",
+      "ac-029",
+      "ac-030",
+      "ac-031",
+      "ac-032",
+      "ac-033",
+      "ac-034",
+      "ac-035",
+      "ac-036",
+      "ac-037",
+      "ac-038",
+      "ac-039",
+      "ac-040"
+    ],
+    "questions/prep/achievement-math.jsonl": [
+      "am-001",
+      "am-002",
+      "am-003",
+      "am-004",
+      "am-005",
+      "am-006",
+      "am-007",
+      "am-008",
+      "am-009",
+      "am-010",
+      "am-011",
+      "am-012",
+      "am-013",
+      "am-014",
+      "am-016",
+      "am-017",
+      "am-018",
+      "am-019",
+      "am-020",
+      "am-021",
+      "am-022",
+      "am-023",
+      "am-024",
+      "am-025",
+      "am-026",
+      "am-027",
+      "am-028",
+      "am-029",
+      "am-030",
+      "am-031",
+      "am-032",
+      "am-033",
+      "am-034",
+      "am-035",
+      "am-036",
+      "am-037",
+      "am-038",
+      "am-039",
+      "am-040"
+    ],
+    "questions/prep/achievement-physics.jsonl": [
+      "ap-001",
+      "ap-002",
+      "ap-003",
+      "ap-004",
+      "ap-005",
+      "ap-006",
+      "ap-007",
+      "ap-008",
+      "ap-009",
+      "ap-010",
+      "ap-011",
+      "ap-012",
+      "ap-013",
+      "ap-014",
+      "ap-015",
+      "ap-016",
+      "ap-017",
+      "ap-018",
+      "ap-019",
+      "ap-020",
+      "ap-021",
+      "ap-022",
+      "ap-023",
+      "ap-024",
+      "ap-025",
+      "ap-026",
+      "ap-027",
+      "ap-028",
+      "ap-029",
+      "ap-030",
+      "ap-031",
+      "ap-032",
+      "ap-034",
+      "ap-035",
+      "ap-036",
+      "ap-037",
+      "ap-038",
+      "ap-039",
+      "ap-040"
+    ],
+    "questions/prep/aptitude-quantitative.jsonl": [
+      "aq-001",
+      "aq-002",
+      "aq-004",
+      "aq-005",
+      "aq-006",
+      "aq-008",
+      "aq-009",
+      "aq-010",
+      "aq-011",
+      "aq-012",
+      "aq-013",
+      "aq-014",
+      "aq-015",
+      "aq-016",
+      "aq-017",
+      "aq-018",
+      "aq-019",
+      "aq-020",
+      "aq-021",
+      "aq-022",
+      "aq-023",
+      "aq-024",
+      "aq-025",
+      "aq-026",
+      "aq-027",
+      "aq-028",
+      "aq-029",
+      "aq-030",
+      "aq-031",
+      "aq-032",
+      "aq-033",
+      "aq-034",
+      "aq-035",
+      "aq-036",
+      "aq-037",
+      "aq-038",
+      "aq-039",
+      "aq-040",
+      "aq-041",
+      "aq-042",
+      "aq-043",
+      "aq-044",
+      "aq-045",
+      "aq-046",
+      "aq-047",
+      "aq-048",
+      "aq-049",
+      "aq-050",
+      "aq-051",
+      "aq-052",
+      "aq-053",
+      "aq-054",
+      "aq-055",
+      "aq-056",
+      "aq-057",
+      "aq-058",
+      "aq-059",
+      "aq-060",
+      "aq-061",
+      "aq-062",
+      "aq-063",
+      "aq-064",
+      "aq-065",
+      "aq-066",
+      "aq-067",
+      "aq-068",
+      "aq-069",
+      "aq-070",
+      "aq-071",
+      "aq-072",
+      "aq-073",
+      "aq-074",
+      "aq-075",
+      "aq-076",
+      "aq-077",
+      "aq-078",
+      "aq-079",
+      "aq-080"
+    ],
+    "questions/prep/aptitude-verbal.jsonl": [
+      "av-001",
+      "av-002",
+      "av-003",
+      "av-004",
+      "av-005",
+      "av-006",
+      "av-007",
+      "av-008",
+      "av-009",
+      "av-010",
+      "av-011",
+      "av-012",
+      "av-013",
+      "av-014",
+      "av-015",
+      "av-016",
+      "av-017",
+      "av-018",
+      "av-019",
+      "av-020",
+      "av-021",
+      "av-022",
+      "av-023",
+      "av-024",
+      "av-025",
+      "av-026",
+      "av-027",
+      "av-028",
+      "av-029",
+      "av-030",
+      "av-031",
+      "av-032",
+      "av-033",
+      "av-034",
+      "av-035",
+      "av-036",
+      "av-037",
+      "av-038",
+      "av-039",
+      "av-040",
+      "av-041",
+      "av-042",
+      "av-043",
+      "av-044",
+      "av-045",
+      "av-046",
+      "av-047",
+      "av-048",
+      "av-049",
+      "av-050",
+      "av-051",
+      "av-052",
+      "av-053",
+      "av-054",
+      "av-055",
+      "av-056",
+      "av-057",
+      "av-058",
+      "av-059",
+      "av-060"
+    ]
+  },
   "removed": []
 }

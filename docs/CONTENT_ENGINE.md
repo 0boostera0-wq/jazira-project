@@ -2292,8 +2292,11 @@ gaps, the commit hash) are listed in the final report on the branch.
       assistance and validated (without naming a provider);
     - the separate `practice` daily quota (30/day free).
 12. **Middle-1 Arabic has no lesson → page mapping** (0 of 91 lessons): the
-    book's table of contents is organized by skill strands inside units,
-    not by the iEN lesson titles, so the TOC matcher finds no pages. No
+    book's table of contents is a grid (units as columns; a row of section
+    titles such as «نصوص الوحدة», «الاستماع» followed by a «ص» row of page
+    numbers), while the TOC matcher reads one entry per line, so it pairs
+    titles with the wrong numbers and maps no lesson. Fix: a grid-aware TOC
+    parser (column-aligned title and page rows), then generation. No
     Arabic questions are generated until a mapping (owner- or
     agent-audited, with evidence) exists; nothing is guessed.
 13. **The Gemini language review is lenient.** In the 2026-09-27 pilot it

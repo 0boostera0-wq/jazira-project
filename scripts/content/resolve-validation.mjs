@@ -111,6 +111,8 @@ export function evidenceOverlaps(q, spans, { pages, evidence }) {
         const t = matchForm(s.quote);
         for (let i = 0; i + 20 <= t.length; i++) if (g.includes(t.slice(i, i + 20))) return true;
         if (t.length < 20 && t.length >= 8 && g.includes(t)) return true;
+        // Symmetric: a short generator quote («مح = 2 ل + 2 ض») inside the extractor's longer span.
+        if (g.length < 20 && g.length >= 8 && t.includes(g)) return true;
       }
     }
   }

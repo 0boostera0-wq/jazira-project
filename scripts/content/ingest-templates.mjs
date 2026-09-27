@@ -98,15 +98,17 @@ export function templateContentHash(t) {
 }
 
 /** The lesson's resource and page span from a generation packet (no quotes: templates cite none). */
-function sourceOf(packet) {
+function sourceOf(packet, bank) {
   const pages = (packet.pages ?? []).filter((p) => p.resource_id && Number.isInteger(p.pdf_page));
   if (!pages.length) return null;
   const rid = pages[0].resource_id;
+  const resource = bank.resources.get(rid);
+  if (!resource?.source_id) reject("S001", `packet resource ${rid} is not in resources.jsonl`);
   const same = pages.filter((p) => p.resource_id === rid);
   const pdf = same.map((p) => p.pdf_page);
   const printed = same.map((p) => p.printed_page).filter(Number.isInteger);
   return {
-    source_id: "ien",
+    source_id: resource.source_id,
     resource_id: rid,
     pdf_page_start: Math.min(...pdf),
     pdf_page_end: Math.max(...pdf),
@@ -132,7 +134,7 @@ export function ingestTemplate(d, packet, bank, { runId, now }) {
   if (!TEMPLATE_TYPES.includes(d.question_type)) reject("S001", `question_type must be one of ${TEMPLATE_TYPES.join(", ")}`);
   if (!ITEM_STYLES.includes(d.item_style)) reject("S001", `bad item_style ${d.item_style}`);
   if (d.objective_id != null && !(packet.objectives ?? []).some((o) => o.id === d.objective_id)) reject("S001", `objective ${d.objective_id} is not one of the packet's objectives`);
-  const source = sourceOf(packet);
+  const source = sourceOf(packet, bank);
   const t = {
     schema: "question-template@1",
     id: null,

@@ -11,7 +11,9 @@
 //     node scripts/content/make-packets.mjs --kind validate --run run-20260928-val-01
 //          (--ids a,b | --subject <node> | --status structural_pass) [--render]
 //   --kind evidence  evidence-extractor packets for high-risk items (objective +
-//          cited pages, never the question)
+//          cited pages, never the question; with --claim also the item's stem and
+//          correct answer, never the generator's quotes: the second pass for
+//          lessons without objectives)
 //   Common: [--staging data/staging] [--cache dir] [--allow-missing-images]
 //
 // Every packet page carries its text (repaired text or vision transcript from
@@ -274,7 +276,18 @@ export function buildValidationPackets(bank, q, { runId, pages, root }) {
 }
 
 /** Evidence-extractor packet (high-risk items): objective + cited pages, never the question. */
-export function buildEvidencePacket(bank, q, { runId, pages, root }) {
+/** The correct answer as text (for the --claim evidence pass). */
+function answerClaim(q) {
+  const p = q.payload ?? {};
+  if (q.question_type === "mcq" || q.question_type === "true_false") return p.options?.find((o) => o.id === p.answer?.option_id)?.text ?? null;
+  if (q.question_type === "numeric") return [p.answer?.value, p.unit?.display ?? null].filter(Boolean).join(" ");
+  if (q.question_type === "short_answer") return p.answer_display ?? p.accepted?.[0] ?? null;
+  if (q.question_type === "matching") return (p.answer?.pairs ?? []).map(([l, r]) => `${p.left.find((x) => x.id === l)?.text} ↔ ${p.right.find((x) => x.id === r)?.text}`).join("؛ ");
+  if (q.question_type === "ordering") return (p.answer?.order ?? []).map((id) => p.items.find((x) => x.id === id)?.text).join(" ← ");
+  return null;
+}
+
+export function buildEvidencePacket(bank, q, { runId, pages, root, claim = false }) {
   const missing = [];
   const lesson = q.curriculum?.lesson ? bank.nodes.get(q.curriculum.lesson) : null;
   const pagesOut = q.source?.resource_id ? packetPagesFor(bank, pages, q.source.resource_id, citedPageList(q), missing, { stem: isStemItem(q) }) : [];
@@ -285,8 +298,14 @@ export function buildEvidencePacket(bank, q, { runId, pages, root }) {
     packet: {
       packet_id: `${runId}:${q.id}:evidence`, kind: "evidence", question_id: q.id, revision: q.revision,
       objective: objectiveOf(bank, q), lesson: lesson ? { id: lesson.id, title_ar: lesson.title_ar } : null,
+      // --claim (evidence pass 2): the item's claim (stem + correct answer), never the
+      // generator's quotes or pages list beyond the cited ones; for lessons without
+      // objectives, where the objective alone cannot point at the supporting span.
+      ...(claim ? { claim: { stem: q.stem, answer: answerClaim(q) } } : {}),
       pages: pagesOut,
-      instructions: "Return the supporting span for the objective: {\"question_id\", \"revision\", \"spans\": [{\"pdf_page\", \"quote\"}]} (quotes ≤ 200 chars, copied from the page text or the image).",
+      instructions: claim
+        ? "Return the span on these pages that states or directly supports the claim (the stem and its correct answer): {\"question_id\", \"revision\", \"spans\": [{\"pdf_page\", \"quote\"}]} (quotes ≤ 200 chars, copied from the page text or the image). If no span supports it, return spans: []."
+        : "Return the supporting span for the objective: {\"question_id\", \"revision\", \"spans\": [{\"pdf_page\", \"quote\"}]} (quotes ≤ 200 chars, copied from the page text or the image).",
       output: join(cachePaths(root).llmDir(runId), `${name}.evidence.jsonl`).split("\\").join("/"),
     },
   };
@@ -333,6 +352,7 @@ export function parseArgs(argv) {
     else if (a === "--rewrite") o.rewrite = list();
     else if (a === "--render") o.render = true;
     else if (a === "--allow-missing-images") o.allowMissing = true;
+    else if (a === "--claim") o.claim = true;
     else if (a === "--help" || a === "-h") o.help = true;
     else throw new UsageError(`unknown option ${a}`);
   }
@@ -371,7 +391,7 @@ async function buildAll(bank, o, ctx) {
         const v = buildValidationPackets(bank, q, ctx);
         out.push({ name: `${v.name}.blind`, packet: v.blind, missing: [] }, { name: `${v.name}.keyed`, packet: v.keyed, missing: v.missing });
       } else if (isHighRisk(q, latestRecord(bank, q, "deterministic")?.checks ?? []) && q.source?.resource_id) {
-        const e = buildEvidencePacket(bank, q, ctx);
+        const e = buildEvidencePacket(bank, q, { ...ctx, claim: Boolean(o.claim) });
         out.push({ name: `${e.name}.evidence`, packet: e.packet, missing: e.missing });
       }
     }
