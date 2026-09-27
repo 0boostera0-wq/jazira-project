@@ -1,0 +1,30 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260926-extract-01",
+  "kind": "extract",
+  "tool": "extract-pdf@1",
+  "started_at": "2026-09-27T05:52:48Z",
+  "finished_at": "2026-09-27T05:57:10Z",
+  "params": {
+    "pages": "all",
+    "range": false,
+    "rebuild": false,
+    "resources": [
+      "ien-120606",
+      "ien-121390"
+    ]
+  },
+  "inputs": {
+    "books_sha256": "05d736fbb2735fac6a880e9fe214dca064b7ee1e8b3fdd8c0caf0c6a6dc0d74c"
+  },
+  "counts": {
+    "resources": 2,
+    "pages": 476,
+    "untrusted": 428,
+    "awaiting_vision": 428,
+    "not_cached": 0,
+    "not_applicable": 0,
+    "failed": 0
+  },
+  "errors": []
+}

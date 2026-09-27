@@ -1,0 +1,240 @@
+{
+ "description": "A TOC page whose entries are font garbage: the heading is found but the page is untrusted, so the TOC is read by vision (two reads).",
+ "page": {
+  "pdf_page": 5,
+  "width": 600,
+  "height": 800,
+  "images": 1,
+  "items": [
+   {
+    "str": "المحتويات",
+    "dir": "rtl",
+    "x": 479,
+    "y": 50,
+    "w": 81,
+    "size": 18
+   },
+   {
+    "str": "`g1446",
+    "dir": "ltr",
+    "x": 518,
+    "y": 90,
+    "w": 42,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 515,
+    "y": 90,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "ègÉæª∏d",
+    "dir": "ltr",
+    "x": 465,
+    "y": 90,
+    "w": 49,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 462,
+    "y": 90,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "»æWƒdG",
+    "dir": "ltr",
+    "x": 419,
+    "y": 90,
+    "w": 42,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 416,
+    "y": 90,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "..........",
+    "dir": "ltr",
+    "x": 345,
+    "y": 90,
+    "w": 70,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 342,
+    "y": 90,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "11",
+    "dir": "ltr",
+    "x": 327,
+    "y": 90,
+    "w": 14,
+    "size": 14
+   },
+   {
+    "str": "õcôŸG",
+    "dir": "ltr",
+    "x": 525,
+    "y": 115,
+    "w": 35,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 522,
+    "y": 115,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "»æWƒdG",
+    "dir": "ltr",
+    "x": 479,
+    "y": 115,
+    "w": 42,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 476,
+    "y": 115,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "ègÉæª",
+    "dir": "ltr",
+    "x": 440,
+    "y": 115,
+    "w": 35,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 437,
+    "y": 115,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "..........",
+    "dir": "ltr",
+    "x": 366,
+    "y": 115,
+    "w": 70,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 363,
+    "y": 115,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "12",
+    "dir": "ltr",
+    "x": 348,
+    "y": 115,
+    "w": 14,
+    "size": 14
+   },
+   {
+    "str": "°üØdG",
+    "dir": "ltr",
+    "x": 525,
+    "y": 140,
+    "w": 35,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 522,
+    "y": 140,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "π",
+    "dir": "ltr",
+    "x": 514,
+    "y": 140,
+    "w": 7,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 511,
+    "y": 140,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "ådÉãdG",
+    "dir": "ltr",
+    "x": 468,
+    "y": 140,
+    "w": 42,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 465,
+    "y": 140,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "..........",
+    "dir": "ltr",
+    "x": 394,
+    "y": 140,
+    "w": 70,
+    "size": 14
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 391,
+    "y": 140,
+    "w": 3,
+    "size": 14
+   },
+   {
+    "str": "17",
+    "dir": "ltr",
+    "x": 376,
+    "y": 140,
+    "w": 14,
+    "size": 14
+   }
+  ]
+ },
+ "expect": {
+  "text_quality": "untrusted",
+  "vision_reason": "untrusted",
+  "reads_required": 2
+ }
+}

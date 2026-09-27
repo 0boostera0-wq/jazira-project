@@ -23,7 +23,7 @@ import {
   builderReducer, clampMinutes, countLock, effectiveMinutes, estimateMinutes, initialBuilderState, maxQuestionsFor,
   presetLock, toStartConfig,
 } from "./builder-logic";
-import { attemptHref, setLocalPointer, stashAttempt } from "./handoff";
+import { handOff } from "./handoff";
 import { sectionColor, sectionIcon, sectionLabel, signInHref, topicLabel } from "./labels";
 import { attemptsToday } from "./stats-logic";
 import { useTier } from "./useTier";
@@ -140,9 +140,7 @@ export default function ExamBuilder({ exam }) {
     setStarting(true);
     try {
       const payload = await startExam(toStartConfig(state));
-      stashAttempt(payload);
-      if (payload.mode === "local") setLocalPointer(payload.attempt_id);
-      router.push(attemptHref(payload));
+      router.push(handOff(payload));
       // keep the button busy until the runner route takes over
     } catch (e) {
       setStarting(false);

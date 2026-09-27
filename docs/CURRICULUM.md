@@ -13,7 +13,12 @@ Jazira may and may not host, and how to add authorised files later.
 | `scripts/import-curriculum.mjs` | Imports authorised PDFs once into Jazira's own store. |
 | `src/app/api/content/fetch/route.js` | Serves a file only when the manifest marks its key `hosted`. |
 | `src/app/[locale]/(app)/curriculum/**`, `src/components/curriculum/**` | The hub, the stage / year / track / grade pages and the subject drawer. |
-| `tests/unit/curriculum.test.js`, `tests/unit/content-fetch.test.js` | Catalog ↔ research parity, manifest, UI model, route policy. |
+| `src/content/curriculum/outline/<stage>/<grade>[-<track>].json` | Generated **outline layer** per leaf: units, lessons, book page ranges, term membership, iEN resources (§8). |
+| `src/content/curriculum/outline/catalog-terms.js` | Generated catalog term table: only subjects whose term split is **verified**; everything else uses both terms, `unverified`. |
+| `src/lib/curriculum-outline.js` | Server reader of the outline (`loadOutline`, `outlineFor`, `subjectOutline`, `nodeById`, `lessonsUnder`, `subjectTerms`). |
+| `scripts/content/build-curriculum.mjs` | Run R2: crawl + catalog + research → `data/staging/curriculum/**`, `resources.jsonl`, the outline and the catalog term table (docs/CONTENT_ENGINE.md §4.2). |
+| `tests/unit/curriculum.test.js`, `tests/unit/content-fetch.test.js` | Catalog ↔ research parity (incl. terms), manifest, UI model, route policy. |
+| `tests/unit/content-curriculum-build.test.js`, `tests/unit/curriculum-outline.test.js` | iEN mapping reconciliation, part/year, the term-resolution truth table, id stability; the outline interface and invariants. |
 
 ## 1. Structure
 
@@ -26,6 +31,7 @@ stage ─┬─ elementary   grade-1 … grade-6                (leaf = grade)
        ├─ continuing   pending (separate plan, not verified — no subjects)
        └─ special      pending (separate plans, not verified — no subjects)
 leaf → subjects → terms (t1, t2) → resources (student_book · activity_book · exam_samples)
+outline layer (§8): leaf → subject → unit → [chapter] → lesson, with book pages and iEN links
 ```
 
 URLs follow the slug: `/curriculum/elementary/grade-4`,
@@ -39,9 +45,10 @@ another alias branch appears without its own redirect).
 **Every subject** carries: `id`, `name` (official Arabic name as printed in the
 plan), `name_en` (Jazira's English rendering — not an official MoE name),
 `labels` / `labels_en` (the plan's level labels such as «الرياضيات 2»),
-`periods` (annual maximum), `status: "verified"`, `terms: ["t1","t2"]`,
-`terms_status: "unverified"`, `notes` (message keys under `curriculum.notes.*`)
-and `resources`.
+`periods` (annual maximum), `status: "verified"`, `terms` and `terms_status`
+(from data — see the term policy in §8; today every subject has
+`terms: ["t1","t2"]`, `terms_status: "unverified"`), `notes` (message keys under
+`curriculum.notes.*`) and `resources` (one set per listed term).
 
 Numbers shown in the UI (grades, tracks, subjects, periods) are always derived
 from the catalog — never typed by hand.
@@ -65,9 +72,9 @@ from the catalog — never typed by hand.
 |---|---|---|
 | Subjects per grade / track, official Arabic names, annual periods | **verified** | «دليل الخطط الدراسية – الإصدار الخامس», National Curriculum Center, on moe.gov.sa — <https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Documents/Curriculum_Guide_Fifth_Edition_13oct2025.pdf> (listed on <https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx>). K–9: pp.19, 21, 23. Secondary: pp.25–40. |
 | Two terms in 1447H | **verified** | MoE news 11/02/1447 — <https://www.moe.gov.sa/ar/mediacenter/MOEnews/Pages/news1_05082025.aspx>; SPA <https://spa.gov.sa/N2373796> |
-| Which term each subject runs in | **unverified** | The plan gives annual periods only; the official book listing (iEN) was in maintenance and Madrasati needs a login. |
-| Where the textbooks are published | **verified** | MoE e-service «خدمة مقرراتي» — <https://www.moe.gov.sa/ar/knowledgecenter/eservices/pages/courses.aspx> → منصة مدرستي <https://schools.madrasati.sa/> (active account required); alternative «عين» <https://www.ien.edu.sa/> |
-| Whether each subject has a student / activity book per term | **unverified** | Book listings could not be observed. PE, fitness, graduation project, research and the elective field may have no printed book (note `noTextbook`). |
+| Which term each subject runs in | **unverified** (per subject) | The plan gives annual periods only. The 1448 books on iEN are published as parts («الجزء الأول / الثاني من المقرر») and **no cover read so far names a term**. See the term policy (§8). |
+| Where the textbooks are published | **verified** | MoE e-service «خدمة مقرراتي» — <https://www.moe.gov.sa/ar/knowledgecenter/eservices/pages/courses.aspx> → منصة مدرستي <https://schools.madrasati.sa/> (active account required); «عين» <https://www.ien.edu.sa/> — a **public** official portal (no account), named on the MoE study-plans page for viewing the course books. |
+| Which books exist per subject | **verified from iEN** (crawl 2026-09-26) | 315 listed files (311 `1448-…`, one `1488-…` anomaly, 3 zip files), 10,102 lessons in 2,126 units. Per-book deep links (`https://iencontent.ien.edu.sa/books/<file>`) are in the outline layer. Subjects without an iEN book (the graduation project) are listed `catalog_only` in `data/staging/curriculum/ien-mapping.json`. |
 | Elective-field options (general track, year 3) | **verified** | Guide p.30; SPA <https://www.spa.gov.sa/N2383308> |
 | Tahfeez (Quran memorisation) schools | not modelled | Guide pp.20, 22, 24 — a separate plan; mentioned on the hub, not in the tree. |
 | Continuing / special education | **unverified** | Separate plans not reviewed; shown as "not added yet" pages (noindex) with no subjects. |
@@ -77,7 +84,8 @@ catalog: `docs/research/curriculum-k9.md`, `docs/research/curriculum-secondary.m
 
 ### How the UI states it
 
-- Every subject is listed in **both terms**, and the term filter always shows:
+- A subject is listed in **both terms** unless its split is verified (§8), and
+  while `terms_status` is `unverified` the term filter shows:
   «تحدد الخطة الرسمية حصص العام كاملًا دون تقسيمها على الفصلين، لذلك تظهر المواد
   في الفصلين، وقد يختلف التوزيع الفعلي في مدرستك.»
 - The hub's "Where this data comes from" section names the three sources, marks
@@ -96,13 +104,14 @@ advice).
 
 | `availability` | Meaning | Used for |
 |---|---|---|
-| `external_official` | The file is on the official platform; Jazira links out (Madrasati / iEN, `rel="noopener noreferrer"`), never hosts it. Book-level deep links are not published, so links go to the platform. | Student and activity books (default) |
+| `external_official` | The file is on the official platform; Jazira links out (Madrasati / iEN, `rel="noopener noreferrer"`), never hosts it. The catalog rows link to the platform; the outline layer (§8) carries iEN book-level links, including `#page=<n>` deep links for lessons with a page range. | Student and activity books (default) |
 | `hosted` | Jazira holds an **authorised** copy: written permission from the rights holder, or Jazira's own original work. Registered in `hosted.js` **and** present in the store. | Nothing today |
 | `unavailable` | No authorised source. Nothing is linked or served. | Sample exams (default) |
 
 Manifest row `status` is `verified` only for a hosted, authorised file; every
 other row is `unverified` (the subject is verified, the specific book per term
-is not). `term_status` is `unverified` everywhere.
+is not). A row's `term_status` is the subject's `terms_status` (`unverified`
+everywhere at this revision).
 
 `/api/content/fetch?key=…` serves **only** keys whose manifest row is `hosted`.
 Anything else is `404 {"error":"not_available"}` (malformed keys `400
@@ -117,8 +126,11 @@ node scripts/build-curriculum-manifest.mjs --check  # CI: exit 1 if the catalog 
 ```
 
 Before writing, the builder compares every catalog leaf with the verified
-research (subject ids, official names, periods, plan labels) and refuses to
-build on any difference. `tests/unit/curriculum.test.js` runs the same check and
+research (subject ids, official names, periods, plan labels, **terms**) and
+refuses to build on any difference. Terms: a research subject with
+`terms_status: "verified"` must carry `terms_evidence` (term-evidence ids) and
+the catalog must list exactly its terms; any other research `terms` value is a
+hint only, and the catalog must list both terms as `unverified`. `tests/unit/curriculum.test.js` runs the same check and
 fails when the committed manifest is stale.
 
 Row fields: `internal_key` (e.g. `1447/high-school/grade-2/general/math/t1/student-book.pdf`),
@@ -191,3 +203,82 @@ The subject drawer adds, next to the official resources:
 2. Update `YEAR`, `SOURCES_CHECKED` and the subject rows in `src/lib/curriculum.js`
    until `node scripts/build-curriculum-manifest.mjs --check` passes, then rebuild.
 3. Keys are versioned by year (`1447/…`), so hosted files of different years never collide.
+4. The catalog year stays `1447` until the 1448 study plan is verified; iEN
+   books carry their own edition label (`year_label: "1448"`), which the UI
+   shows per book.
+
+## 8. Outline layer, iEN mapping and term policy
+
+Design: `docs/CONTENT_ENGINE.md` §2.4, §2.5, §4.2 (work package WP2).
+
+```bash
+node scripts/content/build-curriculum.mjs            # run R2 (offline): rebuild everything below
+node scripts/content/build-curriculum.mjs --check    # exit 1 when any output is stale
+node scripts/content/build-curriculum.mjs --cache-pages   # also re-read cover pages 1–3 from the content cache
+node scripts/content/build-prep-alignment.mjs [--spec <qiyas-spec.json>]   # achievement prep alignment (§4.3b)
+node scripts/content/crawl-diff.mjs --prev <dir> | --prev-rev <rev>        # changes-<date>.jsonl after a new crawl
+```
+
+**Inputs:** the catalog, the research JSON, the iEN crawl
+(`data/staging/sources/ien/*`), `research/catalog-map.jsonl`,
+`research/term-evidence.json`, `book-frontmatter.jsonl` (its `term_*` keys are
+ignored) and, when present, WP3's `resources/{extraction.jsonl,term-evidence.jsonl,toc/*.json}`
+and the owner's `curriculum/owner-decisions.jsonl`.
+
+**Outputs:** `data/staging/curriculum/nodes/**` (stage → grade → track → term /
+subject → unit → [chapter] → lesson), `subject-terms.jsonl`, `ien-mapping.json`,
+`audit.jsonl`, `id-registry.jsonl`, `data/staging/resources/resources.jsonl`
+(every iEN file plus each subject's iEN question bank as an external count and
+link — never mined), `term-evidence.jsonl` (page-0 routes), and the published
+subset `src/content/curriculum/outline/**`. Output is byte-deterministic; ids
+are stable across reruns (`n<iEN id>` for units and lessons; a unit whose iEN
+id collides with a lesson id of the same subject — 14 cases — and TOC-only
+nodes get frozen `x<hex8>` ids from the id registry).
+
+**iEN mapping.** `catalog-map.jsonl` (agent audit) is verified row by row: each
+iEN subject must exist under the same leaf, its books and lesson/unit counts
+must equal the crawl, and it must agree with the title heuristic (plan labels,
+then the name). Result at this revision: 228 rows verified, 6 need review (the
+English «Top Goal» series titles, «القرآن الكريم (2-1)/(3-1)» numbering,
+«قراءات 2», the elective slot), 4 `catalog_only` (graduation project, no iEN
+book), 15 rows for subjects outside the catalog. 66 iEN subjects are
+`source_only` (Chinese, enrichment arts and music, tahfeez tajweed, level-2 PE
+listed under the first year): they are kept in staging with `in_plan: false`
+and are **never added to the catalog**.
+
+**Term policy.**
+
+- Two terms in 1447/1448: **verified** (official decision).
+- Term membership comes only from evidence: a cover or title page stating
+  «الفصل الدراسي الأول/الثاني» (strict regex; «الفصل الثاني» alone is a chapter
+  heading), TOC markers, two agreeing vision reads — all `verified`; the
+  listing title, the plan guide's per-term table, a plan-guide-corroborated
+  course code, or an owner decision — all `inferred`.
+- **Part numbers are never evidence**: part 1 is not assumed to be term 1. The
+  owner may record "part N = term N" for a set of subjects in
+  `data/staging/curriculum/owner-decisions.jsonl`; that gives `inferred`, and
+  the UI shows it as *unconfirmed* (`term_basis: "owner_decision"` in the outline).
+- A book without counting evidence is `needs_review` (one book or several
+  parts alike); `unknown` is used only where a term does not apply (iEN
+  question-bank links, stage/grade/subject nodes).
+- The catalog is corrected only for subjects whose iEN mapping is `verified`;
+  a verified split on a disputed mapping is logged as
+  `catalog_correction_blocked` in `audit.jsonl` instead.
+- A subject leaves a term in the catalog **only** when its membership for that
+  term is `absent`, i.e. every one of its books is verified for the other term.
+  Then `verified-*.json` gets `terms`, `terms_status: "verified"` and
+  `terms_evidence`, and `catalog-terms.js` lists the subject.
+
+**Expected outcome (and today's state):** no cover or TOC read so far names a
+term — the covers say «الجزء الأول/الثاني من المقرر». Every subject-term
+membership is therefore `needs_review`, the catalog keeps both terms as
+`unverified`, and term exams are offered only once verified or inferred
+evidence exists. This is the honest result, not a failure; the coverage report
+leads with the "term undeterminable" bucket.
+
+**Books.** `part` comes from the listing title or the cover («الجزء الأول»); the
+file name (`-part2`, `-PART2.PDF`, `.part.pdf`) only cross-checks it.
+`year_label` is the cover edition line («طبعة 1448») when present, else the file
+name; both are recorded, and a mismatch (13 books whose cover pages say 1447)
+or the `1488-…` anomaly stays verbatim with `status: needs_review`. Zip files
+(audio, workbook, «Test Bank») are recorded as resources and never opened.

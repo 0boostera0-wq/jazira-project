@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:question-template",
+  "title": "Question template (§2.9)",
+  "description": "data/staging/question-variants/templates/<shard>.jsonl.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "id",
+    "revision",
+    "lesson_node_id",
+    "objective_id",
+    "question_type",
+    "item_style",
+    "difficulty",
+    "language",
+    "solution_method",
+    "params",
+    "constraints",
+    "stem",
+    "answer",
+    "distractors",
+    "explanation",
+    "max_variants",
+    "source",
+    "provenance",
+    "status",
+    "validation"
+  ],
+  "properties": {
+    "schema": {
+      "const": "question-template@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/template_id"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "content_hash": {
+      "$ref": "urn:jazira:schema:common#/$defs/content_hash"
+    },
+    "lesson_node_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/node_id"
+    },
+    "objective_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/objective_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "question_type": {
+      "type": "string",
+      "enum": [
+        "mcq",
+        "true_false",
+        "matching",
+        "ordering",
+        "short_answer",
+        "numeric"
+      ]
+    },
+    "item_style": {
+      "type": "string",
+      "enum": [
+        "definition",
+        "conceptual",
+        "computation",
+        "application",
+        "scenario",
+        "reasoning",
+        "review"
+      ]
+    },
+    "difficulty": {
+      "$ref": "urn:jazira:schema:common#/$defs/difficulty"
+    },
+    "language": {
+      "$ref": "urn:jazira:schema:common#/$defs/language"
+    },
+    "solution_method": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "params": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 10,
+      "propertyNames": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,31}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "int",
+              "decimal",
+              "choice"
+            ]
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          },
+          "step": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "exclude": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 50
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string",
+                  "maxLength": 60
+                }
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 50
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      },
+      "maxItems": 20
+    },
+    "stem": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "answer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expr",
+        "format"
+      ],
+      "properties": {
+        "expr": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "format": {
+          "type": "string",
+          "pattern": "^(?:int|fraction|mixed|decimal:\\d{1,2})$"
+        }
+      }
+    },
+    "distractors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expr",
+          "why"
+        ],
+        "properties": {
+          "expr": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        }
+      },
+      "maxItems": 5
+    },
+    "explanation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "steps"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 8000
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "maxItems": 30
+        }
+      }
+    },
+    "max_variants": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50
+    },
+    "time_limit_seconds": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 600
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 60
+      },
+      "maxItems": 12
+    },
+    "source": {
+      "$ref": "urn:jazira:schema:common#/$defs/question_source"
+    },
+    "provenance": {
+      "$ref": "urn:jazira:schema:common#/$defs/provenance"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "candidate",
+        "validated",
+        "published",
+        "rejected",
+        "review_required",
+        "retired"
+      ]
+    },
+    "validation": {
+      "$ref": "urn:jazira:schema:common#/$defs/validation_summary"
+    },
+    "is_premium": {
+      "type": "boolean"
+    },
+    "created_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_datetime"
+    },
+    "updated_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_datetime"
+    }
+  }
+}

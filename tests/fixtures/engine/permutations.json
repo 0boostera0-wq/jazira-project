@@ -1,0 +1,1036 @@
+{
+ "schema": "engine-permutations@1",
+ "description": "displayMaps() conformance (§5.4) over the runtime-bank fixture's content rows: choice_order[display] = canonical index (null = identity), display_map.left/right/items[display] = canonical id. Fixed orders (true_false, fixed_order_reason, 'لا شيء مما سبق', legacy contextual-error) stay identity; all-numeric options are ascending; an ordering never starts in answer order.",
+ "cases": [
+  {
+   "key": "av-101",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     0,
+     2,
+     3,
+     1
+    ]
+   }
+  },
+  {
+   "key": "av-101",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     1,
+     0,
+     3,
+     2
+    ]
+   }
+  },
+  {
+   "key": "av-102",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     2,
+     3,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "key": "av-102",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "key": "av-103",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     2,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "key": "av-103",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     1,
+     0,
+     3,
+     2
+    ]
+   }
+  },
+  {
+   "key": "av-104",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     0,
+     3,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "key": "av-104",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     0,
+     3,
+     2,
+     1
+    ]
+   }
+  },
+  {
+   "key": "av-105",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "av-105",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "av-106",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "av-106",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "av-107",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "av-107",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "av-108",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     2,
+     1,
+     0
+    ]
+   }
+  },
+  {
+   "key": "av-108",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     2,
+     0,
+     1,
+     3
+    ]
+   }
+  },
+  {
+   "key": "av-109",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     1,
+     2,
+     0,
+     3
+    ]
+   }
+  },
+  {
+   "key": "av-109",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     0,
+     1,
+     3,
+     2
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-0012a3fa00",
+   "type": "short_answer",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-0012a3fa00",
+   "type": "short_answer",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-25f682044b",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     2,
+     0,
+     3,
+     1
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-25f682044b",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-2c3a4249d7",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-2c3a4249d7",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-2f5da6e992",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-2f5da6e992",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     2,
+     3,
+     1,
+     0
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-3c56619749",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     2,
+     3,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-3c56619749",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     2,
+     3,
+     1,
+     0
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-43700797e2",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-43700797e2",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-449777124b",
+   "type": "true_false",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-449777124b",
+   "type": "true_false",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-4539e4b488",
+   "type": "true_false",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-4539e4b488",
+   "type": "true_false",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-4814d92093",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-4814d92093",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-486bacc5c2",
+   "type": "numeric",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-486bacc5c2",
+   "type": "numeric",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-66220e7159",
+   "type": "ordering",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": [
+    "s4c090c",
+    "sed9bce",
+    "s408d3d",
+    "s65c831"
+   ],
+   "expected": {
+    "display_map": {
+     "items": [
+      "s408d3d",
+      "s4c090c",
+      "s65c831",
+      "sed9bce"
+     ]
+    }
+   }
+  },
+  {
+   "key": "q-m1-math-66220e7159",
+   "type": "ordering",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": [
+    "s4c090c",
+    "sed9bce",
+    "s408d3d",
+    "s65c831"
+   ],
+   "expected": {
+    "display_map": {
+     "items": [
+      "sed9bce",
+      "s408d3d",
+      "s4c090c",
+      "s65c831"
+     ]
+    }
+   }
+  },
+  {
+   "key": "q-m1-math-730bea4ff1",
+   "type": "short_answer",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-730bea4ff1",
+   "type": "short_answer",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-76a8277347",
+   "type": "matching",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "display_map": {
+     "left": [
+      "l6dbe1b",
+      "lf383bb",
+      "l857eca"
+     ],
+     "right": [
+      "ra1aaba",
+      "r5d01df",
+      "r7ea934",
+      "r6a3138"
+     ]
+    }
+   }
+  },
+  {
+   "key": "q-m1-math-76a8277347",
+   "type": "matching",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "display_map": {
+     "left": [
+      "l857eca",
+      "l6dbe1b",
+      "lf383bb"
+     ],
+     "right": [
+      "r6a3138",
+      "ra1aaba",
+      "r7ea934",
+      "r5d01df"
+     ]
+    }
+   }
+  },
+  {
+   "key": "q-m1-math-79b98f273c",
+   "type": "short_answer",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-79b98f273c",
+   "type": "short_answer",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-7c1c97df17",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     1,
+     2,
+     0
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-7c1c97df17",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     1,
+     0,
+     2
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-7dc96f776c",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-7dc96f776c",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-82f3e9c695",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     1,
+     2,
+     0
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-82f3e9c695",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     1,
+     0,
+     3,
+     2
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-844ecc0816",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-844ecc0816",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-8b53639f15",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     0,
+     2,
+     1,
+     3
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-8b53639f15",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     0,
+     2,
+     1,
+     3
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-8b5cc4df7e",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     1,
+     2,
+     0,
+     3
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-8b5cc4df7e",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     2,
+     0,
+     1,
+     3
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-9c0abe51c6",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-9c0abe51c6",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-ac0f09c0f8",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-ac0f09c0f8",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-af327a6478",
+   "type": "matching",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "display_map": {
+     "left": [
+      "l1b988a",
+      "l458df9"
+     ],
+     "right": [
+      "r6b447a",
+      "re2fa41"
+     ]
+    }
+   }
+  },
+  {
+   "key": "q-m1-math-af327a6478",
+   "type": "matching",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "display_map": {
+     "left": [
+      "l1b988a",
+      "l458df9"
+     ],
+     "right": [
+      "re2fa41",
+      "r6b447a"
+     ]
+    }
+   }
+  },
+  {
+   "key": "q-m1-math-cef7fc13a3",
+   "type": "numeric",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-cef7fc13a3",
+   "type": "numeric",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-d0bf3e6ee1",
+   "type": "numeric",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-d0bf3e6ee1",
+   "type": "numeric",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {}
+  },
+  {
+   "key": "q-m1-math-d0f631ca1d",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     3,
+     1,
+     2,
+     0
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-d0f631ca1d",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     2,
+     0,
+     1,
+     3
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-e788103ee1",
+   "type": "true_false",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-e788103ee1",
+   "type": "true_false",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-ec31682fde",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-ec31682fde",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-f451a61749",
+   "type": "ordering",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": [
+    "s5cc7d4",
+    "s97d775",
+    "sb0a4f3",
+    "s8bb4cc",
+    "s64c430"
+   ],
+   "expected": {
+    "display_map": {
+     "items": [
+      "s64c430",
+      "s5cc7d4",
+      "s8bb4cc",
+      "sb0a4f3",
+      "s97d775"
+     ]
+    }
+   }
+  },
+  {
+   "key": "q-m1-math-f451a61749",
+   "type": "ordering",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": [
+    "s5cc7d4",
+    "s97d775",
+    "sb0a4f3",
+    "s8bb4cc",
+    "s64c430"
+   ],
+   "expected": {
+    "display_map": {
+     "items": [
+      "s8bb4cc",
+      "s5cc7d4",
+      "s97d775",
+      "s64c430",
+      "sb0a4f3"
+     ]
+    }
+   }
+  },
+  {
+   "key": "q-m1-math-f46dd28a54",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-f46dd28a54",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": null
+   }
+  },
+  {
+   "key": "q-m1-math-f55ff16f66",
+   "type": "mcq",
+   "seed": "0123456789abcdef0123456789abcdef",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     1,
+     2,
+     0,
+     3
+    ]
+   }
+  },
+  {
+   "key": "q-m1-math-f55ff16f66",
+   "type": "mcq",
+   "seed": "fedcba9876543210fedcba9876543210",
+   "template": "practice",
+   "answer_order": null,
+   "expected": {
+    "choice_order": [
+     1,
+     0,
+     2,
+     3
+    ]
+   }
+  }
+ ]
+}

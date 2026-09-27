@@ -1,0 +1,643 @@
+{
+  "schema": "outline-tree@1",
+  "description": "Node-tree interface fixture (docs/CONTENT_ENGINE.md §9.1 WP1): the tree object WP2's src/lib/curriculum-outline.js serves and WP6's scope.js consumes. `expected` pins each query. Synthetic science ids are x-node hashes; math mirrors tests/fixtures/content/staging.",
+  "interface": {
+    "nodeById(id)": "the node object, or null when unknown",
+    "outlineFor(leafSlug)": "{ leaf, subjects: subject node ids in `order` }",
+    "subjectOutline(subjectNodeId)": "{ id, children: [...] } nested by parent_id in `order` (term nodes are not children of a subject)",
+    "lessonsUnder(nodeId)": "lesson ids under a node in outline order (depth first, by `order`); a lesson returns itself; no status filtering",
+    "subjectTerms(subjectNodeId)": "subject-terms rows of the subject (t1, t2)",
+    "eligibleLessons(scope)": "§5.3 step 1: lessons under the node with status verified and not unit openers; @t1/@t2 keep lessons whose term is that term or both with term_status verified|inferred; @year keeps both terms"
+  },
+  "leaf": "middle/grade-1",
+  "nodes": [
+    {
+      "id": "middle",
+      "parent_id": null,
+      "kind": "stage",
+      "order": 1,
+      "title_ar": "المرحلة المتوسطة",
+      "title_en": "Middle school",
+      "term": null,
+      "term_status": "unknown",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": null
+    },
+    {
+      "id": "middle/grade-1",
+      "parent_id": "middle",
+      "kind": "grade",
+      "order": 1,
+      "title_ar": "الصف الأول المتوسط",
+      "title_en": "Grade 7 (1st middle)",
+      "term": null,
+      "term_status": "unknown",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": 12
+      }
+    },
+    {
+      "id": "middle/grade-1/t1",
+      "parent_id": "middle/grade-1",
+      "kind": "term",
+      "order": 2,
+      "title_ar": "الفصل الدراسي الأول",
+      "title_en": "Term 1",
+      "term": "t1",
+      "term_status": "verified",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": null
+    },
+    {
+      "id": "middle/grade-1/t2",
+      "parent_id": "middle/grade-1",
+      "kind": "term",
+      "order": 3,
+      "title_ar": "الفصل الدراسي الثاني",
+      "title_en": "Term 2",
+      "term": "t2",
+      "term_status": "verified",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": null
+    },
+    {
+      "id": "middle/grade-1/math",
+      "parent_id": "middle/grade-1",
+      "kind": "subject",
+      "order": 1,
+      "title_ar": "الرياضيات",
+      "title_en": "Mathematics",
+      "term": null,
+      "term_status": "unknown",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": 90
+      }
+    },
+    {
+      "id": "middle/grade-1/math/n91",
+      "parent_id": "middle/grade-1/math",
+      "kind": "unit",
+      "order": 1,
+      "title_ar": "الجبر و الدوال",
+      "title_en": null,
+      "term": "t1",
+      "term_status": "inferred",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [
+        {
+          "resource_id": "ien-120607",
+          "pdf_start": 12,
+          "pdf_end": 40,
+          "printed_start": 10,
+          "printed_end": 38
+        }
+      ],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": 91
+      }
+    },
+    {
+      "id": "middle/grade-1/math/n92",
+      "parent_id": "middle/grade-1/math",
+      "kind": "unit",
+      "order": 2,
+      "title_ar": "الأعداد الصحيحة",
+      "title_en": null,
+      "term": "t2",
+      "term_status": "inferred",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": 92
+      }
+    },
+    {
+      "id": "middle/grade-1/math/n53",
+      "parent_id": "middle/grade-1/math/n91",
+      "kind": "lesson",
+      "order": 1,
+      "title_ar": "الخطوات الأربع لحل المسألة",
+      "title_en": null,
+      "term": "t1",
+      "term_status": "inferred",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [
+        {
+          "resource_id": "ien-120607",
+          "pdf_start": 12,
+          "pdf_end": 13,
+          "printed_start": 10,
+          "printed_end": 11
+        }
+      ],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": 53
+      }
+    },
+    {
+      "id": "middle/grade-1/math/n54",
+      "parent_id": "middle/grade-1/math/n91",
+      "kind": "lesson",
+      "order": 2,
+      "title_ar": "القوى و الأسس",
+      "title_en": null,
+      "term": "t1",
+      "term_status": "inferred",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [
+        {
+          "resource_id": "ien-120607",
+          "pdf_start": 14,
+          "pdf_end": 16,
+          "printed_start": 12,
+          "printed_end": 14
+        }
+      ],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": 54
+      }
+    },
+    {
+      "id": "middle/grade-1/math/n55",
+      "parent_id": "middle/grade-1/math/n91",
+      "kind": "lesson",
+      "order": 3,
+      "title_ar": "ترتيب العمليات",
+      "title_en": null,
+      "term": "t1",
+      "term_status": "inferred",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [
+        {
+          "resource_id": "ien-120607",
+          "pdf_start": 17,
+          "pdf_end": 19,
+          "printed_start": 15,
+          "printed_end": 17
+        }
+      ],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": 55
+      }
+    },
+    {
+      "id": "middle/grade-1/math/xb321f898",
+      "parent_id": "middle/grade-1/math/n91",
+      "kind": "lesson",
+      "order": 4,
+      "title_ar": "مراجعة تراكمية",
+      "title_en": null,
+      "term": "t1",
+      "term_status": "inferred",
+      "status": "needs_review",
+      "unit_opener": false,
+      "pages": [
+        {
+          "resource_id": "ien-120607",
+          "pdf_start": 38,
+          "pdf_end": 40,
+          "printed_start": 36,
+          "printed_end": 38
+        }
+      ],
+      "source_ref": null
+    },
+    {
+      "id": "middle/grade-1/math/x5a3afdd4",
+      "parent_id": "middle/grade-1/math/n92",
+      "kind": "lesson",
+      "order": 1,
+      "title_ar": "مدخل وحدة (الأعداد الصحيحة)",
+      "title_en": null,
+      "term": "t2",
+      "term_status": "inferred",
+      "status": "needs_review",
+      "unit_opener": true,
+      "pages": [],
+      "source_ref": null
+    },
+    {
+      "id": "middle/grade-1/math/n61",
+      "parent_id": "middle/grade-1/math/n92",
+      "kind": "lesson",
+      "order": 2,
+      "title_ar": "الأعداد الصحيحة والقيمة المطلقة",
+      "title_en": null,
+      "term": "t2",
+      "term_status": "inferred",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": 61
+      }
+    },
+    {
+      "id": "middle/grade-1/math/n62",
+      "parent_id": "middle/grade-1/math/n92",
+      "kind": "lesson",
+      "order": 3,
+      "title_ar": "مقارنة الأعداد الصحيحة وترتيبها",
+      "title_en": null,
+      "term": "t2",
+      "term_status": "inferred",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": 62
+      }
+    },
+    {
+      "id": "middle/grade-1/science",
+      "parent_id": "middle/grade-1",
+      "kind": "subject",
+      "order": 4,
+      "title_ar": "العلوم",
+      "title_en": "Science",
+      "term": null,
+      "term_status": "unknown",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": null
+      }
+    },
+    {
+      "id": "middle/grade-1/science/x9368a8a7",
+      "parent_id": "middle/grade-1/science",
+      "kind": "unit",
+      "order": 1,
+      "title_ar": "المادة وخصائصها",
+      "title_en": null,
+      "term": null,
+      "term_status": "needs_review",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": null
+      }
+    },
+    {
+      "id": "middle/grade-1/science/xc8b1a031",
+      "parent_id": "middle/grade-1/science/x9368a8a7",
+      "kind": "chapter",
+      "order": 1,
+      "title_ar": "تركيب المادة",
+      "title_en": null,
+      "term": null,
+      "term_status": "needs_review",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": null
+      }
+    },
+    {
+      "id": "middle/grade-1/science/xe389fa43",
+      "parent_id": "middle/grade-1/science/xc8b1a031",
+      "kind": "lesson",
+      "order": 1,
+      "title_ar": "الذرات والعناصر",
+      "title_en": null,
+      "term": null,
+      "term_status": "needs_review",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": null
+      }
+    },
+    {
+      "id": "middle/grade-1/science/xc241a07b",
+      "parent_id": "middle/grade-1/science/xc8b1a031",
+      "kind": "lesson",
+      "order": 2,
+      "title_ar": "المركبات والمخاليط",
+      "title_en": null,
+      "term": "t1",
+      "term_status": "verified",
+      "status": "verified",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": null
+      }
+    },
+    {
+      "id": "middle/grade-1/science/xa3e7e839",
+      "parent_id": "middle/grade-1/science/x9368a8a7",
+      "kind": "lesson",
+      "order": 2,
+      "title_ar": "الخواص الفيزيائية",
+      "title_en": null,
+      "term": null,
+      "term_status": "needs_review",
+      "status": "needs_review",
+      "unit_opener": false,
+      "pages": [],
+      "source_ref": {
+        "source_id": "ien",
+        "ien_id": null
+      }
+    }
+  ],
+  "subject_terms": [
+    {
+      "subject_node_id": "middle/grade-1/math",
+      "term": "t1",
+      "status": "inferred",
+      "evidence": [
+        "te-ien-120607-p0-t1"
+      ]
+    },
+    {
+      "subject_node_id": "middle/grade-1/math",
+      "term": "t2",
+      "status": "inferred",
+      "evidence": [
+        "te-ien-121391-p0-t2"
+      ]
+    },
+    {
+      "subject_node_id": "middle/grade-1/science",
+      "term": "t1",
+      "status": "needs_review",
+      "evidence": []
+    },
+    {
+      "subject_node_id": "middle/grade-1/science",
+      "term": "t2",
+      "status": "needs_review",
+      "evidence": []
+    }
+  ],
+  "expected": {
+    "outlineFor": {
+      "middle/grade-1": {
+        "leaf": "middle/grade-1",
+        "subjects": [
+          "middle/grade-1/math",
+          "middle/grade-1/science"
+        ]
+      }
+    },
+    "subjectOutline": {
+      "middle/grade-1/math": {
+        "id": "middle/grade-1/math",
+        "children": [
+          {
+            "id": "middle/grade-1/math/n91",
+            "children": [
+              {
+                "id": "middle/grade-1/math/n53",
+                "children": []
+              },
+              {
+                "id": "middle/grade-1/math/n54",
+                "children": []
+              },
+              {
+                "id": "middle/grade-1/math/n55",
+                "children": []
+              },
+              {
+                "id": "middle/grade-1/math/xb321f898",
+                "children": []
+              }
+            ]
+          },
+          {
+            "id": "middle/grade-1/math/n92",
+            "children": [
+              {
+                "id": "middle/grade-1/math/x5a3afdd4",
+                "children": []
+              },
+              {
+                "id": "middle/grade-1/math/n61",
+                "children": []
+              },
+              {
+                "id": "middle/grade-1/math/n62",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      "middle/grade-1/science": {
+        "id": "middle/grade-1/science",
+        "children": [
+          {
+            "id": "middle/grade-1/science/x9368a8a7",
+            "children": [
+              {
+                "id": "middle/grade-1/science/xc8b1a031",
+                "children": [
+                  {
+                    "id": "middle/grade-1/science/xe389fa43",
+                    "children": []
+                  },
+                  {
+                    "id": "middle/grade-1/science/xc241a07b",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "id": "middle/grade-1/science/xa3e7e839",
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "lessonsUnder": {
+      "middle/grade-1/math": [
+        "middle/grade-1/math/n53",
+        "middle/grade-1/math/n54",
+        "middle/grade-1/math/n55",
+        "middle/grade-1/math/xb321f898",
+        "middle/grade-1/math/x5a3afdd4",
+        "middle/grade-1/math/n61",
+        "middle/grade-1/math/n62"
+      ],
+      "middle/grade-1/math/n91": [
+        "middle/grade-1/math/n53",
+        "middle/grade-1/math/n54",
+        "middle/grade-1/math/n55",
+        "middle/grade-1/math/xb321f898"
+      ],
+      "middle/grade-1/math/n92": [
+        "middle/grade-1/math/x5a3afdd4",
+        "middle/grade-1/math/n61",
+        "middle/grade-1/math/n62"
+      ],
+      "middle/grade-1/math/n54": [
+        "middle/grade-1/math/n54"
+      ],
+      "middle/grade-1/science": [
+        "middle/grade-1/science/xe389fa43",
+        "middle/grade-1/science/xc241a07b",
+        "middle/grade-1/science/xa3e7e839"
+      ],
+      "middle/grade-1/science/x9368a8a7": [
+        "middle/grade-1/science/xe389fa43",
+        "middle/grade-1/science/xc241a07b",
+        "middle/grade-1/science/xa3e7e839"
+      ],
+      "middle/grade-1/science/xc8b1a031": [
+        "middle/grade-1/science/xe389fa43",
+        "middle/grade-1/science/xc241a07b"
+      ]
+    },
+    "nodeById": {
+      "middle/grade-1/math/n54": {
+        "id": "middle/grade-1/math/n54",
+        "parent_id": "middle/grade-1/math/n91",
+        "kind": "lesson",
+        "order": 2,
+        "title_ar": "القوى و الأسس",
+        "title_en": null,
+        "term": "t1",
+        "term_status": "inferred",
+        "status": "verified",
+        "unit_opener": false,
+        "pages": [
+          {
+            "resource_id": "ien-120607",
+            "pdf_start": 14,
+            "pdf_end": 16,
+            "printed_start": 12,
+            "printed_end": 14
+          }
+        ],
+        "source_ref": {
+          "source_id": "ien",
+          "ien_id": 54
+        }
+      },
+      "middle/grade-1/math/n999": null
+    },
+    "subjectTerms": {
+      "middle/grade-1/math": [
+        {
+          "subject_node_id": "middle/grade-1/math",
+          "term": "t1",
+          "status": "inferred",
+          "evidence": [
+            "te-ien-120607-p0-t1"
+          ]
+        },
+        {
+          "subject_node_id": "middle/grade-1/math",
+          "term": "t2",
+          "status": "inferred",
+          "evidence": [
+            "te-ien-121391-p0-t2"
+          ]
+        }
+      ],
+      "middle/grade-1/science": [
+        {
+          "subject_node_id": "middle/grade-1/science",
+          "term": "t1",
+          "status": "needs_review",
+          "evidence": []
+        },
+        {
+          "subject_node_id": "middle/grade-1/science",
+          "term": "t2",
+          "status": "needs_review",
+          "evidence": []
+        }
+      ]
+    },
+    "eligibleLessons": {
+      "middle/grade-1/math": [
+        "middle/grade-1/math/n53",
+        "middle/grade-1/math/n54",
+        "middle/grade-1/math/n55",
+        "middle/grade-1/math/n61",
+        "middle/grade-1/math/n62"
+      ],
+      "middle/grade-1/math@t1": [
+        "middle/grade-1/math/n53",
+        "middle/grade-1/math/n54",
+        "middle/grade-1/math/n55"
+      ],
+      "middle/grade-1/math@t2": [
+        "middle/grade-1/math/n61",
+        "middle/grade-1/math/n62"
+      ],
+      "middle/grade-1/math@year": [
+        "middle/grade-1/math/n53",
+        "middle/grade-1/math/n54",
+        "middle/grade-1/math/n55",
+        "middle/grade-1/math/n61",
+        "middle/grade-1/math/n62"
+      ],
+      "middle/grade-1/math/n91": [
+        "middle/grade-1/math/n53",
+        "middle/grade-1/math/n54",
+        "middle/grade-1/math/n55"
+      ],
+      "middle/grade-1/math/n54": [
+        "middle/grade-1/math/n54"
+      ],
+      "middle/grade-1/science": [
+        "middle/grade-1/science/xe389fa43",
+        "middle/grade-1/science/xc241a07b"
+      ],
+      "middle/grade-1/science@t1": [
+        "middle/grade-1/science/xc241a07b"
+      ],
+      "middle/grade-1/science@t2": [],
+      "middle/grade-1/science/x9368a8a7": [
+        "middle/grade-1/science/xe389fa43",
+        "middle/grade-1/science/xc241a07b"
+      ],
+      "middle/grade-1/science/xc8b1a031": [
+        "middle/grade-1/science/xe389fa43",
+        "middle/grade-1/science/xc241a07b"
+      ]
+    }
+  }
+}

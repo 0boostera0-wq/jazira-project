@@ -1,0 +1,152 @@
+[
+  {
+    "schema": "exam-template@1",
+    "id": "chapter-quiz",
+    "version": 1,
+    "kind": "chapter",
+    "scope_kinds": [
+      "unit",
+      "chapter"
+    ],
+    "count": {
+      "default": 15,
+      "min": 5,
+      "max": 40,
+      "guest_max": 20,
+      "free_max": 25,
+      "mini": null
+    },
+    "difficulty_mix": {
+      "easy": 30,
+      "medium": 50,
+      "hard": 20
+    },
+    "coverage": {
+      "stratify_by": "lesson",
+      "weight": "equal",
+      "min_per_stratum": 1
+    },
+    "term_rule": "inherit",
+    "types": [
+      "mcq",
+      "true_false",
+      "matching",
+      "ordering",
+      "short_answer",
+      "numeric"
+    ],
+    "timing": {
+      "mode": "timed",
+      "seconds_per_question": 75,
+      "min_seconds": 300,
+      "max_seconds": 3600,
+      "grace_seconds": 30,
+      "user_may_change": true
+    },
+    "feedback": {
+      "default": "end",
+      "allowed": [
+        "end"
+      ]
+    },
+    "retry": {
+      "avoid_last_attempts": 5,
+      "avoid_days": 90,
+      "allow_reuse": true,
+      "max_reuse_share": 30
+    },
+    "randomization": {
+      "question_order": "shuffle_keep_stimulus",
+      "option_shuffle": true,
+      "one_per_exclusion_group": true
+    },
+    "scoring": {
+      "unit": "percent",
+      "matching": "partial",
+      "negative_marking": false,
+      "pass_threshold": 60
+    },
+    "quota": "exam",
+    "eligibility": {
+      "question_status": [
+        "published"
+      ],
+      "min_pool_factor": 1
+    }
+  },
+  {
+    "schema": "exam-template@1",
+    "id": "lesson-quiz",
+    "version": 1,
+    "kind": "lesson",
+    "scope_kinds": [
+      "lesson"
+    ],
+    "count": {
+      "default": 10,
+      "min": 3,
+      "max": 20,
+      "guest_max": 20,
+      "free_max": 25,
+      "mini": null
+    },
+    "difficulty_mix": {
+      "easy": 40,
+      "medium": 40,
+      "hard": 20
+    },
+    "coverage": {
+      "stratify_by": "objective",
+      "weight": "equal",
+      "min_per_stratum": 1
+    },
+    "term_rule": "inherit",
+    "types": [
+      "mcq",
+      "true_false",
+      "matching",
+      "ordering",
+      "short_answer",
+      "numeric"
+    ],
+    "timing": {
+      "mode": "untimed",
+      "seconds_per_question": null,
+      "min_seconds": null,
+      "max_seconds": null,
+      "grace_seconds": 30,
+      "user_may_change": true
+    },
+    "feedback": {
+      "default": "immediate",
+      "allowed": [
+        "immediate",
+        "end"
+      ]
+    },
+    "retry": {
+      "avoid_last_attempts": 5,
+      "avoid_days": 90,
+      "allow_reuse": true,
+      "max_reuse_share": 30
+    },
+    "randomization": {
+      "question_order": "shuffle_keep_stimulus",
+      "option_shuffle": true,
+      "one_per_exclusion_group": true
+    },
+    "scoring": {
+      "unit": "percent",
+      "matching": "partial",
+      "negative_marking": false,
+      "pass_threshold": 60
+    },
+    "quota": "practice",
+    "eligibility": {
+      "question_status": [
+        "published"
+      ],
+      "min_pool_factor": 1
+    }
+  }
+]

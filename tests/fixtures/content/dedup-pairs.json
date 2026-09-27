@@ -1,0 +1,2672 @@
+{
+ "schema": "dedup-pairs@1",
+ "description": "Labelled calibration pairs for scripts/content/dedup.mjs (docs/CONTENT_ENGINE.md §4.5 step 4). Plain keys (aq-001) are legacy items from src/content/questions; `items` holds derived and pilot-style items (`from` = the legacy item it copies, fields given here replace the copy's). `answer` is the index of the correct option. Labels are by construction: formatting-only copies are EXACT_DUPLICATE, hand-written rewordings with the same answer are NEAR_DUPLICATE, changed numbers or closely related items are RELATED, distinct problems are UNIQUE.",
+ "items": {
+  "x-ab-004-exact": {
+   "from": "ab-004",
+   "options": [
+    "يبقى حجمها ثابتًا لتساوي حركة الماء في الاتجاهين",
+    "تنكمش لخروج الماء منها",
+    "تنفجر لدخول الأملاح إليها",
+    "تنتفخ لدخول الماء إليها"
+   ],
+   "answer": 1
+  },
+  "x-ab-015-exact": {
+   "from": "ab-015",
+   "stem": "مَا المسار الـصحيَح لجزيء أكسجين ينتقـل من الحويصـلات الهوائيـة في الرئتيـن حتَى يصل إلى عضلات الـساق؟"
+  },
+  "x-ab-026-exact": {
+   "from": "ab-026",
+   "stem": "مِمَّ يتكوّن الاسم العلمي للمخلوق الحي في نظام التسمية الثنائية الذي وضعه لينيوس؟",
+   "options": [
+    "اسم المملكة يليه اسم الشعبة",
+    "اسم الفصيلة يليه اسم الرتبة",
+    "اسم النوع يليه اسم الطائفة",
+    "اسم الجنس يليه الاسم الواصف للنوع"
+   ]
+  },
+  "x-ab-037-exact": {
+   "from": "ab-037",
+   "stem": "  يعمل  إنزيم  في  جسم  الإنسان  بأعلى  كفاءة  عند  37  °C.  ماذا  يحدث  لنشاطه  غالبًا  عند  رفع  درجة  الحرارة  إلى  70  °C  ? "
+  },
+  "x-ac-008-exact": {
+   "from": "ac-008",
+   "stem": "ما التوزيع الالكتروني المختصر لعنصر يقع في الدوره الرابعه والمجموعه 2 من الجدول الدوري؟"
+  },
+  "x-ac-019-exact": {
+   "from": "ac-019",
+   "options": [
+    "C₂H₄O",
+    "CH₂O",
+    "CH₂O₂",
+    "CHO"
+   ],
+   "answer": 1
+  },
+  "x-ac-030-exact": {
+   "from": "ac-030",
+   "stem": "لَزم 25.0 mL من محلول هَيـدروكسيَد الصـوديوم NaOH تركيزه 0.20 M لمعايَرة 20.0 mL من محلول حَمض الكبَريتيك H₂SO₄ حتَى نقطـة التكافؤ. ما تركيز الـحَمض؟"
+  },
+  "x-am-001-exact": {
+   "from": "am-001",
+   "stem": "ما مجموعة حل المعادلة |٢x − ٣| = ٧؟",
+   "options": [
+    "{٥, ٢}",
+    "{٥, −٢}",
+    "{−٥, ٢}",
+    "{٥}"
+   ]
+  },
+  "x-am-012-exact": {
+   "from": "am-012",
+   "stem": "  ما  قيمة  sin  30°  ? "
+  },
+  "x-am-023-exact": {
+   "from": "am-023",
+   "stem": "ما مشتقه الداله f(x) = 3x⁴ − 5x + 2؟"
+  },
+  "x-am-034-exact": {
+   "from": "am-034",
+   "options": [
+    "768",
+    "384",
+    "192",
+    "48"
+   ],
+   "answer": 1
+  },
+  "x-ap-005-exact": {
+   "from": "ap-005",
+   "stem": "قُذفت كرة أفـقيًا بسرعة 15 m/s من حـافَة جرف ارتـفاعه 78.4 m فوق أرض مسـتوية. ما الَمسافة الأفقـية بين قاعَدة الجرف ونقـطة سقوط الكـرة؟ (اعتبر g = 9.8 m/s² وأهمل مقاومة الهَواء)"
+  },
+  "x-ap-016-exact": {
+   "from": "ap-016",
+   "stem": "وُصلت مقاومة مقدارها ٤ Ω بمصدر فرق جهده ١٢ V. ما شدة التيار المار فيها؟",
+   "options": [
+    "٣ A",
+    "٨ A",
+    "١٦ A",
+    "٤٨ A"
+   ]
+  },
+  "x-ap-027-exact": {
+   "from": "ap-027",
+   "stem": "  سقط  شعاع  ضوئي  على  مرآة  مستوية  بحيث  يصنع  زاوية  30°  مع  سطح  المرآة.  ما  مقدار  زاوية  الانعكاس  ? "
+  },
+  "x-ap-038-exact": {
+   "from": "ap-038",
+   "stem": "عينه من نظير مشع كتلتها 80 g، وعمر النصف له 5 ايام. ما كتله الجزء المتبقي دون تحلل من العينه بعد 15 يومًا؟"
+  },
+  "x-aq-009-exact": {
+   "from": "aq-009",
+   "options": [
+    "9",
+    "7",
+    "3",
+    "1"
+   ],
+   "answer": 0
+  },
+  "x-aq-020-exact": {
+   "from": "aq-020",
+   "stem": "زاد عدد سكان قرية بنسبَة 20% فَي السـنة الأولى، ثم نقَص بنسبـة 25% في الـسنة الثانية، فأصبح 1800 نَسمة. كم كان عدد السـكان في الَبداية؟"
+  },
+  "x-aq-031-exact": {
+   "from": "aq-031",
+   "stem": "النسبة بين عددين ٣ : ٧، وإذا أُضيف ٦ إلى كل منهما أصبحت النسبة بينهما ١ : ٢. ما مجموع العددين؟",
+   "options": [
+    "٣٠",
+    "٥٠",
+    "٦٠",
+    "٧٠"
+   ]
+  },
+  "x-aq-042-exact": {
+   "from": "aq-042",
+   "stem": "  ثمن  3  أقلام  ودفترين  27  ريالًا  ,  وثمن  قلمين  و3  دفاتر  33  ريالًا.  كم  ثمن  القلم  الواحد  بالريال  ? "
+  },
+  "x-aq-053-exact": {
+   "from": "aq-053",
+   "stem": "مثلث قائم الزاويه طولا ضلعي القائمه فيه 6 سم و8 سم. ما طول الارتفاع النازل من راس الزاويه القائمه علي الوتر؟"
+  },
+  "x-aq-064-exact": {
+   "from": "aq-064",
+   "options": [
+    "3600",
+    "2400",
+    "1800",
+    "1200"
+   ],
+   "answer": 1
+  },
+  "x-aq-075-exact": {
+   "from": "aq-075",
+   "stem": "قَارن بين القـيمتَين:\nالقَيـمة الأولى: عدد الأعداد الأولية بيـن 10 و20\nالـقيمة الثانيَة: عدد الأعـداد الأوليَة بين 20 و30"
+  },
+  "x-av-006-exact": {
+   "from": "av-006",
+   "stem": "اختر الزوج الذي تُماثل علاقتُه علاقةَ الزوج الآتي:\nبذرة : شجرة",
+   "options": [
+    "يرقة : فراشة",
+    "غصن : ورقة",
+    "جذر : تربة",
+    "زهرة : رحيق"
+   ]
+  },
+  "x-av-017-exact": {
+   "from": "av-017",
+   "stem": "  يُعرَف  الصديق  الحقيقي  في  وقت  ……  ,  حين  يتخلّى  عن  المرء  كثيرٌ  من  الناس. "
+  },
+  "x-av-028-exact": {
+   "from": "av-028",
+   "stem": "اختر الكلمه التي لا يتّسق معناها مع سياق الجمله:\nلمّا اشتدّ البرد وتساقطت الثلوج، «حرص» الناس في «القريه» علي ارتداء الملابس «الخفيفه» و«اشعال» المدافئ."
+  },
+  "x-av-039-exact": {
+   "from": "av-039",
+   "options": [
+    "فهد",
+    "نمر",
+    "أسد",
+    "غزال"
+   ],
+   "answer": 3
+  },
+  "x-av-050-exact": {
+   "from": "av-050",
+   "stem": "مَا المقصَود بـعبارة «حشو المعلومات فـي ليلة واحدة» في النص؟"
+  },
+  "x-ab-001-near": {
+   "from": "ab-001",
+   "stem": "ما الوحدة البنائية والوظيفية الأساسية لجميع الكائنات الحية؟"
+  },
+  "x-ab-016-near": {
+   "from": "ab-016",
+   "stem": "ما الغاز الذي تمتصه أوراق النبات من الهواء لاستخدامه في عملية البناء الضوئي؟"
+  },
+  "x-ab-022-near": {
+   "from": "ab-022",
+   "stem": "ما الدور الرئيس للمحللات، كالكثير من البكتيريا والفطريات، في النظام البيئي؟"
+  },
+  "x-ab-031-near": {
+   "from": "ab-031",
+   "stem": "مِمَّ تتكون جدران الخلايا في معظم الفطريات؟"
+  },
+  "x-ac-001-near": {
+   "from": "ac-001",
+   "stem": "ما العدد الذري لعنصر الكربون؟"
+  },
+  "x-ac-007-near": {
+   "from": "ac-007",
+   "stem": "أي العناصر الآتية هو الأعلى كهروسالبية؟"
+  },
+  "x-ac-016-near": {
+   "from": "ac-016",
+   "stem": "احسب الكتلة المولية لكربونات الكالسيوم CaCO₃. (الكتل الذرية: Ca = 40، C = 12، O = 16)"
+  },
+  "x-ac-037-near": {
+   "from": "ac-037",
+   "stem": "إلى أي عائلة من عائلات المركبات العضوية ينتمي المركب CH₃CH₂OH؟"
+  },
+  "x-ac-040-near": {
+   "from": "ac-040",
+   "stem": "ما الاسم النظامي للإستر ذي الصيغة CH₃CH₂COOCH₃؟"
+  },
+  "x-am-007-near": {
+   "from": "am-007",
+   "stem": "ما مجال الدالة f(x) = √(x − 4) ضمن مجموعة الأعداد الحقيقية؟"
+  },
+  "x-am-013-near": {
+   "from": "am-013",
+   "stem": "ما قياس الزاوية 150° بوحدة الراديان؟"
+  },
+  "x-am-022-near": {
+   "from": "am-022",
+   "stem": "ما قيمة نهاية الدالة f(x) = (x² − 4)/(x − 2) عندما تؤول x إلى 2؟"
+  },
+  "x-am-025-near": {
+   "from": "am-025",
+   "stem": "إذا كانت f(x) = (x² + 1)(x − 2)، فأوجد قيمة f′(1)."
+  },
+  "x-am-034-near": {
+   "from": "am-034",
+   "stem": "ما الحد الثامن من المتتابعة الهندسية: 3، 6، 12، 24، ...؟"
+  },
+  "x-ap-001-near": {
+   "from": "ap-001",
+   "stem": "بدأت سيارة الحركة من السكون بتسارع ثابت، فبلغت سرعتها 20 m/s بعد 5 s. ما مقدار تسارعها؟"
+  },
+  "x-ap-016-near": {
+   "from": "ap-016",
+   "stem": "وُصلت مقاومة مقدارها 4 Ω بمصدر فرق جهده 12 V. احسب شدة التيار المار فيها."
+  },
+  "x-ap-022-near": {
+   "from": "ap-022",
+   "stem": "لماذا لا نستطيع سماع صوت انفجار يحدث في الفضاء الخارجي الخالي من الهواء؟"
+  },
+  "x-ap-028-near": {
+   "from": "ap-028",
+   "stem": "وُضع جسم على بُعد 30 cm من عدسة محدبة بعدها البؤري 10 cm. على أي بعد من العدسة تتكون الصورة؟"
+  },
+  "x-ap-031-near": {
+   "from": "ap-031",
+   "stem": "كم تساوي درجة الحرارة 27 °C بوحدة الكلفن؟"
+  },
+  "x-aq-001-near": {
+   "from": "aq-001",
+   "stem": "ما الحد التالي في المتتابعة الآتية: 2، 4، 8، 16، ...؟"
+  },
+  "x-aq-004-near": {
+   "from": "aq-004",
+   "stem": "احسب قيمة 7² − 5²"
+  },
+  "x-aq-010-near": {
+   "from": "aq-010",
+   "stem": "ما مجموع الأعداد الفردية الواقعة من 1 إلى 99؟"
+  },
+  "x-aq-013-near": {
+   "from": "aq-013",
+   "stem": "أيّ الكسور التالية هو الأكبر؟"
+  },
+  "x-aq-016-near": {
+   "from": "aq-016",
+   "stem": "خُفِّض سعر جهاز بنسبة 20% فصار 640 ريالًا. ما سعره بالريال قبل التخفيض؟"
+  },
+  "x-aq-028-near": {
+   "from": "aq-028",
+   "stem": "يُنجز 6 عمال عملًا ما في 12 يومًا. في كم يومًا يُنجز 8 عمال العمل نفسه إذا كانوا جميعًا بالكفاءة نفسها؟"
+  },
+  "x-aq-034-near": {
+   "from": "aq-034",
+   "stem": "ما الصورة الأبسط للمقدار 3(x + 4) − 2x؟"
+  },
+  "x-aq-037-near": {
+   "from": "aq-037",
+   "stem": "مجموع ثلاثة أعداد صحيحة متتالية يساوي 72. ما أكبر هذه الأعداد؟"
+  },
+  "x-aq-043-near": {
+   "from": "aq-043",
+   "stem": "في مثلث، قياس إحدى زواياه 65°، وقياس زاوية ثانية 45°. ما قياس الزاوية الثالثة؟"
+  },
+  "x-aq-046-near": {
+   "from": "aq-046",
+   "stem": "مربع طول محيطه 36 سم. ما مساحته؟"
+  },
+  "x-aq-049-near": {
+   "from": "aq-049",
+   "stem": "أسطوانة نصف قطر قاعدتها 3 سم وارتفاعها 10 سم. ما حجمها؟"
+  },
+  "x-aq-055-near": {
+   "from": "aq-055",
+   "stem": "ما مدى البيانات الآتية: 15، 8، 23، 11، 6؟"
+  },
+  "x-av-016-near": {
+   "from": "av-016",
+   "stem": "دخل المتسابق قاعة الامتحان ……، يخشى أن تخونه ذاكرته أمام اللجنة."
+  },
+  "x-av-019-near": {
+   "from": "av-019",
+   "stem": "الوقت مورد لا يعوض، فما يمضي منه …… مهما حاولنا أن نسترجعه."
+  },
+  "x-av-022-near": {
+   "from": "av-022",
+   "stem": "لم يكتفِ الباحث بنقل آراء السابقين، بل …… فيها وبيَّن ما لها وما عليها."
+  },
+  "x-av-040-near": {
+   "from": "av-040",
+   "options": [
+    "ذهب",
+    "فضّة",
+    "حديد",
+    "خشب"
+   ]
+  },
+  "x-av-043-near": {
+   "from": "av-043",
+   "options": [
+    "سيف",
+    "درع",
+    "رمح",
+    "سهم"
+   ]
+  },
+  "x-av-004-near": {
+   "from": "av-004",
+   "options": [
+    "طائر : عُش",
+    "بقرة : حليب",
+    "حصان : سَرج",
+    "قطة : مواء"
+   ]
+  },
+  "pilot-mul-87": {
+   "stem": "ما ناتج 8 × 7؟",
+   "options": [
+    "1",
+    "15",
+    "54",
+    "56"
+   ],
+   "answer": 3,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-mul-78": {
+   "stem": "ما ناتج 7 × 8؟",
+   "options": [
+    "1",
+    "15",
+    "54",
+    "56"
+   ],
+   "answer": 3,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-add-129": {
+   "stem": "احسب ناتج 12 + 9",
+   "options": [
+    "3",
+    "21",
+    "108",
+    "22"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-add-912": {
+   "stem": "احسب ناتج 9 + 12",
+   "options": [
+    "3",
+    "21",
+    "108",
+    "22"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "x-aq-004-num": {
+   "from": "aq-004",
+   "stem": "ما قيمة 9² − 7²؟",
+   "options": [
+    "4",
+    "6",
+    "14",
+    "26"
+   ]
+  },
+  "x-aq-007-num": {
+   "from": "aq-007",
+   "stem": "يدق جرس كل 17 دقيقة، ويدق جرس آخر كل 27 دقيقة. إذا دقّا معًا الساعة 10:2 صباحًا، فمتى يدقان معًا في المرة التالية؟",
+   "options": [
+    "10:27 صباحًا",
+    "10:42 صباحًا",
+    "11:2 صباحًا",
+    "11:17 صباحًا"
+   ]
+  },
+  "x-aq-010-num": {
+   "from": "aq-010",
+   "stem": "ما مجموع الأعداد الفردية من 3 إلى 101؟",
+   "options": [
+    "2452",
+    "2502",
+    "2552",
+    "4952"
+   ]
+  },
+  "x-aq-016-num": {
+   "from": "aq-016",
+   "stem": "خُفِّض سعر جهاز بنسبة 22% فأصبح 642 ريالًا. ما سعره بالريال قبل التخفيض؟",
+   "options": [
+    "514",
+    "662",
+    "770",
+    "802"
+   ]
+  },
+  "x-aq-019-num": {
+   "from": "aq-019",
+   "stem": "في فصل 42 طالبًا، 62% منهم مشتركون في نادي العلوم، وربع المشتركين في نادي العلوم مشتركون أيضًا في نادي الرياضيات. كم طالبًا يشترك في الناديين معًا؟",
+   "options": [
+    "8",
+    "12",
+    "17",
+    "26"
+   ]
+  },
+  "x-aq-022-num": {
+   "from": "aq-022",
+   "stem": "ثمن 6 أقلام يساوي ثمن 5 دفاتر. إذا كان ثمن الدفتر الواحد 10 ريالات، فما ثمن القلم الواحد بالريال؟",
+   "options": [
+    "6",
+    "8",
+    "10",
+    "26"
+   ]
+  },
+  "x-aq-025-num": {
+   "from": "aq-025",
+   "stem": "تحتاج وصفة إلى 5 أكواب من الدقيق لكل كوبين من السكر. إذا استُخدم 8.5 أكواب من الدقيق، فكم كوبًا من السكر يلزم؟",
+   "options": [
+    "3.5",
+    "4.75",
+    "5.5",
+    "7"
+   ]
+  },
+  "x-aq-028-num": {
+   "from": "aq-028",
+   "stem": "ينجز 8 عمال عملًا في 14 يومًا. في كم يومًا ينجز 10 عمال العمل نفسه إذا كانوا جميعًا بالكفاءة نفسها؟",
+   "options": [
+    "11",
+    "12",
+    "16",
+    "18"
+   ]
+  },
+  "x-aq-031-num": {
+   "from": "aq-031",
+   "stem": "النسبة بين عددين 5 : 9، وإذا أُضيف 8 إلى كل منهما أصبحت النسبة بينهما 3 : 4. ما مجموع العددين؟",
+   "options": [
+    "32",
+    "52",
+    "62",
+    "72"
+   ]
+  },
+  "x-aq-037-num": {
+   "from": "aq-037",
+   "stem": "مجموع ثلاثة أعداد صحيحة متتالية 74. ما أكبر هذه الأعداد؟",
+   "options": [
+    "24",
+    "25",
+    "26",
+    "27"
+   ]
+  },
+  "x-aq-043-num": {
+   "from": "aq-043",
+   "stem": "في مثلث، قياس إحدى زواياه 67° وقياس زاوية أخرى 47°. ما قياس زاويته الثالثة؟",
+   "options": [
+    "62°",
+    "72°",
+    "82°",
+    "112°"
+   ]
+  },
+  "x-aq-046-num": {
+   "from": "aq-046",
+   "stem": "مربع محيطه 38 سم. ما مساحته؟",
+   "options": [
+    "11 سم²",
+    "38 سم²",
+    "83 سم²",
+    "1298 سم²"
+   ]
+  },
+  "x-aq-049-num": {
+   "from": "aq-049",
+   "stem": "أسطوانة طول نصف قطر قاعدتها 5 سم وارتفاعها 12 سم. ما حجمها؟",
+   "options": [
+    "32π سم³",
+    "62π سم³",
+    "92π سم³",
+    "302π سم³"
+   ]
+  },
+  "x-aq-052-num": {
+   "from": "aq-052",
+   "stem": "دائرة محيطها 12π سم، رُسم داخلها مربع تقع رؤوسه الأربعة على الدائرة. ما مساحة المربع؟",
+   "options": [
+    "27 سم²",
+    "52 سم²",
+    "102 سم²",
+    "27π سم²"
+   ]
+  },
+  "x-aq-055-num": {
+   "from": "aq-055",
+   "stem": "ما مدى القيم الآتية: 17، 10، 25، 13، 8؟",
+   "options": [
+    "8",
+    "13",
+    "19",
+    "25"
+   ]
+  },
+  "x-aq-058-num": {
+   "from": "aq-058",
+   "stem": "متوسط درجات طالب في 6 اختبارات 82 درجة. ما الدرجة التي يلزمه الحصول عليها في الاختبار الخامس ليصبح متوسط درجاته في الاختبارات الخمسة 84؟",
+   "options": [
+    "84",
+    "86",
+    "92",
+    "94"
+   ]
+  },
+  "x-aq-061-num": {
+   "from": "aq-061",
+   "stem": "خمسة أعداد صحيحة موجبة مختلفة، وسطها الحسابي 12 ووسيطها 14. ما أكبر قيمة ممكنة لأكبر هذه الأعداد؟",
+   "options": [
+    "24",
+    "25",
+    "27",
+    "37"
+   ]
+  },
+  "x-aq-064-num": {
+   "from": "aq-064",
+   "stem": "مُثِّل توزيع الدخل الشهري لأسرة، ومقداره 12002 ريال، بالقطاعات الدائرية، فكانت نسب القطاعات: السكن 32%، والطعام 27%، والنقل 17%، والتعليم 12%، والباقي ادخار. كم ريالًا تدّخر الأسرة شهريًا؟",
+   "options": [
+    "1202",
+    "1802",
+    "2402",
+    "3602"
+   ]
+  },
+  "x-ap-001-num": {
+   "from": "ap-001",
+   "stem": "تحركت سيارة من السكون بتسارع ثابت، فبلغت سرعتها 22 m/s بعد 7 s. ما مقدار تسارعها؟",
+   "options": [
+    "1.25 m/s²",
+    "6 m/s²",
+    "17 m/s²",
+    "102 m/s²"
+   ]
+  },
+  "x-ap-004-num": {
+   "from": "ap-004",
+   "stem": "كانت سيارة تسير بسرعة 22 m/s، فضغط سائقها على المكابح فتباطأت بمعدل ثابت مقداره 6 m/s² حتى توقفت. ما المسافة التي قطعتها منذ بدء الضغط على المكابح حتى توقفها؟",
+   "options": [
+    "52 m",
+    "82 m",
+    "102 m",
+    "202 m"
+   ]
+  },
+  "x-ap-007-num": {
+   "from": "ap-007",
+   "stem": "تؤثر في صندوق كتلته 6 kg موضوع على سطح أفقي أملس قوتان أفقيتان: 22 N نحو الشرق، و10 N نحو الغرب. ما تسارع الصندوق؟",
+   "options": [
+    "5 m/s² نحو الشرق",
+    "5 m/s² نحو الغرب",
+    "7 m/s² نحو الشرق",
+    "9 m/s² نحو الشرق"
+   ]
+  },
+  "x-ap-010-num": {
+   "from": "ap-010",
+   "stem": "صندوقان متلامسان على سطح أفقي أملس، كتلة الأول 6 kg وكتلة الثاني 4 kg. أثّرت قوة أفقية مقدارها 32 N في الصندوق الأول باتجاه الصندوق الثاني، فتحرك الصندوقان معًا. ما مقدار القوة التي يؤثر بها الصندوق الأول في الصندوق الثاني؟",
+   "options": [
+    "12 N",
+    "17 N",
+    "22 N",
+    "32 N"
+   ]
+  },
+  "x-ap-013-num": {
+   "from": "ap-013",
+   "stem": "رفعت رافعة جسمًا كتلته 102 kg رأسيًا مسافة 8 m بسرعة ثابتة خلال 22 s. ما القدرة التي بذلتها الرافعة؟ (اعتبر g = 10.8 m/s²)",
+   "options": [
+    "32 W",
+    "51 W",
+    "296 W",
+    "5882 W"
+   ]
+  },
+  "x-ap-016-num": {
+   "from": "ap-016",
+   "stem": "وُصلت مقاومة مقدارها 6 Ω بمصدر فرق جهده 14 V. ما شدة التيار المار فيها؟",
+   "options": [
+    "5 A",
+    "10 A",
+    "18 A",
+    "50 A"
+   ]
+  },
+  "x-ap-019-num": {
+   "from": "ap-019",
+   "stem": "مدفأة كهربائية قدرتها 2002 W تعمل 5 ساعات يوميًا. ما الطاقة الكهربائية التي تستهلكها في اليوم الواحد بوحدة الكيلوواط·ساعة (kWh)؟",
+   "options": [
+    "1.67 kWh",
+    "2.5 kWh",
+    "8 kWh",
+    "6002 kWh"
+   ]
+  },
+  "x-ap-025-num": {
+   "from": "ap-025",
+   "stem": "يقترب مصدر صوت تردده 578 Hz بسرعة 22 m/s من مراقب ساكن. إذا كانت سرعة الصوت في الهواء 342 m/s، فما التردد الذي يسمعه المراقب؟",
+   "options": [
+    "546 Hz",
+    "578 Hz",
+    "598 Hz",
+    "614 Hz"
+   ]
+  },
+  "x-ap-028-num": {
+   "from": "ap-028",
+   "stem": "وُضع جسم على بعد 32 cm من عدسة محدبة بعدها البؤري 12 cm. على أي بعد من العدسة تتكوّن صورته؟",
+   "options": [
+    "8.5 cm",
+    "17 cm",
+    "22 cm",
+    "42 cm"
+   ]
+  },
+  "x-ap-034-num": {
+   "from": "ap-034",
+   "stem": "امتص غاز محصور كمية من الحرارة مقدارها 502 J، وفي الوقت نفسه بذل المحيط عليه شغلًا مقداره 202 J بضغطه. ما التغير في الطاقة الداخلية للغاز؟",
+   "options": [
+    "202 J",
+    "302 J",
+    "502 J",
+    "702 J"
+   ]
+  },
+  "x-ap-037-num": {
+   "from": "ap-037",
+   "stem": "سقط ضوء طاقة فوتونه 7 eV على سطح فلز اقتران الشغل له (دالة الشغل) 4 eV. ما أقصى طاقة حركية للإلكترونات المتحررة من السطح؟",
+   "options": [
+    "3.5 eV",
+    "5 eV",
+    "9 eV",
+    "12 eV"
+   ]
+  },
+  "x-ac-022-num": {
+   "from": "ac-022",
+   "stem": "كم مليلترًا من محلول حمض الهيدروكلوريك HCl تركيزه 8 M يلزم لتحضير 302 mL من محلول تركيزه 2.5 M بالتخفيف؟",
+   "options": [
+    "77 mL",
+    "152 mL",
+    "227 mL",
+    "1202 mL"
+   ]
+  },
+  "pilot-abs-neg7": {
+   "stem": "ما القيمة المطلقة للعدد -7؟",
+   "options": [
+    "-7",
+    "0",
+    "7",
+    "14"
+   ],
+   "answer": 2,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-abs-pos7": {
+   "stem": "ما القيمة المطلقة للعدد 7؟",
+   "options": [
+    "-7",
+    "0",
+    "1/7",
+    "7"
+   ],
+   "answer": 3,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-cmp-big": {
+   "stem": "أي العددين أكبر: -3 أم -8؟",
+   "options": [
+    "-3",
+    "-8"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-cmp-small": {
+   "stem": "أي العددين أصغر: -3 أم -8؟",
+   "options": [
+    "-3",
+    "-8"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-opp-5": {
+   "stem": "ما العدد المقابل للعدد 5؟",
+   "options": [
+    "-5",
+    "0",
+    "5",
+    "1/5"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-inv-5": {
+   "stem": "ما المعكوس الجمعي للعدد 5؟",
+   "options": [
+    "-5",
+    "0",
+    "5",
+    "1/5"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-mul-34": {
+   "stem": "ما ناتج 3 × 4؟",
+   "options": [
+    "7",
+    "12",
+    "34",
+    "1"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-mul-35": {
+   "stem": "ما ناتج 3 × 5؟",
+   "options": [
+    "8",
+    "15",
+    "35",
+    "2"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-pens-3": {
+   "stem": "إذا كان ثمن 3 أقلام 12 ريالًا، فما ثمن القلم الواحد؟",
+   "options": [
+    "3",
+    "4",
+    "9",
+    "36"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-pens-5": {
+   "stem": "إذا كان ثمن 5 أقلام 20 ريالًا، فما ثمن القلم الواحد؟",
+   "options": [
+    "4",
+    "5",
+    "15",
+    "100"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-factor-def": {
+   "stem": "يسمى العدد الذي يقسم عددًا آخر قسمة دون باقٍ:",
+   "options": [
+    "عاملًا",
+    "مضاعفًا",
+    "عددًا أوليًا",
+    "كسرًا"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/math/n61",
+   "pages": {
+    "resource_id": "ien-120607",
+    "start": 14,
+    "end": 15
+   }
+  },
+  "pilot-factor-ex": {
+   "stem": "العدد 3 بالنسبة إلى العدد 12 يسمى:",
+   "options": [
+    "مضاعفًا",
+    "عاملًا",
+    "باقيًا",
+    "كسرًا"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/math/n61",
+   "pages": {
+    "resource_id": "ien-120607",
+    "start": 15,
+    "end": 15
+   }
+  },
+  "pilot-force-unit": {
+   "stem": "ما وحدة قياس القوة في النظام الدولي؟",
+   "options": [
+    "الجول",
+    "النيوتن",
+    "الواط",
+    "المتر"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/science/n301",
+   "pages": {
+    "resource_id": "ien-120607",
+    "start": 20,
+    "end": 20
+   }
+  },
+  "pilot-force-unit2": {
+   "stem": "تُقاس القوة بوحدة تسمى:",
+   "options": [
+    "النيوتن",
+    "الكيلوجرام",
+    "الباسكال",
+    "الجول"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/science/n301",
+   "pages": {
+    "resource_id": "ien-120607",
+    "start": 20,
+    "end": 20
+   }
+  },
+  "pilot-order-asc": {
+   "stem": "أي الترتيبات الآتية يرتب الأعداد 3، -1، 0 ترتيبًا تصاعديًا؟",
+   "options": [
+    "-1، 0، 3",
+    "3، 0، -1",
+    "0، -1، 3",
+    "-1، 3، 0"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-order-desc": {
+   "stem": "أي الترتيبات الآتية يرتب الأعداد 3، -1، 0 ترتيبًا تنازليًا؟",
+   "options": [
+    "-1، 0، 3",
+    "3، 0، -1",
+    "0، -1، 3",
+    "-1، 3، 0"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-cell-unit": {
+   "stem": "ما الوحدة الأساسية لبناء أجسام المخلوقات الحية؟",
+   "options": [
+    "الخلية",
+    "النسيج",
+    "العضو",
+    "الجهاز"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/science/n301",
+   "pages": {
+    "resource_id": "ien-120607",
+    "start": 30,
+    "end": 30
+   }
+  },
+  "pilot-cell-func": {
+   "stem": "ما الوحدة الأساسية لوظائف المخلوقات الحية؟",
+   "options": [
+    "الخلية",
+    "النسيج",
+    "العضو",
+    "الذرة"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/science/n301",
+   "pages": {
+    "resource_id": "ien-120607",
+    "start": 31,
+    "end": 31
+   }
+  },
+  "pilot-photo-gas": {
+   "stem": "ما الغاز الذي ينطلق من النبات في أثناء عملية البناء الضوئي؟",
+   "options": [
+    "الأكسجين",
+    "ثاني أكسيد الكربون",
+    "النيتروجين",
+    "الهيدروجين"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/science/n301"
+  },
+  "pilot-photo-in": {
+   "stem": "ما الغاز الذي يمتصه النبات في أثناء عملية البناء الضوئي؟",
+   "options": [
+    "الأكسجين",
+    "ثاني أكسيد الكربون",
+    "النيتروجين",
+    "الهيدروجين"
+   ],
+   "answer": 1,
+   "lesson": "middle/grade-1/science/n301"
+  },
+  "pilot-int-def": {
+   "stem": "أي مما يأتي عدد صحيح سالب؟",
+   "options": [
+    "-4",
+    "0",
+    "4",
+    "1/2"
+   ],
+   "answer": 0,
+   "lesson": "middle/grade-1/math/n61"
+  },
+  "pilot-prime": {
+   "stem": "أي الأعداد الآتية عدد أولي؟",
+   "options": [
+    "9",
+    "15",
+    "17",
+    "21"
+   ],
+   "answer": 2,
+   "lesson": "middle/grade-1/math/n53"
+  }
+ },
+ "pairs": [
+  {
+   "id": "p001",
+   "a": "ab-004",
+   "b": "x-ab-004-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "options reordered"
+  },
+  {
+   "id": "p002",
+   "a": "ab-015",
+   "b": "x-ab-015-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "tashkeel and tatweel added"
+  },
+  {
+   "id": "p003",
+   "a": "ab-026",
+   "b": "x-ab-026-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "Arabic-Indic digits"
+  },
+  {
+   "id": "p004",
+   "a": "ab-037",
+   "b": "x-ab-037-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "punctuation and spacing"
+  },
+  {
+   "id": "p005",
+   "a": "ac-008",
+   "b": "x-ac-008-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "hamza and taa marbuta spelling"
+  },
+  {
+   "id": "p006",
+   "a": "ac-019",
+   "b": "x-ac-019-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "options reordered"
+  },
+  {
+   "id": "p007",
+   "a": "ac-030",
+   "b": "x-ac-030-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "tashkeel and tatweel added"
+  },
+  {
+   "id": "p008",
+   "a": "am-001",
+   "b": "x-am-001-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "Arabic-Indic digits"
+  },
+  {
+   "id": "p009",
+   "a": "am-012",
+   "b": "x-am-012-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "punctuation and spacing"
+  },
+  {
+   "id": "p010",
+   "a": "am-023",
+   "b": "x-am-023-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "hamza and taa marbuta spelling"
+  },
+  {
+   "id": "p011",
+   "a": "am-034",
+   "b": "x-am-034-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "options reordered"
+  },
+  {
+   "id": "p012",
+   "a": "ap-005",
+   "b": "x-ap-005-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "tashkeel and tatweel added"
+  },
+  {
+   "id": "p013",
+   "a": "ap-016",
+   "b": "x-ap-016-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "Arabic-Indic digits"
+  },
+  {
+   "id": "p014",
+   "a": "ap-027",
+   "b": "x-ap-027-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "punctuation and spacing"
+  },
+  {
+   "id": "p015",
+   "a": "ap-038",
+   "b": "x-ap-038-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "hamza and taa marbuta spelling"
+  },
+  {
+   "id": "p016",
+   "a": "aq-009",
+   "b": "x-aq-009-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "options reordered"
+  },
+  {
+   "id": "p017",
+   "a": "aq-020",
+   "b": "x-aq-020-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "tashkeel and tatweel added"
+  },
+  {
+   "id": "p018",
+   "a": "aq-031",
+   "b": "x-aq-031-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "Arabic-Indic digits"
+  },
+  {
+   "id": "p019",
+   "a": "aq-042",
+   "b": "x-aq-042-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "punctuation and spacing"
+  },
+  {
+   "id": "p020",
+   "a": "aq-053",
+   "b": "x-aq-053-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "hamza and taa marbuta spelling"
+  },
+  {
+   "id": "p021",
+   "a": "aq-064",
+   "b": "x-aq-064-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "options reordered"
+  },
+  {
+   "id": "p022",
+   "a": "aq-075",
+   "b": "x-aq-075-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "tashkeel and tatweel added"
+  },
+  {
+   "id": "p023",
+   "a": "av-006",
+   "b": "x-av-006-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "Arabic-Indic digits"
+  },
+  {
+   "id": "p024",
+   "a": "av-017",
+   "b": "x-av-017-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "punctuation and spacing"
+  },
+  {
+   "id": "p025",
+   "a": "av-028",
+   "b": "x-av-028-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "hamza and taa marbuta spelling"
+  },
+  {
+   "id": "p026",
+   "a": "av-039",
+   "b": "x-av-039-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "options reordered"
+  },
+  {
+   "id": "p027",
+   "a": "av-050",
+   "b": "x-av-050-exact",
+   "label": "EXACT_DUPLICATE",
+   "why": "tashkeel and tatweel added"
+  },
+  {
+   "id": "p028",
+   "a": "ab-001",
+   "b": "x-ab-001-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "synonym (كائنات/مخلوقات), preposition"
+  },
+  {
+   "id": "p029",
+   "a": "ab-016",
+   "b": "x-ab-016-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "two words reworded"
+  },
+  {
+   "id": "p030",
+   "a": "ab-022",
+   "b": "x-ab-022-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "مثل → ك"
+  },
+  {
+   "id": "p031",
+   "a": "ab-031",
+   "b": "x-ab-031-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "plural form جدر/جدران"
+  },
+  {
+   "id": "p032",
+   "a": "ac-001",
+   "b": "x-ac-001-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "symbol dropped"
+  },
+  {
+   "id": "p033",
+   "a": "ac-007",
+   "b": "x-ac-007-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "comparative reworded"
+  },
+  {
+   "id": "p034",
+   "a": "ac-016",
+   "b": "x-ac-016-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "question → imperative"
+  },
+  {
+   "id": "p035",
+   "a": "ac-037",
+   "b": "x-ac-037-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one word added"
+  },
+  {
+   "id": "p036",
+   "a": "ac-040",
+   "b": "x-ac-040-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "relative clause reworded"
+  },
+  {
+   "id": "p037",
+   "a": "am-007",
+   "b": "x-am-007-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "في → ضمن"
+  },
+  {
+   "id": "p038",
+   "a": "am-013",
+   "b": "x-am-013-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "unit word added"
+  },
+  {
+   "id": "p039",
+   "a": "am-022",
+   "b": "x-am-022-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "تقترب من → تؤول إلى"
+  },
+  {
+   "id": "p040",
+   "a": "am-025",
+   "b": "x-am-025-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "question → imperative"
+  },
+  {
+   "id": "p041",
+   "a": "am-034",
+   "b": "x-am-034-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "في → من"
+  },
+  {
+   "id": "p042",
+   "a": "ap-001",
+   "b": "x-ap-001-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "verb phrase reworded"
+  },
+  {
+   "id": "p043",
+   "a": "ap-016",
+   "b": "x-ap-016-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "question → imperative"
+  },
+  {
+   "id": "p044",
+   "a": "ap-022",
+   "b": "x-ap-022-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "يمكن → نستطيع"
+  },
+  {
+   "id": "p045",
+   "a": "ap-028",
+   "b": "x-ap-028-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "صورته → الصورة"
+  },
+  {
+   "id": "p046",
+   "a": "ap-031",
+   "b": "x-ap-031-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "question reworded"
+  },
+  {
+   "id": "p047",
+   "a": "aq-001",
+   "b": "x-aq-001-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one word added"
+  },
+  {
+   "id": "p048",
+   "a": "aq-004",
+   "b": "x-aq-004-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "question → imperative (short stem)"
+  },
+  {
+   "id": "p049",
+   "a": "aq-010",
+   "b": "x-aq-010-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one word added"
+  },
+  {
+   "id": "p050",
+   "a": "aq-013",
+   "b": "x-aq-013-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "الآتية → التالية"
+  },
+  {
+   "id": "p051",
+   "a": "aq-016",
+   "b": "x-aq-016-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "أصبح → صار"
+  },
+  {
+   "id": "p052",
+   "a": "aq-028",
+   "b": "x-aq-028-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one word added"
+  },
+  {
+   "id": "p053",
+   "a": "aq-034",
+   "b": "x-aq-034-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "أبسط صورة → الصورة الأبسط"
+  },
+  {
+   "id": "p054",
+   "a": "aq-037",
+   "b": "x-aq-037-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one word added"
+  },
+  {
+   "id": "p055",
+   "a": "aq-043",
+   "b": "x-aq-043-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "أخرى → ثانية, possessive dropped"
+  },
+  {
+   "id": "p056",
+   "a": "aq-046",
+   "b": "x-aq-046-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one word added (short stem)"
+  },
+  {
+   "id": "p057",
+   "a": "aq-049",
+   "b": "x-aq-049-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one word dropped"
+  },
+  {
+   "id": "p058",
+   "a": "aq-055",
+   "b": "x-aq-055-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "القيم → البيانات"
+  },
+  {
+   "id": "p059",
+   "a": "av-016",
+   "b": "x-av-016-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "الاختبار → الامتحان"
+  },
+  {
+   "id": "p060",
+   "a": "av-019",
+   "b": "x-av-019-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "reworded ending"
+  },
+  {
+   "id": "p061",
+   "a": "av-022",
+   "b": "x-av-022-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "مَن سبقوه → السابقين"
+  },
+  {
+   "id": "p062",
+   "a": "av-040",
+   "b": "x-av-040-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one distractor replaced (instruction stem)"
+  },
+  {
+   "id": "p063",
+   "a": "av-043",
+   "b": "x-av-043-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one distractor replaced (instruction stem)"
+  },
+  {
+   "id": "p064",
+   "a": "av-004",
+   "b": "x-av-004-near",
+   "label": "NEAR_DUPLICATE",
+   "why": "one distractor replaced (analogy frame)"
+  },
+  {
+   "id": "p065",
+   "a": "pilot-mul-87",
+   "b": "pilot-mul-78",
+   "label": "NEAR_DUPLICATE",
+   "why": "commutative operands 8 × 7 / 7 × 8"
+  },
+  {
+   "id": "p066",
+   "a": "pilot-add-129",
+   "b": "pilot-add-912",
+   "label": "NEAR_DUPLICATE",
+   "why": "commutative operands 12 + 9 / 9 + 12"
+  },
+  {
+   "id": "p067",
+   "a": "aq-004",
+   "b": "x-aq-004-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p068",
+   "a": "aq-007",
+   "b": "x-aq-007-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p069",
+   "a": "aq-010",
+   "b": "x-aq-010-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p070",
+   "a": "aq-016",
+   "b": "x-aq-016-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p071",
+   "a": "aq-019",
+   "b": "x-aq-019-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p072",
+   "a": "aq-022",
+   "b": "x-aq-022-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p073",
+   "a": "aq-025",
+   "b": "x-aq-025-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p074",
+   "a": "aq-028",
+   "b": "x-aq-028-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p075",
+   "a": "aq-031",
+   "b": "x-aq-031-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p076",
+   "a": "aq-037",
+   "b": "x-aq-037-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p077",
+   "a": "aq-043",
+   "b": "x-aq-043-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p078",
+   "a": "aq-046",
+   "b": "x-aq-046-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p079",
+   "a": "aq-049",
+   "b": "x-aq-049-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p080",
+   "a": "aq-052",
+   "b": "x-aq-052-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p081",
+   "a": "aq-055",
+   "b": "x-aq-055-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p082",
+   "a": "aq-058",
+   "b": "x-aq-058-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p083",
+   "a": "aq-061",
+   "b": "x-aq-061-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p084",
+   "a": "aq-064",
+   "b": "x-aq-064-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p085",
+   "a": "ap-001",
+   "b": "x-ap-001-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p086",
+   "a": "ap-004",
+   "b": "x-ap-004-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p087",
+   "a": "ap-007",
+   "b": "x-ap-007-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p088",
+   "a": "ap-010",
+   "b": "x-ap-010-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p089",
+   "a": "ap-013",
+   "b": "x-ap-013-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p090",
+   "a": "ap-016",
+   "b": "x-ap-016-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p091",
+   "a": "ap-019",
+   "b": "x-ap-019-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p092",
+   "a": "ap-025",
+   "b": "x-ap-025-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p093",
+   "a": "ap-028",
+   "b": "x-ap-028-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p094",
+   "a": "ap-034",
+   "b": "x-ap-034-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p095",
+   "a": "ap-037",
+   "b": "x-ap-037-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p096",
+   "a": "ac-022",
+   "b": "x-ac-022-num",
+   "label": "RELATED",
+   "why": "numbers changed (numeric_variant)"
+  },
+  {
+   "id": "p097",
+   "a": "pilot-abs-neg7",
+   "b": "pilot-abs-pos7",
+   "label": "RELATED",
+   "why": "same skill, sign changed, same answer (numeric variant)"
+  },
+  {
+   "id": "p098",
+   "a": "pilot-cmp-big",
+   "b": "pilot-cmp-small",
+   "label": "RELATED",
+   "why": "same numbers, larger/smaller asked"
+  },
+  {
+   "id": "p099",
+   "a": "pilot-opp-5",
+   "b": "pilot-inv-5",
+   "label": "RELATED",
+   "why": "same fact asked with a synonym term"
+  },
+  {
+   "id": "p100",
+   "a": "pilot-mul-34",
+   "b": "pilot-mul-35",
+   "label": "RELATED",
+   "why": "numeric variant"
+  },
+  {
+   "id": "p101",
+   "a": "pilot-pens-3",
+   "b": "pilot-pens-5",
+   "label": "RELATED",
+   "why": "numeric variant with the same answer"
+  },
+  {
+   "id": "p102",
+   "a": "pilot-factor-def",
+   "b": "pilot-factor-ex",
+   "label": "RELATED",
+   "why": "same pages, same answer (definition vs example)"
+  },
+  {
+   "id": "p103",
+   "a": "pilot-force-unit",
+   "b": "pilot-force-unit2",
+   "label": "RELATED",
+   "why": "same page, same answer, reworded"
+  },
+  {
+   "id": "p104",
+   "a": "pilot-order-asc",
+   "b": "pilot-order-desc",
+   "label": "RELATED",
+   "why": "same numbers, ascending vs descending"
+  },
+  {
+   "id": "p105",
+   "a": "pilot-cell-unit",
+   "b": "pilot-cell-func",
+   "label": "RELATED",
+   "why": "same answer, one word differs (structure/function)"
+  },
+  {
+   "id": "p106",
+   "a": "pilot-photo-gas",
+   "b": "pilot-photo-in",
+   "label": "RELATED",
+   "why": "released vs absorbed gas, one word differs"
+  },
+  {
+   "id": "p107",
+   "a": "pilot-abs-neg7",
+   "b": "pilot-cmp-big",
+   "label": "UNIQUE",
+   "why": "same lesson, different skills"
+  },
+  {
+   "id": "p108",
+   "a": "pilot-opp-5",
+   "b": "pilot-mul-34",
+   "label": "UNIQUE",
+   "why": "same lesson, different skills"
+  },
+  {
+   "id": "p109",
+   "a": "pilot-int-def",
+   "b": "pilot-abs-neg7",
+   "label": "UNIQUE",
+   "why": "same lesson, different skills"
+  },
+  {
+   "id": "p110",
+   "a": "pilot-prime",
+   "b": "pilot-mul-35",
+   "label": "UNIQUE",
+   "why": "different lessons"
+  },
+  {
+   "id": "p111",
+   "a": "pilot-force-unit",
+   "b": "pilot-cell-unit",
+   "label": "UNIQUE",
+   "why": "same subject, different facts"
+  },
+  {
+   "id": "p112",
+   "a": "pilot-photo-gas",
+   "b": "ab-016",
+   "label": "UNIQUE",
+   "why": "same topic, different gas and answer (curriculum vs prep)"
+  },
+  {
+   "id": "p113",
+   "a": "av-038",
+   "b": "av-039",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p114",
+   "a": "av-038",
+   "b": "av-040",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p115",
+   "a": "av-038",
+   "b": "av-041",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p116",
+   "a": "av-038",
+   "b": "av-042",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p117",
+   "a": "av-038",
+   "b": "av-043",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p118",
+   "a": "av-038",
+   "b": "av-044",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p119",
+   "a": "av-038",
+   "b": "av-045",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p120",
+   "a": "av-039",
+   "b": "av-040",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p121",
+   "a": "av-039",
+   "b": "av-041",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p122",
+   "a": "av-039",
+   "b": "av-042",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p123",
+   "a": "av-039",
+   "b": "av-043",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p124",
+   "a": "av-039",
+   "b": "av-044",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p125",
+   "a": "av-039",
+   "b": "av-045",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p126",
+   "a": "av-040",
+   "b": "av-041",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p127",
+   "a": "av-040",
+   "b": "av-042",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p128",
+   "a": "av-040",
+   "b": "av-043",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p129",
+   "a": "av-040",
+   "b": "av-044",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p130",
+   "a": "av-040",
+   "b": "av-045",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p131",
+   "a": "av-041",
+   "b": "av-042",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p132",
+   "a": "av-041",
+   "b": "av-043",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p133",
+   "a": "av-041",
+   "b": "av-044",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p134",
+   "a": "av-041",
+   "b": "av-045",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p135",
+   "a": "av-042",
+   "b": "av-043",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p136",
+   "a": "av-042",
+   "b": "av-044",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p137",
+   "a": "av-042",
+   "b": "av-045",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p138",
+   "a": "av-043",
+   "b": "av-044",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p139",
+   "a": "av-043",
+   "b": "av-045",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p140",
+   "a": "av-044",
+   "b": "av-045",
+   "label": "UNIQUE",
+   "why": "same instruction stem, different words"
+  },
+  {
+   "id": "p141",
+   "a": "aq-070",
+   "b": "aq-071",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p142",
+   "a": "aq-070",
+   "b": "aq-072",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p143",
+   "a": "aq-070",
+   "b": "aq-073",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p144",
+   "a": "aq-070",
+   "b": "aq-074",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p145",
+   "a": "aq-070",
+   "b": "aq-075",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p146",
+   "a": "aq-070",
+   "b": "aq-076",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p147",
+   "a": "aq-070",
+   "b": "aq-077",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p148",
+   "a": "aq-071",
+   "b": "aq-072",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p149",
+   "a": "aq-071",
+   "b": "aq-073",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p150",
+   "a": "aq-071",
+   "b": "aq-074",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p151",
+   "a": "aq-071",
+   "b": "aq-075",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p152",
+   "a": "aq-071",
+   "b": "aq-076",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p153",
+   "a": "aq-071",
+   "b": "aq-077",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p154",
+   "a": "aq-072",
+   "b": "aq-073",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p155",
+   "a": "aq-072",
+   "b": "aq-074",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p156",
+   "a": "aq-072",
+   "b": "aq-075",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p157",
+   "a": "aq-072",
+   "b": "aq-076",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p158",
+   "a": "aq-072",
+   "b": "aq-077",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p159",
+   "a": "aq-073",
+   "b": "aq-074",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p160",
+   "a": "aq-073",
+   "b": "aq-075",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p161",
+   "a": "aq-073",
+   "b": "aq-076",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p162",
+   "a": "aq-073",
+   "b": "aq-077",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p163",
+   "a": "aq-074",
+   "b": "aq-075",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p164",
+   "a": "aq-074",
+   "b": "aq-076",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p165",
+   "a": "aq-074",
+   "b": "aq-077",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p166",
+   "a": "aq-075",
+   "b": "aq-076",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p167",
+   "a": "aq-075",
+   "b": "aq-077",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p168",
+   "a": "aq-076",
+   "b": "aq-077",
+   "label": "UNIQUE",
+   "why": "same comparison frame and answer set, different values"
+  },
+  {
+   "id": "p169",
+   "a": "av-001",
+   "b": "av-002",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p170",
+   "a": "av-002",
+   "b": "av-003",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p171",
+   "a": "av-003",
+   "b": "av-004",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p172",
+   "a": "av-004",
+   "b": "av-005",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p173",
+   "a": "av-005",
+   "b": "av-006",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p174",
+   "a": "av-006",
+   "b": "av-007",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p175",
+   "a": "av-007",
+   "b": "av-008",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p176",
+   "a": "av-008",
+   "b": "av-009",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p177",
+   "a": "av-009",
+   "b": "av-010",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p178",
+   "a": "av-010",
+   "b": "av-011",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p179",
+   "a": "av-011",
+   "b": "av-012",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p180",
+   "a": "av-012",
+   "b": "av-013",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p181",
+   "a": "av-013",
+   "b": "av-014",
+   "label": "UNIQUE",
+   "why": "same analogy frame, different pair"
+  },
+  {
+   "id": "p182",
+   "a": "av-027",
+   "b": "av-028",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p183",
+   "a": "av-028",
+   "b": "av-029",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p184",
+   "a": "av-029",
+   "b": "av-030",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p185",
+   "a": "av-030",
+   "b": "av-031",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p186",
+   "a": "av-031",
+   "b": "av-032",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p187",
+   "a": "av-032",
+   "b": "av-033",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p188",
+   "a": "av-033",
+   "b": "av-034",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p189",
+   "a": "av-034",
+   "b": "av-035",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p190",
+   "a": "av-035",
+   "b": "av-036",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p191",
+   "a": "av-036",
+   "b": "av-037",
+   "label": "UNIQUE",
+   "why": "same instruction line, different sentence"
+  },
+  {
+   "id": "p192",
+   "a": "av-046",
+   "b": "av-047",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p193",
+   "a": "av-047",
+   "b": "av-048",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p194",
+   "a": "av-048",
+   "b": "av-049",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p195",
+   "a": "av-049",
+   "b": "av-050",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p196",
+   "a": "av-050",
+   "b": "av-051",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p197",
+   "a": "av-051",
+   "b": "av-052",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p198",
+   "a": "av-052",
+   "b": "av-053",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p199",
+   "a": "av-053",
+   "b": "av-054",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p200",
+   "a": "av-054",
+   "b": "av-055",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p201",
+   "a": "av-055",
+   "b": "av-056",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p202",
+   "a": "av-056",
+   "b": "av-057",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p203",
+   "a": "av-057",
+   "b": "av-058",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p204",
+   "a": "av-058",
+   "b": "av-059",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p205",
+   "a": "av-059",
+   "b": "av-060",
+   "label": "UNIQUE",
+   "why": "reading comprehension (shared or different passage)"
+  },
+  {
+   "id": "p206",
+   "a": "ab-001",
+   "b": "ab-002",
+   "label": "UNIQUE",
+   "why": "same topic (biology/cells), different problems"
+  },
+  {
+   "id": "p207",
+   "a": "ab-006",
+   "b": "ab-007",
+   "label": "UNIQUE",
+   "why": "same topic (biology/genetics), different problems"
+  },
+  {
+   "id": "p208",
+   "a": "ab-011",
+   "b": "ab-012",
+   "label": "UNIQUE",
+   "why": "same topic (biology/human-body), different problems"
+  },
+  {
+   "id": "p209",
+   "a": "ab-016",
+   "b": "ab-017",
+   "label": "UNIQUE",
+   "why": "same topic (biology/plants), different problems"
+  },
+  {
+   "id": "p210",
+   "a": "ab-021",
+   "b": "ab-022",
+   "label": "UNIQUE",
+   "why": "same topic (biology/ecology), different problems"
+  },
+  {
+   "id": "p211",
+   "a": "ab-026",
+   "b": "ab-027",
+   "label": "UNIQUE",
+   "why": "same topic (biology/classification-evolution), different problems"
+  },
+  {
+   "id": "p212",
+   "a": "ab-031",
+   "b": "ab-032",
+   "label": "UNIQUE",
+   "why": "same topic (biology/microbiology), different problems"
+  },
+  {
+   "id": "p213",
+   "a": "ab-036",
+   "b": "ab-037",
+   "label": "UNIQUE",
+   "why": "same topic (biology/biochemistry), different problems"
+  },
+  {
+   "id": "p214",
+   "a": "ac-001",
+   "b": "ac-002",
+   "label": "UNIQUE",
+   "why": "same topic (chemistry/atomic-structure), different problems"
+  },
+  {
+   "id": "p215",
+   "a": "ac-006",
+   "b": "ac-007",
+   "label": "UNIQUE",
+   "why": "same topic (chemistry/periodic-table), different problems"
+  },
+  {
+   "id": "p216",
+   "a": "ac-011",
+   "b": "ac-012",
+   "label": "UNIQUE",
+   "why": "same topic (chemistry/bonding), different problems"
+  },
+  {
+   "id": "p217",
+   "a": "ac-016",
+   "b": "ac-017",
+   "label": "UNIQUE",
+   "why": "same topic (chemistry/stoichiometry), different problems"
+  },
+  {
+   "id": "p218",
+   "a": "ac-021",
+   "b": "ac-022",
+   "label": "UNIQUE",
+   "why": "same topic (chemistry/solutions), different problems"
+  },
+  {
+   "id": "p219",
+   "a": "ac-026",
+   "b": "ac-027",
+   "label": "UNIQUE",
+   "why": "same topic (chemistry/acids-bases), different problems"
+  },
+  {
+   "id": "p220",
+   "a": "ac-031",
+   "b": "ac-032",
+   "label": "UNIQUE",
+   "why": "same topic (chemistry/thermochemistry), different problems"
+  },
+  {
+   "id": "p221",
+   "a": "ac-036",
+   "b": "ac-037",
+   "label": "UNIQUE",
+   "why": "same topic (chemistry/organic), different problems"
+  },
+  {
+   "id": "p222",
+   "a": "am-001",
+   "b": "am-002",
+   "label": "UNIQUE",
+   "why": "same topic (math/algebra), different problems"
+  },
+  {
+   "id": "p223",
+   "a": "am-006",
+   "b": "am-007",
+   "label": "UNIQUE",
+   "why": "same topic (math/functions), different problems"
+  },
+  {
+   "id": "p224",
+   "a": "am-012",
+   "b": "am-013",
+   "label": "UNIQUE",
+   "why": "same topic (math/trigonometry), different problems"
+  },
+  {
+   "id": "p225",
+   "a": "am-017",
+   "b": "am-018",
+   "label": "UNIQUE",
+   "why": "same topic (math/geometry), different problems"
+  },
+  {
+   "id": "p226",
+   "a": "am-022",
+   "b": "am-023",
+   "label": "UNIQUE",
+   "why": "same topic (math/calculus), different problems"
+  },
+  {
+   "id": "p227",
+   "a": "am-028",
+   "b": "am-029",
+   "label": "UNIQUE",
+   "why": "same topic (math/statistics-probability), different problems"
+  },
+  {
+   "id": "p228",
+   "a": "am-033",
+   "b": "am-034",
+   "label": "UNIQUE",
+   "why": "same topic (math/sequences), different problems"
+  },
+  {
+   "id": "p229",
+   "a": "am-037",
+   "b": "am-038",
+   "label": "UNIQUE",
+   "why": "same topic (math/matrices), different problems"
+  },
+  {
+   "id": "p230",
+   "a": "ap-001",
+   "b": "ap-002",
+   "label": "UNIQUE",
+   "why": "same topic (physics/kinematics), different problems"
+  },
+  {
+   "id": "p231",
+   "a": "ap-006",
+   "b": "ap-007",
+   "label": "UNIQUE",
+   "why": "same topic (physics/forces-motion), different problems"
+  },
+  {
+   "id": "p232",
+   "a": "ap-011",
+   "b": "ap-012",
+   "label": "UNIQUE",
+   "why": "same topic (physics/energy-work), different problems"
+  },
+  {
+   "id": "p233",
+   "a": "ap-016",
+   "b": "ap-017",
+   "label": "UNIQUE",
+   "why": "same topic (physics/electricity), different problems"
+  },
+  {
+   "id": "p234",
+   "a": "ap-021",
+   "b": "ap-022",
+   "label": "UNIQUE",
+   "why": "same topic (physics/waves-sound), different problems"
+  },
+  {
+   "id": "p235",
+   "a": "ap-026",
+   "b": "ap-027",
+   "label": "UNIQUE",
+   "why": "same topic (physics/optics), different problems"
+  },
+  {
+   "id": "p236",
+   "a": "ap-031",
+   "b": "ap-032",
+   "label": "UNIQUE",
+   "why": "same topic (physics/thermodynamics), different problems"
+  },
+  {
+   "id": "p237",
+   "a": "ap-036",
+   "b": "ap-037",
+   "label": "UNIQUE",
+   "why": "same topic (physics/modern-physics), different problems"
+  },
+  {
+   "id": "p238",
+   "a": "aq-001",
+   "b": "aq-002",
+   "label": "UNIQUE",
+   "why": "same topic (quantitative/arithmetic), different problems"
+  },
+  {
+   "id": "p239",
+   "a": "aq-011",
+   "b": "aq-012",
+   "label": "UNIQUE",
+   "why": "same topic (quantitative/fractions-percent), different problems"
+  },
+  {
+   "id": "p240",
+   "a": "aq-022",
+   "b": "aq-023",
+   "label": "UNIQUE",
+   "why": "same topic (quantitative/ratio-proportion), different problems"
+  },
+  {
+   "id": "p241",
+   "a": "aq-032",
+   "b": "aq-033",
+   "label": "UNIQUE",
+   "why": "same topic (quantitative/algebra), different problems"
+  },
+  {
+   "id": "p242",
+   "a": "aq-043",
+   "b": "aq-044",
+   "label": "UNIQUE",
+   "why": "same topic (quantitative/geometry), different problems"
+  },
+  {
+   "id": "p243",
+   "a": "aq-054",
+   "b": "aq-055",
+   "label": "UNIQUE",
+   "why": "same topic (quantitative/statistics), different problems"
+  },
+  {
+   "id": "p244",
+   "a": "aq-062",
+   "b": "aq-063",
+   "label": "UNIQUE",
+   "why": "same topic (quantitative/data-interpretation), different problems"
+  },
+  {
+   "id": "p245",
+   "a": "av-015",
+   "b": "av-016",
+   "label": "UNIQUE",
+   "why": "same topic (verbal/sentence-completion), different problems"
+  }
+ ]
+}

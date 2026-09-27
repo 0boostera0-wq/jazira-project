@@ -1,0 +1,282 @@
+{
+  "schema": "manifest@1",
+  "generated_by": "validate-staging@1",
+  "normalization": "n2",
+  "files": [
+    {
+      "path": "curriculum/audit.jsonl",
+      "schema": "curriculum-audit@1",
+      "sha256": "f7f0a549e16bbee0afeeba1cb71791d83533072bfce34e63c6b96fdd0e7c7470",
+      "lines": 2,
+      "bytes": 443
+    },
+    {
+      "path": "curriculum/id-registry.jsonl",
+      "schema": "id-registry@1",
+      "sha256": "145dc168326069f0ce8c2d482ed1a38f1d08e29121aad164fd45a88bb350a316",
+      "lines": 4,
+      "bytes": 906
+    },
+    {
+      "path": "curriculum/ien-mapping.json",
+      "schema": "ien-mapping@1",
+      "sha256": "2f243d8eba190da2eb9abc86649d6204836ec1a60bc70ba034cd984955830a26",
+      "lines": 1,
+      "bytes": 197
+    },
+    {
+      "path": "curriculum/nodes/middle/grade-1.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "5c9cdfffc8c166ab5081bf3fbb9865e6fb580ffccf90eb97b2b3c34c6eb49958",
+      "lines": 14,
+      "bytes": 7474
+    },
+    {
+      "path": "curriculum/objectives/middle/grade-1.jsonl",
+      "schema": "objective@1",
+      "sha256": "30dcc94711630924033b57a4a3d89568bc33dce5df09d6997936c9215bf8cc6b",
+      "lines": 2,
+      "bytes": 468
+    },
+    {
+      "path": "curriculum/owner-decisions.jsonl",
+      "schema": "owner-decision@1",
+      "sha256": "0756f29f6c1f02d8b9f1b12d68b7f2ac805098093e89e71418be200538812475",
+      "lines": 1,
+      "bytes": 282
+    },
+    {
+      "path": "curriculum/prep-alignment.jsonl",
+      "schema": "prep-alignment@1",
+      "sha256": "06d8390c578593597801feca3d92fe6d8502cbdac30ee857701f4e8314bd9a12",
+      "lines": 1,
+      "bytes": 173
+    },
+    {
+      "path": "curriculum/subject-terms.jsonl",
+      "schema": "subject-term@1",
+      "sha256": "ff63bc5ec25e21403cc4eaa7428e860daabf7c184d72523810fd36d25bf08d96",
+      "lines": 2,
+      "bytes": 270
+    },
+    {
+      "path": "exams/blueprints/middle.jsonl",
+      "schema": "exam-blueprint@1",
+      "sha256": "9f8a346c6ce0dd28bf82cec56fc8d49eabc0ef0ecdbb461839fb32c6612891a4",
+      "lines": 1,
+      "bytes": 174
+    },
+    {
+      "path": "exams/templates.json",
+      "schema": "exam-template@1",
+      "sha256": "5b132f9cae70c5652f63100cd46736276295d61d04fd222ea7289136a42bd165",
+      "lines": 2,
+      "bytes": 2999
+    },
+    {
+      "path": "question-variants/middle/grade-1/math.jsonl",
+      "schema": "question@1",
+      "sha256": "fe71b73432e4bb2632012f1681c2de730a18c1208a34b33af66615922b3fa777",
+      "lines": 2,
+      "bytes": 3569
+    },
+    {
+      "path": "question-variants/templates/middle/grade-1/math.jsonl",
+      "schema": "question-template@1",
+      "sha256": "c8b0af2916b07974ddedd60f88d051be052706377c1cc9efebc72f8727e67e18",
+      "lines": 1,
+      "bytes": 1220
+    },
+    {
+      "path": "questions/middle/grade-1/math.jsonl",
+      "schema": "question@1",
+      "sha256": "c40c98a0fcb99e18df12399701b729de962bf9325d461664646c1549b69d87f7",
+      "lines": 7,
+      "bytes": 13858
+    },
+    {
+      "path": "questions/prep/aptitude-verbal.jsonl",
+      "schema": "question@1",
+      "sha256": "372327c9a55642fcafb2dd74e4224ecc2fe9ac8bfac2602863c99cdd322890d0",
+      "lines": 1,
+      "bytes": 1584
+    },
+    {
+      "path": "questions/stimuli/middle/grade-1/math.jsonl",
+      "schema": "stimulus@1",
+      "sha256": "002df8c8beda4ce3808366281d1e79b0d0c2a0a8b80a12d32e4470058dff9e5d",
+      "lines": 1,
+      "bytes": 302
+    },
+    {
+      "path": "resources/exercise-index/ien-120607.jsonl",
+      "schema": "exercise-index@1",
+      "sha256": "e99f83398339ffddd238f2ce74136a57ba8e54713b9b2102a2f50b5c9247154b",
+      "lines": 2,
+      "bytes": 337
+    },
+    {
+      "path": "resources/extraction.jsonl",
+      "schema": "extraction@1",
+      "sha256": "b6f9b5efa22407bae5892d2f59f297b35a2dd2fdae197a7783bb890c8146e60f",
+      "lines": 1,
+      "bytes": 201
+    },
+    {
+      "path": "resources/page-maps/ien-120607.jsonl",
+      "schema": "page-map@1",
+      "sha256": "b38d216363dc6b72084637342e03a9e66cba0c1b76e7833a82d0882538fb759c",
+      "lines": 5,
+      "bytes": 2039
+    },
+    {
+      "path": "resources/resources.jsonl",
+      "schema": "resource@1",
+      "sha256": "89a8eb9a84c087c083973a032ec727c3fb95c716bfa8336d5990ee21aaa3ceee",
+      "lines": 3,
+      "bytes": 3760
+    },
+    {
+      "path": "resources/term-evidence.jsonl",
+      "schema": "term-evidence@1",
+      "sha256": "c94f72b4c7db88922e1e7741b23a24ffb3b4f7b77a13798a23ca2bcf699acbed",
+      "lines": 2,
+      "bytes": 472
+    },
+    {
+      "path": "resources/toc/ien-120607.json",
+      "schema": "toc@1",
+      "sha256": "044d75508a910168ce789b2700b781e8b43792bd0527373446437abe643963af",
+      "lines": 1,
+      "bytes": 1373
+    },
+    {
+      "path": "sources/ien/book-frontmatter.jsonl",
+      "schema": "book-frontmatter@1",
+      "sha256": "2c1857cd32372ae3a07b78221a2f26ac450d000fb2da1c4d48382803e209c216",
+      "lines": 1,
+      "bytes": 674
+    },
+    {
+      "path": "sources/ien/books.jsonl",
+      "schema": "ien-book@1",
+      "sha256": "63785288f111c0600775beff354316f999948ca933af3d11c0da47d852291da2",
+      "lines": 2,
+      "bytes": 1545
+    },
+    {
+      "path": "sources/ien/changes-2026-09-26.jsonl",
+      "schema": "crawl-changes@1",
+      "sha256": "6b9f068b62af229ada6f46020c92016e98b611975feab6b7ca5852bda79c2f17",
+      "lines": 1,
+      "bytes": 172
+    },
+    {
+      "path": "sources/ien/crawl-report.json",
+      "schema": "crawl-report@1",
+      "sha256": "e190a63bb7f5dec597f303edb7d08f6d70478407c517d16de004533406e2e2e8",
+      "lines": 1,
+      "bytes": 959
+    },
+    {
+      "path": "sources/ien/lessons.jsonl",
+      "schema": "ien-lesson@1",
+      "sha256": "2023334e1a0ba493ac1778ceef6dba54867e3a31de8a093308047a8defbdac1a",
+      "lines": 5,
+      "bytes": 1070
+    },
+    {
+      "path": "sources/ien/nodes.jsonl",
+      "schema": "ien-node@1",
+      "sha256": "f9e693ee84f313f0325aaabcffdc547bd8bd9857e02f91bfbd334cdadf919262",
+      "lines": 3,
+      "bytes": 1399
+    },
+    {
+      "path": "sources/registry.json",
+      "schema": "source@1",
+      "sha256": "a2bd6deaefc35c4e65d527619909ff7d4f2de57e795217eb814bdda34d1430bf",
+      "lines": 4,
+      "bytes": 3586
+    },
+    {
+      "path": "sources/research/catalog-map.jsonl",
+      "schema": "catalog-map@1",
+      "sha256": "bb40a2f84f6450b2f121c49c09d6a6dc290de17354adca09f44fe4f6c334aabd",
+      "lines": 1,
+      "bytes": 582
+    },
+    {
+      "path": "sources/research/term-evidence.json",
+      "schema": "research-claims@1",
+      "sha256": "235c13ff8f0bd6e68a89e7f9c503a05cb00644a46b33286e84c8e9c8a84f6588",
+      "lines": 1,
+      "bytes": 1824
+    },
+    {
+      "path": "validation/dedup-clusters.jsonl",
+      "schema": "dedup-cluster@1",
+      "sha256": "7f83d4c2fa269ee96187ce562c51ab369d7f2b88fa100710a01e39e8edb3b452",
+      "lines": 1,
+      "bytes": 322
+    },
+    {
+      "path": "validation/records/middle/grade-1/math.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "526d1b789264d0a24433648e6c1860f3676f8cb4c87a1038f4dd322aeb9e85e2",
+      "lines": 14,
+      "bytes": 7828
+    },
+    {
+      "path": "validation/records/prep/aptitude-verbal.jsonl",
+      "schema": "validation-record@1",
+      "sha256": "1832d1c952e3350668f7ce0d9611cc9fb686b1e9469c5c012f9011fda09c9547",
+      "lines": 2,
+      "bytes": 1070
+    },
+    {
+      "path": "validation/review-decisions.jsonl",
+      "schema": "review-decision@1",
+      "sha256": "89355dfc0bcd2433f1dace49e57918662e13fd78b94f25adbab686171d7e8753",
+      "lines": 1,
+      "bytes": 221
+    },
+    {
+      "path": "validation/review-queue.jsonl",
+      "schema": "review-queue@1",
+      "sha256": "7c564d7af04b91969f0d0aabb10e04b4bb69608661463b27b889538d9100f790",
+      "lines": 1,
+      "bytes": 266
+    },
+    {
+      "path": "validation/runs/run-20260927-gen-01.json",
+      "schema": "run-manifest@1",
+      "sha256": "5e80e60c20ddd0b7e2a8d1ca7dabc7398f05d2a7b5c7c5977edf9d97fe3aa02a",
+      "lines": 1,
+      "bytes": 444
+    }
+  ],
+  "totals": {
+    "files": 36,
+    "lines": 95,
+    "bytes": 64063
+  },
+  "published": {
+    "question-variants/middle/grade-1/math.jsonl": [
+      "v-m1-math-9927f5ac29-01",
+      "v-m1-math-9927f5ac29-02"
+    ],
+    "questions/middle/grade-1/math.jsonl": [
+      "q-m1-math-0979d559d5",
+      "q-m1-math-1850fcb0b9",
+      "q-m1-math-8ec8ada9ed",
+      "q-m1-math-d02dedd49d",
+      "q-m1-math-fa3093174f",
+      "q-m1-math-faa8c931d3"
+    ],
+    "questions/prep/aptitude-verbal.jsonl": [
+      "av-901"
+    ]
+  },
+  "removed": []
+}

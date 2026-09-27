@@ -1,0 +1,536 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "start_template_attempt",
+ "signature": "start_template_attempt(p_template text, p_scope text, p_count int default null, p_timing text default null, p_feedback text default null, p_retake_of uuid default null) → jsonb",
+ "grants": [
+  "authenticated",
+  "service_role"
+ ],
+ "description": "§6.2 / §5.7: validates, per-user advisory lock, lazy expiry, quotas and tier clamping (exam: 5/day free and 25 questions, mini below a template's min; practice: 30/day free), pool (_ce_pool), allocation (_ce_allocate; a retake reuses meta.allocation), pick (_ce_pick), inserts the attempt with seed, choice orders and display maps. Questions carry display indexes only.",
+ "cases": [
+  {
+   "name": "chapter quiz for a free member",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_template": "chapter-quiz",
+    "p_scope": "middle/grade-1/math/n91",
+    "p_count": 10
+   },
+   "response": {
+    "mode": "db",
+    "attempt_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "status": "in_progress",
+    "template": {
+     "id": "chapter-quiz",
+     "version": 1,
+     "kind": "chapter"
+    },
+    "scope": "middle/grade-1/math/n91",
+    "term_scope": null,
+    "quota": "exam",
+    "mini": false,
+    "limited": false,
+    "requested_count": 10,
+    "question_count": 10,
+    "reused": false,
+    "short": false,
+    "retake_of": null,
+    "timing_mode": "timed",
+    "feedback_mode": "end",
+    "time_limit_seconds": 750,
+    "started_at": "2026-10-01T12:00:00.000Z",
+    "expires_at": "2026-10-01T12:12:30.000Z",
+    "server_now": "2026-10-01T12:00:00.000Z",
+    "seconds_remaining": 750,
+    "questions": [
+     {
+      "position": 1,
+      "key": "q-m1-math-76a8277347",
+      "type": "matching",
+      "language": "ar",
+      "stem": "سؤال b3؟",
+      "stimulus": null,
+      "options": [],
+      "choices": [],
+      "public": {
+       "left": [
+        {
+         "index": 0,
+         "text": "5²"
+        },
+        {
+         "index": 1,
+         "text": "3²"
+        },
+        {
+         "index": 2,
+         "text": "2³"
+        }
+       ],
+       "right": [
+        {
+         "index": 0,
+         "text": "25"
+        },
+        {
+         "index": 1,
+         "text": "9"
+        },
+        {
+         "index": 2,
+         "text": "10"
+        },
+        {
+         "index": 3,
+         "text": "8"
+        }
+       ],
+       "scoring": "partial"
+      },
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n54",
+       "title": "القوى و الأسس"
+      }
+     },
+     {
+      "position": 2,
+      "key": "q-m1-math-2c3a4249d7",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال a2؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "4"
+       },
+       {
+        "index": 1,
+        "text": "7"
+       },
+       {
+        "index": 2,
+        "text": "10"
+       },
+       {
+        "index": 3,
+        "text": "32"
+       }
+      ],
+      "choices": [
+       "4",
+       "7",
+       "10",
+       "32"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n53",
+       "title": "الخطوات الأربع لحل المسألة"
+      }
+     },
+     {
+      "position": 3,
+      "key": "q-m1-math-d0f631ca1d",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c1؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "ثلاثاء"
+       },
+       {
+        "index": 1,
+        "text": "أحد"
+       },
+       {
+        "index": 2,
+        "text": "اثنين"
+       },
+       {
+        "index": 3,
+        "text": "سبت"
+       }
+      ],
+      "choices": [
+       "ثلاثاء",
+       "أحد",
+       "اثنين",
+       "سبت"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات"
+      }
+     },
+     {
+      "position": 4,
+      "key": "q-m1-math-7dc96f776c",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال b1؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "8"
+       },
+       {
+        "index": 1,
+        "text": "16"
+       },
+       {
+        "index": 2,
+        "text": "32"
+       },
+       {
+        "index": 3,
+        "text": "64"
+       }
+      ],
+      "choices": [
+       "8",
+       "16",
+       "32",
+       "64"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n54",
+       "title": "القوى و الأسس"
+      }
+     },
+     {
+      "position": 5,
+      "key": "q-m1-math-f46dd28a54",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال a3؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "أ"
+       },
+       {
+        "index": 1,
+        "text": "ب"
+       },
+       {
+        "index": 2,
+        "text": "ج"
+       },
+       {
+        "index": 3,
+        "text": "لا شيء مما سبق"
+       }
+      ],
+      "choices": [
+       "أ",
+       "ب",
+       "ج",
+       "لا شيء مما سبق"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n53",
+       "title": "الخطوات الأربع لحل المسألة"
+      }
+     },
+     {
+      "position": 6,
+      "key": "q-m1-math-0012a3fa00",
+      "type": "short_answer",
+      "language": "ar",
+      "stem": "سؤال c4؟",
+      "stimulus": null,
+      "options": [],
+      "choices": [],
+      "public": {
+       "max_chars": 20
+      },
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات"
+      }
+     },
+     {
+      "position": 7,
+      "key": "q-m1-math-f55ff16f66",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال a1؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "خطط"
+       },
+       {
+        "index": 1,
+        "text": "حل"
+       },
+       {
+        "index": 2,
+        "text": "افهم"
+       },
+       {
+        "index": 3,
+        "text": "تحقق"
+       }
+      ],
+      "choices": [
+       "خطط",
+       "حل",
+       "افهم",
+       "تحقق"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n53",
+       "title": "الخطوات الأربع لحل المسألة"
+      }
+     },
+     {
+      "position": 8,
+      "key": "q-m1-math-486bacc5c2",
+      "type": "numeric",
+      "language": "ar",
+      "stem": "سؤال b4؟",
+      "stimulus": null,
+      "options": [],
+      "choices": [],
+      "public": {
+       "unit": {
+        "text": "سم",
+        "required": true
+       },
+       "input": {
+        "allow_fraction": true,
+        "max_decimals": 2
+       }
+      },
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n54",
+       "title": "القوى و الأسس"
+      }
+     },
+     {
+      "position": 9,
+      "key": "q-m1-math-7c1c97df17",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c3؟",
+      "stimulus": {
+       "text": "سجل متجر مبيعات أسبوع: 12 قطعة يوم الأحد و18 قطعة يوم الاثنين."
+      },
+      "options": [
+       {
+        "index": 0,
+        "text": "لا يمكن"
+       },
+       {
+        "index": 1,
+        "text": "أقل"
+       },
+       {
+        "index": 2,
+        "text": "يساوي"
+       },
+       {
+        "index": 3,
+        "text": "أكثر"
+       }
+      ],
+      "choices": [
+       "لا يمكن",
+       "أقل",
+       "يساوي",
+       "أكثر"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات"
+      }
+     },
+     {
+      "position": 10,
+      "key": "q-m1-math-9c0abe51c6",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c2؟",
+      "stimulus": {
+       "text": "سجل متجر مبيعات أسبوع: 12 قطعة يوم الأحد و18 قطعة يوم الاثنين."
+      },
+      "options": [
+       {
+        "index": 0,
+        "text": "6"
+       },
+       {
+        "index": 1,
+        "text": "12"
+       },
+       {
+        "index": 2,
+        "text": "18"
+       },
+       {
+        "index": 3,
+        "text": "30"
+       }
+      ],
+      "choices": [
+       "6",
+       "12",
+       "18",
+       "30"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "full year for a free member runs as the mini version",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_template": "full-year",
+    "p_scope": "middle/grade-1/math@year"
+   },
+   "response": {
+    "mode": "db",
+    "attempt_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "status": "in_progress",
+    "template": {
+     "id": "full-year",
+     "version": 1,
+     "kind": "full_year"
+    },
+    "scope": "middle/grade-1/math@year",
+    "term_scope": "year",
+    "quota": "exam",
+    "mini": true,
+    "limited": true,
+    "requested_count": 60,
+    "question_count": 25,
+    "reused": false,
+    "short": false,
+    "retake_of": null,
+    "timing_mode": "timed",
+    "feedback_mode": "end",
+    "time_limit_seconds": 750,
+    "started_at": "2026-10-01T12:00:00.000Z",
+    "expires_at": "2026-10-01T12:12:30.000Z",
+    "server_now": "2026-10-01T12:00:00.000Z",
+    "seconds_remaining": 750,
+    "questions": "<25 questions>"
+   }
+  },
+  {
+   "name": "a client seed is refused",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_template": "chapter-quiz",
+    "p_scope": "middle/grade-1/math/n91",
+    "seed": "0123456789abcdef0123456789abcdef"
+   },
+   "error": {
+    "message": "seed_not_allowed",
+    "details": null
+   }
+  },
+  {
+   "name": "retake of another member's attempt",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_template": "chapter-quiz",
+    "p_scope": "middle/grade-1/math/n91",
+    "p_retake_of": "3f2b1c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
+   },
+   "error": {
+    "message": "not_found",
+    "details": null
+   }
+  },
+  {
+   "name": "immediate feedback on an end-only template",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_template": "chapter-quiz",
+    "p_scope": "middle/grade-1/math/n91",
+    "p_feedback": "immediate"
+   },
+   "error": {
+    "message": "feedback_not_allowed",
+    "details": null
+   }
+  },
+  {
+   "name": "not enough items",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_template": "term-exam",
+    "p_scope": "middle/grade-1/math@t1"
+   },
+   "error": {
+    "message": "insufficient_pool",
+    "details": {
+     "available": 3,
+     "required": 20
+    }
+   }
+  },
+  {
+   "name": "a scope above 5,000 eligible items",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_template": "practice",
+    "p_scope": "high-school"
+   },
+   "error": {
+    "message": "scope_too_large",
+    "details": null
+   }
+  },
+  {
+   "name": "anon",
+   "role": "anon",
+   "match": "exact",
+   "args": {
+    "p_template": "chapter-quiz",
+    "p_scope": "middle/grade-1/math/n91"
+   },
+   "error": {
+    "message": "permission denied for function start_template_attempt",
+    "code": "42501"
+   }
+  }
+ ]
+}

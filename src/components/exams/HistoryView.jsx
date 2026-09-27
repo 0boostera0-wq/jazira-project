@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { BarChart3, ChevronRight, Clock, LogIn, Plus, RotateCcw, Target, Trophy, TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { BarChart3, BookOpenCheck, ChevronRight, Clock, LogIn, Plus, Repeat, RotateCcw, Target, Trophy, TrendingDown, TrendingUp, Minus } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useLocale, useT } from "@/i18n/client";
 import { formatClock, formatDate, formatNumber, formatPercent } from "@/i18n/format";
 import { getExamStats, listAttempts } from "@/lib/data/exams";
+import { getSupabase } from "@/lib/supabase-lazy";
 import { SECTIONS } from "@/lib/exams/catalog";
 import Alert from "@/components/ui/Alert";
 import Button from "@/components/ui/Button";
@@ -18,15 +19,52 @@ import Tabs from "@/components/ui/Tabs";
 import { cn } from "@/components/ui/cn";
 import { builderHref } from "./builder-logic";
 import { sectionLabel, signInHref, topicLabel } from "./labels";
-import { ringTone, scoreTone } from "./results-logic";
+import { lessonHref, prepTopicOf } from "./question-logic";
+import { ringTone, scoreTone, templateName } from "./results-logic";
+import Recommendations from "./Recommendations";
 import Sparkline from "./Sparkline";
-import { HistoryBodySkeleton } from "./skeletons";
-import { dailySeries, hasStats, rankTopics, sortSections, topicAnalyticsLocked, windowDelta } from "./stats-logic";
+import { HistoryBodySkeleton, ListCardSkeleton } from "./skeletons";
+import {
+  dailySeries, hasStats, isOpenAttempt, previousOnScope, rankTopics, repeatedMistakes, sortSections, topicAnalyticsLocked, weakLessons, windowDelta,
+} from "./stats-logic";
 import { useTier } from "./useTier";
 
 const PAGE = 20;
 const TREND_SIZE = { width: 600, height: 170, pad: 10 };
 const BAR = { green: "green", gold: "gold", danger: "danger", neutral: "ink" };
+const MISSING = new Set(["PGRST202", "PGRST205", "42P01", "42883"]);
+const isMissing = (error) => MISSING.has(error?.code) || /could not find the function|schema cache/i.test(error?.message || "");
+
+/**
+ * Attempt history with template and scope (list_exam_attempts_v2, 0014);
+ * a database without it falls back to list_exam_attempts (legacy rows only).
+ */
+async function listHistory({ before = null, beforeId = null, limit = PAGE } = {}) {
+  const supabase = await getSupabase().catch(() => null);
+  if (supabase) {
+    const { data, error } = await supabase.rpc("list_exam_attempts_v2", { p_limit: limit, p_before: before, p_before_id: beforeId });
+    if (!error) {
+      const items = Array.isArray(data) ? data : [];
+      const last = items[items.length - 1];
+      return { mode: "db", items, nextCursor: items.length === limit && last ? { before: last.started_at, beforeId: last.id } : null };
+    }
+    if (!isMissing(error)) throw error;
+  }
+  return listAttempts({ before, beforeId, limit });
+}
+
+/** get_learning_stats() (0014): weak lessons and repeated mistakes; null when unavailable. */
+async function loadLearningStats() {
+  const supabase = await getSupabase().catch(() => null);
+  if (!supabase) return null;
+  const { data, error } = await supabase.rpc("get_learning_stats", { p_node: null });
+  if (error) {
+    if (isMissing(error)) return null;
+    throw error;
+  }
+  return data && typeof data === "object" ? data : null;
+}
+
 const pctOrDash = (v, locale) => (v === null || v === undefined ? "—" : formatPercent(Number(v) / 100, locale, Number(v) % 1 ? 1 : 0));
 
 export default function HistoryView() {
@@ -37,6 +75,7 @@ export default function HistoryView() {
   const [list, setList] = useState({ status: "loading", items: [], nextCursor: null, more: "idle" });
   const [nonce, setNonce] = useState(0);
   const [tab, setTab] = useState("analytics");
+  const [learning, setLearning] = useState({ status: "loading" });
 
   // Stats and the first page load independently: neither waits for the other.
   useEffect(() => {
@@ -54,8 +93,20 @@ export default function HistoryView() {
   useEffect(() => {
     if (!isSignedIn) return;
     let alive = true;
+    setLearning({ status: "loading" });
+    loadLearningStats()
+      .then((d) => alive && setLearning(d ? { status: "ready", data: d } : { status: "unavailable" }))
+      .catch(() => alive && setLearning({ status: "error" }));
+    return () => {
+      alive = false;
+    };
+  }, [isSignedIn, nonce]);
+
+  useEffect(() => {
+    if (!isSignedIn) return;
+    let alive = true;
     setList({ status: "loading", items: [], nextCursor: null, more: "idle" });
-    listAttempts({ limit: PAGE })
+    listHistory({ limit: PAGE })
       .then((r) => alive && setList({ status: r.mode === "db" ? "ready" : "unavailable", items: r.items, nextCursor: r.nextCursor, more: "idle" }))
       .catch(() => alive && setList({ status: "error", items: [], nextCursor: null, more: "idle" }));
     return () => {
@@ -67,7 +118,7 @@ export default function HistoryView() {
     if (!list.nextCursor || list.more === "loading") return;
     setList((l) => ({ ...l, more: "loading" }));
     try {
-      const r = await listAttempts({ limit: PAGE, ...list.nextCursor });
+      const r = await listHistory({ limit: PAGE, ...list.nextCursor });
       setList((l) => ({ ...l, items: [...l.items, ...r.items.filter((it) => !l.items.some((x) => x.id === it.id))], nextCursor: r.nextCursor, more: "idle" }));
     } catch {
       setList((l) => ({ ...l, more: "error" }));
@@ -147,6 +198,8 @@ export default function HistoryView() {
           </div>
         </div>
         <div className={cn("flex min-w-0 flex-col gap-6 xl:col-span-5", tab === "attempts" && "max-lg:hidden")}>
+          <Recommendations />
+          <LessonWeaknesses t={t} learning={learning} />
           <SectionAccuracy t={t} stats={stats} />
           {locked ? (
             <PremiumLock
@@ -422,12 +475,14 @@ function AttemptsList({ t, list, onMore, onRetry }) {
     );
   }
   const now = Date.now();
+  // compare each graded attempt with the previous one on the same template + scope (loaded pages)
+  const compare = previousOnScope(list.items);
   return (
     <Card id="attempts-title" title={t("history.list.title")}>
       <ul className="-mx-2 mt-3 divide-y divide-line/10">
         {list.items.map((it) => {
           const pct = it.score_percent === null || it.score_percent === undefined ? null : Number(it.score_percent);
-          const open = it.status === "in_progress" && Date.parse(it.expires_at) > now;
+          const open = isOpenAttempt(it, now);
           return (
             <li key={it.id} style={{ contentVisibility: "auto", containIntrinsicSize: "auto 76px" }}>
               <Link href={`/exams/attempt/${it.id}`} className="group flex items-center gap-3.5 rounded-md px-2 py-3 transition-colors hover:bg-surface-2">
@@ -442,7 +497,14 @@ function AttemptsList({ t, list, onMore, onRetry }) {
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[0.9375rem] font-medium text-ink">
-                    {t(`types.${it.exam}`)} · {sectionLabel(t, it.exam, it.section)}
+                    {it.template_id ? (
+                      <>
+                        {templateName(t, it.template_id)}
+                        {it.scope_title ? <> · <bdi lang="ar" dir="rtl">{it.scope_title}</bdi></> : null}
+                      </>
+                    ) : (
+                      <>{t(`types.${it.exam}`)} · {sectionLabel(t, it.exam, it.section)}</>
+                    )}
                   </p>
                   <p className="t-caption mt-0.5 flex flex-wrap items-center gap-x-2">
                     <span>{formatDate(it.started_at, locale, { day: "numeric", month: "short", year: "numeric" })}</span>
@@ -454,11 +516,19 @@ function AttemptsList({ t, list, onMore, onRetry }) {
                         <span className="num">{formatClock(it.duration_seconds)}</span>
                       </>
                     ) : null}
+                    {compare.has(it.id) ? (
+                      <>
+                        <span aria-hidden="true">·</span>
+                        <CompareDelta t={t} delta={compare.get(it.id)} />
+                      </>
+                    ) : null}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   {open ? (
                     <Badge tone="gold" size="sm">{t("history.list.resume")}</Badge>
+                  ) : it.retake_of ? (
+                    <Badge tone="outline" size="sm" className="hidden xs:inline-flex">{t("history.list.retake")}</Badge>
                   ) : it.status === "expired" || it.status === "abandoned" ? (
                     <Badge tone="neutral" size="sm" className="hidden xs:inline-flex">{t(`history.list.status.${it.status}`)}</Badge>
                   ) : null}
@@ -483,3 +553,101 @@ function AttemptsList({ t, list, onMore, onRetry }) {
   );
 }
 
+
+/** "+8 pts vs the previous attempt on this scope" (template + scope, or exam + section + skill). */
+function CompareDelta({ t, delta }) {
+  const { locale } = useLocale();
+  const Icon = delta.direction === "up" ? TrendingUp : delta.direction === "down" ? TrendingDown : Minus;
+  const tone = delta.direction === "up" ? "text-green-700" : delta.direction === "down" ? "text-danger" : "text-ink-3";
+  return (
+    <span className={cn("inline-flex items-center gap-1", tone)}>
+      <Icon size={13} aria-hidden="true" />
+      {t(`history.list.compare.${delta.direction}`, { value: formatNumber(Math.abs(delta.delta), locale, { maximumFractionDigits: 1 }) })}
+    </span>
+  );
+}
+
+/**
+ * Lessons to review (get_learning_stats, 0014): lessons with at least 5
+ * answers ranked by the Wilson lower bound (weakest first, §2.14), plus the
+ * lessons where questions keep being missed (wrong_streak ≥ 2). Hidden when
+ * the database has no 0014 yet; a skeleton while it loads.
+ */
+function LessonWeaknesses({ t, learning }) {
+  const { locale } = useLocale();
+  if (learning.status === "loading") return <ListCardSkeleton rows={3} />;
+  if (learning.status === "unavailable") return null;
+  if (learning.status === "error") {
+    return (
+      <Card id="weak-title" title={t("history.weak.title")}>
+        <p className="t-small mt-3 text-ink-3">{t("history.weak.failed")}</p>
+      </Card>
+    );
+  }
+  const byLesson = learning.data?.by_lesson;
+  // prep topics (aptitude / achievement practice) have no lesson page: named by their topic label, not linked
+  const named = (r) => {
+    const topic = r.title ? null : prepTopicOf(r.lesson);
+    return { ...r, href: lessonHref(r.lesson), label: r.title || (topic ? topicLabel(t, topic) : r.lesson), content: Boolean(r.title) };
+  };
+  const weak = weakLessons(byLesson).map(named);
+  const repeated = repeatedMistakes(learning.data?.repeated_mistakes, byLesson).map(named);
+  return (
+    <Card id="weak-title" title={t("history.weak.title")}>
+      <p className="t-caption mt-0.5">{t("history.weak.lead")}</p>
+      {weak.length === 0 ? (
+        <p className="t-small mt-4 text-ink-3">{t("history.weak.empty")}</p>
+      ) : (
+        <ul className="mt-4 space-y-3.5">
+          {weak.map((r) => (
+            <li key={r.lesson}>
+              <div className="flex items-baseline justify-between gap-3 text-sm">
+                {r.href ? (
+                  <Link href={r.href} className="min-w-0 truncate font-medium text-ink hover:text-gold-700 hover:underline">
+                    <bdi lang={r.content ? "ar" : undefined} dir={r.content ? "rtl" : undefined}>{r.label}</bdi>
+                  </Link>
+                ) : (
+                  <span className="min-w-0 truncate font-medium text-ink"><bdi lang={r.content ? "ar" : undefined} dir={r.content ? "rtl" : undefined}>{r.label}</bdi></span>
+                )}
+                <span className="t-caption shrink-0 tabular">{t("history.weak.value", { correct: r.correct, answered: r.answered })}</span>
+              </div>
+              <ProgressBar
+                value={r.accuracy}
+                tone={BAR[scoreTone(r.accuracy)]}
+                size="sm"
+                className="mt-1.5"
+                label={`${r.label} ${formatPercent(r.accuracy / 100, locale, r.accuracy % 1 ? 1 : 0)}`}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+      {repeated.length > 0 && (
+        <div className="mt-5 border-t border-line/10 pt-4">
+          <h3 className="flex items-center gap-2 text-sm font-medium text-ink">
+            <Repeat size={15} aria-hidden="true" className="text-danger" />
+            {t("history.weak.repeated.title")}
+          </h3>
+          <ul className="mt-2.5 space-y-2">
+            {repeated.map((r) => (
+              <li key={r.lesson} className="flex items-center justify-between gap-3 text-sm">
+                {r.href ? (
+                  <Link href={r.href} className="inline-flex min-w-0 items-center gap-1.5 text-ink-2 hover:text-ink hover:underline">
+                    <BookOpenCheck size={14} aria-hidden="true" className="shrink-0 text-ink-4" />
+                    <bdi lang={r.content ? "ar" : undefined} dir={r.content ? "rtl" : undefined} className="truncate">{r.label}</bdi>
+                  </Link>
+                ) : (
+                  <span className="inline-flex min-w-0 items-center gap-1.5 text-ink-2">
+                    <BookOpenCheck size={14} aria-hidden="true" className="shrink-0 text-ink-4" />
+                    <bdi lang={r.content ? "ar" : undefined} dir={r.content ? "rtl" : undefined} className="truncate">{r.label}</bdi>
+                  </span>
+                )}
+                <span className="t-caption shrink-0">{t("history.weak.repeated.count", { count: r.count })}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </Card>
+  );
+}

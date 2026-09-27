@@ -13,7 +13,7 @@ vi.mock("@/lib/supabase-server", () => ({
 
 import { decideEntitlement, eventKey, isProductionEnv, verifySignature } from "@/lib/payments/lemonsqueezy";
 import { POST as webhook } from "@/app/api/webhooks/lemonsqueezy/route";
-import { signLocalSet, verifyLocalSet, GRADE_GRACE_MS } from "@/lib/exams/local-token";
+import { signLocalSet, verifyLocalSet, GRADE_GRACE_MS, examSecretStatus } from "@/lib/exams/local-token";
 import { clientIp, isSameOrigin, readJsonBody } from "@/lib/http-guards";
 import { isRateLimited } from "@/lib/rate-limit";
 import { POST as deleteAccount } from "@/app/api/account/delete/route";
@@ -179,6 +179,58 @@ describe("local exam set tokens", () => {
     expect(verifyLocalSet(`${payload}.${sig}.x`)).toEqual({ ok: false, error: "invalid_token" });
     expect(verifyLocalSet(null)).toEqual({ ok: false, error: "invalid_token" });
     expect(verifyLocalSet(token, { now: expiresAt + GRADE_GRACE_MS + 1 })).toEqual({ ok: false, error: "expired" });
+  });
+});
+
+// ── exam secret policy (docs/CONTENT_ENGINE.md §5.8, §10.2) ─────────────────
+describe("exam secret policy", () => {
+  const KEYS = ["LOCAL_EXAM_SECRET", "EXAM_SECRET_REQUIRED", "SUPABASE_SERVICE_ROLE_KEY", "GEMINI_API_KEY", "VERCEL_ENV"];
+  const before = {};
+  beforeEach(() => {
+    for (const k of KEYS) {
+      before[k] = process.env[k];
+      delete process.env[k];
+    }
+  });
+  afterEach(() => {
+    for (const k of KEYS) {
+      if (before[k] === undefined) delete process.env[k];
+      else process.env[k] = before[k];
+    }
+  });
+  const post = (route, url, body) => route(new Request(`https://jazira.test${url}`, { method: "POST", headers: { "content-type": "application/json", host: "jazira.test", "x-forwarded-for": "203.0.113.50" }, body: JSON.stringify(body) }));
+
+  it("flag off: live practice keeps working without LOCAL_EXAM_SECRET (a stable derived key, a warning)", async () => {
+    process.env.VERCEL_ENV = "production";
+    process.env.GEMINI_API_KEY = "gemini-only";
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const token = signLocalSet({ keys: ["aq-001"], expiresAt: Date.now() + 60_000 });
+      expect(verifyLocalSet(token).ok).toBe(true);
+      expect(examSecretStatus()).toMatchObject({ available: true, source: "fallback", fallback: "GEMINI_API_KEY" });
+      const { POST: sessionStart } = await import("@/app/api/exams/session/start/route");
+      const res = await post(sessionStart, "/api/exams/session/start", { template: "no-such-template", scope: "middle/grade-1/math" });
+      expect(res.status).toBe(404);                                   // past the secret gate
+      expect(warn).toHaveBeenCalled();
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
+  it("flag on without the variable: the session routes answer 503 unavailable", async () => {
+    process.env.EXAM_SECRET_REQUIRED = "1";
+    process.env.SUPABASE_SERVICE_ROLE_KEY = "service";
+    expect(examSecretStatus().available).toBe(false);
+    const routes = await Promise.all([
+      import("@/app/api/exams/session/start/route"), import("@/app/api/exams/session/check/route"), import("@/app/api/exams/session/submit/route"),
+    ]);
+    for (const [i, { POST }] of routes.entries()) {
+      const res = await post(POST, ["/api/exams/session/start", "/api/exams/session/check", "/api/exams/session/submit"][i], {});
+      expect(res.status).toBe(503);
+      expect(await res.json()).toEqual({ error: "unavailable" });
+    }
+    process.env.LOCAL_EXAM_SECRET = "x".repeat(32);
+    expect(examSecretStatus().available).toBe(true);
   });
 });
 

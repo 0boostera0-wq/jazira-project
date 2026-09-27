@@ -1,21 +1,86 @@
 "use client";
 
-import { ArrowUpRight, BookOpen, ChevronRight, ClipboardCheck, Eye, Info, KeyRound, Landmark, NotebookPen, Target, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, Layers, BookOpen, ChevronRight, ClipboardCheck, Eye, Info, KeyRound, Landmark, NotebookPen, RotateCcw, Target, Users } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useLocale, useT } from "@/i18n/client";
 import { useAuthUser } from "@/context/AuthProvider";
 import { formatNumber } from "@/i18n/format";
 import AssistantAvatar from "@/components/brand/AssistantAvatar";
+import Alert from "@/components/ui/Alert";
 import Badge from "@/components/ui/Badge";
 import Button, { buttonClasses } from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
+import Skeleton from "@/components/ui/Skeleton";
 import { cn } from "@/components/ui/cn";
 import { SubjectTile } from "./SubjectIcon";
 import { ArabicName, ExternalLink } from "./parts";
 import { resourcesForTerm } from "./model";
+import ExamEntryPoints from "@/components/learn/ExamEntryPoints";
+import ResourceList from "@/components/learn/ResourceList";
+import SubjectOutline from "@/components/learn/SubjectOutline";
+
+const OUTLINE_PREVIEW = 4; // units shown before "show all"
 
 const TYPE_ICON = { student_book: BookOpen, activity_book: NotebookPen, exam_samples: ClipboardCheck };
 const BADGE = { external_official: "green", hosted: "gold", unavailable: "neutral" };
+
+// ── the subject's outline layer, loaded when the drawer opens ─────────────────
+// The leaf page ships a summary per subject ({ node, href, units, groups,
+// lessons, books }); units, lessons, "Test yourself" entries and the iEN files
+// come from GET /api/content/outline (CDN-cached, memoized here for the session).
+const learnPromises = new Map(); // subject node id → Promise<payload>
+const learnData = new Map(); // subject node id → payload (resolved)
+
+/** Fetch (once per session) the drawer payload of a subject node. Rejects on failure (and forgets it, so a retry refetches). */
+export function loadSubjectLearn(node) {
+  if (typeof node !== "string" || !node) return Promise.resolve(null);
+  let p = learnPromises.get(node);
+  if (!p) {
+    p = fetch(`/api/content/outline?subject=${encodeURIComponent(node)}`, { headers: { Accept: "application/json" } })
+      .then(async (res) => {
+        if (!res.ok) throw new Error(`outline ${res.status}`);
+        const data = await res.json();
+        learnData.set(node, data);
+        return data;
+      })
+      .catch((e) => {
+        learnPromises.delete(node);
+        throw e;
+      });
+    learnPromises.set(node, p);
+  }
+  return p;
+}
+
+/**
+ * { status: "ready" | "loading" | "error" | "none", data, retry }. A subject
+ * rendered with the eager shape (outline / entries / books on the subject)
+ * is ready at once; a summary loads its payload on mount.
+ */
+function useSubjectLearn(s) {
+  const eager = s.outline !== undefined || Boolean(s.learn?.entries);
+  const node = eager ? null : s.learn?.node || null;
+  const initial = () => {
+    if (eager) return { key: null, status: "ready", data: { outline: s.outline ?? null, entries: s.learn?.entries ?? null, books: s.learn?.books ?? [] } };
+    if (!node) return { key: null, status: "none", data: null };
+    return learnData.has(node) ? { key: node, status: "ready", data: learnData.get(node) } : { key: node, status: "loading", data: null };
+  };
+  const [state, setState] = useState(initial);
+  const [nonce, setNonce] = useState(0);
+  useEffect(() => {
+    if (!node) return;
+    let alive = true;
+    setState((st) => (st.key === node && st.status === "ready" ? st : { key: node, status: "loading", data: null }));
+    loadSubjectLearn(node)
+      .then((data) => alive && setState({ key: node, status: "ready", data }))
+      .catch(() => alive && setState({ key: node, status: "error", data: null }));
+    return () => {
+      alive = false;
+    };
+  }, [node, nonce]);
+  return { ...state, retry: () => setNonce((n) => n + 1) };
+}
 
 /**
  * Body of the subject drawer: plan facts → official resources and how to reach
@@ -23,7 +88,19 @@ const BADGE = { external_official: "green", hosted: "gold", unavailable: "neutra
  */
 export default function SubjectDetail({ subject: s, term, context, links, onView }) {
   const t = useT("curriculum");
+  const tl = useT("learn");
+  const tc = useT("common");
   const { locale } = useLocale();
+  const [allUnits, setAllUnits] = useState(false);
+  const learn = useSubjectLearn(s);
+  const summary = s.learn?.node ? s.learn : null; // lazy summary (counts) while the payload loads
+  const loadingLearn = learn.status === "loading";
+  const outline = learn.data?.outline ?? null;
+  const entries = learn.data?.entries ?? null;
+  const books = learn.data?.books ?? [];
+  const showOutline = outline?.units?.length > 0 || (loadingLearn && summary?.groups > 0);
+  const unitCount = outline ? outline.units.filter((u) => u.id).length : summary?.units ?? 0;
+  const lessonCount = outline ? outline.lessons : summary?.lessons ?? 0;
   const { isLoaded, isSignedIn } = useAuthUser();
   const en = locale === "en";
   const name = en ? s.name_en || s.name : s.name;
@@ -36,7 +113,9 @@ export default function SubjectDetail({ subject: s, term, context, links, onView
   const facts = [
     { key: "periods", label: t("subject.periodsLabel"), value: formatNumber(s.periods, locale), hint: t("subject.periodsHint") },
     labels.length > 0 && { key: "label", label: t("subject.planLabel"), value: labels.join(en ? ", " : "، ") },
-    { key: "terms", label: t("subject.termsLabel"), value: t("subject.termsValue"), hint: t("subject.termsHint") },
+    termsKnown(s)
+      ? { key: "terms", label: t("subject.termsLabel"), value: s.terms.map((x) => t(`terms.${x}`)).join(en ? ", " : "، "), hint: t(`subject.termsKnown.${s.terms_status}`) }
+      : { key: "terms", label: t("subject.termsLabel"), value: t("subject.termsValue"), hint: t("subject.termsHint") },
   ].filter(Boolean);
 
   const study = [
@@ -105,6 +184,62 @@ export default function SubjectDetail({ subject: s, term, context, links, onView
         </ul>
       )}
 
+      {/* ── Units and lessons (outline layer) ── */}
+      {showOutline && (
+        <section aria-labelledby="subject-outline" aria-busy={loadingLearn || undefined}>
+          <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-1">
+            <h3 id="subject-outline" className="t-h4 flex items-center gap-2">
+              <Layers size={18} aria-hidden="true" className="text-gold-600" />
+              {t("outline.title")}
+            </h3>
+            <span className="t-caption tabular">
+              {tl("count.units", { count: unitCount })} · {tl("count.lessons", { count: lessonCount })}
+            </span>
+          </div>
+          <p className="t-caption mt-0.5">{t("outline.lead")}</p>
+          {outline ? (
+            <SubjectOutline
+              outline={allUnits ? outline : { ...outline, units: outline.units.slice(0, OUTLINE_PREVIEW) }}
+              t={tl}
+              locale={locale}
+              openFirst={0}
+              className="mt-3"
+            />
+          ) : (
+            <OutlineSkeleton rows={Math.min(summary?.groups || 1, OUTLINE_PREVIEW)} label={t("outline.loading")} />
+          )}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {outline && !allUnits && outline.units.length > OUTLINE_PREVIEW && (
+              <Button size="sm" variant="ghost" onClick={() => setAllUnits(true)}>
+                {t("outline.more", { count: outline.units.length })}
+              </Button>
+            )}
+            {s.learn?.href && (
+              <Button href={s.learn.href} size="sm" variant="secondary" iconEnd={ChevronRight}>
+                {t("outline.open")}
+              </Button>
+            )}
+          </div>
+        </section>
+      )}
+
+      {learn.status === "error" && (
+        <Alert
+          tone="warning"
+          title={t("outline.error")}
+          action={
+            <Button size="sm" variant="secondary" iconStart={RotateCcw} onClick={learn.retry}>
+              {tc("actions.retry")}
+            </Button>
+          }
+        >
+          {t("outline.errorBody")}
+        </Alert>
+      )}
+
+      {/* ── Test yourself (subject-level quizzes, pool rule) ── */}
+      {entries && <ExamEntryPoints primary={entries.primary} related={[]} titleId={`subject-test-${s.id}`} />}
+
       {/* ── Official resources ── */}
       <section aria-labelledby="subject-resources">
         <h3 id="subject-resources" className="t-h4">{t("subject.resourcesTitle")}</h3>
@@ -168,6 +303,19 @@ export default function SubjectDetail({ subject: s, term, context, links, onView
             </span>
           </p>
         </div>
+
+        {/* The subject's files on iEN: link-outs in their three states (nothing embedded). */}
+        {(books.length > 0 || (loadingLearn && summary?.books > 0)) && (
+          <div className="mt-5" aria-busy={loadingLearn || undefined}>
+            <h4 className="text-[0.9375rem] font-medium text-ink">{t("ien.title")}</h4>
+            <p className="t-caption mt-0.5">{t("ien.lead")}</p>
+            {books.length > 0 ? (
+              <ResourceList items={books} t={tl} locale={locale} heading={false} />
+            ) : (
+              <OutlineSkeleton rows={Math.min(summary.books, 3)} label={t("ien.loading")} />
+            )}
+          </div>
+        )}
       </section>
 
       {/* ── Jazira value ── */}
@@ -194,6 +342,29 @@ export default function SubjectDetail({ subject: s, term, context, links, onView
           ))}
         </ul>
       </section>
+    </div>
+  );
+}
+
+/** Terms backed by evidence (verified or inferred; §2.5) are shown as such; otherwise "split not published". */
+const termsKnown = (s) => (s.terms_status === "verified" || s.terms_status === "inferred") && Array.isArray(s.terms) && s.terms.length > 0;
+
+/** Placeholder rows while the drawer payload loads (the counts above come from the page's summary). */
+function OutlineSkeleton({ rows, label }) {
+  return (
+    <div className="mt-3 space-y-2">
+      <span className="sr-only" role="status">
+        {label}
+      </span>
+      {Array.from({ length: Math.max(1, rows) }, (_, i) => (
+        <div key={i} aria-hidden="true" className="flex min-h-14 items-center gap-3 rounded-md border border-line/12 px-3.5 py-3">
+          <Skeleton className="h-4 w-4 shrink-0" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className={cn("h-3.5", i % 2 ? "w-2/5" : "w-3/5")} />
+            <Skeleton className="h-3 w-1/4" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

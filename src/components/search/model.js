@@ -293,3 +293,62 @@ export function parseRecent(raw) {
     return [];
   }
 }
+
+// ── content search (lessons, units, books, quizzes; docs/CONTENT_ENGINE.md §7) ──
+/** Display order of the content groups (search_content / GET /api/content/search). */
+export const CONTENT_SEARCH_GROUPS = ["node", "exam", "resource", "question"];
+/** Rows per content group in a preview (the "all" tab); a full list pages by CONTENT_PAGE. */
+export const CONTENT_PREVIEW = { node: 5, exam: 3, resource: 3, question: 3 };
+export const CONTENT_PAGE = 20;
+
+// A learn page is a subject node or below: stage/grade[/track]/subject[/local id] (3–6 segments).
+const LEARN_HREF = /^\/learn\/[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*){2,5}$/;
+const CURRICULUM_HREF = /^\/curriculum\/[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*){0,2}$/;
+const CATALOG_KINDS = new Set(["stage", "grade", "track"]);
+const learnPath = (id) => {
+  const href = `/learn/${String(id ?? "").split("@")[0]}`;
+  return LEARN_HREF.test(href) ? href : null;
+};
+
+/**
+ * Internal href of a content result. Only /learn/<node id> paths are ever
+ * linked (a row from the database cannot point anywhere else), except the
+ * stage, grade and track nodes search_content may return, which open their
+ * /curriculum page (they have no learn page); null = no link. Exam rows come
+ * as { scope } from the outline index and as { node } from search_content.
+ */
+export function contentHref(group, item) {
+  if (!item || typeof item !== "object") return null;
+  if (group === "node" && CATALOG_KINDS.has(item.kind)) {
+    const href = `/curriculum/${String(item.id ?? "")}`;
+    return CURRICULUM_HREF.test(href) ? href : null;
+  }
+  if (typeof item.href === "string" && LEARN_HREF.test(item.href)) return item.href;
+  if (group === "exam") return learnPath(item.scope ?? item.node);
+  if (group === "resource") return learnPath(item.subject);
+  if (group === "question") return learnPath(item.lesson);
+  return learnPath(item.id);
+}
+
+/** Stable React key of a content row (search_content exam rows carry { template, node } and no id). */
+export function contentKey(group, item) {
+  const exam = item?.node ? `${item.template ?? ""}:${item.node}` : null;
+  return `${group}:${item?.id ?? exam ?? item?.lesson ?? item?.scope ?? ""}`;
+}
+
+/** Total shown for a content group ("100+" when capped). */
+export function contentCount(results, group) {
+  const g = results?.groups?.[group];
+  if (!g) return null;
+  return { n: Number(g.total) || 0, capped: Boolean(g.capped) };
+}
+
+/** Can a content group load more rows? `loaded` = rows received so far (the next offset, ≤ 100). */
+export function contentHasMore(results, group, loaded, maxOffset = 100) {
+  const c = contentCount(results, group);
+  if (!c || loaded > maxOffset) return false;
+  return c.capped ? true : loaded < c.n;
+}
+
+/** Groups with at least one row, in display order. */
+export const contentGroupsWithRows = (results) => CONTENT_SEARCH_GROUPS.filter((g) => (results?.groups?.[g]?.items?.length || 0) > 0);

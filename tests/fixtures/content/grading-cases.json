@@ -1,0 +1,1932 @@
+{
+  "schema": "grading-cases@1",
+  "description": "Shared grading cases (docs/CONTENT_ENGINE.md §2.8): run by src/lib/content/answers.js (WP1), the guest route path (WP6) and SQL _ce_grade (WP7). Payloads and responses are canonical (ids, not display indexes). Scores are rounded to 4 decimals; `reason` marks an invalid response (graded 0).",
+  "cases": [
+    {
+      "id": "mcq-correct",
+      "type": "mcq",
+      "payload": {
+        "options": [
+          {
+            "id": "o1a2b3c",
+            "text": "7"
+          },
+          {
+            "id": "o4d5e6f",
+            "text": "10"
+          },
+          {
+            "id": "o7a8b9c",
+            "text": "32"
+          }
+        ],
+        "answer": {
+          "option_id": "o7a8b9c"
+        },
+        "fixed_order_reason": "numeric_ascending"
+      },
+      "response": {
+        "option_id": "o7a8b9c"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "mcq-wrong",
+      "type": "mcq",
+      "payload": {
+        "options": [
+          {
+            "id": "o1a2b3c",
+            "text": "7"
+          },
+          {
+            "id": "o4d5e6f",
+            "text": "10"
+          },
+          {
+            "id": "o7a8b9c",
+            "text": "32"
+          }
+        ],
+        "answer": {
+          "option_id": "o7a8b9c"
+        },
+        "fixed_order_reason": "numeric_ascending"
+      },
+      "response": {
+        "option_id": "o4d5e6f"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "mcq-unanswered-null",
+      "type": "mcq",
+      "payload": {
+        "options": [
+          {
+            "id": "o1a2b3c",
+            "text": "7"
+          },
+          {
+            "id": "o4d5e6f",
+            "text": "10"
+          },
+          {
+            "id": "o7a8b9c",
+            "text": "32"
+          }
+        ],
+        "answer": {
+          "option_id": "o7a8b9c"
+        },
+        "fixed_order_reason": "numeric_ascending"
+      },
+      "response": null,
+      "expected": {
+        "score": 0,
+        "verdict": "unanswered"
+      }
+    },
+    {
+      "id": "mcq-unanswered-empty",
+      "type": "mcq",
+      "payload": {
+        "options": [
+          {
+            "id": "o1a2b3c",
+            "text": "7"
+          },
+          {
+            "id": "o4d5e6f",
+            "text": "10"
+          },
+          {
+            "id": "o7a8b9c",
+            "text": "32"
+          }
+        ],
+        "answer": {
+          "option_id": "o7a8b9c"
+        },
+        "fixed_order_reason": "numeric_ascending"
+      },
+      "response": {
+        "option_id": ""
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "unanswered"
+      }
+    },
+    {
+      "id": "mcq-unknown-option",
+      "type": "mcq",
+      "note": "an id that is not an option is invalid",
+      "payload": {
+        "options": [
+          {
+            "id": "o1a2b3c",
+            "text": "7"
+          },
+          {
+            "id": "o4d5e6f",
+            "text": "10"
+          },
+          {
+            "id": "o7a8b9c",
+            "text": "32"
+          }
+        ],
+        "answer": {
+          "option_id": "o7a8b9c"
+        },
+        "fixed_order_reason": "numeric_ascending"
+      },
+      "response": {
+        "option_id": "zzz"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "unknown_option"
+      }
+    },
+    {
+      "id": "tf-correct",
+      "type": "true_false",
+      "payload": {
+        "options": [
+          {
+            "id": "t",
+            "text": "صح"
+          },
+          {
+            "id": "f",
+            "text": "خطأ"
+          }
+        ],
+        "answer": {
+          "option_id": "f"
+        },
+        "fixed_order_reason": null
+      },
+      "response": {
+        "option_id": "f"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "tf-wrong",
+      "type": "true_false",
+      "payload": {
+        "options": [
+          {
+            "id": "t",
+            "text": "صح"
+          },
+          {
+            "id": "f",
+            "text": "خطأ"
+          }
+        ],
+        "answer": {
+          "option_id": "f"
+        },
+        "fixed_order_reason": null
+      },
+      "response": {
+        "option_id": "t"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "matching-all",
+      "type": "matching",
+      "payload": {
+        "left": [
+          {
+            "id": "l1",
+            "text": "3^2"
+          },
+          {
+            "id": "l2",
+            "text": "2^3"
+          },
+          {
+            "id": "l3",
+            "text": "5^1"
+          }
+        ],
+        "right": [
+          {
+            "id": "r1",
+            "text": "9"
+          },
+          {
+            "id": "r2",
+            "text": "8"
+          },
+          {
+            "id": "r3",
+            "text": "5"
+          },
+          {
+            "id": "r4",
+            "text": "6"
+          }
+        ],
+        "answer": {
+          "pairs": [
+            [
+              "l1",
+              "r1"
+            ],
+            [
+              "l2",
+              "r2"
+            ],
+            [
+              "l3",
+              "r3"
+            ]
+          ]
+        },
+        "scoring": "partial"
+      },
+      "response": {
+        "pairs": [
+          [
+            "l1",
+            "r1"
+          ],
+          [
+            "l2",
+            "r2"
+          ],
+          [
+            "l3",
+            "r3"
+          ]
+        ]
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "matching-two-of-three",
+      "type": "matching",
+      "note": "partial = correct pairs ÷ left count, rounded to 4 decimals",
+      "payload": {
+        "left": [
+          {
+            "id": "l1",
+            "text": "3^2"
+          },
+          {
+            "id": "l2",
+            "text": "2^3"
+          },
+          {
+            "id": "l3",
+            "text": "5^1"
+          }
+        ],
+        "right": [
+          {
+            "id": "r1",
+            "text": "9"
+          },
+          {
+            "id": "r2",
+            "text": "8"
+          },
+          {
+            "id": "r3",
+            "text": "5"
+          },
+          {
+            "id": "r4",
+            "text": "6"
+          }
+        ],
+        "answer": {
+          "pairs": [
+            [
+              "l1",
+              "r1"
+            ],
+            [
+              "l2",
+              "r2"
+            ],
+            [
+              "l3",
+              "r3"
+            ]
+          ]
+        },
+        "scoring": "partial"
+      },
+      "response": {
+        "pairs": [
+          [
+            "l1",
+            "r1"
+          ],
+          [
+            "l2",
+            "r2"
+          ],
+          [
+            "l3",
+            "r4"
+          ]
+        ]
+      },
+      "expected": {
+        "score": 0.6667,
+        "verdict": "partial"
+      }
+    },
+    {
+      "id": "matching-one-answered",
+      "type": "matching",
+      "note": "unanswered left items count as wrong",
+      "payload": {
+        "left": [
+          {
+            "id": "l1",
+            "text": "3^2"
+          },
+          {
+            "id": "l2",
+            "text": "2^3"
+          },
+          {
+            "id": "l3",
+            "text": "5^1"
+          }
+        ],
+        "right": [
+          {
+            "id": "r1",
+            "text": "9"
+          },
+          {
+            "id": "r2",
+            "text": "8"
+          },
+          {
+            "id": "r3",
+            "text": "5"
+          },
+          {
+            "id": "r4",
+            "text": "6"
+          }
+        ],
+        "answer": {
+          "pairs": [
+            [
+              "l1",
+              "r1"
+            ],
+            [
+              "l2",
+              "r2"
+            ],
+            [
+              "l3",
+              "r3"
+            ]
+          ]
+        },
+        "scoring": "partial"
+      },
+      "response": {
+        "pairs": [
+          [
+            "l2",
+            "r2"
+          ]
+        ]
+      },
+      "expected": {
+        "score": 0.3333,
+        "verdict": "partial"
+      }
+    },
+    {
+      "id": "matching-all-or-nothing",
+      "type": "matching",
+      "payload": {
+        "left": [
+          {
+            "id": "l1",
+            "text": "3^2"
+          },
+          {
+            "id": "l2",
+            "text": "2^3"
+          },
+          {
+            "id": "l3",
+            "text": "5^1"
+          }
+        ],
+        "right": [
+          {
+            "id": "r1",
+            "text": "9"
+          },
+          {
+            "id": "r2",
+            "text": "8"
+          },
+          {
+            "id": "r3",
+            "text": "5"
+          },
+          {
+            "id": "r4",
+            "text": "6"
+          }
+        ],
+        "answer": {
+          "pairs": [
+            [
+              "l1",
+              "r1"
+            ],
+            [
+              "l2",
+              "r2"
+            ],
+            [
+              "l3",
+              "r3"
+            ]
+          ]
+        },
+        "scoring": "all_or_nothing"
+      },
+      "response": {
+        "pairs": [
+          [
+            "l1",
+            "r1"
+          ],
+          [
+            "l2",
+            "r2"
+          ],
+          [
+            "l3",
+            "r4"
+          ]
+        ]
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "matching-duplicate-right",
+      "type": "matching",
+      "payload": {
+        "left": [
+          {
+            "id": "l1",
+            "text": "3^2"
+          },
+          {
+            "id": "l2",
+            "text": "2^3"
+          },
+          {
+            "id": "l3",
+            "text": "5^1"
+          }
+        ],
+        "right": [
+          {
+            "id": "r1",
+            "text": "9"
+          },
+          {
+            "id": "r2",
+            "text": "8"
+          },
+          {
+            "id": "r3",
+            "text": "5"
+          },
+          {
+            "id": "r4",
+            "text": "6"
+          }
+        ],
+        "answer": {
+          "pairs": [
+            [
+              "l1",
+              "r1"
+            ],
+            [
+              "l2",
+              "r2"
+            ],
+            [
+              "l3",
+              "r3"
+            ]
+          ]
+        },
+        "scoring": "partial"
+      },
+      "response": {
+        "pairs": [
+          [
+            "l1",
+            "r1"
+          ],
+          [
+            "l2",
+            "r1"
+          ]
+        ]
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "duplicate_right"
+      }
+    },
+    {
+      "id": "matching-unknown-id",
+      "type": "matching",
+      "payload": {
+        "left": [
+          {
+            "id": "l1",
+            "text": "3^2"
+          },
+          {
+            "id": "l2",
+            "text": "2^3"
+          },
+          {
+            "id": "l3",
+            "text": "5^1"
+          }
+        ],
+        "right": [
+          {
+            "id": "r1",
+            "text": "9"
+          },
+          {
+            "id": "r2",
+            "text": "8"
+          },
+          {
+            "id": "r3",
+            "text": "5"
+          },
+          {
+            "id": "r4",
+            "text": "6"
+          }
+        ],
+        "answer": {
+          "pairs": [
+            [
+              "l1",
+              "r1"
+            ],
+            [
+              "l2",
+              "r2"
+            ],
+            [
+              "l3",
+              "r3"
+            ]
+          ]
+        },
+        "scoring": "partial"
+      },
+      "response": {
+        "pairs": [
+          [
+            "l1",
+            "r9"
+          ]
+        ]
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "unknown_pair"
+      }
+    },
+    {
+      "id": "matching-empty",
+      "type": "matching",
+      "payload": {
+        "left": [
+          {
+            "id": "l1",
+            "text": "3^2"
+          },
+          {
+            "id": "l2",
+            "text": "2^3"
+          },
+          {
+            "id": "l3",
+            "text": "5^1"
+          }
+        ],
+        "right": [
+          {
+            "id": "r1",
+            "text": "9"
+          },
+          {
+            "id": "r2",
+            "text": "8"
+          },
+          {
+            "id": "r3",
+            "text": "5"
+          },
+          {
+            "id": "r4",
+            "text": "6"
+          }
+        ],
+        "answer": {
+          "pairs": [
+            [
+              "l1",
+              "r1"
+            ],
+            [
+              "l2",
+              "r2"
+            ],
+            [
+              "l3",
+              "r3"
+            ]
+          ]
+        },
+        "scoring": "partial"
+      },
+      "response": {
+        "pairs": []
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "unanswered"
+      }
+    },
+    {
+      "id": "ordering-correct",
+      "type": "ordering",
+      "payload": {
+        "items": [
+          {
+            "id": "s1",
+            "text": "افهم"
+          },
+          {
+            "id": "s2",
+            "text": "خطط"
+          },
+          {
+            "id": "s3",
+            "text": "حل"
+          },
+          {
+            "id": "s4",
+            "text": "تحقق"
+          }
+        ],
+        "answer": {
+          "order": [
+            "s1",
+            "s2",
+            "s3",
+            "s4"
+          ]
+        },
+        "criterion": "process_steps"
+      },
+      "response": {
+        "order": [
+          "s1",
+          "s2",
+          "s3",
+          "s4"
+        ]
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "ordering-wrong",
+      "type": "ordering",
+      "note": "v1 gives no partial credit",
+      "payload": {
+        "items": [
+          {
+            "id": "s1",
+            "text": "افهم"
+          },
+          {
+            "id": "s2",
+            "text": "خطط"
+          },
+          {
+            "id": "s3",
+            "text": "حل"
+          },
+          {
+            "id": "s4",
+            "text": "تحقق"
+          }
+        ],
+        "answer": {
+          "order": [
+            "s1",
+            "s2",
+            "s3",
+            "s4"
+          ]
+        },
+        "criterion": "process_steps"
+      },
+      "response": {
+        "order": [
+          "s2",
+          "s1",
+          "s3",
+          "s4"
+        ]
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "ordering-not-permutation",
+      "type": "ordering",
+      "payload": {
+        "items": [
+          {
+            "id": "s1",
+            "text": "افهم"
+          },
+          {
+            "id": "s2",
+            "text": "خطط"
+          },
+          {
+            "id": "s3",
+            "text": "حل"
+          },
+          {
+            "id": "s4",
+            "text": "تحقق"
+          }
+        ],
+        "answer": {
+          "order": [
+            "s1",
+            "s2",
+            "s3",
+            "s4"
+          ]
+        },
+        "criterion": "process_steps"
+      },
+      "response": {
+        "order": [
+          "s1",
+          "s1",
+          "s3",
+          "s4"
+        ]
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "not_a_permutation"
+      }
+    },
+    {
+      "id": "ordering-empty",
+      "type": "ordering",
+      "payload": {
+        "items": [
+          {
+            "id": "s1",
+            "text": "افهم"
+          },
+          {
+            "id": "s2",
+            "text": "خطط"
+          },
+          {
+            "id": "s3",
+            "text": "حل"
+          },
+          {
+            "id": "s4",
+            "text": "تحقق"
+          }
+        ],
+        "answer": {
+          "order": [
+            "s1",
+            "s2",
+            "s3",
+            "s4"
+          ]
+        },
+        "criterion": "process_steps"
+      },
+      "response": {
+        "order": []
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "unanswered"
+      }
+    },
+    {
+      "id": "short-tashkeel",
+      "type": "short_answer",
+      "note": "tashkeel is stripped",
+      "payload": {
+        "accepted": [
+          "الرياضيات"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "الرياضيات"
+      },
+      "response": {
+        "text": "الرِّياضِيّات"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-tatweel-space",
+      "type": "short_answer",
+      "note": "tatweel and outer spaces",
+      "payload": {
+        "accepted": [
+          "الرياضيات"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "الرياضيات"
+      },
+      "response": {
+        "text": "  الـرياضيات  "
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-punctuation",
+      "type": "short_answer",
+      "note": "punctuation → space",
+      "payload": {
+        "accepted": [
+          "الرياضيات"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "الرياضيات"
+      },
+      "response": {
+        "text": "«الرياضيات»."
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-nfkc-presentation-forms",
+      "type": "short_answer",
+      "note": "Arabic presentation forms fold under NFKC",
+      "payload": {
+        "accepted": [
+          "الرياضيات"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "الرياضيات"
+      },
+      "response": {
+        "text": "ﺍﻟﺮﻳﺎﺿﻴﺎﺕ"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-taa-marbuta",
+      "type": "short_answer",
+      "note": "ة → ه in normalized_exact",
+      "payload": {
+        "accepted": [
+          "مدرسة"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "مدرسة"
+      },
+      "response": {
+        "text": "مدرسه"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-hamza-fold",
+      "type": "short_answer",
+      "note": "أ → ا in normalized_exact",
+      "payload": {
+        "accepted": [
+          "أحمد"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "أحمد"
+      },
+      "response": {
+        "text": "احمد"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-superscript",
+      "type": "short_answer",
+      "note": "superscripts map to ^n before NFKC",
+      "payload": {
+        "accepted": [
+          "x^2"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "x^2"
+      },
+      "response": {
+        "text": "x²"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-superscript-not-x2",
+      "type": "short_answer",
+      "note": "x2 is not x²",
+      "payload": {
+        "accepted": [
+          "x^2"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "x^2"
+      },
+      "response": {
+        "text": "x2"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "short-vulgar-fraction",
+      "type": "short_answer",
+      "payload": {
+        "accepted": [
+          "1/2"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "1/2"
+      },
+      "response": {
+        "text": "½"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-digits",
+      "type": "short_answer",
+      "note": "Arabic-Indic digits",
+      "payload": {
+        "accepted": [
+          "125"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "125"
+      },
+      "response": {
+        "text": "١٢٥"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-latin-case",
+      "type": "short_answer",
+      "payload": {
+        "accepted": [
+          "Photosynthesis"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "Photosynthesis"
+      },
+      "response": {
+        "text": "photosynthesis"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "short-wrong",
+      "type": "short_answer",
+      "payload": {
+        "accepted": [
+          "الرياضيات",
+          "رياضيات"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "الرياضيات"
+      },
+      "response": {
+        "text": "العلوم"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "short-too-long",
+      "type": "short_answer",
+      "payload": {
+        "accepted": [
+          "7"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 10,
+        "answer_display": "7"
+      },
+      "response": {
+        "text": "سبعة أعداد صحيحة"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "too_long"
+      }
+    },
+    {
+      "id": "short-empty",
+      "type": "short_answer",
+      "payload": {
+        "accepted": [
+          "7"
+        ],
+        "match": "normalized_exact",
+        "max_chars": 40,
+        "answer_display": "7"
+      },
+      "response": {
+        "text": "   "
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "unanswered"
+      }
+    },
+    {
+      "id": "exact-marks-correct",
+      "type": "short_answer",
+      "note": "exact_marks: NFC + whitespace only",
+      "payload": {
+        "accepted": [
+          "مَدْرَسَةٌ"
+        ],
+        "match": "exact_marks",
+        "max_chars": 40,
+        "answer_display": "مَدْرَسَةٌ"
+      },
+      "response": {
+        "text": " مَدْرَسَةٌ "
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "exact-marks-missing-tashkeel",
+      "type": "short_answer",
+      "note": "no folding under exact_marks",
+      "payload": {
+        "accepted": [
+          "مَدْرَسَةٌ"
+        ],
+        "match": "exact_marks",
+        "max_chars": 40,
+        "answer_display": "مَدْرَسَةٌ"
+      },
+      "response": {
+        "text": "مدرسة"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "exact-marks-taa",
+      "type": "short_answer",
+      "payload": {
+        "accepted": [
+          "مدرسة"
+        ],
+        "match": "exact_marks",
+        "max_chars": 40,
+        "answer_display": "مدرسة"
+      },
+      "response": {
+        "text": "مدرسه"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "exact-marks-nfc-hamza",
+      "type": "short_answer",
+      "note": "alef + combining hamza composes to أ under NFC",
+      "payload": {
+        "accepted": [
+          "أحمد"
+        ],
+        "match": "exact_marks",
+        "max_chars": 40,
+        "answer_display": "أحمد"
+      },
+      "response": {
+        "text": "أحمد"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-plain",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "1250",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "1250"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-thousands-comma",
+      "type": "numeric",
+      "note": "strict group of three after a non-zero group",
+      "payload": {
+        "answer": {
+          "value": "1250",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "1,250"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-thousands-arabic",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "1250",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "١٬٢٥٠"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-thousands-groups",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "12345678",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "12,345,678"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-comma-decimal-two",
+      "type": "numeric",
+      "note": "12,50 is 12.5",
+      "payload": {
+        "answer": {
+          "value": "1250",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "12,50"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "numeric-comma-decimal",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "2.5",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "2,5"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-arabic-decimal",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "2.5",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "٢٫٥"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-fraction",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "2.5",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "5/2"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-ambiguous-zero",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "0.125",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "0,125"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "ambiguous_separator"
+      }
+    },
+    {
+      "id": "numeric-ambiguous-mixed",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "1250.5",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "1,250.5"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "ambiguous_separator"
+      }
+    },
+    {
+      "id": "numeric-ambiguous-long-group",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "1234.567",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "1234,567"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "ambiguous_separator"
+      }
+    },
+    {
+      "id": "numeric-bad-groups",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "123",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "1,2,3"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "invalid_number"
+      }
+    },
+    {
+      "id": "numeric-not-a-number",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "3",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "abc"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "invalid_number"
+      }
+    },
+    {
+      "id": "numeric-superscript-not-concatenated",
+      "type": "numeric",
+      "note": "superscripts map to ^n before NFKC: 10² is a power, never read as 102 (not a plain number → invalid)",
+      "payload": {
+        "answer": {
+          "value": "102",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "10²"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "invalid_number"
+      }
+    },
+    {
+      "id": "numeric-empty",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "3",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": ""
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "unanswered"
+      }
+    },
+    {
+      "id": "numeric-negative",
+      "type": "numeric",
+      "note": "U+2212 minus sign",
+      "payload": {
+        "answer": {
+          "value": "-12",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "−12"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-abs-tolerance-in",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "3.14",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0.05"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "3.1"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-abs-tolerance-out",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "3.14",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0.05"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "3.2"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "numeric-rel-tolerance-in",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "100",
+          "tolerance": {
+            "kind": "rel",
+            "value": "0.01"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "100.9"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-rel-tolerance-out",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "100",
+          "tolerance": {
+            "kind": "rel",
+            "value": "0.01"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "101.5"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "numeric-fraction-not-allowed",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "0.5",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": false,
+          "max_decimals": 2
+        }
+      },
+      "response": {
+        "value": "1/2"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "fraction_not_allowed"
+      }
+    },
+    {
+      "id": "numeric-too-many-decimals",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "3.14",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": null,
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 2
+        }
+      },
+      "response": {
+        "value": "3.141"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect",
+        "reason": "too_many_decimals"
+      }
+    },
+    {
+      "id": "numeric-unit-accepted",
+      "type": "numeric",
+      "note": "units compare after normalization",
+      "payload": {
+        "answer": {
+          "value": "5",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": {
+          "text": "سم",
+          "required": true,
+          "accepted": [
+            "cm",
+            "سنتيمتر"
+          ]
+        },
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "5",
+        "unit": "CM"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    },
+    {
+      "id": "numeric-unit-wrong",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "5",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": {
+          "text": "سم",
+          "required": true,
+          "accepted": [
+            "cm"
+          ]
+        },
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "5",
+        "unit": "م"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "numeric-unit-missing",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "5",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": {
+          "text": "سم",
+          "required": true,
+          "accepted": [
+            "cm"
+          ]
+        },
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "5"
+      },
+      "expected": {
+        "score": 0,
+        "verdict": "incorrect"
+      }
+    },
+    {
+      "id": "numeric-unit-optional",
+      "type": "numeric",
+      "payload": {
+        "answer": {
+          "value": "5",
+          "tolerance": {
+            "kind": "abs",
+            "value": "0"
+          }
+        },
+        "unit": {
+          "text": "سم",
+          "required": false,
+          "accepted": []
+        },
+        "input": {
+          "allow_fraction": true,
+          "max_decimals": 4
+        }
+      },
+      "response": {
+        "value": "5"
+      },
+      "expected": {
+        "score": 1,
+        "verdict": "correct"
+      }
+    }
+  ]
+}

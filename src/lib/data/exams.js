@@ -7,7 +7,10 @@
 // LOCAL mode: guests, Supabase not configured, RPCs missing (PGRST202/42883) or
 //             the database unreachable → /api/exams/local/* (bundled questions,
 //             graded on the server, NOTHING saved). Every payload carries
-//             `mode: "db" | "local"` so the UI can say "results aren't saved".
+//             `mode: "db" | "local" | "guest"` so the UI can say "results aren't saved".
+// GUEST mode: template sessions (startExam({ template, scope, … })) for guests or
+//             when start_template_attempt is unavailable → /api/exams/session/*
+//             (src/lib/data/exam-sessions.js; ids "g-…", nothing saved).
 //
 // Shapes are the same in both modes (local attempts have string ids starting
 // with "local-" and question ids equal to the question key).
@@ -17,12 +20,20 @@
 // sent one (e.g. daily_limit_reached → { limit, used, resets_at }).
 // ============================================================================
 import { getSupabase } from "@/lib/supabase-lazy";
+import {
+  getGuestSession, isGuestAttemptId, saveGuestResponse, startGuestSession, submitGuestSession,
+} from "@/lib/data/exam-sessions";
 
 export const EXAM_ERROR_CODES = [
   "not_authenticated", "invalid_argument", "premium_required", "daily_limit_reached", "not_enough_questions",
   "attempt_not_found", "attempt_closed", "rate_limited", "forbidden", "unavailable", "network", "unknown",
+  // template engine (docs/CONTENT_ENGINE.md §5.7)
+  "template_not_found", "scope_not_found", "insufficient_pool", "feedback_not_allowed", "invalid_response",
+  "item_locked", "scope_too_large", "seed_not_allowed", "not_found", "key_reveal_limit", "token_invalid",
+  "token_expired", "bank_changed",
 ];
-const SERVER_CODES = new Set(EXAM_ERROR_CODES.slice(0, 9));
+// codes the database raises as the exception message (P0001)
+const SERVER_CODES = new Set(EXAM_ERROR_CODES.filter((c) => !["unavailable", "network", "unknown"].includes(c)));
 const MISSING = new Set(["PGRST202", "PGRST205", "42P01", "42883"]);
 const DB_DOWN = new Set(["PGRST000", "PGRST001", "PGRST002", "PGRST003"]);
 const GRACE_MS = 30_000;
@@ -298,8 +309,13 @@ async function submitLocal(att, answers) {
  *   an unknown topic → DataError invalid_argument { field: "topic" }.
  * @returns {Promise<object>} { mode, attempt_id, status, exam, section, topic, difficulty,
  *   question_count, requested_count, started_at, expires_at, time_limit_seconds, server_now, questions[] }
+ *
+ * Template sessions: { template, scope, count?, timing?, feedback?, retakeOf? } (see
+ * startTemplateExam) → { mode: "db" | "guest", attempt_id, template, scope, mini, reused, … }.
  */
-export async function startExam({ exam, section = null, topic = null, difficulty = null, count = 10, timeLimitSeconds = null } = {}) {
+export async function startExam(config = {}) {
+  if (config?.template) return startTemplateExam(config);
+  const { exam, section = null, topic = null, difficulty = null, count = 10, timeLimitSeconds = null } = config ?? {};
   const { supabase, signedIn } = await dbContext();
   if (supabase && signedIn) {
     const args = {
@@ -321,6 +337,31 @@ export async function startExam({ exam, section = null, topic = null, difficulty
 }
 
 /**
+ * Template session (docs/CONTENT_ENGINE.md §5.7): start_template_attempt when
+ * signed in with a working database; guests — or a database without 0014 /
+ * unreachable — get a guest session (nothing saved). A guest retake needs a
+ * guest session id; a database retake a database attempt id.
+ */
+async function startTemplateExam({ template, scope, count = null, timing = null, feedback = null, retakeOf = null }) {
+  const { supabase, signedIn } = await dbContext();
+  const guestRetake = retakeOf && isGuestAttemptId(retakeOf);
+  if (supabase && signedIn && !guestRetake) {
+    const { data, error } = await supabase.rpc("start_template_attempt", {
+      p_template: template,
+      p_scope: scope,
+      p_count: count ?? null,
+      p_timing: timing ?? null,
+      p_feedback: feedback ?? null,
+      p_retake_of: retakeOf ?? null,
+    });
+    if (!error) return { ...data, mode: "db" };
+    if (!isMissing(error) && !isDown(error)) throw toExamError(error);
+    if (retakeOf) throw dataError("unavailable"); // a saved attempt cannot be retaken without the database
+  }
+  return startGuestSession({ template, scope, count, timing, feedback, retakeOf: guestRetake ? retakeOf : null });
+}
+
+/**
  * Save one answer while the attempt is running.
  * @param {string} attemptId
  * @param {number} position        1-based
@@ -328,6 +369,7 @@ export async function startExam({ exam, section = null, topic = null, difficulty
  * @param {{ timeSpentSeconds?: number, flagged?: boolean|null }} [opts]  timeSpentSeconds is cumulative for that question
  */
 export async function saveAnswer(attemptId, position, selectedIndex, { timeSpentSeconds = 0, flagged = null } = {}) {
+  if (isGuestAttemptId(attemptId)) return saveGuestResponse(attemptId, position, selectedIndex, { timeSpentSeconds, flagged });
   if (isLocalAttemptId(attemptId)) {
     const att = loadLocal(attemptId);
     if (!att) throw dataError("attempt_not_found");
@@ -338,6 +380,18 @@ export async function saveAnswer(attemptId, position, selectedIndex, { timeSpent
   }
   const { supabase } = await dbContext();
   if (!supabase) throw dataError("unavailable");
+  if (selectedIndex !== null && typeof selectedIndex === "object") {
+    // a typed response (matching, ordering, short answer, numeric, or {option_index})
+    const { data, error } = await supabase.rpc("save_exam_response", {
+      p_attempt: attemptId,
+      p_position: position,
+      p_response: selectedIndex,
+      p_time_spent: timeSpentSeconds,
+      p_flagged: flagged,
+    });
+    if (error) throw toExamError(error);
+    return { ...data, mode: "db" };
+  }
   const { data, error } = await supabase.rpc("save_exam_answer", {
     p_attempt: attemptId,
     p_position: position,
@@ -357,6 +411,7 @@ export async function saveAnswer(attemptId, position, selectedIndex, { timeSpent
  * @returns {Promise<object>} { mode, status, attempt, items[], by_topic[] }
  */
 export async function submitExam(attemptId, answers = null) {
+  if (isGuestAttemptId(attemptId)) return submitGuestSession(attemptId, answers);
   if (isLocalAttemptId(attemptId)) {
     const att = loadLocal(attemptId);
     if (!att) throw dataError("attempt_not_found");
@@ -375,6 +430,7 @@ export async function submitExam(attemptId, answers = null) {
  * submitted/expired → same payload as submitExam()
  */
 export async function getAttempt(attemptId) {
+  if (isGuestAttemptId(attemptId)) return getGuestSession(attemptId);
   if (isLocalAttemptId(attemptId)) {
     const att = loadLocal(attemptId);
     if (!att) throw dataError("attempt_not_found");

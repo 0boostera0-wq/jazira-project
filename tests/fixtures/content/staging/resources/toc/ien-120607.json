@@ -1,0 +1,57 @@
+{
+  "schema": "toc@1",
+  "resource_id": "ien-120607",
+  "toc_status": "found",
+  "toc_pages": [
+    5
+  ],
+  "page_offset": 2,
+  "run_id": "run-20260926-extract-01",
+  "entries": [
+    {
+      "level": "unit",
+      "title": "الجبر و الدوال",
+      "printed_page": 10,
+      "pdf_page": 12,
+      "matched_node_id": "middle/grade-1/math/n91",
+      "match_score": 1,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "الخطوات الأربع لحل المسألة",
+      "printed_page": 10,
+      "pdf_page": 12,
+      "matched_node_id": "middle/grade-1/math/n53",
+      "match_score": 0.94,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "القوى والأسس",
+      "printed_page": 12,
+      "pdf_page": 14,
+      "matched_node_id": "middle/grade-1/math/n54",
+      "match_score": 0.88,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "ترتيب العمليات",
+      "printed_page": 15,
+      "pdf_page": 17,
+      "matched_node_id": "middle/grade-1/math/n55",
+      "match_score": 1,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "مراجعة تراكمية",
+      "printed_page": 36,
+      "pdf_page": 38,
+      "matched_node_id": "middle/grade-1/math/xb321f898",
+      "match_score": null,
+      "method": "vision"
+    }
+  ]
+}

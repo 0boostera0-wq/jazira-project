@@ -1,0 +1,387 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:exam-template",
+  "title": "Exam template (§2.12)",
+  "description": "data/staging/exams/templates.json (JSON array sorted by id, version), exported from src/lib/exams/engine/exam-templates.js.",
+  "type": "object",
+  "required": [
+    "id",
+    "version",
+    "kind",
+    "scope_kinds",
+    "count",
+    "difficulty_mix",
+    "coverage",
+    "term_rule",
+    "types",
+    "timing",
+    "feedback",
+    "retry",
+    "randomization",
+    "scoring",
+    "quota",
+    "eligibility"
+  ],
+  "properties": {
+    "schema": {
+      "const": "exam-template@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/slug"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "lesson",
+        "chapter",
+        "subject",
+        "term",
+        "full_year",
+        "practice",
+        "mock",
+        "timed",
+        "weakness",
+        "random"
+      ]
+    },
+    "scope_kinds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 40
+      },
+      "minItems": 1
+    },
+    "count": {
+      "type": "object",
+      "required": [
+        "default",
+        "min",
+        "max"
+      ],
+      "properties": {
+        "default": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "guest_max": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "free_max": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mini": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "difficulty_mix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "properties": {
+        "easy": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "medium": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "hard": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "required": [
+        "stratify_by",
+        "weight"
+      ],
+      "properties": {
+        "stratify_by": {
+          "type": "string",
+          "enum": [
+            "objective",
+            "lesson",
+            "chapter",
+            "unit",
+            "topic",
+            "none"
+          ]
+        },
+        "weight": {
+          "type": "string",
+          "enum": [
+            "equal",
+            "lesson_count",
+            "pool_size",
+            "error_rate"
+          ]
+        },
+        "min_per_stratum": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "term_rule": {
+      "type": "string",
+      "enum": [
+        "inherit",
+        "single_term",
+        "both_terms"
+      ]
+    },
+    "types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "mcq",
+          "true_false",
+          "matching",
+          "ordering",
+          "short_answer",
+          "numeric"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "timing": {
+      "type": "object",
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "timed",
+            "untimed"
+          ]
+        },
+        "seconds_per_question": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "min_seconds": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "max_seconds": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "grace_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "user_may_change": {
+          "type": "boolean"
+        }
+      }
+    },
+    "feedback": {
+      "type": "object",
+      "required": [
+        "default",
+        "allowed"
+      ],
+      "properties": {
+        "default": {
+          "type": "string",
+          "enum": [
+            "end",
+            "immediate"
+          ]
+        },
+        "allowed": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "end",
+              "immediate"
+            ]
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "required": [
+        "avoid_last_attempts"
+      ],
+      "properties": {
+        "avoid_last_attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "avoid_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "allow_reuse": {
+          "type": "boolean"
+        },
+        "max_reuse_share": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "randomization": {
+      "type": "object",
+      "required": [
+        "question_order",
+        "option_shuffle"
+      ],
+      "properties": {
+        "question_order": {
+          "type": "string",
+          "enum": [
+            "shuffle",
+            "shuffle_keep_stimulus",
+            "by_stratum"
+          ]
+        },
+        "option_shuffle": {
+          "type": "boolean"
+        },
+        "one_per_exclusion_group": {
+          "type": "boolean"
+        }
+      }
+    },
+    "scoring": {
+      "type": "object",
+      "required": [
+        "unit"
+      ],
+      "properties": {
+        "unit": {
+          "const": "percent"
+        },
+        "matching": {
+          "type": "string",
+          "enum": [
+            "partial",
+            "all_or_nothing"
+          ]
+        },
+        "negative_marking": {
+          "const": false
+        },
+        "pass_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "quota": {
+      "type": "string",
+      "enum": [
+        "exam",
+        "practice"
+      ]
+    },
+    "eligibility": {
+      "type": "object",
+      "required": [
+        "question_status"
+      ],
+      "properties": {
+        "question_status": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "candidate",
+              "validated",
+              "published",
+              "rejected",
+              "review_required",
+              "retired"
+            ]
+          }
+        },
+        "min_pool_factor": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

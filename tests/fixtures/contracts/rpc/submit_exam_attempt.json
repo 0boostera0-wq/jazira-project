@@ -1,0 +1,1529 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "submit_exam_attempt",
+ "signature": "submit_exam_attempt(p_attempt uuid, p_answers jsonb default null) → jsonb (unchanged signature)",
+ "grants": [
+  "authenticated",
+  "service_role"
+ ],
+ "description": "Same signature as 0010. p_answers items may carry `response` (display indexes, §2.8); entries for locked positions are ignored (graded from the lock-time response); items whose question revision changed are voided. Template attempts return the §5.7 result; legacy attempts (template_id null, choice_order null) return exactly the 0012 payload plus the added fields.",
+ "cases": [
+  {
+   "name": "template attempt",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_answers": [
+     {
+      "position": 1,
+      "response": {
+       "pairs": [
+        [
+         0,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         2,
+         3
+        ]
+       ]
+      }
+     },
+     {
+      "position": 2,
+      "response": {
+       "option_index": 0
+      }
+     },
+     {
+      "position": 3,
+      "response": null
+     },
+     {
+      "position": 4,
+      "response": {
+       "option_index": 2
+      }
+     },
+     {
+      "position": 5,
+      "response": {
+       "option_index": 0
+      }
+     },
+     {
+      "position": 6,
+      "response": null
+     },
+     {
+      "position": 7,
+      "response": {
+       "option_index": 2
+      }
+     },
+     {
+      "position": 8,
+      "response": {
+       "value": "1250",
+       "unit": "سم"
+      }
+     },
+     {
+      "position": 9,
+      "response": null
+     },
+     {
+      "position": 10,
+      "response": {
+       "option_index": 3
+      }
+     }
+    ]
+   },
+   "response": {
+    "mode": "db",
+    "status": "submitted",
+    "attempt": {
+     "id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+     "template_id": "chapter-quiz",
+     "template_version": 1,
+     "scope": "middle/grade-1/math/n91",
+     "term_scope": null,
+     "retake_of": null,
+     "status": "submitted",
+     "started_at": "2026-10-01T12:00:00.000Z",
+     "expires_at": "2026-10-01T12:12:30.000Z",
+     "submitted_at": "2026-10-01T12:18:45.000Z",
+     "question_count": 10,
+     "correct_count": 5,
+     "score_percent": 50,
+     "duration_seconds": 645,
+     "xp_awarded": 10
+    },
+    "voided_count": 0,
+    "answered_count": 7,
+    "by_lesson": [
+     {
+      "id": "middle/grade-1/math/n53",
+      "title": "الخطوات الأربع لحل المسألة",
+      "href": "/learn/middle/grade-1/math/n53",
+      "total": 3,
+      "correct": 1,
+      "score_sum": 1
+     },
+     {
+      "id": "middle/grade-1/math/n54",
+      "title": "القوى و الأسس",
+      "href": "/learn/middle/grade-1/math/n54",
+      "total": 3,
+      "correct": 3,
+      "score_sum": 3
+     },
+     {
+      "id": "middle/grade-1/math/n55",
+      "title": "ترتيب العمليات",
+      "href": "/learn/middle/grade-1/math/n55",
+      "total": 4,
+      "correct": 1,
+      "score_sum": 1
+     }
+    ],
+    "by_band": [
+     {
+      "band": 1,
+      "total": 3,
+      "correct": 2,
+      "score_sum": 2
+     },
+     {
+      "band": 2,
+      "total": 6,
+      "correct": 3,
+      "score_sum": 3
+     },
+     {
+      "band": 3,
+      "total": 1,
+      "correct": 0,
+      "score_sum": 0
+     }
+    ],
+    "items": [
+     {
+      "position": 1,
+      "key": "q-m1-math-76a8277347",
+      "type": "matching",
+      "language": "ar",
+      "stem": "سؤال b3؟",
+      "stimulus": null,
+      "options": [],
+      "choices": [],
+      "public": {
+       "left": [
+        {
+         "index": 0,
+         "text": "5²"
+        },
+        {
+         "index": 1,
+         "text": "3²"
+        },
+        {
+         "index": 2,
+         "text": "2³"
+        }
+       ],
+       "right": [
+        {
+         "index": 0,
+         "text": "25"
+        },
+        {
+         "index": 1,
+         "text": "9"
+        },
+        {
+         "index": 2,
+         "text": "10"
+        },
+        {
+         "index": 3,
+         "text": "8"
+        }
+       ],
+       "scoring": "partial"
+      },
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n54",
+       "title": "القوى و الأسس",
+       "href": "/learn/middle/grade-1/math/n54"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "pairs": [
+        [
+         0,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         2,
+         3
+        ]
+       ]
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "pairs": [
+        [
+         0,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         2,
+         3
+        ]
+       ]
+      },
+      "explanation": {
+       "text": "شرح b3.",
+       "steps": [
+        "خطوة b3"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 2,
+      "key": "q-m1-math-2c3a4249d7",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال a2؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "4"
+       },
+       {
+        "index": 1,
+        "text": "7"
+       },
+       {
+        "index": 2,
+        "text": "10"
+       },
+       {
+        "index": 3,
+        "text": "32"
+       }
+      ],
+      "choices": [
+       "4",
+       "7",
+       "10",
+       "32"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n53",
+       "title": "الخطوات الأربع لحل المسألة",
+       "href": "/learn/middle/grade-1/math/n53"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 0
+      },
+      "verdict": "incorrect",
+      "score": 0,
+      "correct_response": {
+       "option_index": 3
+      },
+      "explanation": {
+       "text": "شرح a2.",
+       "steps": [
+        "خطوة a2"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 3,
+      "key": "q-m1-math-d0f631ca1d",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c1؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "ثلاثاء"
+       },
+       {
+        "index": 1,
+        "text": "أحد"
+       },
+       {
+        "index": 2,
+        "text": "اثنين"
+       },
+       {
+        "index": 3,
+        "text": "سبت"
+       }
+      ],
+      "choices": [
+       "ثلاثاء",
+       "أحد",
+       "اثنين",
+       "سبت"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات",
+       "href": "/learn/middle/grade-1/math/n55"
+      },
+      "voided": null,
+      "locked": false,
+      "response": null,
+      "verdict": "unanswered",
+      "score": 0,
+      "correct_response": {
+       "option_index": 1
+      },
+      "explanation": {
+       "text": "شرح c1.",
+       "steps": [
+        "خطوة c1"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 4,
+      "key": "q-m1-math-7dc96f776c",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال b1؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "8"
+       },
+       {
+        "index": 1,
+        "text": "16"
+       },
+       {
+        "index": 2,
+        "text": "32"
+       },
+       {
+        "index": 3,
+        "text": "64"
+       }
+      ],
+      "choices": [
+       "8",
+       "16",
+       "32",
+       "64"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n54",
+       "title": "القوى و الأسس",
+       "href": "/learn/middle/grade-1/math/n54"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 2
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "option_index": 2
+      },
+      "explanation": {
+       "text": "شرح b1.",
+       "steps": [
+        "خطوة b1"
+       ]
+      },
+      "objective": {
+       "text": "يحسب قيمة عبارة أسية بأساس وأس صحيحين."
+      },
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 5,
+      "key": "q-m1-math-f46dd28a54",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال a3؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "أ"
+       },
+       {
+        "index": 1,
+        "text": "ب"
+       },
+       {
+        "index": 2,
+        "text": "ج"
+       },
+       {
+        "index": 3,
+        "text": "لا شيء مما سبق"
+       }
+      ],
+      "choices": [
+       "أ",
+       "ب",
+       "ج",
+       "لا شيء مما سبق"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n53",
+       "title": "الخطوات الأربع لحل المسألة",
+       "href": "/learn/middle/grade-1/math/n53"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 0
+      },
+      "verdict": "incorrect",
+      "score": 0,
+      "correct_response": {
+       "option_index": 3
+      },
+      "explanation": {
+       "text": "شرح a3.",
+       "steps": [
+        "خطوة a3"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 6,
+      "key": "q-m1-math-0012a3fa00",
+      "type": "short_answer",
+      "language": "ar",
+      "stem": "سؤال c4؟",
+      "stimulus": null,
+      "options": [],
+      "choices": [],
+      "public": {
+       "max_chars": 20
+      },
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات",
+       "href": "/learn/middle/grade-1/math/n55"
+      },
+      "voided": null,
+      "locked": false,
+      "response": null,
+      "verdict": "unanswered",
+      "score": 0,
+      "correct_response": {
+       "text": "مَدْرَسَةٌ"
+      },
+      "explanation": {
+       "text": "شرح c4.",
+       "steps": [
+        "خطوة c4"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 7,
+      "key": "q-m1-math-f55ff16f66",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال a1؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "خطط"
+       },
+       {
+        "index": 1,
+        "text": "حل"
+       },
+       {
+        "index": 2,
+        "text": "افهم"
+       },
+       {
+        "index": 3,
+        "text": "تحقق"
+       }
+      ],
+      "choices": [
+       "خطط",
+       "حل",
+       "افهم",
+       "تحقق"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n53",
+       "title": "الخطوات الأربع لحل المسألة",
+       "href": "/learn/middle/grade-1/math/n53"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 2
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "option_index": 2
+      },
+      "explanation": {
+       "text": "شرح a1.",
+       "steps": [
+        "خطوة a1"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 8,
+      "key": "q-m1-math-486bacc5c2",
+      "type": "numeric",
+      "language": "ar",
+      "stem": "سؤال b4؟",
+      "stimulus": null,
+      "options": [],
+      "choices": [],
+      "public": {
+       "unit": {
+        "text": "سم",
+        "required": true
+       },
+       "input": {
+        "allow_fraction": true,
+        "max_decimals": 2
+       }
+      },
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n54",
+       "title": "القوى و الأسس",
+       "href": "/learn/middle/grade-1/math/n54"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "value": "1250",
+       "unit": "سم"
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "value": "1250",
+       "unit": "سم"
+      },
+      "explanation": {
+       "text": "شرح b4.",
+       "steps": [
+        "خطوة b4"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 9,
+      "key": "q-m1-math-7c1c97df17",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c3؟",
+      "stimulus": {
+       "text": "سجل متجر مبيعات أسبوع: 12 قطعة يوم الأحد و18 قطعة يوم الاثنين."
+      },
+      "options": [
+       {
+        "index": 0,
+        "text": "لا يمكن"
+       },
+       {
+        "index": 1,
+        "text": "أقل"
+       },
+       {
+        "index": 2,
+        "text": "يساوي"
+       },
+       {
+        "index": 3,
+        "text": "أكثر"
+       }
+      ],
+      "choices": [
+       "لا يمكن",
+       "أقل",
+       "يساوي",
+       "أكثر"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات",
+       "href": "/learn/middle/grade-1/math/n55"
+      },
+      "voided": null,
+      "locked": false,
+      "response": null,
+      "verdict": "unanswered",
+      "score": 0,
+      "correct_response": {
+       "option_index": 3
+      },
+      "explanation": {
+       "text": "شرح c3.",
+       "steps": [
+        "خطوة c3"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 10,
+      "key": "q-m1-math-9c0abe51c6",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c2؟",
+      "stimulus": {
+       "text": "سجل متجر مبيعات أسبوع: 12 قطعة يوم الأحد و18 قطعة يوم الاثنين."
+      },
+      "options": [
+       {
+        "index": 0,
+        "text": "6"
+       },
+       {
+        "index": 1,
+        "text": "12"
+       },
+       {
+        "index": 2,
+        "text": "18"
+       },
+       {
+        "index": 3,
+        "text": "30"
+       }
+      ],
+      "choices": [
+       "6",
+       "12",
+       "18",
+       "30"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات",
+       "href": "/learn/middle/grade-1/math/n55"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 3
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "option_index": 3
+      },
+      "explanation": {
+       "text": "شرح c2.",
+       "steps": [
+        "خطوة c2"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "a double submit returns the stored result",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_answers": null
+   },
+   "response": {
+    "mode": "db",
+    "status": "submitted",
+    "attempt": {
+     "id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+     "template_id": "chapter-quiz",
+     "template_version": 1,
+     "scope": "middle/grade-1/math/n91",
+     "term_scope": null,
+     "retake_of": null,
+     "status": "submitted",
+     "started_at": "2026-10-01T12:00:00.000Z",
+     "expires_at": "2026-10-01T12:12:30.000Z",
+     "submitted_at": "2026-10-01T12:18:45.000Z",
+     "question_count": 10,
+     "correct_count": 5,
+     "score_percent": 50,
+     "duration_seconds": 645,
+     "xp_awarded": 10
+    },
+    "voided_count": 0,
+    "answered_count": 7,
+    "by_lesson": [
+     {
+      "id": "middle/grade-1/math/n53",
+      "title": "الخطوات الأربع لحل المسألة",
+      "href": "/learn/middle/grade-1/math/n53",
+      "total": 3,
+      "correct": 1,
+      "score_sum": 1
+     },
+     {
+      "id": "middle/grade-1/math/n54",
+      "title": "القوى و الأسس",
+      "href": "/learn/middle/grade-1/math/n54",
+      "total": 3,
+      "correct": 3,
+      "score_sum": 3
+     },
+     {
+      "id": "middle/grade-1/math/n55",
+      "title": "ترتيب العمليات",
+      "href": "/learn/middle/grade-1/math/n55",
+      "total": 4,
+      "correct": 1,
+      "score_sum": 1
+     }
+    ],
+    "by_band": [
+     {
+      "band": 1,
+      "total": 3,
+      "correct": 2,
+      "score_sum": 2
+     },
+     {
+      "band": 2,
+      "total": 6,
+      "correct": 3,
+      "score_sum": 3
+     },
+     {
+      "band": 3,
+      "total": 1,
+      "correct": 0,
+      "score_sum": 0
+     }
+    ],
+    "items": [
+     {
+      "position": 1,
+      "key": "q-m1-math-76a8277347",
+      "type": "matching",
+      "language": "ar",
+      "stem": "سؤال b3؟",
+      "stimulus": null,
+      "options": [],
+      "choices": [],
+      "public": {
+       "left": [
+        {
+         "index": 0,
+         "text": "5²"
+        },
+        {
+         "index": 1,
+         "text": "3²"
+        },
+        {
+         "index": 2,
+         "text": "2³"
+        }
+       ],
+       "right": [
+        {
+         "index": 0,
+         "text": "25"
+        },
+        {
+         "index": 1,
+         "text": "9"
+        },
+        {
+         "index": 2,
+         "text": "10"
+        },
+        {
+         "index": 3,
+         "text": "8"
+        }
+       ],
+       "scoring": "partial"
+      },
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n54",
+       "title": "القوى و الأسس",
+       "href": "/learn/middle/grade-1/math/n54"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "pairs": [
+        [
+         0,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         2,
+         3
+        ]
+       ]
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "pairs": [
+        [
+         0,
+         0
+        ],
+        [
+         1,
+         1
+        ],
+        [
+         2,
+         3
+        ]
+       ]
+      },
+      "explanation": {
+       "text": "شرح b3.",
+       "steps": [
+        "خطوة b3"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 2,
+      "key": "q-m1-math-2c3a4249d7",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال a2؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "4"
+       },
+       {
+        "index": 1,
+        "text": "7"
+       },
+       {
+        "index": 2,
+        "text": "10"
+       },
+       {
+        "index": 3,
+        "text": "32"
+       }
+      ],
+      "choices": [
+       "4",
+       "7",
+       "10",
+       "32"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n53",
+       "title": "الخطوات الأربع لحل المسألة",
+       "href": "/learn/middle/grade-1/math/n53"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 0
+      },
+      "verdict": "incorrect",
+      "score": 0,
+      "correct_response": {
+       "option_index": 3
+      },
+      "explanation": {
+       "text": "شرح a2.",
+       "steps": [
+        "خطوة a2"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 3,
+      "key": "q-m1-math-d0f631ca1d",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c1؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "ثلاثاء"
+       },
+       {
+        "index": 1,
+        "text": "أحد"
+       },
+       {
+        "index": 2,
+        "text": "اثنين"
+       },
+       {
+        "index": 3,
+        "text": "سبت"
+       }
+      ],
+      "choices": [
+       "ثلاثاء",
+       "أحد",
+       "اثنين",
+       "سبت"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات",
+       "href": "/learn/middle/grade-1/math/n55"
+      },
+      "voided": null,
+      "locked": false,
+      "response": null,
+      "verdict": "unanswered",
+      "score": 0,
+      "correct_response": {
+       "option_index": 1
+      },
+      "explanation": {
+       "text": "شرح c1.",
+       "steps": [
+        "خطوة c1"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 4,
+      "key": "q-m1-math-7dc96f776c",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال b1؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "8"
+       },
+       {
+        "index": 1,
+        "text": "16"
+       },
+       {
+        "index": 2,
+        "text": "32"
+       },
+       {
+        "index": 3,
+        "text": "64"
+       }
+      ],
+      "choices": [
+       "8",
+       "16",
+       "32",
+       "64"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n54",
+       "title": "القوى و الأسس",
+       "href": "/learn/middle/grade-1/math/n54"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 2
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "option_index": 2
+      },
+      "explanation": {
+       "text": "شرح b1.",
+       "steps": [
+        "خطوة b1"
+       ]
+      },
+      "objective": {
+       "text": "يحسب قيمة عبارة أسية بأساس وأس صحيحين."
+      },
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 5,
+      "key": "q-m1-math-f46dd28a54",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال a3؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "أ"
+       },
+       {
+        "index": 1,
+        "text": "ب"
+       },
+       {
+        "index": 2,
+        "text": "ج"
+       },
+       {
+        "index": 3,
+        "text": "لا شيء مما سبق"
+       }
+      ],
+      "choices": [
+       "أ",
+       "ب",
+       "ج",
+       "لا شيء مما سبق"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n53",
+       "title": "الخطوات الأربع لحل المسألة",
+       "href": "/learn/middle/grade-1/math/n53"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 0
+      },
+      "verdict": "incorrect",
+      "score": 0,
+      "correct_response": {
+       "option_index": 3
+      },
+      "explanation": {
+       "text": "شرح a3.",
+       "steps": [
+        "خطوة a3"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 6,
+      "key": "q-m1-math-0012a3fa00",
+      "type": "short_answer",
+      "language": "ar",
+      "stem": "سؤال c4؟",
+      "stimulus": null,
+      "options": [],
+      "choices": [],
+      "public": {
+       "max_chars": 20
+      },
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات",
+       "href": "/learn/middle/grade-1/math/n55"
+      },
+      "voided": null,
+      "locked": false,
+      "response": null,
+      "verdict": "unanswered",
+      "score": 0,
+      "correct_response": {
+       "text": "مَدْرَسَةٌ"
+      },
+      "explanation": {
+       "text": "شرح c4.",
+       "steps": [
+        "خطوة c4"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 7,
+      "key": "q-m1-math-f55ff16f66",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال a1؟",
+      "stimulus": null,
+      "options": [
+       {
+        "index": 0,
+        "text": "خطط"
+       },
+       {
+        "index": 1,
+        "text": "حل"
+       },
+       {
+        "index": 2,
+        "text": "افهم"
+       },
+       {
+        "index": 3,
+        "text": "تحقق"
+       }
+      ],
+      "choices": [
+       "خطط",
+       "حل",
+       "افهم",
+       "تحقق"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n53",
+       "title": "الخطوات الأربع لحل المسألة",
+       "href": "/learn/middle/grade-1/math/n53"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 2
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "option_index": 2
+      },
+      "explanation": {
+       "text": "شرح a1.",
+       "steps": [
+        "خطوة a1"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 8,
+      "key": "q-m1-math-486bacc5c2",
+      "type": "numeric",
+      "language": "ar",
+      "stem": "سؤال b4؟",
+      "stimulus": null,
+      "options": [],
+      "choices": [],
+      "public": {
+       "unit": {
+        "text": "سم",
+        "required": true
+       },
+       "input": {
+        "allow_fraction": true,
+        "max_decimals": 2
+       }
+      },
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n54",
+       "title": "القوى و الأسس",
+       "href": "/learn/middle/grade-1/math/n54"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "value": "1250",
+       "unit": "سم"
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "value": "1250",
+       "unit": "سم"
+      },
+      "explanation": {
+       "text": "شرح b4.",
+       "steps": [
+        "خطوة b4"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 9,
+      "key": "q-m1-math-7c1c97df17",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c3؟",
+      "stimulus": {
+       "text": "سجل متجر مبيعات أسبوع: 12 قطعة يوم الأحد و18 قطعة يوم الاثنين."
+      },
+      "options": [
+       {
+        "index": 0,
+        "text": "لا يمكن"
+       },
+       {
+        "index": 1,
+        "text": "أقل"
+       },
+       {
+        "index": 2,
+        "text": "يساوي"
+       },
+       {
+        "index": 3,
+        "text": "أكثر"
+       }
+      ],
+      "choices": [
+       "لا يمكن",
+       "أقل",
+       "يساوي",
+       "أكثر"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات",
+       "href": "/learn/middle/grade-1/math/n55"
+      },
+      "voided": null,
+      "locked": false,
+      "response": null,
+      "verdict": "unanswered",
+      "score": 0,
+      "correct_response": {
+       "option_index": 3
+      },
+      "explanation": {
+       "text": "شرح c3.",
+       "steps": [
+        "خطوة c3"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     },
+     {
+      "position": 10,
+      "key": "q-m1-math-9c0abe51c6",
+      "type": "mcq",
+      "language": "ar",
+      "stem": "سؤال c2؟",
+      "stimulus": {
+       "text": "سجل متجر مبيعات أسبوع: 12 قطعة يوم الأحد و18 قطعة يوم الاثنين."
+      },
+      "options": [
+       {
+        "index": 0,
+        "text": "6"
+       },
+       {
+        "index": 1,
+        "text": "12"
+       },
+       {
+        "index": 2,
+        "text": "18"
+       },
+       {
+        "index": 3,
+        "text": "30"
+       }
+      ],
+      "choices": [
+       "6",
+       "12",
+       "18",
+       "30"
+      ],
+      "public": {},
+      "time_limit_seconds": 60,
+      "lesson": {
+       "id": "middle/grade-1/math/n55",
+       "title": "ترتيب العمليات",
+       "href": "/learn/middle/grade-1/math/n55"
+      },
+      "voided": null,
+      "locked": false,
+      "response": {
+       "option_index": 3
+      },
+      "verdict": "correct",
+      "score": 1,
+      "correct_response": {
+       "option_index": 3
+      },
+      "explanation": {
+       "text": "شرح c2.",
+       "steps": [
+        "خطوة c2"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "another member's attempt",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "3f2b1c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+    "p_answers": null
+   },
+   "error": {
+    "message": "attempt_not_found",
+    "details": null
+   }
+  }
+ ]
+}

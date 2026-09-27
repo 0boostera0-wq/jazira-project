@@ -8,8 +8,48 @@ import OfficialChannels from "../OfficialChannels";
 import PlanCard from "../PlanCard";
 import SubjectExplorer from "../SubjectExplorer";
 import { LevelSwitcher, pageList } from "../parts";
-import { TRACK_ART, subjectArt, switcherFor, toClientSubject, totalPeriods } from "../model";
+import { TRACK_ART, subjectArt, switcherFor, termsStatusOf, toClientSubject, totalPeriods } from "../model";
+import { loadOutline } from "@/lib/curriculum-outline";
+import { compactOutline, createPoolIndex, learnHref, resolveLearnNode } from "@/components/learn/learn-logic";
 import { OFFICIAL_LINKS, PLAN_URL, breadcrumbs, channelsCopy, nameOf, titleOf } from "../copy";
+
+/**
+ * Outline layer of a leaf's subjects (docs/CONTENT_ENGINE.md §7): per catalog
+ * subject with an outline, only a SUMMARY is rendered into the page — the
+ * subject node id, its learn href and the unit / lesson / file counts
+ * (`{ node, href, units, groups, lessons, books }`). The units and lessons,
+ * the "Test yourself" entry points (pool counts) and the official files load
+ * when the subject's drawer opens (GET /api/content/outline, CDN-cached), so
+ * the leaf page no longer ships every subject's outline (~100–190 KB of JSON
+ * per leaf) on first paint. Subjects without an outline get null (the drawer
+ * then shows the plan and channels only).
+ */
+async function learnLayer(leafSlug, subjects) {
+  let tree = null;
+  try {
+    tree = await loadOutline(leafSlug);
+  } catch {
+    tree = null;
+  }
+  const out = new Map();
+  if (!tree) return out;
+  const noPool = createPoolIndex(tree, []); // counts only: pool sizes arrive with the drawer payload
+  for (const s of subjects) {
+    const ctx = resolveLearnNode(tree, `${leafSlug}/${s.id}`);
+    if (!ctx || ctx.node.kind !== "subject") continue;
+    const outline = compactOutline(tree, ctx.node.id, noPool);
+    const units = outline?.units || [];
+    out.set(s.id, {
+      node: ctx.node.id,
+      href: learnHref(ctx.node.id),
+      units: units.filter((u) => u.id).length,
+      groups: units.length,
+      lessons: outline?.lessons ?? 0,
+      books: tree.resourcesFor(ctx.node.id).length,
+    });
+  }
+  return out;
+}
 
 /** A grade (K–9) or a track year (secondary): the subjects, their official resources and Jazira's help. */
 export default async function LeafView({ slug, node, trail, locale }) {
@@ -21,9 +61,14 @@ export default async function LeafView({ slug, node, trail, locale }) {
   const title = titleOf(node, locale);
   const path = `/curriculum/${slug.join("/")}`;
 
-  const subjects = node.subjects.map((s) =>
-    toClientSubject(s, { practice: practiceFor(stage.id, s.id), tag: communityTag(s.name), art: subjectArt(stage.id, s.id) })
-  );
+  const learn = await learnLayer(slug.join("/"), node.subjects);
+  // toClientSubject() knows the eager { outline, entries, books } shape; the leaf page passes the lazy summary instead.
+  const subjects = node.subjects.map((s) => {
+    const c = toClientSubject(s, { practice: practiceFor(stage.id, s.id), tag: communityTag(s.name), art: subjectArt(stage.id, s.id) });
+    const summary = learn.get(s.id);
+    return summary ? { ...c, learn: summary } : c;
+  });
+  const termsStatus = termsStatusOf(node.subjects);
   const levelLabel = (l) => (hs ? nameOf(l, locale) : t(`switch.grades.g${l.n}`));
   const pages = node.plan?.pages || [];
   // Secondary: the track is the heading and the year joins the stage in the eyebrow
@@ -70,7 +115,7 @@ export default async function LeafView({ slug, node, trail, locale }) {
           {!art && <NodeHeader {...header}>{switchers}</NodeHeader>}
 
           <div className={art ? undefined : "mt-9 sm:mt-10"}>
-            <Messages ns={["curriculum"]}>
+            <Messages ns={["curriculum", "learn"]}>
               <SubjectExplorer
                 subjects={subjects}
                 context={{ title, electiveOptions: subjects.some((x) => x.notes.includes("electiveOptions")) ? ELECTIVE_OPTIONS : null }}
@@ -90,7 +135,7 @@ export default async function LeafView({ slug, node, trail, locale }) {
               { label: t("plan.source"), value: t("plan.guide"), wide: true, hint: pages.length ? t("plan.pages", { count: pages.length, pages: pageList(pages, locale) }) : null },
               { label: t("plan.total"), value: t("count.periods", { count: totalPeriods(node) }), hint: t("subject.periodsHint") },
               { label: t("plan.checked"), value: formatDate(SOURCES_CHECKED, locale) },
-              { label: t("plan.terms"), value: t("plan.termsValue"), wide: true },
+              { label: t("plan.terms"), value: t(termsStatus === "unverified" ? "plan.termsValue" : `plan.termsValueKnown.${termsStatus}`), wide: true },
             ]}
             source={{ href: PLAN_URL, label: t("plan.open"), newTab: t("channels.newTab") }}
             note={hs ? null : t("plan.tahfeez")}

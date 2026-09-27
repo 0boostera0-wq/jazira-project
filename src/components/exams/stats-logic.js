@@ -153,3 +153,110 @@ export function topicAnalyticsLocked(stats, isElite) {
 
 /** Is there anything graded yet? */
 export const hasStats = (stats) => Boolean(stats && Number(stats.completed_attempts) > 0);
+
+// ── template attempts: scope comparison, weak lessons, repeated mistakes ────
+
+/**
+ * "The same scope" for comparing attempts: template + scope for template
+ * attempts (list_exam_attempts_v2), exam + section + topic for legacy ones.
+ */
+export function attemptScopeKey(it) {
+  if (!it) return null;
+  if (it.template_id) return `tpl:${it.template_id}|${it.scope ?? ""}`;
+  return `legacy:${it.exam ?? ""}|${it.section ?? ""}|${it.topic ?? ""}`;
+}
+
+/**
+ * An attempt row that can still be resumed. list_exam_attempts carries
+ * `expires_at`; list_exam_attempts_v2 (0014) does not, so its deadline is
+ * started_at + time_limit_seconds (always set: untimed sessions get 7 days).
+ * A row whose deadline cannot be derived is not offered for resuming.
+ */
+export function isOpenAttempt(it, now = Date.now()) {
+  if (!it || it.status !== "in_progress") return false;
+  let deadline = Date.parse(it.expires_at);
+  if (Number.isNaN(deadline)) {
+    const start = Date.parse(it.started_at);
+    const secs = num(it.time_limit_seconds);
+    deadline = Number.isNaN(start) || secs === null ? NaN : start + secs * 1000;
+  }
+  return !Number.isNaN(deadline) && deadline > now;
+}
+
+/**
+ * For each graded attempt (list order: newest first), the previous graded
+ * attempt on the same scope and the score change in percentage points.
+ * @returns {Map<string, { previousId: string, previousScore: number, delta: number, direction: "up"|"down"|"same" }>}
+ */
+export function previousOnScope(items = []) {
+  const out = new Map();
+  const last = new Map();
+  const list = (Array.isArray(items) ? items : []).filter((it) => it?.id && num(it.score_percent) !== null && it.status !== "in_progress");
+  for (let i = list.length - 1; i >= 0; i--) {
+    const it = list[i];
+    const key = attemptScopeKey(it);
+    const prev = last.get(key);
+    if (prev) {
+      const diff = num(it.score_percent) - num(prev.score_percent);
+      const delta = (Math.sign(diff) * Math.round(Math.abs(diff) * 10)) / 10 || 0;
+      out.set(it.id, { previousId: prev.id, previousScore: num(prev.score_percent), delta, direction: delta > 0 ? "up" : delta < 0 ? "down" : "same" });
+    }
+    last.set(key, it);
+  }
+  return out;
+}
+
+/** Wilson score lower bound of an accuracy (z = 1.645, as the database ranks weak lessons). */
+export function wilsonLower(correct, n, z = 1.645) {
+  const total = num(n) ?? 0;
+  if (total <= 0) return 0;
+  const p = clamp((num(correct) ?? 0) / total, 0, 1);
+  const z2 = z * z;
+  const centre = p + z2 / (2 * total);
+  const margin = z * Math.sqrt((p * (1 - p) + z2 / (4 * total)) / total);
+  return Math.max(0, (centre - margin) / (1 + z2 / total));
+}
+
+/**
+ * Weak lessons (§2.14): lessons with at least `min` answers, weakest first by
+ * the Wilson lower bound (the server's `wilson_lower`, else computed here);
+ * accuracy in percent (0–100, 1 decimal).
+ */
+export function weakLessons(byLesson = [], { min = 5, limit = 5 } = {}) {
+  return (Array.isArray(byLesson) ? byLesson : [])
+    .filter((r) => r?.lesson && (num(r.answered) ?? 0) >= min)
+    .map((r) => {
+      const answered = num(r.answered) ?? 0;
+      const correct = num(r.correct) ?? 0;
+      const wilson = num(r.wilson_lower) ?? wilsonLower(correct, answered);
+      return { ...r, answered, correct, wilson, accuracy: Math.round((1000 * correct) / answered) / 10 };
+    })
+    .sort((a, b) => a.wilson - b.wilson || b.answered - a.answered || String(a.lesson).localeCompare(String(b.lesson)))
+    .slice(0, limit);
+}
+
+/**
+ * Repeated mistakes (§2.14: wrong_streak ≥ 2) grouped by lesson: how many
+ * questions keep being missed there, most first. Lesson titles come from
+ * the by_lesson rows when the mistake rows have none.
+ * @returns {{ lesson: string, title: string|null, count: number, maxStreak: number }[]}
+ */
+export function repeatedMistakes(rows = [], byLesson = []) {
+  const titles = new Map((Array.isArray(byLesson) ? byLesson : []).filter((r) => r?.lesson).map((r) => [r.lesson, r.title ?? null]));
+  const groups = new Map();
+  for (const r of Array.isArray(rows) ? rows : []) {
+    const streak = num(r?.wrong_streak) ?? 0;
+    if (streak < 2 || !r?.lesson) continue;
+    const g = groups.get(r.lesson) ?? { lesson: r.lesson, title: r.title ?? titles.get(r.lesson) ?? null, count: 0, maxStreak: 0 };
+    g.count += 1;
+    g.maxStreak = Math.max(g.maxStreak, streak);
+    groups.set(r.lesson, g);
+  }
+  return [...groups.values()].sort((a, b) => b.count - a.count || b.maxStreak - a.maxStreak || a.lesson.localeCompare(b.lesson));
+}
+
+/** Recommendation rows of get_practice_recommendations, well formed and in a known kind. */
+export const RECOMMENDATION_KINDS = ["lesson_quiz", "lesson_review", "weakness_review"];
+export function recommendationRows(rows = []) {
+  return (Array.isArray(rows) ? rows : []).filter((r) => r && RECOMMENDATION_KINDS.includes(r.kind) && typeof r.node === "string" && r.node);
+}

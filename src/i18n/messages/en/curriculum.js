@@ -176,6 +176,10 @@ const curriculum = {
     t1: "Term 1",
     t2: "Term 2",
     note: "The official plan sets periods for the whole year without splitting them by term, so subjects appear in both terms — your school's actual split may differ.",
+    noteKnown: {
+      verified: "Each subject's term is stated in its official books.",
+      inferred: "Each subject's term is inferred from official listings, not stated in the books — your school's actual split may differ.",
+    },
     count: "{subjects} in {term}",
   },
 
@@ -189,6 +193,7 @@ const curriculum = {
     termsLabel: "Terms",
     termsValue: "Terms 1 and 2",
     termsHint: "Split not published",
+    termsKnown: { verified: "Stated in the official books", inferred: "Inferred from official listings" },
     resourcesTitle: "Official resources",
     studyTitle: "Study it with Jazira",
   },
@@ -219,7 +224,7 @@ const curriculum = {
     maqarrarati: "About the Muqarrarati service",
     ien: "iEN portal (alternative)",
     account: "You need an active school account on Madrasati.",
-    noDeepLinks: "The platform doesn't publish direct links to individual books, and Jazira doesn't republish them.",
+    noDeepLinks: "Madrasati doesn't publish direct links to individual books; the iEN portal does. Jazira links to them and never republishes them.",
     newTab: "Opens in a new tab",
   },
 
@@ -233,6 +238,10 @@ const curriculum = {
     total: "Total subject periods",
     terms: "Terms",
     termsValue: "Two; the split of subjects between them isn't published",
+    termsValueKnown: {
+      verified: "Two; each subject's term is stated in its official books",
+      inferred: "Two; each subject's term is inferred from official listings",
+    },
     checked: "Last checked",
     tahfeez: "Quran memorisation schools follow a closely related plan with more Quran periods; it isn't in the library yet.",
     open: "Open the guide (PDF)",
@@ -258,6 +267,22 @@ const curriculum = {
     topic: "{subject} — {context}",
   },
   community: { title: "Discuss it in the community", body: "Posts tagged {tag}" },
+
+  // Outline layer in the subject drawer (units, lessons, quizzes, iEN files).
+  outline: {
+    title: "Units and lessons",
+    lead: "As the official iEN portal lists them. Open a lesson for its book pages and practice.",
+    open: "Open the lessons page",
+    more: { zero: "", one: "Show {count} more unit", other: "Show all {count} units" },
+    loading: "Loading units and lessons…",
+    error: "Units and lessons couldn't be loaded.",
+    errorBody: "Check your connection and try again. The subject's plan and official links below are still available.",
+  },
+  ien: {
+    title: "The books on iEN",
+    lead: "Each file opens on the official iEN portal in a new tab.",
+    loading: "Loading the books…",
+  },
 
   notes: {
     islamicCombined: "The official plan has one combined subject for the Holy Quran and Islamic studies.",

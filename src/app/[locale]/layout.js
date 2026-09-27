@@ -10,7 +10,11 @@ import { fontVariables, THEME_SCRIPT } from "../fonts";
 // Fonts (IBM Plex Sans Arabic + IBM Plex Sans, no preload, Arabic-metric
 // fallback) are configured in app/fonts.js, shared with app/not-found.js.
 
-export const dynamicParams = false;
+// No `dynamicParams = false` here: Next applies it to every child route, so
+// the pages with their own dynamic segments (learn/[...path], tags/[tag],
+// u/[username], community/post/[id]) answered 404 for any path not built
+// ahead — every English one (Arabic survived only through the middleware
+// rewrite). An unknown locale is still a 404: the layout calls notFound().
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }

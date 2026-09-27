@@ -1,0 +1,1089 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:question",
+  "title": "Canonical question (§2.8)",
+  "description": "data/staging/questions/**, question-variants/<shard>.jsonl. Evidence quotes are never committed (cache sidecar only).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "id",
+    "revision",
+    "content_hash",
+    "scope",
+    "curriculum",
+    "links",
+    "prep",
+    "objective_id",
+    "question_type",
+    "item_style",
+    "difficulty",
+    "difficulty_band",
+    "difficulty_source",
+    "language",
+    "stimulus_id",
+    "stem",
+    "payload",
+    "explanation",
+    "shuffle_options",
+    "time_limit_seconds",
+    "tags",
+    "computation",
+    "source",
+    "provenance",
+    "status",
+    "validation",
+    "dedup",
+    "variant",
+    "is_premium",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "schema": {
+      "const": "question@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/question_id"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "content_hash": {
+      "$ref": "urn:jazira:schema:common#/$defs/content_hash"
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "curriculum",
+        "aptitude",
+        "achievement"
+      ]
+    },
+    "curriculum": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stage",
+            "grade",
+            "track",
+            "term",
+            "term_status",
+            "subject",
+            "unit",
+            "chapter",
+            "lesson"
+          ],
+          "properties": {
+            "stage": {
+              "$ref": "urn:jazira:schema:common#/$defs/node_id"
+            },
+            "grade": {
+              "$ref": "urn:jazira:schema:common#/$defs/node_id"
+            },
+            "track": {
+              "anyOf": [
+                {
+                  "$ref": "urn:jazira:schema:common#/$defs/node_id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "term": {
+              "$ref": "urn:jazira:schema:common#/$defs/term_or_null"
+            },
+            "term_status": {
+              "$ref": "urn:jazira:schema:common#/$defs/term_status"
+            },
+            "subject": {
+              "$ref": "urn:jazira:schema:common#/$defs/node_id"
+            },
+            "unit": {
+              "anyOf": [
+                {
+                  "$ref": "urn:jazira:schema:common#/$defs/node_id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "chapter": {
+              "anyOf": [
+                {
+                  "$ref": "urn:jazira:schema:common#/$defs/node_id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "lesson": {
+              "$ref": "urn:jazira:schema:common#/$defs/node_id"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "node_id",
+          "role"
+        ],
+        "properties": {
+          "node_id": {
+            "$ref": "urn:jazira:schema:common#/$defs/link_node_id"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "aligned"
+            ]
+          }
+        }
+      },
+      "maxItems": 20
+    },
+    "prep": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/prep"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "objective_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/objective_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "question_type": {
+      "type": "string",
+      "enum": [
+        "mcq",
+        "true_false",
+        "matching",
+        "ordering",
+        "short_answer",
+        "numeric"
+      ]
+    },
+    "item_style": {
+      "type": "string",
+      "enum": [
+        "definition",
+        "conceptual",
+        "computation",
+        "application",
+        "scenario",
+        "reasoning",
+        "review"
+      ]
+    },
+    "difficulty": {
+      "$ref": "urn:jazira:schema:common#/$defs/difficulty"
+    },
+    "difficulty_band": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "difficulty_source": {
+      "type": "string",
+      "enum": [
+        "author",
+        "generator_estimate",
+        "validator_estimate",
+        "empirical"
+      ]
+    },
+    "language": {
+      "$ref": "urn:jazira:schema:common#/$defs/language"
+    },
+    "stimulus_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/stimulus_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stem": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "payload": {
+      "type": "object"
+    },
+    "explanation": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/explanation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "shuffle_options": {
+      "type": "boolean"
+    },
+    "time_limit_seconds": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 600
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 60
+      },
+      "maxItems": 12
+    },
+    "computation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "expr",
+            "vars"
+          ],
+          "properties": {
+            "expr": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "vars": {
+              "type": "object",
+              "maxProperties": 20,
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "maxLength": 40
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "$ref": "urn:jazira:schema:common#/$defs/question_source"
+    },
+    "provenance": {
+      "$ref": "urn:jazira:schema:common#/$defs/provenance"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "candidate",
+        "validated",
+        "published",
+        "rejected",
+        "review_required",
+        "retired"
+      ]
+    },
+    "validation": {
+      "$ref": "urn:jazira:schema:common#/$defs/validation_summary"
+    },
+    "dedup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "class",
+        "cluster_id",
+        "exclusion_group"
+      ],
+      "properties": {
+        "class": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "EXACT_DUPLICATE",
+                "NEAR_DUPLICATE",
+                "RELATED",
+                "UNIQUE"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cluster_id": {
+          "anyOf": [
+            {
+              "$ref": "urn:jazira:schema:common#/$defs/dedup_cluster_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "exclusion_group": {
+          "anyOf": [
+            {
+              "$ref": "urn:jazira:schema:common#/$defs/exclusion_group"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "duplicate_of": {
+          "anyOf": [
+            {
+              "$ref": "urn:jazira:schema:common#/$defs/question_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "variant": {
+      "anyOf": [
+        {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "template_id",
+                "variant_no",
+                "params"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "template"
+                },
+                "template_id": {
+                  "$ref": "urn:jazira:schema:common#/$defs/template_id"
+                },
+                "variant_no": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 50
+                },
+                "params": {
+                  "type": "object",
+                  "maxProperties": 20
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "of",
+                "change"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "rewrite"
+                },
+                "of": {
+                  "$ref": "urn:jazira:schema:common#/$defs/question_id"
+                },
+                "change": {
+                  "type": "string",
+                  "enum": [
+                    "context",
+                    "representation"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "is_premium": {
+      "type": "boolean"
+    },
+    "created_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_datetime"
+    },
+    "updated_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_datetime"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "question_type": {
+            "const": "mcq"
+          }
+        },
+        "required": [
+          "question_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "options",
+              "answer",
+              "fixed_order_reason"
+            ],
+            "properties": {
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$ref": "urn:jazira:schema:common#/$defs/option_id"
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
+                    }
+                  }
+                },
+                "minItems": 2,
+                "maxItems": 6
+              },
+              "answer": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "option_id"
+                ],
+                "properties": {
+                  "option_id": {
+                    "$ref": "urn:jazira:schema:common#/$defs/option_id"
+                  }
+                }
+              },
+              "fixed_order_reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "all_of_above",
+                      "none_of_above",
+                      "combined_option",
+                      "numeric_ascending",
+                      "conventional_scale",
+                      "source_order"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "question_type": {
+            "const": "true_false"
+          }
+        },
+        "required": [
+          "question_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "options",
+              "answer"
+            ],
+            "properties": {
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$ref": "urn:jazira:schema:common#/$defs/option_id"
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20
+                    }
+                  }
+                },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "answer": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "option_id"
+                ],
+                "properties": {
+                  "option_id": {
+                    "$ref": "urn:jazira:schema:common#/$defs/option_id"
+                  }
+                }
+              },
+              "fixed_order_reason": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "all_of_above",
+                      "none_of_above",
+                      "combined_option",
+                      "numeric_ascending",
+                      "conventional_scale",
+                      "source_order"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "question_type": {
+            "const": "matching"
+          }
+        },
+        "required": [
+          "question_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "left",
+              "right",
+              "answer",
+              "scoring"
+            ],
+            "properties": {
+              "left": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$ref": "urn:jazira:schema:common#/$defs/option_id"
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
+                    }
+                  }
+                },
+                "minItems": 2,
+                "maxItems": 6
+              },
+              "right": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$ref": "urn:jazira:schema:common#/$defs/option_id"
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
+                    }
+                  }
+                },
+                "minItems": 2,
+                "maxItems": 8
+              },
+              "answer": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "pairs"
+                ],
+                "properties": {
+                  "pairs": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "urn:jazira:schema:common#/$defs/option_id"
+                      },
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "minItems": 2,
+                    "maxItems": 6
+                  }
+                }
+              },
+              "scoring": {
+                "type": "string",
+                "enum": [
+                  "partial",
+                  "all_or_nothing"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "question_type": {
+            "const": "ordering"
+          }
+        },
+        "required": [
+          "question_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "items",
+              "answer",
+              "criterion"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "id",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$ref": "urn:jazira:schema:common#/$defs/option_id"
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
+                    }
+                  }
+                },
+                "minItems": 3,
+                "maxItems": 7
+              },
+              "answer": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "order"
+                ],
+                "properties": {
+                  "order": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "urn:jazira:schema:common#/$defs/option_id"
+                    },
+                    "minItems": 3,
+                    "maxItems": 7
+                  }
+                }
+              },
+              "criterion": {
+                "type": "string",
+                "enum": [
+                  "chronological",
+                  "ascending",
+                  "descending",
+                  "process_steps",
+                  "other"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "question_type": {
+            "const": "short_answer"
+          }
+        },
+        "required": [
+          "question_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "accepted",
+              "match",
+              "max_chars",
+              "answer_display"
+            ],
+            "properties": {
+              "accepted": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "minItems": 1,
+                "maxItems": 10
+              },
+              "match": {
+                "type": "string",
+                "enum": [
+                  "normalized_exact",
+                  "exact_marks"
+                ]
+              },
+              "max_chars": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 80
+              },
+              "answer_display": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "question_type": {
+            "const": "numeric"
+          }
+        },
+        "required": [
+          "question_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "answer",
+              "unit",
+              "input"
+            ],
+            "properties": {
+              "answer": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "value",
+                  "tolerance"
+                ],
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "pattern": "^-?\\d+(?:\\.\\d+)?$",
+                    "maxLength": 40
+                  },
+                  "tolerance": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "kind",
+                      "value"
+                    ],
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "abs",
+                          "rel"
+                        ]
+                      },
+                      "value": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "pattern": "^\\d+(?:\\.\\d+)?$",
+                            "maxLength": 40
+                          },
+                          {
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "unit": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "text",
+                      "required",
+                      "accepted"
+                    ],
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 40
+                      },
+                      "required": {
+                        "type": "boolean"
+                      },
+                      "accepted": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 40
+                        },
+                        "maxItems": 10
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "input": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "allow_fraction",
+                  "max_decimals"
+                ],
+                "properties": {
+                  "allow_fraction": {
+                    "type": "boolean"
+                  },
+                  "max_decimals": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 10
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "scope": {
+            "const": "curriculum"
+          }
+        },
+        "required": [
+          "scope"
+        ]
+      },
+      "then": {
+        "properties": {
+          "curriculum": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "scope": {
+            "enum": [
+              "aptitude",
+              "achievement"
+            ]
+          }
+        },
+        "required": [
+          "scope"
+        ]
+      },
+      "then": {
+        "properties": {
+          "prep": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "difficulty": {
+            "enum": [
+              1,
+              2
+            ]
+          }
+        },
+        "required": [
+          "difficulty"
+        ]
+      },
+      "then": {
+        "properties": {
+          "difficulty_band": {
+            "const": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "difficulty": {
+            "const": 3
+          }
+        },
+        "required": [
+          "difficulty"
+        ]
+      },
+      "then": {
+        "properties": {
+          "difficulty_band": {
+            "const": 2
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "difficulty": {
+            "enum": [
+              4,
+              5
+            ]
+          }
+        },
+        "required": [
+          "difficulty"
+        ]
+      },
+      "then": {
+        "properties": {
+          "difficulty_band": {
+            "const": 3
+          }
+        }
+      }
+    }
+  ]
+}

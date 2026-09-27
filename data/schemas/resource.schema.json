@@ -1,0 +1,483 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:resource",
+  "title": "Resource (§2.4)",
+  "description": "data/staging/resources/resources.jsonl — one book, file or external bank.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "source_id",
+    "provider_ref",
+    "subject_node_id",
+    "stage",
+    "grade",
+    "track",
+    "kind",
+    "title",
+    "part",
+    "part_evidence",
+    "year_label",
+    "year_evidence",
+    "url",
+    "file_type",
+    "bytes",
+    "last_modified",
+    "http_status",
+    "range_supported",
+    "page_count",
+    "sha256",
+    "external_count",
+    "availability",
+    "term",
+    "term_status",
+    "term_evidence",
+    "license_status",
+    "provenance_status",
+    "redistribution",
+    "retrieved_at",
+    "extraction",
+    "status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "resource@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+    },
+    "source_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/slug"
+    },
+    "provider_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ien_book_id",
+        "subject_ien_id",
+        "path",
+        "tree_path"
+      ],
+      "properties": {
+        "ien_book_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subject_ien_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tree_path": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "subject_node_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stage": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "grade": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "track": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "student_book",
+        "activity_book",
+        "teacher_guide",
+        "practice_resource",
+        "test_resource",
+        "audio",
+        "question_bank_external",
+        "other"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "part": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "part_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "listing",
+        "cover",
+        "file_name"
+      ],
+      "properties": {
+        "listing": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cover": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "year_label": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/hijri_year"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "year_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cover",
+        "file_name"
+      ],
+      "properties": {
+        "cover": {
+          "anyOf": [
+            {
+              "$ref": "urn:jazira:schema:common#/$defs/hijri_year"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "$ref": "urn:jazira:schema:common#/$defs/hijri_year"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "url": {
+      "$ref": "urn:jazira:schema:common#/$defs/https_url"
+    },
+    "file_type": {
+      "type": "string",
+      "enum": [
+        "pdf",
+        "zip",
+        "other"
+      ]
+    },
+    "bytes": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "last_modified": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "http_status": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "range_supported": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "page_count": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sha256": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "external_count": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "availability": {
+      "type": "string",
+      "enum": [
+        "external_official",
+        "unavailable",
+        "needs_review"
+      ]
+    },
+    "term": {
+      "$ref": "urn:jazira:schema:common#/$defs/term_or_null"
+    },
+    "term_status": {
+      "$ref": "urn:jazira:schema:common#/$defs/term_status"
+    },
+    "term_evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:jazira:schema:common#/$defs/term_evidence_id"
+      },
+      "maxItems": 50
+    },
+    "license_status": {
+      "$ref": "urn:jazira:schema:common#/$defs/license_status"
+    },
+    "provenance_status": {
+      "$ref": "urn:jazira:schema:common#/$defs/provenance_status"
+    },
+    "redistribution": {
+      "$ref": "urn:jazira:schema:common#/$defs/redistribution"
+    },
+    "retrieved_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_date_or_datetime"
+    },
+    "extraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "run_id",
+        "pages_with_text",
+        "pages_vision",
+        "text_quality",
+        "toc_status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_started",
+            "frontmatter_done",
+            "full_done",
+            "failed",
+            "not_applicable"
+          ]
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "$ref": "urn:jazira:schema:common#/$defs/run_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pages_with_text": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pages_vision": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text_quality": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "ok",
+                "repaired",
+                "untrusted"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "toc_status": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "found",
+                "not_found",
+                "partial"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "needs_review",
+        "unavailable"
+      ]
+    }
+  }
+}

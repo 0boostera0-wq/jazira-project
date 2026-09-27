@@ -3,7 +3,8 @@
 import { useCallback, useDeferredValue, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  Bell, ClipboardCheck, Compass, Hash, History, Info, Library, MessageSquareHeart, MessagesSquare, RotateCcw, Sparkles, Star, UserRound, Users,
+  Bell, BookOpen, ClipboardCheck, Compass, Hash, History, Info, Layers, Library, ListChecks, MessageSquareHeart, MessagesSquare, RotateCcw, Sparkles, Star,
+  UserRound, Users,
 } from "lucide-react";
 import { useLocale, useT } from "@/i18n/client";
 import { localizeHref } from "@/i18n/navigation";
@@ -11,7 +12,7 @@ import { formatNumber } from "@/i18n/format";
 import { useAuthUser } from "@/context/AuthProvider";
 import { APP_NAV } from "@/lib/nav";
 import { NAV_ICONS } from "@/components/shell/icons";
-import { debounce } from "@/lib/data/search";
+import { createContentSearcher, debounce, searchContent } from "@/lib/data/search";
 import { loadCurriculumIndex, normalizeText, searchCurriculum } from "@/lib/search/curriculum-index";
 import Alert from "@/components/ui/Alert";
 import Button from "@/components/ui/Button";
@@ -24,11 +25,12 @@ import RecentSearches from "./RecentSearches";
 import { useRecentSearches } from "./useRecentSearches";
 import { useSearchApi } from "./api";
 import {
-  CurriculumClusterRow, CurriculumRow, Group, GroupSkeleton, PageChip, PersonRow, PostRow, PracticeRow, QuestionRow, RowList, TagChip,
+  ContentRow, CurriculumClusterRow, CurriculumRow, Group, GroupSkeleton, PageChip, PersonRow, PostRow, PracticeRow, QuestionRow, RowList, TagChip,
 } from "./results";
 import {
-  ALL_TAB_LIMITS, CURRICULUM_PAGE, REMOTE_LIMIT, TABS, buildPagesIndex, buildPracticeIndex, cleanQuery, clusterCurriculum, countLabel, groupByStage,
-  hasMoreRows, linkablePeople, parseTab, searchHref, searchKey, searchLocal, tabCounts,
+  ALL_TAB_LIMITS, CONTENT_PAGE, CONTENT_PREVIEW, CURRICULUM_PAGE, REMOTE_LIMIT, TABS, buildPagesIndex, buildPracticeIndex, cleanQuery, clusterCurriculum,
+  contentCount, contentGroupsWithRows, contentHasMore, contentKey, countLabel, groupByStage, hasMoreRows, linkablePeople, parseTab, searchHref, searchKey,
+  searchLocal, tabCounts,
 } from "./model";
 
 // Pages beyond the sidebar that are worth jumping to (labels: nav.items.*).
@@ -44,9 +46,13 @@ const EXTRA_PAGES = [
 const GROUP_ICONS = {
   pages: Compass, curriculum: Library, practice: ClipboardCheck, questions: Sparkles, people: Users, posts: MessagesSquare, tags: Hash,
 };
+// Content groups: lessons & units, quizzes, official books, lesson-level question counts (signed in).
+const CONTENT_ICONS = { node: Layers, exam: ClipboardCheck, resource: BookOpen, question: ListChecks };
 
 const IDLE_REMOTE = { status: "idle", data: null, query: "", code: null };
 const IDLE_MORE = { key: "", rows: [], loaded: 0, loading: false, error: false };
+const IDLE_CONTENT = { status: "idle", data: null, query: "", code: null };
+const IDLE_CONTENT_MORE = { key: "", groups: {} }; // "show more" pages per content group: { rows, loading, error }
 
 // A query inside a sentence ("No results for “…”"): bidi-isolated (FSI … PDI)
 // so an Arabic query in English copy (or the reverse) keeps its punctuation.
@@ -96,6 +102,10 @@ const coarsePointer = () => {
  * recent-search history. Local groups (curriculum, practice catalog, pages)
  * answer instantly; the database groups (search_all) are debounced, cancel
  * stale requests and keep the previous results on screen while loading.
+ * Content groups (lessons & units, quizzes, official books; docs/CONTENT_ENGINE.md
+ * §7 "Search") come from searchContent — search_content when signed in, else the
+ * server-side GET /api/content/search — with the same debounce / cancel rules:
+ * a preview in "all", every row with "show more" paging in "curriculum".
  */
 export default function SearchExperience({ header, railStatic, idle, suggest, practice }) {
   const t = useT("search");
@@ -116,6 +126,9 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
   const [retry, setRetry] = useState(0);
   const [currLimit, setCurrLimit] = useState(CURRICULUM_PAGE);
   const [more, setMore] = useState(IDLE_MORE); // "show more" pages of one remote tab
+  const [content, setContent] = useState(IDLE_CONTENT);
+  const [contentRetry, setContentRetry] = useState(0);
+  const [contentMore, setContentMore] = useState(IDLE_CONTENT_MORE);
   const recent = useRecentSearches();
 
   const inputRef = useRef(null);
@@ -125,7 +138,10 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
   const lastWritten = useRef(searchKey(urlQ, urlTab));
   const searcherRef = useRef(null);
   const knownUnavailable = useRef(false);
+  const contentSearcherRef = useRef(null);
   if (!searcherRef.current) searcherRef.current = api.createSearcher({ limit: REMOTE_LIMIT });
+  // One request per query serves both the "all" preview and the first page of the curriculum tab.
+  if (!contentSearcherRef.current) contentSearcherRef.current = createContentSearcher({ limit: CONTENT_PAGE });
 
   const q = cleanQuery(query);
   const active = normalizeText(q).length >= 2;
@@ -211,6 +227,28 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
       });
   }, [q, active, retry]);
 
+  // ── content search (lessons, units, books, quizzes) ────────────────────────
+  useEffect(() => () => contentSearcherRef.current?.cancel(), []);
+  useEffect(() => {
+    const searcher = contentSearcherRef.current;
+    if (!active) {
+      searcher.cancel();
+      setContent(IDLE_CONTENT);
+      return;
+    }
+    setContent((c) => ({ ...c, status: "loading", code: null }));
+    searcher
+      .search(q)
+      .then((res) => {
+        if (res?.available === false) setContent({ status: "unavailable", data: null, query: q, code: null });
+        else setContent({ status: "done", data: res, query: q, code: null });
+      })
+      .catch((e) => {
+        if (e?.code === "aborted") return;
+        setContent({ status: "error", data: null, query: q, code: e?.code || "unknown" });
+      });
+  }, [q, active, contentRetry]);
+
   // An emptied field starts over on "all".
   useEffect(() => {
     if (!q) setTab("all");
@@ -276,20 +314,54 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
   const shownCounts = tabCounts({ curriculum: curriculumHits, practice: practiceHits }, shown);
   const remoteSettled = !active || ((remote.status === "done" || remote.status === "unavailable" || remote.status === "error") && remote.query === q);
   const localSettled = curr.status !== "loading" && dq === q;
+
+  // ── content view model (same fresh / stale rules as the remote groups) ─────
+  const contentFresh = content.status === "done" && content.query === q;
+  const contentStale = active && content.status === "loading" && Boolean(content.data);
+  const contentShown = active && (contentFresh || contentStale) ? content.data : null;
+  const contentQuery = contentFresh ? q : content.query;
+  const contentSettled = !active || (content.status !== "loading" && content.status !== "idle" && content.query === q);
+  const contentFailed = active && contentSettled && content.status === "error";
+  const contentPending = active && !contentSettled && !contentShown;
+  const contentGroups = contentGroupsWithRows(contentShown);
+  const contentMoreFor = (g) => (contentFresh && contentMore.key === q ? contentMore.groups[g] : null);
+  const contentRows = (g) => {
+    const seen = new Set();
+    return [...(contentShown?.groups?.[g]?.items || []), ...(contentMoreFor(g)?.rows || [])].filter((item) => {
+      const k = contentKey(g, item);
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  };
+  const contentTotals = (data) =>
+    contentGroupsWithRows(data).reduce(
+      (acc, g) => {
+        const c = contentCount(data, g);
+        return { n: acc.n + (c?.n || 0), capped: acc.capped || Boolean(c?.capped) };
+      },
+      { n: 0, capped: false }
+    );
+  const contentTotal = contentFresh ? contentTotals(content.data) : { n: 0, capped: false };
+  // The curriculum tab holds the catalog and the content groups: count both.
+  counts.curriculum = { n: curriculumHits.length + contentTotal.n, capped: contentTotal.capped };
+  const shownContent = contentTotals(contentShown);
+  shownCounts.curriculum = { n: curriculumHits.length + shownContent.n, capped: shownContent.capped };
+
   const remoteTotal = fresh ? counts.people.n + counts.posts.n + counts.tags.n + (counts.questions.n - practiceHits.length) : 0;
   const localTotal = curriculumHits.length + practiceHits.length;
-  const total = localTotal + remoteTotal;
+  const total = localTotal + remoteTotal + contentTotal.n;
   const currFailed = curr.status === "error";
   // Never claim "no results" while part of the search could not run.
-  const zero = active && remoteSettled && localSettled && !currFailed && total === 0 && pageHits.length === 0;
+  const zero = active && remoteSettled && localSettled && contentSettled && !currFailed && !contentFailed && total === 0 && pageHits.length === 0;
   const remoteBlocked = active && remoteSettled && (remote.status === "unavailable" || remote.status === "error");
 
   // ── announcements for screen readers ───────────────────────────────────────
   const [announce, setAnnounce] = useState("");
   useEffect(() => {
     if (!active) setAnnounce("");
-    else if (remoteSettled && localSettled) setAnnounce(t("status.count", { count: total }));
-  }, [active, remoteSettled, localSettled, total, t]);
+    else if (remoteSettled && localSettled && contentSettled) setAnnounce(t("status.count", { count: total }));
+  }, [active, remoteSettled, localSettled, contentSettled, total, t]);
 
   // ── actions ────────────────────────────────────────────────────────────────
   const commit = useCallback(() => {
@@ -400,11 +472,12 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
     const isRemote = value !== "curriculum";
     let count = null;
     if (active) {
-      if (value === "curriculum") count = curr.status === "ready" ? formatNumber(c.n, locale) : null;
+      if (value === "curriculum") count = curr.status === "ready" && contentSettled ? countLabel(formatNumber(c.n, locale), c.capped) : null;
       else if (value === "questions") count = fresh || remote.status === "unavailable" || remote.status === "error" ? countLabel(formatNumber(c.n, locale), c.capped) : null;
       else if (fresh) count = countLabel(formatNumber(c.n, locale), c.capped);
     }
-    return { value, label: t(`tabs.${value}`), count, pending: active && isRemote && remotePending };
+    const pending = isRemote ? remotePending : !contentSettled;
+    return { value, label: t(`tabs.${value}`), count, pending: active && pending };
   });
 
   // ── group renderers ────────────────────────────────────────────────────────
@@ -503,6 +576,89 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
             {t("results.remaining", { count: Math.min(more, CURRICULUM_PAGE) })}
           </Button>
         )}
+      </div>
+    );
+  };
+
+  // ── content groups (lessons & units, quizzes, official books) ──────────────
+  // "Show more" pages one group (kinds=[group], offset = rows received so far).
+  const loadMoreContent = async (g) => {
+    if (!contentFresh || contentMoreFor(g)?.loading) return;
+    const key = q;
+    const offset = (content.data?.groups?.[g]?.items?.length || 0) + (contentMoreFor(g)?.rows?.length || 0);
+    const patch = (m, next) => {
+      const base = m.key === key ? m.groups : {};
+      return { key, groups: { ...base, [g]: { rows: [], ...base[g], ...next(base[g]) } } };
+    };
+    setContentMore((m) => patch(m, () => ({ loading: true, error: false })));
+    try {
+      const res = await searchContent(q, { kinds: [g], limit: CONTENT_PAGE, offset });
+      const rows = Array.isArray(res?.groups?.[g]?.items) ? res.groups[g].items : [];
+      setContentMore((m) => (m.key !== key ? m : patch(m, (prev) => ({ rows: [...(prev?.rows || []), ...rows], loading: false, end: rows.length < CONTENT_PAGE }))));
+    } catch (e) {
+      if (e?.code === "aborted") return;
+      setContentMore((m) => (m.key !== key ? m : patch(m, () => ({ loading: false, error: true }))));
+    }
+  };
+
+  const contentNotice = contentFailed ? (
+    <RetryAlert key="content-error" title={t("content.error")} retryLabel={tc("actions.retry")} onRetry={() => setContentRetry((n) => n + 1)}>
+      {content.code === "network" ? tc("states.networkError") : null}
+    </RetryAlert>
+  ) : null;
+
+  const contentSkeleton = (full) => (
+    <GroupSkeleton key="content-sk" id={gid("content-sk")} icon={CONTENT_ICONS.node} title={t("content.groups.node")} loadingLabel={t("content.loading")} rows={full ? 3 : 1} />
+  );
+
+  // full = the curriculum tab (every row, "show more"); otherwise a preview whose "view all" opens that tab.
+  const contentSection = (full) => {
+    if (!contentGroups.length) return contentPending ? contentSkeleton(full) : contentNotice;
+    return (
+      <div key={full ? "content-full" : "content"} className="space-y-7">
+        {contentGroups.map((g) => {
+          const c = contentCount(contentShown, g);
+          const n = c ? countLabel(formatNumber(c.n, locale), c.capped) : null;
+          const rows = full ? contentRows(g) : contentShown.groups[g].items.slice(0, CONTENT_PREVIEW[g]);
+          const page = contentMoreFor(g);
+          const loaded = contentShown.groups[g].items.length + (page?.rows?.length || 0);
+          const canMore = full && contentFresh && !page?.end && contentHasMore(contentShown, g, loaded);
+          return (
+            <Group
+              key={`content-${g}`}
+              id={gid(`content-${g}`)}
+              icon={CONTENT_ICONS[g]}
+              title={t(`content.groups.${g}`)}
+              count={n}
+              stale={contentStale}
+              {...(!full && c && c.n > rows.length ? viewAll("curriculum", n) : {})}
+            >
+              <RowList>
+                {rows.map((item) => (
+                  <ContentRow key={contentKey(g, item)} group={g} item={item} q={contentQuery} t={t} locale={locale} />
+                ))}
+              </RowList>
+              {canMore && (
+                <div className="border-t border-line/8 p-1.5">
+                  <button
+                    type="button"
+                    onClick={() => loadMoreContent(g)}
+                    disabled={page?.loading}
+                    aria-busy={page?.loading || undefined}
+                    className="inline-flex h-11 w-full items-center justify-center rounded-md text-sm font-medium text-gold-600 transition-colors hover:bg-gold-50 disabled:opacity-60 sm:h-9"
+                  >
+                    {t("content.more")}
+                  </button>
+                  {page?.error && (
+                    <p role="alert" className="t-caption px-2 pb-1 text-danger">
+                      {t("content.moreError")}
+                    </p>
+                  )}
+                </div>
+              )}
+            </Group>
+          );
+        })}
       </div>
     );
   };
@@ -734,6 +890,7 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
     const groups = [
       pagesGroup,
       curriculumPreview(ALL_TAB_LIMITS.curriculum),
+      contentSection(false),
       practiceGroup(ALL_TAB_LIMITS.practice, true),
       remoteBlocked ? null : questionsGroup(ALL_TAB_LIMITS.questions, true),
       remoteBlocked ? null : peopleGroup(ALL_TAB_LIMITS.people, true),
@@ -743,7 +900,18 @@ export default function SearchExperience({ header, railStatic, idle, suggest, pr
     ].filter(Boolean);
     panel = <div className="space-y-7">{groups}</div>;
   } else if (tab === "curriculum") {
-    panel = curriculumLoading || currFailed || curriculumHits.length ? curriculumFull() : zeroTab("curriculum");
+    // The catalog (subjects, grades, tracks) first, then the lessons, quizzes and books.
+    const catalog = curriculumLoading || currFailed || curriculumHits.length > 0;
+    const lessons = contentGroups.length > 0 || contentPending || contentFailed;
+    panel =
+      catalog || lessons ? (
+        <div className="space-y-7">
+          {catalog && curriculumFull()}
+          {contentSection(true)}
+        </div>
+      ) : (
+        zeroTab("curriculum")
+      );
   } else {
     const body = {
       people: () => peopleGroup(REMOTE_LIMIT, false),

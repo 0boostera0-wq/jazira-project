@@ -218,7 +218,7 @@ describe("runner session", () => {
 
   it("summarises and builds the submit payload", () => {
     const answers = { 1: { selected: 0, flagged: false }, 2: { selected: null, flagged: true }, 3: { selected: 1, flagged: true } };
-    expect(summarize(answers, [1, 2, 3])).toEqual({ total: 3, answered: 2, unanswered: 1, flagged: 2, firstUnanswered: 2, firstFlagged: 2 });
+    expect(summarize(answers, [1, 2, 3])).toEqual({ total: 3, answered: 2, unanswered: 1, flagged: 2, firstUnanswered: 2, firstFlagged: 2, invalid: 0, firstInvalid: null });
     expect(answersPayload([1, 2], answers, { 1: 12.4 })).toEqual([
       { position: 1, selected_index: 0, time_spent_seconds: 12, flagged: false },
       { position: 2, selected_index: null, time_spent_seconds: 0, flagged: true },
@@ -459,7 +459,8 @@ describe("results", () => {
 
   it("classifies and filters review items", () => {
     expect(items.map(itemStatus)).toEqual(["correct", "incorrect", "unanswered", "incorrect"]);
-    expect(reviewCounts(items)).toEqual({ all: 4, correct: 1, incorrect: 2, unanswered: 1, flagged: 1 });
+    // partial / voided only occur for template items (exams-types.test.js)
+    expect(reviewCounts(items)).toEqual({ all: 4, correct: 1, incorrect: 2, partial: 0, unanswered: 1, voided: 0, flagged: 1 });
     expect(filterReview(items, "incorrect").map((i) => i.position)).toEqual([2, 4]);
     expect(filterReview(items, "unanswered").map((i) => i.position)).toEqual([3]);
     expect(filterReview(items, "flagged").map((i) => i.position)).toEqual([2]);

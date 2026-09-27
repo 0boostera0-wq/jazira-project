@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:runtime-bank-content",
+  "title": "Runtime bank chunk (§5.8)",
+  "description": "data/runtime/bank/c/<chunk>.json (kind content: public fields only — never answers, accepted answers, explanations, computations or content hashes) and k/<chunk>.json (kind keys: answers and explanations), ≤ 256 KB each. validate-staging also checks c/ ↔ content and k/ ↔ keys and scans content chunks at every depth.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "chunk_id",
+    "kind",
+    "items"
+  ],
+  "properties": {
+    "schema": {
+      "const": "runtime-bank-content@1"
+    },
+    "chunk_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "content",
+        "keys"
+      ]
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "revision"
+        ],
+        "properties": {
+          "key": {
+            "$ref": "urn:jazira:schema:common#/$defs/question_id"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "kind": {
+        "const": "content"
+      }
+    },
+    "required": [
+      "kind"
+    ]
+  },
+  "then": {
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "answer"
+                ]
+              },
+              {
+                "required": [
+                  "accepted"
+                ]
+              },
+              {
+                "required": [
+                  "accepted_norm"
+                ]
+              },
+              {
+                "required": [
+                  "answer_display"
+                ]
+              },
+              {
+                "required": [
+                  "explanation"
+                ]
+              },
+              {
+                "required": [
+                  "computation"
+                ]
+              },
+              {
+                "required": [
+                  "content_hash"
+                ]
+              },
+              {
+                "required": [
+                  "tolerance"
+                ]
+              }
+            ]
+          },
+          "properties": {
+            "payload": {
+              "type": "object",
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "answer"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "accepted"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "accepted_norm"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "answer_display"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "explanation"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "computation"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "content_hash"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "tolerance"
+                    ]
+                  }
+                ]
+              }
+            },
+            "public": {
+              "type": "object",
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "answer"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "accepted"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "accepted_norm"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "answer_display"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "explanation"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "computation"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "content_hash"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "tolerance"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

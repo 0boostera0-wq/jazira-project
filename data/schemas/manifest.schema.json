@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:manifest",
+  "title": "Staging manifest (§3)",
+  "description": "data/staging/manifest.json, written by validate-staging --write-manifest. No timestamp, so a rerun without changes is byte-identical.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "generated_by",
+    "normalization",
+    "files",
+    "totals",
+    "published",
+    "removed"
+  ],
+  "properties": {
+    "schema": {
+      "const": "manifest@1"
+    },
+    "generated_by": {
+      "type": "string",
+      "pattern": "^validate-staging@\\d+$"
+    },
+    "normalization": {
+      "const": "n2"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "schema",
+          "sha256",
+          "lines",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "schema": {
+            "type": "string",
+            "pattern": "^[a-z-]+@\\d+$"
+          },
+          "sha256": {
+            "$ref": "urn:jazira:schema:common#/$defs/sha256"
+          },
+          "lines": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "files",
+        "lines",
+        "bytes"
+      ],
+      "properties": {
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "published": {
+      "type": "object",
+      "description": "Published question keys per shard path (sorted), the input of the import retire diff (§6.3).",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "urn:jazira:schema:common#/$defs/question_id"
+        }
+      }
+    },
+    "removed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "reason"
+        ],
+        "properties": {
+          "key": {
+            "$ref": "urn:jazira:schema:common#/$defs/question_id"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          }
+        }
+      }
+    }
+  }
+}

@@ -75,6 +75,12 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
+  // The guest exam routes read the runtime bank from disk (fs, never an import),
+  // so the files must be traced into those functions explicitly
+  // (docs/CONTENT_ENGINE.md §5.8; src/lib/exams/engine/runtime-bank.server.js).
+  outputFileTracingIncludes: {
+    "/api/exams/session/**": ["./data/runtime/bank/**"],
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

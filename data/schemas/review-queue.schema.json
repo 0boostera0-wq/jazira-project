@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:review-queue",
+  "title": "Review queue row (§4.4)",
+  "description": "data/staging/validation/review-queue.jsonl, sorted by (question_id, revision).",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "question_id",
+    "revision",
+    "reason"
+  ],
+  "properties": {
+    "schema": {
+      "const": "review-queue@1"
+    },
+    "question_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/question_id"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "record_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      }
+    },
+    "queued_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_datetime"
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:stimulus",
+  "title": "Stimulus / shared passage (§2.7)",
+  "description": "data/staging/questions/stimuli/<shard>.jsonl.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "language",
+    "text",
+    "origin",
+    "source"
+  ],
+  "properties": {
+    "schema": {
+      "const": "stimulus@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/stimulus_id"
+    },
+    "language": {
+      "$ref": "urn:jazira:schema:common#/$defs/language"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8000
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "source_derived",
+        "transformed",
+        "generated_practice",
+        "internal_authored",
+        "review_required"
+      ]
+    },
+    "source": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "resource_id",
+            "pdf_page_start",
+            "pdf_page_end"
+          ],
+          "properties": {
+            "resource_id": {
+              "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+            },
+            "pdf_page_start": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "pdf_page_end": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

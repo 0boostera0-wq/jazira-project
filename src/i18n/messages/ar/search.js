@@ -161,6 +161,38 @@ const search = {
       feedback: "اقتراح ملاحظات رأي",
     },
   },
+
+  // Lessons, units, books and quizzes from the curriculum outline (docs/CONTENT_ENGINE.md §7).
+  content: {
+    groups: { node: "الدروس والوحدات", exam: "الاختبارات", resource: "الكتب الرسمية", question: "أسئلة التدريب حسب الدرس" },
+    kinds: { stage: "مرحلة", grade: "صف", track: "مسار", subject: "مادة", unit: "وحدة", chapter: "فصل", lesson: "درس" },
+    templates: {
+      "lesson-quiz": "اختبار الدرس",
+      "chapter-quiz": "اختبار الوحدة",
+      "subject-quiz": "اختبار المادة",
+      "term-exam": "اختبار الفصل الدراسي",
+      "full-year": "اختبار العام كاملًا",
+      practice: "تدريب",
+    },
+    resourceKinds: {
+      student_book: "كتاب الطالب",
+      activity_book: "كتاب النشاط",
+      teacher_guide: "دليل المعلم",
+      practice_resource: "ملف تدريب",
+      test_resource: "ملف اختبار",
+      audio: "ملف صوتي",
+      question_bank_external: "بنك أسئلة عين",
+      other: "ملف",
+    },
+    part: "الجزء {part}",
+    onIen: "على عين",
+    published: { zero: "لا توجد أسئلة بعد", one: "سؤال واحد", two: "سؤالان", few: "{count} أسئلة", many: "{count} سؤالًا", other: "{count} سؤال" },
+    loading: "جارٍ البحث في الدروس والكتب…",
+    error: "تعذّر البحث في الدروس والكتب. حاول مجددًا.",
+    unavailable: "البحث في الدروس غير متاح حاليًا.",
+    more: "اعرض المزيد",
+    moreError: "تعذّر تحميل المزيد من النتائج.",
+  },
 };
 
 export default search;

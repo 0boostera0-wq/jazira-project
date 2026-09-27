@@ -369,7 +369,11 @@ export async function main(argv = process.argv.slice(2), log = console) {
     const f = files.find((x) => x.label === i.label);
     return f ? `${i.label}: ${f.questions.length}` : `${i.label}: invalid`;
   });
-  if (summary.length) log.log(summary.join("\n"));
+  // With --stdout the SQL owns stdout; the summary goes to stderr so the output stays valid SQL.
+  if (summary.length) {
+    if (opts.stdout) log.error(summary.join("\n"));
+    else log.log(summary.join("\n"));
+  }
 
   if (allErrors.length) {
     log.error(`${allErrors.length} error(s) — ${opts.check ? "check failed" : "nothing written"}`);

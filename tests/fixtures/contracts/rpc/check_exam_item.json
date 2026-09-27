@@ -1,0 +1,123 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "check_exam_item",
+ "signature": "check_exam_item(p_attempt uuid, p_position smallint) → jsonb",
+ "grants": [
+  "authenticated",
+  "service_role"
+ ],
+ "description": "Only for feedback_mode = 'immediate'. Grades the stored response, writes score / is_correct, sets locked_at and returns the item result.",
+ "cases": [
+  {
+   "name": "check a saved answer",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 1
+   },
+   "response": {
+    "position": 1,
+    "verdict": "correct",
+    "score": 1,
+    "response": {
+     "pairs": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       3
+      ]
+     ]
+    },
+    "correct_response": {
+     "pairs": [
+      [
+       0,
+       0
+      ],
+      [
+       1,
+       1
+      ],
+      [
+       2,
+       3
+      ]
+     ]
+    },
+    "explanation": {
+     "text": "شرح b3.",
+     "steps": [
+      "خطوة b3"
+     ]
+    },
+    "objective": null,
+    "lesson": {
+     "id": "middle/grade-1/math/n54",
+     "title": "القوى و الأسس",
+     "href": "/learn/middle/grade-1/math/n54"
+    },
+    "source": {
+     "resource_id": "ien-120607",
+     "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+     "printed_start": 12,
+     "printed_end": 13,
+     "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+    },
+    "locked_at": "<iso>"
+   }
+  },
+  {
+   "name": "end-of-session feedback",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 1
+   },
+   "error": {
+    "message": "feedback_not_allowed",
+    "details": null
+   }
+  },
+  {
+   "name": "nothing saved at that position",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 3
+   },
+   "error": {
+    "message": "invalid_response",
+    "details": {
+     "position": 3,
+     "reason": "empty"
+    }
+   }
+  },
+  {
+   "name": "already locked",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 1
+   },
+   "error": {
+    "message": "item_locked",
+    "details": {
+     "position": 1
+    }
+   }
+  }
+ ]
+}

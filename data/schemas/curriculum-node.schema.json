@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:curriculum-node",
+  "title": "Curriculum node (§2.5)",
+  "description": "data/staging/curriculum/nodes/<stage>/<grade>[-<track>].jsonl.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "parent_id",
+    "kind",
+    "stage",
+    "grade",
+    "track",
+    "subject",
+    "order",
+    "title_ar",
+    "title_en",
+    "term",
+    "term_status",
+    "term_evidence",
+    "pages",
+    "source_refs",
+    "in_plan",
+    "status",
+    "audit"
+  ],
+  "properties": {
+    "schema": {
+      "const": "curriculum-node@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/node_id"
+    },
+    "parent_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "stage",
+        "grade",
+        "track",
+        "term",
+        "subject",
+        "unit",
+        "chapter",
+        "lesson"
+      ]
+    },
+    "stage": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "grade": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "track": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "subject": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "title_ar": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "title_en": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "term": {
+      "$ref": "urn:jazira:schema:common#/$defs/term_or_null"
+    },
+    "term_status": {
+      "$ref": "urn:jazira:schema:common#/$defs/term_status"
+    },
+    "term_evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:jazira:schema:common#/$defs/term_evidence_id"
+      },
+      "maxItems": 50
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "resource_id",
+          "pdf_start",
+          "pdf_end",
+          "printed_start",
+          "printed_end",
+          "method",
+          "status"
+        ],
+        "properties": {
+          "resource_id": {
+            "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+          },
+          "pdf_start": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "pdf_end": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "printed_start": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "printed_end": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "toc",
+              "ien_align",
+              "manual"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "needs_review"
+            ]
+          }
+        }
+      },
+      "maxItems": 20
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "ien_id",
+          "ien_unit_id",
+          "code_id",
+          "retrieved_at"
+        ],
+        "properties": {
+          "source_id": {
+            "$ref": "urn:jazira:schema:common#/$defs/slug"
+          },
+          "ien_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ien_unit_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "code_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "$ref": "urn:jazira:schema:common#/$defs/iso_date_or_datetime"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "maxItems": 20
+    },
+    "in_plan": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "needs_review",
+        "source_only",
+        "unavailable"
+      ]
+    },
+    "unit_opener": {
+      "type": "boolean"
+    },
+    "audit": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "detail"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "title_mismatch",
+              "missing_in_toc",
+              "missing_in_ien",
+              "order_mismatch",
+              "term_conflict"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 500
+          }
+        }
+      },
+      "maxItems": 20
+    }
+  }
+}

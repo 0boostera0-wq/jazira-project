@@ -185,3 +185,31 @@ export function HistoryBodySkeleton() {
     </div>
   );
 }
+
+/** A typed answer input (matching / ordering) while its chunk loads. */
+export function InputSkeleton() {
+  return (
+    <div aria-busy="true" className="mt-6 space-y-2.5">
+      <Skeleton className="h-3.5 w-48" />
+      {[0, 1, 2].map((i) => <Skeleton key={i} rounded="md" className="h-14" />)}
+    </div>
+  );
+}
+
+/** Recommendations / weak lessons card while it loads (mirrors the list rows). */
+export function ListCardSkeleton({ rows = 3 }) {
+  return (
+    <div aria-hidden="true" className="surface p-5 sm:p-6">
+      <Skeleton className="h-5 w-40" />
+      <div className="mt-5 space-y-3">
+        {Array.from({ length: rows }, (_, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <Skeleton rounded="md" className="h-10 w-10" />
+            <div className="flex-1 space-y-2"><Skeleton className="h-4 w-2/3" /><Skeleton className="h-3 w-1/3" /></div>
+            <Skeleton rounded="full" className="h-9 w-20" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,1 @@
+{"schema":"dedup-cluster@1","id":"dc-q-m1-math-fa3093174f","canonical_id":"q-m1-math-fa3093174f","members":[{"id":"q-m1-math-a0fd3d5106","class":"RELATED","score":{"stem_jaccard":0.31,"item_jaccard":0.42,"option_jaccard":0.6},"signals":["same_answer"]}],"exclusion_group":"xg-6f8567184d","run_id":"run-20260928-dedup-01"}

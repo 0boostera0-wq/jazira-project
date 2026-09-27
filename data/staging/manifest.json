@@ -1,0 +1,420 @@
+{
+  "schema": "manifest@1",
+  "generated_by": "validate-staging@1",
+  "normalization": "n2",
+  "files": [
+    {
+      "path": "curriculum/audit.jsonl",
+      "schema": "curriculum-audit@1",
+      "sha256": "936f14845ae8e645f9172298acfdbe2e48e3970e2a2c085e5e4939a2bf25a233",
+      "lines": 50,
+      "bytes": 12235
+    },
+    {
+      "path": "curriculum/id-registry.jsonl",
+      "schema": "id-registry@1",
+      "sha256": "04276eb12ff67b61043303b198134a10a1f3b1bf811d7943c8cf628452b255ec",
+      "lines": 14,
+      "bytes": 3220
+    },
+    {
+      "path": "curriculum/ien-mapping.json",
+      "schema": "ien-mapping@1",
+      "sha256": "b940755ea92ee75b3173899b35ce064108ffc8608626cf54efc190900c8204e2",
+      "lines": 1,
+      "bytes": 253103
+    },
+    {
+      "path": "curriculum/nodes/elementary/grade-1.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "a4d46db57d03188eee4b19be9fca04ea1488d6060c75170dfb48b64433759bc9",
+      "lines": 468,
+      "bytes": 252183
+    },
+    {
+      "path": "curriculum/nodes/elementary/grade-2.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "d95608b50953e1c2a8a28aad31f62ae48cf1a94d7fb69885a0d7152be9bed940",
+      "lines": 451,
+      "bytes": 245675
+    },
+    {
+      "path": "curriculum/nodes/elementary/grade-3.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "4d2d37529c6356ad2dfc3474f3b15f210e010b776a3a407639123026e10644e6",
+      "lines": 443,
+      "bytes": 241699
+    },
+    {
+      "path": "curriculum/nodes/elementary/grade-4.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "f567f1d45de64f164d38aecdd21cfaca83cb192c51c9d93b1876850fbcddfb40",
+      "lines": 668,
+      "bytes": 369902
+    },
+    {
+      "path": "curriculum/nodes/elementary/grade-5.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "ac68203a64e98a41ebb2b6a3f14cccc74957a620c2be215991cdb8ea772bf28e",
+      "lines": 806,
+      "bytes": 446777
+    },
+    {
+      "path": "curriculum/nodes/elementary/grade-6.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "91329a4a2b72f2f6937d14d5ac79df42385a222365d7ee1e55d16187f2f37a7a",
+      "lines": 718,
+      "bytes": 400717
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-1-first-year.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "cf20099dd4e5bd4245d5a853ca5357ef2ce6925ca0e01d8fd74d7585a2658101",
+      "lines": 662,
+      "bytes": 415101
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-1.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "de49f794440630e3da77c456a22d8062b3af00a3128543d6cc25a901225d418d",
+      "lines": 2,
+      "bytes": 949
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-2-business.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "b564cc8770afec01be0cea6ee3e556bc2ade2dda87bbf714b0309d259e16063e",
+      "lines": 460,
+      "bytes": 286125
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-2-cs-eng.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "5215d3abfb2c5c4a9590e084046b0fe4018259e62118bc31a6de5ee05db1d316",
+      "lines": 552,
+      "bytes": 336412
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-2-general.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "7fcd25cbdfc4ce7244373819d5ce99fe6d9a00e9d15b3cb275dda4c14cc7c93e",
+      "lines": 584,
+      "bytes": 358758
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-2-health.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "319dbdd35256483902455b54ac1f7d5363460e7df410872afbf5e3ac502dab7b",
+      "lines": 545,
+      "bytes": 332562
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-2-sharia.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "977ea62f3bf140d459082e5f7394253cdcd834383e9becf7593c716a1e6e85d3",
+      "lines": 538,
+      "bytes": 329025
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-2.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "f46cd74013a34d61e4691ff87eb1d799f67e8758a3c5b43367e61ff9947401a1",
+      "lines": 1,
+      "bytes": 491
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-3-business.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "8a30df558b3b7c27031605101e4a19231a66a90ca91ae816b14d6b045cabc217",
+      "lines": 555,
+      "bytes": 345444
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-3-cs-eng.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "b3c46e6b52e4f87be7586f69aaff183694781db9133f7439b9981b368251cdce",
+      "lines": 498,
+      "bytes": 304447
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-3-general.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "bba59887d752a29947e7027491ca558f5ba4788e6096d00d5577217ee6e0b862",
+      "lines": 806,
+      "bytes": 499872
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-3-health.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "0ea3c5d77f4fc955b5ec9f6b6014a75b5ed2f256332ee6feb091b6590e83e530",
+      "lines": 576,
+      "bytes": 353115
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-3-sharia.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "00cbacbcdfdfab55491045a55ce9e376178417e0bd4389a6b35e185b831de905",
+      "lines": 734,
+      "bytes": 448838
+    },
+    {
+      "path": "curriculum/nodes/high-school/grade-3.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "32a013f6b211975867e7bce6e220f3c0c9fc62584a6c776e48e0c152fe074a49",
+      "lines": 1,
+      "bytes": 491
+    },
+    {
+      "path": "curriculum/nodes/middle/grade-1.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "40ee1c5e398f1349b6bbf0b6530e17bf6c13c3d3bf6cb436be6b9a0e42029b3f",
+      "lines": 847,
+      "bytes": 453032
+    },
+    {
+      "path": "curriculum/nodes/middle/grade-2.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "f0e86e2900775e2707e5cc4055224e64d186ba19e2f9f33849e587aa0e3b330c",
+      "lines": 856,
+      "bytes": 458499
+    },
+    {
+      "path": "curriculum/nodes/middle/grade-3.jsonl",
+      "schema": "curriculum-node@1",
+      "sha256": "7470fd39515a901541c2a8ef69bc7432486aaae3f22ccda3dd861e0a7e9ac121",
+      "lines": 827,
+      "bytes": 443697
+    },
+    {
+      "path": "curriculum/prep-alignment.jsonl",
+      "schema": "prep-alignment@1",
+      "sha256": "054ffc708b4f1ee75876c875ce574b13f99ce2bc9ef5e54c6062ba0d8579ea85",
+      "lines": 200,
+      "bytes": 38263
+    },
+    {
+      "path": "curriculum/subject-terms.jsonl",
+      "schema": "subject-term@1",
+      "sha256": "2f2422c65a6e274a3ef7f0d580f626957bbad031dc4f48cf69ad230be8fce82b",
+      "lines": 608,
+      "bytes": 79362
+    },
+    {
+      "path": "exams/templates.json",
+      "schema": "exam-template@1",
+      "sha256": "a30dc1ffb842cf3def4d515c8c13dd46d794a182b3d486260436c8eda8ac277a",
+      "lines": 10,
+      "bytes": 15651
+    },
+    {
+      "path": "resources/exercise-index/ien-120607.jsonl",
+      "schema": "exercise-index@1",
+      "sha256": "590283c44de3e7b228076d92b019a33d601f003af8f96d6a5110996c21a43d6d",
+      "lines": 75,
+      "bytes": 11204
+    },
+    {
+      "path": "resources/exercise-index/ien-120617.jsonl",
+      "schema": "exercise-index@1",
+      "sha256": "e1c77fd7d09cc8935854850c103c072a2828db6550444d3b07335179c3b8b6bd",
+      "lines": 2,
+      "bytes": 304
+    },
+    {
+      "path": "resources/exercise-index/ien-121330.jsonl",
+      "schema": "exercise-index@1",
+      "sha256": "a0695bdc32671e02cdcc93d8d7f4d3617ff55dfc1cd79ea5fbb91c614ae71131",
+      "lines": 4,
+      "bytes": 598
+    },
+    {
+      "path": "resources/exercise-index/ien-121390.jsonl",
+      "schema": "exercise-index@1",
+      "sha256": "11071e1d721dfff4b246f50e4cb9df68611f22c39832017ccbbe203daddb8577",
+      "lines": 1,
+      "bytes": 145
+    },
+    {
+      "path": "resources/exercise-index/ien-121391.jsonl",
+      "schema": "exercise-index@1",
+      "sha256": "8801ce6cdb9aef5e97f57a112b7cb122abf57c7def6172a06a16c356f56debd5",
+      "lines": 58,
+      "bytes": 9308
+    },
+    {
+      "path": "resources/extraction.jsonl",
+      "schema": "extraction@1",
+      "sha256": "ee9b3c66c0c8721cccdbffaa630faf987ba9c57a2ddbcc5f384ff9146614f4f2",
+      "lines": 6,
+      "bytes": 2514
+    },
+    {
+      "path": "resources/page-maps/ien-120606.jsonl",
+      "schema": "page-map@1",
+      "sha256": "f5a5fca20ef34febb0ae0ec358d77a2487b3d171c20b40939f2f0c92f55c68bb",
+      "lines": 234,
+      "bytes": 98945
+    },
+    {
+      "path": "resources/page-maps/ien-120607.jsonl",
+      "schema": "page-map@1",
+      "sha256": "417098dc895925721dc3bf0c7f5f3e84f994404064eaa20f30f43f1e5799b63e",
+      "lines": 183,
+      "bytes": 107264
+    },
+    {
+      "path": "resources/page-maps/ien-120617.jsonl",
+      "schema": "page-map@1",
+      "sha256": "5c43265d186f56cc20265388ef6ae19ac204adcf516791ad5686306e094bd86f",
+      "lines": 226,
+      "bytes": 80492
+    },
+    {
+      "path": "resources/page-maps/ien-121330.jsonl",
+      "schema": "page-map@1",
+      "sha256": "c156eac3a59c96d922b802d5cf0a436295d4d36dd36a5745069c1014d058cccc",
+      "lines": 228,
+      "bytes": 78393
+    },
+    {
+      "path": "resources/page-maps/ien-121390.jsonl",
+      "schema": "page-map@1",
+      "sha256": "9033c2825499ed01d4bbd0701f9854a2844fb003ea10809b1feab292b51620b0",
+      "lines": 242,
+      "bytes": 110481
+    },
+    {
+      "path": "resources/page-maps/ien-121391.jsonl",
+      "schema": "page-map@1",
+      "sha256": "a7b980aebdb934a998f78ea07524b63ff0fd272d11d62e0dec44d37065e7a5c6",
+      "lines": 201,
+      "bytes": 114763
+    },
+    {
+      "path": "resources/resources.jsonl",
+      "schema": "resource@1",
+      "sha256": "d8791b394d10f85b14f8b65db0431ed9fb95b7f35072adca2759a519248b160c",
+      "lines": 584,
+      "bytes": 736137
+    },
+    {
+      "path": "resources/term-evidence.jsonl",
+      "schema": "term-evidence@1",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "lines": 0,
+      "bytes": 0
+    },
+    {
+      "path": "resources/toc/ien-120606.json",
+      "schema": "toc@1",
+      "sha256": "5602599f51ab0b8ce3648b0a192783145754d2b46b72b3a1283731030eb6868a",
+      "lines": 1,
+      "bytes": 179
+    },
+    {
+      "path": "resources/toc/ien-120607.json",
+      "schema": "toc@1",
+      "sha256": "19ce3bdd943aabc34fa41502b12416a9103eb7ce1541d1d5d9cc441c94fd7e51",
+      "lines": 1,
+      "bytes": 193
+    },
+    {
+      "path": "resources/toc/ien-120617.json",
+      "schema": "toc@1",
+      "sha256": "0ad4f1f97ea970d57d6f63bbab9b55e00511e776d9654648b2c02349bf1a2047",
+      "lines": 1,
+      "bytes": 179
+    },
+    {
+      "path": "resources/toc/ien-121330.json",
+      "schema": "toc@1",
+      "sha256": "ebabf98986f4a9670a773afae68eb820aed4be35e9b503ea220bdc698dbf73b1",
+      "lines": 1,
+      "bytes": 179
+    },
+    {
+      "path": "resources/toc/ien-121390.json",
+      "schema": "toc@1",
+      "sha256": "23925e8b8eef712e5f70a64ec515c64c5a2f0a7fadbaf8b08050ed2d27a89065",
+      "lines": 1,
+      "bytes": 179
+    },
+    {
+      "path": "resources/toc/ien-121391.json",
+      "schema": "toc@1",
+      "sha256": "348a170771b78f4cf3c4a6b6c8c39104606d686871ad98dce30d10043e7874c9",
+      "lines": 1,
+      "bytes": 5529
+    },
+    {
+      "path": "sources/ien/book-frontmatter.jsonl",
+      "schema": "book-frontmatter@1",
+      "sha256": "6b754b60e247ff41f67af03b7ca3bf7b12ec3901a41e6af8c475ab107f9f1f77",
+      "lines": 311,
+      "bytes": 225225
+    },
+    {
+      "path": "sources/ien/books.jsonl",
+      "schema": "ien-book@1",
+      "sha256": "05d736fbb2735fac6a880e9fe214dca064b7ee1e8b3fdd8c0caf0c6a6dc0d74c",
+      "lines": 315,
+      "bytes": 250815
+    },
+    {
+      "path": "sources/ien/crawl-report.json",
+      "schema": "crawl-report@1",
+      "sha256": "e190a63bb7f5dec597f303edb7d08f6d70478407c517d16de004533406e2e2e8",
+      "lines": 1,
+      "bytes": 959
+    },
+    {
+      "path": "sources/ien/lessons.jsonl",
+      "schema": "ien-lesson@1",
+      "sha256": "d4e764be4a45a0144dfd87aae7f7181399afab197e0519be558514186b355aa7",
+      "lines": 10102,
+      "bytes": 2260716
+    },
+    {
+      "path": "sources/ien/nodes.jsonl",
+      "schema": "ien-node@1",
+      "sha256": "fd4265f5b9462bf9458621545267fcfded490485b3b9a874bedd84c5f1ed5bef",
+      "lines": 358,
+      "bytes": 256400
+    },
+    {
+      "path": "sources/registry.json",
+      "schema": "source@1",
+      "sha256": "a2bd6deaefc35c4e65d527619909ff7d4f2de57e795217eb814bdda34d1430bf",
+      "lines": 4,
+      "bytes": 3586
+    },
+    {
+      "path": "sources/research/catalog-map.jsonl",
+      "schema": "catalog-map@1",
+      "sha256": "8f80b942782ced4e2c63451daf913eedc8d80a77dd0b39f3282143ef33ed3892",
+      "lines": 253,
+      "bytes": 167614
+    },
+    {
+      "path": "sources/research/term-evidence.json",
+      "schema": "research-claims@1",
+      "sha256": "389b69808d219e095ebaacee6aade5b08a516373660d235c2fd340ab1fbd3f43",
+      "lines": 1,
+      "bytes": 3681
+    },
+    {
+      "path": "validation/runs/run-20260926-extract-01.json",
+      "schema": "run-manifest@1",
+      "sha256": "510191d2a3854df0afd6b043c5fc7a68b8524c5b27fbfcebc11a46c060816158",
+      "lines": 1,
+      "bytes": 637
+    }
+  ],
+  "totals": {
+    "files": 58,
+    "lines": 26877,
+    "bytes": 12252264
+  },
+  "published": {},
+  "removed": []
+}

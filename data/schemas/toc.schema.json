@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:toc",
+  "title": "Parsed table of contents (§2.6)",
+  "description": "data/staging/resources/toc/<resource_id>.json.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "resource_id",
+    "entries"
+  ],
+  "properties": {
+    "schema": {
+      "const": "toc@1"
+    },
+    "resource_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+    },
+    "toc_status": {
+      "type": "string",
+      "enum": [
+        "found",
+        "not_found",
+        "partial"
+      ]
+    },
+    "toc_pages": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "maxItems": 20
+    },
+    "page_offset": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/run_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "level",
+          "title",
+          "printed_page",
+          "pdf_page",
+          "matched_node_id",
+          "match_score",
+          "method"
+        ],
+        "properties": {
+          "level": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 6
+              },
+              {
+                "type": "string",
+                "enum": [
+                  "unit",
+                  "chapter",
+                  "lesson",
+                  "other"
+                ]
+              }
+            ]
+          },
+          "title": {
+            "$ref": "urn:jazira:schema:common#/$defs/excerpt"
+          },
+          "printed_page": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pdf_page": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "matched_node_id": {
+            "anyOf": [
+              {
+                "$ref": "urn:jazira:schema:common#/$defs/node_id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "match_score": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "text",
+              "vision"
+            ]
+          }
+        }
+      },
+      "maxItems": 2000
+    }
+  }
+}

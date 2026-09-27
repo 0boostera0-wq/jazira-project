@@ -1,0 +1,21 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260927-gen-01",
+  "kind": "gen",
+  "prompt_version": "generate.v1",
+  "scope": {
+    "subject": "middle/grade-1/math",
+    "lessons": 5
+  },
+  "counts": {
+    "generated": 7,
+    "accepted": 7
+  },
+  "agents": {
+    "claude_subagent": "available",
+    "deepseek": "unavailable"
+  },
+  "inputs": {
+    "manifest_sha256": "72fe0d961c89cdc8cf6a0c8663484fa8d2259521a0ecbdf00ad49be1a3a07b78"
+  }
+}

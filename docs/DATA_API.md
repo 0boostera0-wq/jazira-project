@@ -3,13 +3,14 @@
 Tables, RPCs and client data functions for the learning features: **exams**
 (runner, results, history, analytics), **community reads** (anonymous
 posting), **notifications**, **search**, **contact** and the **AI quota**.
-Database side: `supabase/migrations/0010_learning_platform.sql` and
-`0012_privacy_topics_analytics_search.sql` (tests: `tests/db/learning.test.js`,
-`tests/db/learning-0012.test.js`, `tests/db/anonymity.test.js`). Client side:
+Database side: `supabase/migrations/0010_learning_platform.sql`,
+`0012_privacy_topics_analytics_search.sql` and `0014_content_engine.sql` (tests: `tests/db/learning.test.js`,
+`tests/db/learning-0012.test.js`, `tests/db/anonymity.test.js`, `tests/db/content-*.test.js`). Client side:
 `src/lib/data/*.js` (community: `src/lib/social.js`).
 
 - [Conventions](#conventions)
 - [Exams](#exams) — [tables](#exam-tables) · [RPCs](#exam-rpcs) · [client](#exam-client-srclibdataexamsjs) · [local practice mode](#local-practice-mode) · [question bank & seed](#question-bank--seed)
+- [Content engine (0014)](#content-engine-0014) — [tables](#content-tables) · [template sessions](#template-sessions-signed-in) · [guests and secrets](#guest-sessions-and-secrets) · [import](#import-pipeline-service-role)
 - [Community: anonymous posting and feed RPCs](#community-anonymous-posting-and-feed-rpcs)
 - [Notifications](#notifications)
 - [Search](#search)
@@ -343,6 +344,117 @@ editing the JSON files and apply the new `0011` file.
 
 ---
 
+## Content engine (0014)
+
+`supabase/migrations/0014_content_engine.sql` adds the curriculum outline,
+typed questions, template-driven exam sessions, learner analytics and the
+staging import (design: `docs/CONTENT_ENGINE.md` §5–§6; tests:
+`tests/db/content-0014.test.js`, `content-engine-rpc.test.js`,
+`content-import.test.js`, `content-perf.test.js`). Every legacy RPC above keeps
+its signature and, for rows with `template_id is null`, exactly today's payload.
+
+### Content tables
+
+| table | main columns | client access |
+|---|---|---|
+| `content_sources` | `id, kind, name_ar, name_en, license_status, provenance_status, redistribution, publish_policy` | read |
+| `curriculum_nodes` | `id` (flat node id), `parent_id, kind (stage…lesson), stage, grade, track, subject, ord, title_ar, title_en, term, term_status, in_plan, status, unit_opener, search_norm` | read, except `status = 'source_only'` |
+| `subject_terms` | `subject_node_id, term, status, evidence` | read |
+| `curriculum_resources` | `id, source_id, subject_node_id, kind, title, part, year_label, url (https link-out), availability, term, term_status, status` | read (metadata only, nothing rehosted) |
+| `lesson_resource_ranges` | `lesson_node_id, resource_id, pdf_start, pdf_end, printed_start, printed_end, method, status` | read |
+| `learning_objectives` | `id, lesson_node_id, text_ar, text_en, origin, status` | read `validated` rows |
+| `exam_templates` | `id, version, kind, definition (exam-template@1), is_active` | read active |
+| `scope_pool_counts` | per `(node_id, band 0–3)`: `published_count, group_count, free_count, free_group_count` (node ids include `subject@t1/@t2` and `prep:` nodes) | read |
+| `learner_question_stats`, `learner_node_stats` | per learner: seen / answered / correct, wrong streak, band counts, time | read own; no writes |
+| `question_stimuli`, `question_curriculum`, `scope_pool_members`, `question_item_stats`, `question_revisions`, `content_import_*` | — | **none** (RPC payloads / service role only) |
+
+Changed tables (additive):
+- `questions`: `question_type, difficulty_level (1–5), item_style, provenance, status, validation_status, content_hash, revision, lesson_node_id, objective_id, stimulus_id, shuffle_options, fixed_order_reason, exclusion_group, payload_public, option_flags, source_*, import_origin, stem_norm`. `exam = 'school'` is the curriculum bank; its rows, and every staging-imported row (`import_origin = 'staging'`: the key is minted from a hash that includes the answer), are **not readable** through PostgREST (policy `exam <> 'school' and import_origin is distinct from 'staging'`); the legacy prep rows stay readable. Select is granted **per column**: today's columns plus `question_type, payload_public, difficulty_level, lesson_node_id`. `content_hash` (it includes the answer), `exclusion_group, provenance, validation_status, import_origin, revision`, source columns, `option_flags` and `stem_norm` are not granted.
+- `question_keys`: `answer` (canonical payload with the answer — the grading input), `explanation_steps`, `accepted_norm` (normalized short answers, computed **in SQL** with `search_normalize_v2`). `correct_index` may be null for non-mcq types.
+- `exam_attempts`: `template_id, template_version, scope, term_scope, seed, retake_of, timing_mode, feedback_mode, quota ('exam'|'practice'), bank_revision`; `exam` may be `'school'`; untimed sessions allow a 7-day deadline. The owner reads every column **except `seed`**.
+- `exam_attempt_items`: `choice_order, display_map, response` (canonical ids — **not granted**, server side only), `score, question_revision, locked_at, voided` (granted to the owner). `score` / `is_correct` stay null until the item is locked (`check_exam_item`) or the attempt is finalized. For template items `selected_index` holds the **display** index of an mcq / true_false answer (grading uses the canonical `response`).
+
+### Template sessions (signed in)
+
+**Question handles.** In every template payload (`start_template_attempt`,
+`get_exam_attempt`, `check_exam_item`, results) `questions[].key` / `items[].key`
+is an opaque per-attempt handle (`h-` + 20 hex), stable within the attempt and
+different across attempts — never the question key, which is derived from the
+answer (§2.2 of docs/CONTENT_ENGINE.md). Identify items by `position`.
+
+Errors are `P0001` with the code as `message` and JSON `details`. New codes:
+`template_not_found`, `scope_not_found`, `insufficient_pool {available, required}`,
+`feedback_not_allowed`, `invalid_response {position, reason}` (reasons include
+`bad_shape, bad_index, index_out_of_range, duplicate_left, duplicate_right,
+not_a_permutation, too_long, too_large, invalid_number, ambiguous_separator,
+fraction_not_allowed, too_many_decimals, empty`), `item_locked {position}`,
+`scope_too_large`, `seed_not_allowed`, `not_found`, `retire_refused {reason}`;
+plus the existing `daily_limit_reached` (now with `quota`), `premium_required`,
+`attempt_not_found`, `attempt_closed`, `invalid_argument {field}`.
+
+| RPC | grants | notes |
+|---|---|---|
+| `start_template_attempt(p_template, p_scope, p_count = null, p_timing = null, p_feedback = null, p_retake_of = null) → jsonb` | authenticated, service_role | Scope grammar `node[@t1|@t2|@year]`, `prep:exam[/section[/topic]]`, `weak:[node]`. Tier clamping (free: 25 questions, mini versions below a template's min, e.g. full year → 25), quotas (free: 5 `exam` sessions — legacy attempts included — and 30 `practice` sessions per Riyadh day), server seed (a `seed` argument → `seed_not_allowed`), selection in SQL (`_ce_select_rows`, identical to the JS engine), a retake reuses the stored allocation and must be the caller's attempt (`not_found`). Payload §5.7: `questions[]` with **display indexes only** (`options[{index,text}]`, `public.left/right/items[{index,text}]`), never ids, answers or explanations. |
+| `save_exam_response(p_attempt, p_position smallint, p_response jsonb, p_time_spent int = 0, p_flagged boolean = null) → jsonb` | authenticated, service_role | `p_response` in display indexes: `{option_index}`, `{pairs:[[l,r]…]}`, `{order:[i…]}`, `{text}`, `{value, unit?}`; mapped to canonical ids and stored; refused on a locked item and after `expires_at + 30 s`. Never writes a score. |
+| `check_exam_item(p_attempt, p_position smallint) → jsonb` | authenticated, service_role | Immediate-feedback sessions only: grades the saved response, locks the item, returns verdict, score, correct response, explanation, objective, lesson and source. |
+| `submit_exam_attempt(p_attempt, p_answers = null)` / `get_exam_attempt(p_attempt)` | unchanged | Template attempts: `p_answers[].response` (display indexes; `selected_index` still accepted for mcq); locked positions keep their lock-time response; answers after the grace period are ignored; items whose question revision changed are **voided** (excluded from the score, rendered from `question_revisions`). Result: `attempt, items[] (verdict, score, response, correct_response, explanation, objective, lesson {id,title,href}, source {resource_id,title,printed_start,printed_end,url}), by_lesson, by_band, by_term (full year), by_topic (prep), voided_count, answered_count`. In progress: `questions`, `answers[] {position, response, flagged, time_spent_seconds, locked, check}`, `timing_mode`, `feedback_mode`. |
+| `abandon_exam_attempt(p_attempt) → jsonb` | authenticated, service_role | Finalizes as `abandoned`: answered items graded for the statistics, no XP. Untimed sessions past their 7-day deadline are abandoned lazily. |
+| `list_exam_attempts_v2(p_limit = 20, p_before = null, p_before_id = null) → jsonb` | authenticated, service_role | Like `list_exam_attempts` plus `topic, template_id, template_version, scope, scope_title, term_scope, retake_of`. |
+| `get_learning_stats(p_node = null) → jsonb` | authenticated, service_role | Totals, by band, weakest lessons (answered ≥ 5, Wilson lower bound z = 1.645), repeated mistakes (wrong streak ≥ 2), 7/30-day trend; `by_topic` for Elite, otherwise listed in `locked`. |
+| `get_practice_recommendations(p_limit = 5) → jsonb` | authenticated, service_role | `[{kind: weakness_review|lesson_review|lesson_quiz, node, title, reason {accuracy, answered}, href}]`. |
+| `get_scope_availability(p_node) → jsonb` | anon, authenticated | Pool counts per band, exclusion components, and per template listing the scope kind: `offered, mini, min_pool, reason` (anon = guest tier). |
+| `search_content(p_q, p_kinds = null, p_node = null, p_limit = 10, p_offset = 0, p_anon = false) → jsonb` | authenticated, service_role | Groups `node, resource, exam`, and — signed in, never with `p_anon` — `question` as **lesson-level counts** (never stems). `p_q` ≥ 2 characters (≥ 3 for questions), totals capped at 100, `statement_timeout = 500ms`. Guests go through the rate-limited `GET /api/content/search` route. |
+
+### Guest sessions and secrets
+
+Guests use `POST /api/exams/session/{start,check,submit}` (stateless signed
+tokens v2; nothing is saved and results say so). With a service role the
+routes select in SQL:
+
+| RPC | grants | notes |
+|---|---|---|
+| `ce_guest_start(p_template, p_scope, p_seed, p_seen text[], p_count) → jsonb` | service_role | Guest tier and scope caps, premium never included, `p_seen` ≤ 300 keys. Returns only the picked content rows (canonical ids stay server side; the route turns them into display indexes) and the stored allocation. |
+| `ce_guest_items(p_keys text[], p_with_keys boolean) → jsonb` | service_role | Content (and at check/submit time the key: canonical payload, explanation, objective, source) of published non-premium keys, in `p_keys` order. |
+
+Environment (see `docs/DATABASE_SETUP.md`): `LOCAL_EXAM_SECRET` signs guest
+tokens (≥ 32 chars for v2); `LOCAL_EXAM_SECRET_PREVIOUS` is accepted during a
+rotation; with `EXAM_SECRET_REQUIRED=1` the guest routes answer
+`503 {error: "unavailable"}` when the secret is missing. Without the flag a
+missing secret is derived from the existing server-only secrets (a warning is
+logged), so live practice never goes down.
+
+### Import pipeline (service role)
+
+`node scripts/content/import-staging.mjs --target pglite|supabase [--run <id>] [--resume] [--only sources,resources,curriculum,objectives,stimuli,questions,templates] [--batch 500] [--dry-run] [--no-retire]`
+
+| RPC | notes |
+|---|---|
+| `ce_import_begin(p_manifest jsonb) → uuid` | The staging manifest (`manifest@1`: `sha256`, `removed[]`) plus `run {target, only, filtered, …}`. |
+| `ce_import_batch(p_run, p_entity, p_batch_no, p_rows jsonb) → jsonb` | ≤ 500 rows, one transaction, `jazira.bulk_import = on`; entities `sources, nodes, resources, subject_terms, lesson_ranges, objectives, stimuli, questions, templates`. Each row is an isolated upsert (unchanged rows untouched); a bad row is rejected into `content_import_errors` and the batch continues. A changed question appends its previous version to `question_revisions` and bumps `revision`. `duplicate_content` for a content hash shared with another manifest row (or an active row). |
+| `ce_import_retire(p_run, p_keys text[]) → jsonb` | Only keys of the manifest's `removed[]`: `is_active = false, status = 'retired'` (never deleted). `retire_refused {reason: only | import_errors | filtered_publish_set}` with nothing retired. |
+| `ce_import_finish(p_run) → jsonb` | Closes the run, calls `ce_refresh_aggregates()` once, returns per-entity counts. |
+| `ce_refresh_aggregates() → void` | Rebuilds `question_bank_counts`, `scope_pool_members` and `scope_pool_counts`. |
+
+Only `published` questions are sent; for `--target supabase` a question whose
+source's `publish_policy` is not `derived_questions_allowed` (internal sources
+always qualify) is held back. Retirement runs **before** question inserts and
+only for keys of shards the run fully covers. The checkpoint
+(`<cache>/import/<target>/checkpoint.json`) makes a stopped run resumable
+(`--resume`, same manifest sha). Reports: `data/staging/reports/import/<target>-<run>.json`
+(supabase) or the cache (pglite).
+
+**Never re-apply `0011_seed_questions.sql` after an import**: it resets
+`is_active` of the seeded rows. The importer updates only the new columns of
+the 300 legacy rows (their stem, choices and key stay as seeded); a staging
+record whose choices, type or answer differ from the seeded row is rejected
+(`legacy_mismatch {field: choices | question_type | answer}`). The legacy
+builder (`start_exam_attempt`) and `question_bank_counts` use `mcq` /
+`true_false` items only. `--resume` needs the database of the stopped run
+(the CLI's `--target pglite` is a fresh in-memory database, so it refuses) and
+the same `--only`.
+
+---
+
 ## Community: anonymous posting and feed RPCs
 
 Since 0012 anonymity is a property of each **post and comment**, not of the
@@ -546,7 +658,9 @@ function; two-argument calls still work).
   **posts** — author only when the post is public or the caller's own
   (`is_mine`), public posts by members the caller blocked are skipped;
   **tags** — all; **questions** — active only, premium only for premium callers
-  (the same rule as the `questions` RLS), only `id/section/topic/snippet`.
+  (the same rule as the `questions` RLS), only `id/section/topic/snippet`;
+  never the curriculum bank (`exam = 'school'`, excluded by 0014 — school
+  items are found lesson-level only, through `search_content`).
 - Snippets are a window of the original text around the (normalised) match.
 
 ```json
@@ -652,9 +766,15 @@ estimate in `useAiUsage`).
 | object | anon | authenticated | notes |
 |---|---|---|---|
 | `question_sources` | select | select | |
-| `questions` | select active non-premium | select active; premium if `has_premium` | no writes |
+| `questions` | select active non-premium, granted columns only, never `exam = 'school'` | same; premium if `has_premium` | no writes; `content_hash` & co. not granted (0014) |
 | `question_keys`, `question_bank_counts`, `ai_usage` | — | — | no privileges at all |
-| `exam_attempts`, `exam_attempt_items` | — | select own | writes via RPCs only |
+| `exam_attempts`, `exam_attempt_items` | — | select own (items: no `choice_order`, `display_map`, `response`) | writes via RPCs only |
+| `content_sources`, `curriculum_nodes`, `subject_terms`, `curriculum_resources`, `lesson_resource_ranges`, `learning_objectives` (validated), `exam_templates` (active), `scope_pool_counts` | select | select | 0014; no writes |
+| `learner_question_stats`, `learner_node_stats` | — | select own | written only by `_exam_finalize` |
+| `question_stimuli`, `question_curriculum`, `scope_pool_members`, `question_item_stats`, `question_revisions`, `content_import_*` | — | — | no privileges |
+| RPCs: template sessions, `list_exam_attempts_v2`, `get_learning_stats`, `get_practice_recommendations`, `search_content` | — | execute | `SECURITY DEFINER`, `search_path = ''` |
+| `get_scope_availability` | execute | execute | counts only |
+| `ce_import_*`, `ce_refresh_aggregates`, `ce_guest_start`, `ce_guest_items` | — | — | service role only |
 | `contact_messages` | insert | insert | write-only |
 | `notification_preferences` | — | select/insert/update own | |
 | `community_posts`, `post_comments` | select public rows | select public rows + own anonymous rows; insert own (`is_anonymous` optional, never updatable) | others' anonymous rows only through the RPCs below |
@@ -672,7 +792,8 @@ estimate in `useAiUsage`).
   through `/api/exams/local/grade` by anyone who knows question keys (premium
   keys never). The per-IP limiter is per server instance only.
 - The free daily limit counts attempts started (including ones never
-  submitted). There is no RPC that sets `abandoned` yet.
+  submitted and abandoned ones). `abandon_exam_attempt` (0014) closes a
+  session without XP; practice-quota template sessions have their own limit.
 - XP is +2 per correct answer, also for repeated questions (premium users can
   take unlimited attempts).
 - `ai_quota()` is a check, not a reservation: two simultaneous requests at the

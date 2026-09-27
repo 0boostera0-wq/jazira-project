@@ -1,0 +1,622 @@
+{
+ "schema": "engine-allocations@1",
+ "description": "allocate() conformance (§5.3 steps 4–7): cells are [cell id, unseen quota, seen quota] in C order; 'hand:' cases were computed by hand (see the design's largest-remainder rule).",
+ "cases": [
+  {
+   "name": "hand: one stratum, no caps hit (5/3/2)",
+   "n": 10,
+   "mix": {
+    "easy": 50,
+    "medium": 30,
+    "hard": 20
+   },
+   "strata": [
+    {
+     "id": "s",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 6,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 4,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 3,
+       "seen": 0
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "min_per_stratum": 1,
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "targets": [
+     5,
+     3,
+     2
+    ],
+    "cells": [
+     [
+      "s#1",
+      5,
+      0
+     ],
+     [
+      "s#2",
+      3,
+      0
+     ],
+     [
+      "s#3",
+      2,
+      0
+     ]
+    ],
+    "placed": 10,
+    "reused": 0,
+    "lower_bound": false,
+    "prepass": [
+     "s"
+    ]
+   }
+  },
+  {
+   "name": "hand: a capped band redistributes (2/5/3)",
+   "n": 10,
+   "mix": {
+    "easy": 50,
+    "medium": 30,
+    "hard": 20
+   },
+   "strata": [
+    {
+     "id": "s",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 2,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 10,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 10,
+       "seen": 0
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "min_per_stratum": 1,
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "targets": [
+     5,
+     3,
+     2
+    ],
+    "cells": [
+     [
+      "s#1",
+      2,
+      0
+     ],
+     [
+      "s#2",
+      5,
+      0
+     ],
+     [
+      "s#3",
+      3,
+      0
+     ]
+    ],
+    "placed": 10,
+    "reused": 0,
+    "lower_bound": false,
+    "prepass": [
+     "s"
+    ]
+   }
+  },
+  {
+   "name": "hand: reuse pass capped at ceil(10·30/100) = 3",
+   "n": 10,
+   "mix": {
+    "easy": 50,
+    "medium": 30,
+    "hard": 20
+   },
+   "strata": [
+    {
+     "id": "s",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 2,
+       "seen": 5
+      },
+      "2": {
+       "unseen": 2,
+       "seen": 5
+      },
+      "3": {
+       "unseen": 1,
+       "seen": 5
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "min_per_stratum": 1,
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "targets": [
+     5,
+     3,
+     2
+    ],
+    "cells": [
+     [
+      "s#1",
+      2,
+      1
+     ],
+     [
+      "s#2",
+      2,
+      1
+     ],
+     [
+      "s#3",
+      1,
+      1
+     ]
+    ],
+    "placed": 8,
+    "reused": 3,
+    "lower_bound": false,
+    "prepass": [
+     "s"
+    ]
+   }
+  },
+  {
+   "name": "hand: reuse off leaves the session short",
+   "n": 10,
+   "mix": {
+    "easy": 50,
+    "medium": 30,
+    "hard": 20
+   },
+   "strata": [
+    {
+     "id": "s",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 2,
+       "seen": 5
+      },
+      "2": {
+       "unseen": 2,
+       "seen": 5
+      },
+      "3": {
+       "unseen": 1,
+       "seen": 5
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "min_per_stratum": 1,
+   "allow_reuse": false,
+   "max_reuse_share": 30,
+   "expected": {
+    "targets": [
+     5,
+     3,
+     2
+    ],
+    "cells": [
+     [
+      "s#1",
+      2,
+      0
+     ],
+     [
+      "s#2",
+      2,
+      0
+     ],
+     [
+      "s#3",
+      1,
+      0
+     ]
+    ],
+    "placed": 5,
+    "reused": 0,
+    "lower_bound": false,
+    "prepass": [
+     "s"
+    ]
+   }
+  },
+  {
+   "name": "coverage: every stratum first, then lesson-count weights",
+   "n": 9,
+   "mix": {
+    "easy": 30,
+    "medium": 50,
+    "hard": 20
+   },
+   "strata": [
+    {
+     "id": "u1",
+     "weight": 3,
+     "cap": {
+      "1": {
+       "unseen": 4,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 4,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 2,
+       "seen": 0
+      }
+     }
+    },
+    {
+     "id": "u2",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 2,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 2,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 1,
+       "seen": 0
+      }
+     }
+    },
+    {
+     "id": "u3",
+     "weight": 2,
+     "cap": {
+      "1": {
+       "unseen": 3,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 3,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 1,
+       "seen": 0
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "min_per_stratum": 1,
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "targets": [
+     3,
+     4,
+     2
+    ],
+    "cells": [
+     [
+      "u1#1",
+      1,
+      0
+     ],
+     [
+      "u1#2",
+      2,
+      0
+     ],
+     [
+      "u1#3",
+      1,
+      0
+     ],
+     [
+      "u2#2",
+      2,
+      0
+     ],
+     [
+      "u3#1",
+      2,
+      0
+     ],
+     [
+      "u3#2",
+      1,
+      0
+     ]
+    ],
+    "placed": 9,
+    "reused": 0,
+    "lower_bound": false,
+    "prepass": [
+     "u2",
+     "u1",
+     "u3"
+    ]
+   }
+  },
+  {
+   "name": "lower bound: n < |S|",
+   "n": 4,
+   "mix": {
+    "easy": 40,
+    "medium": 40,
+    "hard": 20
+   },
+   "strata": [
+    {
+     "id": "l1",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 0
+      }
+     }
+    },
+    {
+     "id": "l2",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 0
+      }
+     }
+    },
+    {
+     "id": "l3",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 0
+      }
+     }
+    },
+    {
+     "id": "l4",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 0
+      }
+     }
+    },
+    {
+     "id": "l5",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 0
+      }
+     }
+    },
+    {
+     "id": "l6",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 0
+      }
+     }
+    }
+   ],
+   "seed": "fedcba9876543210fedcba9876543210",
+   "min_per_stratum": 1,
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "targets": [
+     1,
+     2,
+     1
+    ],
+    "cells": [
+     [
+      "l1#1",
+      1,
+      0
+     ],
+     [
+      "l2#2",
+      1,
+      0
+     ],
+     [
+      "l3#2",
+      1,
+      0
+     ],
+     [
+      "l5#2",
+      1,
+      0
+     ]
+    ],
+    "placed": 4,
+    "reused": 0,
+    "lower_bound": true,
+    "prepass": [
+     "l5",
+     "l3",
+     "l1",
+     "l2"
+    ]
+   }
+  },
+  {
+   "name": "zero error rates fall back to equal weights",
+   "n": 6,
+   "mix": {
+    "easy": 40,
+    "medium": 40,
+    "hard": 20
+   },
+   "strata": [
+    {
+     "id": "a",
+     "weight": 0,
+     "cap": {
+      "1": {
+       "unseen": 3,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 3,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 3,
+       "seen": 0
+      }
+     }
+    },
+    {
+     "id": "b",
+     "weight": 0,
+     "cap": {
+      "1": {
+       "unseen": 3,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 3,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 3,
+       "seen": 0
+      }
+     }
+    }
+   ],
+   "seed": "5f2a9c0e7b1d4386a0f9e2c47d1b6a38",
+   "min_per_stratum": 1,
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "targets": [
+     2,
+     3,
+     1
+    ],
+    "cells": [
+     [
+      "a#1",
+      1,
+      0
+     ],
+     [
+      "a#2",
+      2,
+      0
+     ],
+     [
+      "b#1",
+      1,
+      0
+     ],
+     [
+      "b#2",
+      2,
+      0
+     ]
+    ],
+    "placed": 6,
+    "reused": 0,
+    "lower_bound": false,
+    "prepass": [
+     "a",
+     "b"
+    ]
+   }
+  }
+ ]
+}

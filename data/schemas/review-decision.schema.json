@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:review-decision",
+  "title": "Review decision (§4.4)",
+  "description": "data/staging/validation/review-decisions.jsonl, sorted by (question_id, revision). A decision is itself a human validation record.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "question_id",
+    "revision",
+    "decision",
+    "reviewer",
+    "decided_at",
+    "note"
+  ],
+  "properties": {
+    "schema": {
+      "const": "review-decision@1"
+    },
+    "question_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/question_id"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "accept_key",
+        "set_key",
+        "reject",
+        "repair"
+      ]
+    },
+    "answer": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reviewer": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "decided_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_datetime"
+    },
+    "note": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 1000
+    }
+  }
+}

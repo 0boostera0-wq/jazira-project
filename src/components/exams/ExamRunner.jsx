@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { AlertTriangle, ArrowLeft, ArrowRight, Check, CloudOff, Flag, Info, Keyboard, LayoutGrid, RotateCcw, Send } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ArrowRight, BookOpenCheck, Check, CloudOff, Flag, Hourglass, Info, Keyboard, LayoutGrid, RotateCcw, Send } from "lucide-react";
 import { useLocale, useT } from "@/i18n/client";
 import { formatNumber } from "@/i18n/format";
 import { saveAnswer, submitExam } from "@/lib/data/exams";
+import { checkItem } from "@/lib/data/exam-sessions";
 import { localizeHref } from "@/i18n/config";
 import Alert from "@/components/ui/Alert";
 import Badge from "@/components/ui/Badge";
@@ -22,6 +23,9 @@ import QuestionCard from "./QuestionCard";
 import QuestionNavigator, { NavigatorLegend } from "./QuestionNavigator";
 import RunnerTimer from "./RunnerTimer";
 import { answersPayload, keyAction, runnerReducer, summarize } from "./runner-logic";
+import { choicesOf, emptyResponse, isChoiceType, responseOf, typeOf } from "./question-logic";
+import { preloadInputs } from "./questions";
+import { errorMessage, sessionLessonTitle, templateName } from "./results-logic";
 
 const MAX_SPENT = 14400;
 
@@ -49,7 +53,22 @@ function backToPreviousPage(fallbackHref) {
 
 /** Does the offline draft of a question hold exactly what was just saved? */
 const sameAnswer = (draft, saved) =>
-  Boolean(draft && saved) && (draft.selected ?? null) === (saved.selected ?? null) && Boolean(draft.flagged) === Boolean(saved.flagged);
+  Boolean(draft && saved) &&
+  (draft.selected ?? null) === (saved.selected ?? null) &&
+  JSON.stringify(draft.response ?? null) === JSON.stringify(saved.response ?? null) &&
+  Boolean(draft.flagged) === Boolean(saved.flagged);
+
+/** Errors a save can end with that retrying never fixes (the autosave queue drops "invalid_argument"). */
+function settleSaveError(e) {
+  if (e?.code === "item_locked") return null; // checked in the meantime: the checked answer is final
+  if (e?.code === "invalid_response") {
+    const x = new Error("invalid_argument");
+    x.code = "invalid_argument";
+    x.details = e.details ?? null;
+    throw x;
+  }
+  throw e;
+}
 
 /**
  * The exam runner. Renders immediately from a normalised session
@@ -65,6 +84,9 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
   const tc = useT("common");
   const { locale, isRTL } = useLocale();
   const isLocal = session.mode === "local";
+  // guest template sessions keep their answers in this browser (exam-sessions.js) — nothing to draft or sync
+  const ephemeral = session.mode !== "db";
+  const isTemplate = Boolean(session.template);
 
   const positions = useMemo(() => session.questions.map((q) => q.position), [session]);
   const byPos = useMemo(() => Object.fromEntries(session.questions.map((q) => [q.position, q])), [session]);
@@ -88,8 +110,14 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
   // What the member asked to do while the exam runs:
   //   { kind: "link", href, link } | { kind: "back" } | { kind: "nav", proceed }
   const [leaveTarget, setLeaveTarget] = useState(null);
+  // immediate feedback: the position being checked and the last error per position
+  const [checking, setChecking] = useState(null);
+  const [checkErrors, setCheckErrors] = useState({});
 
-  const summary = summarize(state.answers, positions);
+  const summary = summarize(state.answers, positions, isTemplate ? byPos : null);
+  // "Guests can take up to N": a template session names its tier cap (max_questions) —
+  // it can also be short because the pool is small, which is not the guest cap.
+  const guestCap = isTemplate ? session.maxQuestions : summary.total;
   const index = positions.indexOf(state.current);
   const question = byPos[state.current];
   const isLast = index === positions.length - 1;
@@ -97,19 +125,29 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
   // ── autosave (created in an effect so StrictMode remounts get a live queue) ──
   useEffect(() => {
     const q = createAutosave({
-      save: (pos, p) => saveAnswer(session.id, pos, p.selected, { timeSpentSeconds: p.spent, flagged: p.flagged }),
-      getPayload: (pos) => ({
-        selected: stateRef.current.answers[pos]?.selected ?? null,
-        flagged: Boolean(stateRef.current.answers[pos]?.flagged),
-        spent: Math.min(MAX_SPENT, Math.round(spentRef.current[pos] || 0)),
-      }),
-      delay: isLocal ? 120 : 700,
+      save: (pos, p) => {
+        if (!isTemplate) return saveAnswer(session.id, pos, p.selected, { timeSpentSeconds: p.spent, flagged: p.flagged });
+        // template sessions save display responses; a cleared answer is an explicit empty response in the database
+        const q = byPos[pos];
+        const value = responseOf(q, p) ?? (session.mode === "db" ? emptyResponse(typeOf(q)) : null);
+        return saveAnswer(session.id, pos, value, { timeSpentSeconds: p.spent, flagged: p.flagged }).catch(settleSaveError);
+      },
+      getPayload: (pos) => {
+        const a = stateRef.current.answers[pos];
+        return {
+          selected: a?.selected ?? null,
+          ...(a && "response" in a ? { response: a.response ?? null } : {}),
+          flagged: Boolean(a?.flagged),
+          spent: Math.min(MAX_SPENT, Math.round(spentRef.current[pos] || 0)),
+        };
+      },
+      delay: ephemeral ? 120 : 700,
       onStatus: setSaveStatus,
       onSaved: (pos, saved) => {
         // Forget the device copy only when it holds exactly what the server now
         // has: a newer change made while this save was in flight stays in the
         // draft (and in the queue) until it is sent.
-        if (isLocal || !sameAnswer(draftRef.current[pos], saved)) return;
+        if (ephemeral || !sameAnswer(draftRef.current[pos], saved)) return;
         delete draftRef.current[pos];
         writeDraft(session.id, draftRef.current);
       },
@@ -140,14 +178,51 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
       stateRef.current = next;
       dispatch(action);
       if (action.position === undefined) return;
-      if (!isLocal) {
+      if (!ephemeral) {
         draftRef.current[action.position] = { ...next.answers[action.position], spent: Math.round(spentRef.current[action.position] || 0) };
         writeDraft(session.id, draftRef.current);
       }
       autosaveRef.current?.queue(action.position);
     },
-    [isLocal, session.id]
+    [ephemeral, session.id]
   );
+
+  // ── immediate feedback: save the latest answer, grade it on the server, lock it ──
+  const checkCurrent = useCallback(
+    async (position) => {
+      if (checking !== null) return;
+      const q = byPos[position];
+      const a = stateRef.current.answers[position];
+      const response = responseOf(q, a);
+      if (!q || !response || a?.locked) return;
+      setChecking(position);
+      setCheckErrors((e) => ({ ...e, [position]: null }));
+      try {
+        await saveAnswer(session.id, position, response, {
+          timeSpentSeconds: Math.min(MAX_SPENT, Math.round(spentRef.current[position] || 0)),
+          flagged: Boolean(a.flagged),
+        }).catch(settleSaveError);
+        const result = await checkItem(session.id, position);
+        change({ type: "lock", position, check: result });
+      } catch (e) {
+        const code = e?.code || "unknown";
+        if (code === "item_locked") change({ type: "lock", position, check: null });
+        else if (code === "attempt_closed") onReload?.();
+        else if (code === "invalid_response" || code === "invalid_argument") {
+          const reason = e.details?.reason;
+          setCheckErrors((x) => ({ ...x, [position]: reason && t.has(`runner.numeric.issues.${reason}`) ? t(`runner.numeric.issues.${reason}`) : t("runner.check.invalid") }));
+        } else setCheckErrors((x) => ({ ...x, [position]: errorMessage(t, code, e?.details, tc) }));
+      } finally {
+        setChecking(null);
+      }
+    },
+    [checking, byPos, session.id, change, onReload, t, tc]
+  );
+
+  // matching / ordering inputs are a separate chunk: fetch the ones this session uses right away
+  useEffect(() => {
+    preloadInputs(session.questions.map((q) => q.type).filter(Boolean));
+  }, [session.questions]);
 
   const go = useCallback((position) => {
     dispatch({ type: "goto", position });
@@ -201,7 +276,7 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
       submittingRef.current = true;
       setSubmit({ status: "submitting", auto, code: null });
       try {
-        const result = await submitExam(session.id, answersPayload(positions, stateRef.current.answers, spentRef.current));
+        const result = await submitExam(session.id, answersPayload(positions, stateRef.current.answers, spentRef.current, isTemplate ? byPos : null));
         autosaveRef.current?.cancel();
         clearDraft(session.id);
         // Drop the Back sentinel (same URL) so Back from the results leaves the page at once.
@@ -220,7 +295,7 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
         setSubmit({ status: "error", auto, code });
       }
     },
-    [session.id, positions, onResult, onReload]
+    [session.id, positions, onResult, onReload, isTemplate, byPos]
   );
 
   const onExpire = useCallback(() => {
@@ -248,7 +323,8 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
       if (!onChoice && e.target?.closest?.("input, textarea, select, [contenteditable='true'], dialog")) return;
       if (document.querySelector("dialog[open]")) return;
       const q = byPos[stateRef.current.current];
-      const a = keyAction(e, { rtl: isRTL, choices: q?.choices.length || 4 });
+      // digits choose options of choice items only (typed answers have no 1–6)
+      const a = keyAction(e, { rtl: isRTL, choices: q ? (isChoiceType(typeOf(q)) ? choicesOf(q).length : 0) : 4 });
       if (!a) return;
       if (onChoice && (a.type === "next" || a.type === "prev")) return;
       e.preventDefault();
@@ -356,10 +432,14 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
     setLeaveTarget(null);
   };
 
-  const Icon = examIcon(session.exam);
-  const title = [t(`types.${session.exam}`), sectionLabel(t, session.exam, session.section), session.topic ? topicLabel(t, session.topic) : null]
-    .filter(Boolean)
-    .join(" · ");
+  const Icon = isTemplate ? BookOpenCheck : examIcon(session.exam);
+  const title = isTemplate
+    ? templateName(t, session.template.id, session.mini)
+    : [t(`types.${session.exam}`), sectionLabel(t, session.exam, session.section), session.topic ? topicLabel(t, session.topic) : null]
+      .filter(Boolean)
+      .join(" · ");
+  // the lesson (or the one lesson every question belongs to) names the scope of a template session
+  const scopeTitle = isTemplate ? sessionLessonTitle(session.questions) : null;
   const progress = (summary.answered / summary.total) * 100;
   const submitting = submit.status === "submitting";
 
@@ -370,15 +450,24 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
         <div className="flex h-16 items-center gap-3">
           <IconTile icon={Icon} tone="gold" size="sm" className="hidden xs:inline-grid" />
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-[0.9375rem] font-bold text-ink">{title}</h1>
-            <p className="t-caption truncate tabular">
+            <h1 className="truncate text-[0.9375rem] font-bold text-ink">
+              {title}
+              {scopeTitle ? <span className="font-normal text-ink-2"> · <bdi lang="ar" dir="rtl">{scopeTitle}</bdi></span> : null}
+            </h1>
+            <p className="t-caption truncate tabular" aria-live="off">
               {t("runner.questionOf", { current: index + 1, total: summary.total })}
               <span className="hidden sm:inline"> · {t("runner.answeredOf", { answered: summary.answered, total: summary.total })}</span>
+              <span> · {t("runner.unansweredCount", { count: summary.unanswered })}</span>
+              {summary.flagged > 0 && <span className="hidden sm:inline"> · {t("runner.flaggedCount", { count: summary.flagged })}</span>}
             </p>
           </div>
-          {isLocal && <Badge tone="info" size="sm" icon={Info} className="hidden md:inline-flex">{t("runner.practice.badge")}</Badge>}
-          {!isLocal && <SaveIndicator t={t} status={saveStatus} compact />}
-          <RunnerTimer deadline={session.deadline} limit={session.timeLimitSeconds} onExpire={onExpire} />
+          {ephemeral && <Badge tone="info" size="sm" icon={Info} className="hidden md:inline-flex">{t("runner.practice.badge")}</Badge>}
+          {!ephemeral && <SaveIndicator t={t} status={saveStatus} compact />}
+          {session.timed ? (
+            <RunnerTimer deadline={session.deadline} limit={session.timeLimitSeconds} onExpire={onExpire} />
+          ) : (
+            <Badge tone="neutral" icon={Hourglass} className="shrink-0"><span className="sr-only sm:not-sr-only">{t("runner.untimed")}</span></Badge>
+          )}
           <button
             type="button"
             onClick={() => setNavOpen(true)}
@@ -391,10 +480,21 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
         <ProgressBar value={progress} tone="green" size="sm" label={t("runner.answeredOf", { answered: summary.answered, total: summary.total })} className="!h-[3px] !rounded-none !bg-transparent" />
       </div>
 
-      {isLocal && (
+      {ephemeral && (
         <Alert tone="info" className="mt-5">
           {t("runner.practice.body")}
-          {!isSignedIn && session.limited && session.requested ? ` ${t("runner.practice.limited", { requested: tc("units.questions", { count: session.requested }), questions: tc("units.questions", { count: summary.total }) })}` : ""}
+          {!isSignedIn && session.limited && session.requested && guestCap && guestCap < session.requested
+            ? ` ${t("runner.practice.limited", { requested: tc("units.questions", { count: session.requested }), questions: tc("units.questions", { count: guestCap }) })}`
+            : ""}
+        </Alert>
+      )}
+      {isTemplate && (session.mini || session.reused || session.short) && (
+        <Alert tone={session.short ? "warning" : "info"} className="mt-3">
+          {[
+            session.mini ? t("runner.notices.mini") : null,
+            session.reused ? t("runner.notices.reused") : null,
+            session.short ? t("runner.notices.short", { questions: tc("units.questions", { count: summary.total }) }) : null,
+          ].filter(Boolean).join(" ")}
         </Alert>
       )}
 
@@ -409,7 +509,12 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
             answer={state.answers[state.current]}
             onChoose={(i) => change({ type: "select", position: state.current, index: i })}
             onClear={() => change({ type: "clear", position: state.current })}
+            onRespond={(response) => change({ type: "respond", position: state.current, response })}
             onFlag={flag}
+            feedback={session.feedbackMode}
+            onCheck={() => checkCurrent(state.current)}
+            checking={checking === state.current}
+            checkError={checkErrors[state.current] ?? null}
           />
           {/* desktop step buttons */}
           <div className="mt-4 hidden items-center justify-between gap-3 lg:flex">
@@ -434,7 +539,7 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
               <QuestionNavigator t={t} positions={positions} answers={state.answers} current={state.current} onGo={go} className="mt-4 max-h-[40vh] overflow-y-auto p-1" />
               <NavigatorLegend t={t} className="mt-4" />
               <Button block className="mt-5" onClick={() => setConfirmOpen(true)} iconStart={Send}>{t("runner.submit")}</Button>
-              {!isLocal && <SaveIndicator t={t} status={saveStatus} className="mt-3 justify-center" />}
+              {!ephemeral && <SaveIndicator t={t} status={saveStatus} className="mt-3 justify-center" />}
             </section>
             <section aria-labelledby="keys-title" className="surface-tint p-4">
               <h2 id="keys-title" className="flex items-center gap-2 text-sm font-medium text-ink">
@@ -488,7 +593,7 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
         <Button block className="mt-5" onClick={() => { setNavOpen(false); setConfirmOpen(true); }} iconStart={Send}>
           {t("runner.submit")}
         </Button>
-        {!isLocal && <SaveIndicator t={t} status={saveStatus} className="mt-3 justify-center" />}
+        {!ephemeral && <SaveIndicator t={t} status={saveStatus} className="mt-3 justify-center" />}
       </Dialog>
 
       {/* confirm submit */}
@@ -523,7 +628,16 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
           ))}
         </dl>
         {summary.unanswered > 0 && <p className="t-small mt-4 text-ink-2">{t("runner.confirm.unansweredWarn")}</p>}
+        {summary.invalid > 0 && (
+          <p role="status" className="t-small mt-3 flex items-start gap-1.5 font-medium text-warning">
+            <AlertTriangle size={15} aria-hidden="true" className="mt-0.5 shrink-0" />
+            {t("runner.confirm.invalidWarn", { count: summary.invalid })}
+          </p>
+        )}
         <div className="mt-3 flex flex-col items-start gap-1">
+          {summary.firstInvalid !== null && (
+            <Button variant="link" size="sm" onClick={() => { setConfirmOpen(false); go(summary.firstInvalid); }}>{t("runner.confirm.reviewInvalid")}</Button>
+          )}
           {summary.firstUnanswered !== null && (
             <Button variant="link" size="sm" onClick={() => { setConfirmOpen(false); go(summary.firstUnanswered); }}>{t("runner.confirm.reviewUnanswered")}</Button>
           )}
@@ -565,7 +679,7 @@ export default function ExamRunner({ session, isSignedIn, onResult, onReload }) 
           </>
         }
       >
-        <p className="t-body text-ink-2">{isLocal ? t("runner.leave.bodyLocal") : t("runner.leave.body")}</p>
+        <p className="t-body text-ink-2">{isLocal ? t("runner.leave.bodyLocal") : session.mode === "guest" ? t("runner.leave.bodyGuest") : t("runner.leave.body")}</p>
       </Dialog>
     </div>
   );

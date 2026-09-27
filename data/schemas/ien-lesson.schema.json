@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:ien-lesson",
+  "title": "iEN unit → lesson row (crawl, §4.1)",
+  "description": "data/staging/sources/ien/lessons.jsonl (titles and counts only, never question text).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "subject_ien_id",
+    "unit_ien_id",
+    "unit_title",
+    "lesson_ien_id",
+    "lesson_title",
+    "order",
+    "ien_bank_count",
+    "ien_bank_total"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ien-lesson@1"
+    },
+    "subject_ien_id": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unit_ien_id": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unit_title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "lesson_ien_id": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lesson_title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ien_bank_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ien_bank_total": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

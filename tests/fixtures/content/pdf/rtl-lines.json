@@ -1,0 +1,162 @@
+{
+ "description": "RTL lines given out of order: words right-to-left, word gaps without space items (first line) and with them, glued items without a gap stay one word, digit and Latin runs keep their left-to-right order.",
+ "page": {
+  "pdf_page": 10,
+  "width": 600,
+  "height": 800,
+  "images": 0,
+  "items": [
+   {
+    "str": "1-2",
+    "dir": "ltr",
+    "x": 502,
+    "y": 100,
+    "w": 18,
+    "size": 12
+   },
+   {
+    "str": "من",
+    "dir": "rtl",
+    "x": 492,
+    "y": 130,
+    "w": 12,
+    "size": 12
+   },
+   {
+    "str": "النس",
+    "dir": "rtl",
+    "x": 416,
+    "y": 100,
+    "w": 24,
+    "size": 12
+   },
+   {
+    "str": "20",
+    "dir": "ltr",
+    "x": 464,
+    "y": 130,
+    "w": 12,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 521,
+    "y": 130,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "12",
+    "dir": "ltr",
+    "x": 508,
+    "y": 130,
+    "w": 12,
+    "size": 12
+   },
+   {
+    "str": "بية",
+    "dir": "rtl",
+    "x": 398,
+    "y": 100,
+    "w": 18,
+    "size": 12
+   },
+   {
+    "str": "www.ien.edu.sa",
+    "dir": "ltr",
+    "x": 442,
+    "y": 160,
+    "w": 84,
+    "size": 12
+   },
+   {
+    "str": "الصفحة",
+    "dir": "rtl",
+    "x": 524,
+    "y": 130,
+    "w": 36,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 489,
+    "y": 130,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "زوروا",
+    "dir": "rtl",
+    "x": 530,
+    "y": 160,
+    "w": 30,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 439,
+    "y": 160,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 527,
+    "y": 160,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "الأعداد",
+    "dir": "rtl",
+    "x": 450,
+    "y": 100,
+    "w": 42,
+    "size": 12
+   },
+   {
+    "str": "26",
+    "dir": "ltr",
+    "x": 476,
+    "y": 130,
+    "w": 12,
+    "size": 12
+   },
+   {
+    "str": "للمزيد",
+    "dir": "rtl",
+    "x": 402,
+    "y": 160,
+    "w": 36,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 505,
+    "y": 130,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "الدرس",
+    "dir": "rtl",
+    "x": 530,
+    "y": 100,
+    "w": 30,
+    "size": 12
+   }
+  ]
+ },
+ "expect": {
+  "lines": [
+   "الدرس 1-2 الأعداد النسبية",
+   "الصفحة 12 من 2026",
+   "زوروا www.ien.edu.sa للمزيد"
+  ]
+ }
+}

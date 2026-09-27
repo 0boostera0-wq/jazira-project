@@ -39,7 +39,14 @@ yarn-error.log*
 # large library prefer the Supabase store (CONTENT_STORE=remote) to keep the
 # repo light — then the PDFs live in Supabase, not git.
 
+# content engine — cross-AI exchange batches and interrupted writes/downloads
+# (textbook PDFs, page text, renders and transcripts live outside the repo in
+# C:/jazira/content-cache or $CONTENT_CACHE_DIR; docs/CONTENT_ENGINE.md §3)
+/data/staging/validation/exchange/
+*.part
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 /.next-prod/
+/.next-integrate/

@@ -1146,7 +1146,9 @@ describe("re-running 0010", () => {
     }
     const overloads = await h.sql(
       `select proname, count(*)::int n from pg_proc
-        where pronamespace = 'public'::regnamespace and proname in ('start_exam_attempt', 'search_all', '_exam_pick')
+        where pronamespace = 'public'::regnamespace and proname in ('start_exam_attempt', 'search_all', '_exam_pick',
+          'submit_exam_attempt', 'get_exam_attempt', '_exam_finalize', 'start_template_attempt', 'save_exam_response',
+          'check_exam_item', 'search_content', '_ce_display_maps', '_ce_pool', 'search_normalize_v2')
         group by proname order by proname`);
     expect(overloads.every((r) => r.n === 1)).toBe(true);
     const after = await h.sql("select (select count(*) from public.questions)::int q, (select count(*) from public.question_keys)::int k, (select count(*) from public.question_sources)::int s, (select count(*) from public.question_bank_counts)::int c");

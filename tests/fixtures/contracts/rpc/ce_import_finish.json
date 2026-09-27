@@ -1,0 +1,34 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "ce_import_finish",
+ "signature": "ce_import_finish(p_run uuid) → jsonb",
+ "grants": [
+  "service_role"
+ ],
+ "description": "Closes the run, calls ce_refresh_aggregates() once and returns the report counts.",
+ "cases": [
+  {
+   "name": "finish",
+   "role": "service_role",
+   "match": "shape",
+   "args": {
+    "p_run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f"
+   },
+   "response": {
+    "run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "status": "done",
+    "counts": {
+     "questions": {
+      "inserted": 480,
+      "updated": 12,
+      "unchanged": 8,
+      "rejected": 1,
+      "retired": 1
+     }
+    },
+    "aggregates_refreshed": true
+   }
+  }
+ ]
+}

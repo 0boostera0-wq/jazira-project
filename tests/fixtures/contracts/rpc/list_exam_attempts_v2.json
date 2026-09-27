@@ -1,0 +1,90 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "list_exam_attempts_v2",
+ "signature": "list_exam_attempts_v2(p_limit int default 20, p_before timestamptz default null, p_before_id uuid default null) → jsonb",
+ "grants": [
+  "authenticated",
+  "service_role"
+ ],
+ "description": "Own attempts, newest first, keyset pagination on (started_at, id). Like list_exam_attempts plus template_id, scope, scope_title, term_scope, retake_of.",
+ "cases": [
+  {
+   "name": "first page",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_limit": 2
+   },
+   "response": [
+    {
+     "id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+     "exam": "school",
+     "section": null,
+     "topic": null,
+     "template_id": "chapter-quiz",
+     "template_version": 1,
+     "scope": "middle/grade-1/math/n91",
+     "scope_title": "الجبر و الدوال",
+     "term_scope": null,
+     "retake_of": null,
+     "status": "submitted",
+     "question_count": 10,
+     "correct_count": 5,
+     "score_percent": 50,
+     "time_limit_seconds": 750,
+     "started_at": "2026-10-01T12:00:00.000Z",
+     "submitted_at": "2026-10-01T12:18:45.000Z",
+     "duration_seconds": 645,
+     "xp_awarded": 10
+    },
+    {
+     "id": "3f2b1c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+     "exam": "aptitude",
+     "section": "verbal",
+     "topic": null,
+     "template_id": null,
+     "template_version": null,
+     "scope": null,
+     "scope_title": null,
+     "term_scope": null,
+     "retake_of": null,
+     "status": "submitted",
+     "question_count": 10,
+     "correct_count": 7,
+     "score_percent": 70,
+     "time_limit_seconds": 600,
+     "started_at": "2026-09-30T09:00:00.000Z",
+     "submitted_at": "2026-09-30T09:08:00.000Z",
+     "duration_seconds": 480,
+     "xp_awarded": 14
+    }
+   ]
+  },
+  {
+   "name": "next page",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_limit": 2,
+    "p_before": "2026-09-30T09:00:00.000Z",
+    "p_before_id": "3f2b1c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
+   },
+   "response": []
+  },
+  {
+   "name": "a limit out of range",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_limit": 500
+   },
+   "error": {
+    "message": "invalid_argument",
+    "details": {
+     "field": "limit"
+    }
+   }
+  }
+ ]
+}

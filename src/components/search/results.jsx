@@ -1,6 +1,10 @@
 "use client";
 
-import { ChevronRight, GraduationCap, Hash, Heart, Library, MessageCircle, Route } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { BookOpen, ChevronRight, ClipboardCheck, GraduationCap, Hash, Heart, Layers, Library, ListChecks, MessageCircle, Route } from "lucide-react";
+import { useLocale, useT } from "@/i18n/client";
+import { formatNumber } from "@/i18n/format";
+import { createContentSearcher, searchContent } from "@/lib/data/search";
 import { Link } from "@/i18n/navigation";
 import { formatRelative } from "@/i18n/format";
 import { cn } from "@/components/ui/cn";
@@ -12,7 +16,9 @@ import { textProps } from "@/components/community/text";
 import EliteBadge from "@/components/subscriptions/EliteBadge";
 import Highlight from "./Highlight";
 import SectionTile from "./SectionTile";
-import { postAuthor, questionHref } from "./model";
+import {
+  CONTENT_PAGE, CONTENT_PREVIEW, CONTENT_SEARCH_GROUPS, contentCount, contentHasMore, contentHref, contentKey, countLabel, postAuthor, questionHref,
+} from "./model";
 
 // Result rows. Every row is a real link carrying `data-result`, so ↑/↓ can
 // move focus through them and Enter / middle-click behave natively.
@@ -319,3 +325,186 @@ export function PageChip({ page, q }) {
   );
 }
 
+
+// ── content: lessons, units, books, quizzes (docs/CONTENT_ENGINE.md §7) ─────
+const CONTENT_ICONS = { node: Layers, exam: ClipboardCheck, resource: BookOpen, question: ListChecks };
+const TILE = "grid h-8 w-8 shrink-0 place-items-center rounded-sm bg-surface-2 text-ink-2 ring-1 ring-inset ring-line/10";
+
+/** Arabic content (titles from the official listing) inside either UI language. */
+const Ar = ({ children, className }) => (
+  <span lang="ar" dir="rtl" className={cn("font-ar", className)}>
+    {children}
+  </span>
+);
+
+/** One content result: a single internal link to its learn page (/learn/…), never a stem. */
+export function ContentRow({ group, item, q, t, locale }) {
+  const href = contentHref(group, item);
+  if (!href) return null;
+  const Icon = CONTENT_ICONS[group] || Layers;
+  const en = locale === "en";
+  const english = en && group !== "question" && Boolean(item.title_en);
+  const title = english ? item.title_en : item.title || "";
+  const subject = en && item.subject_title_en ? item.subject_title_en : item.subject_title;
+  const place = en ? item.place_en : item.place;
+  let label;
+  if (group === "node") label = t(`content.kinds.${item.kind}`);
+  else if (group === "exam") label = t(`content.templates.${item.template || item.kind}`);
+  else if (group === "resource") label = t(`content.resourceKinds.${item.kind || "other"}`);
+  else label = t("content.published", { count: Number(item.count) || 0 });
+  const meta = [
+    group === "resource" && Number.isInteger(item.part) ? t("content.part", { part: formatNumber(item.part, locale) }) : null,
+    group === "exam" && Number(item.count) > 0 ? t("content.published", { count: Number(item.count) }) : null,
+  ].filter(Boolean);
+  const context = [item.parent_title, subject, place].filter(Boolean);
+  return (
+    <li>
+      <Link href={href} data-result className={ROW}>
+        <span aria-hidden="true" className={TILE}>
+          <Icon size={16} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[0.9375rem] font-medium text-ink">
+            {english ? (
+              <Highlight text={title} query={q} />
+            ) : (
+              <Ar>
+                <Highlight text={title} query={q} />
+              </Ar>
+            )}
+          </span>
+          <span className="t-caption flex min-w-0 items-center gap-1.5">
+            <span className="shrink-0">{label}</span>
+            {meta.map((m) => (
+              <span key={m} className="flex shrink-0 items-center gap-1.5">
+                <Dot />
+                <span className="tabular">{m}</span>
+              </span>
+            ))}
+            {context.length > 0 && (
+              <>
+                <Dot />
+                <span className="truncate">{context.join(" · ")}</span>
+              </>
+            )}
+          </span>
+        </span>
+        {group === "resource" && item.url && (
+          <Badge size="sm" tone="green" className="hidden shrink-0 sm:inline-flex">
+            {t("content.onIen")}
+          </Badge>
+        )}
+        <Chevron />
+      </Link>
+    </li>
+  );
+}
+
+const IDLE_CONTENT = { query: "", status: "idle", data: null };
+
+/**
+ * Lessons, units, quizzes and official books for a query — a self-contained
+ * island (debounced 250 ms, stale requests cancelled, queries under 2 chars
+ * never sent). Signed-in users also get lesson-level question counts (never
+ * stems); guests go through the rate-limited /api/content/search.
+ *   query: the (deferred) search text · mode: "preview" (a few rows per group,
+ *   "view all" → onViewAll) or "full" (every group with "show more" paging)
+ *   idBase: unique id prefix for the group headings
+ */
+export function ContentSearchGroups({ query, mode = "preview", idBase = "content", onViewAll = null }) {
+  const t = useT("search");
+  const { locale } = useLocale();
+  const limit = mode === "full" ? CONTENT_PAGE : Math.max(...Object.values(CONTENT_PREVIEW));
+  const searcher = useRef(null);
+  if (!searcher.current) searcher.current = createContentSearcher({ limit });
+  const [state, setState] = useState(IDLE_CONTENT);
+  const [extra, setExtra] = useState({}); // group → { rows, loading, error } ("show more" pages)
+
+  useEffect(() => {
+    let alive = true;
+    setExtra({});
+    setState((prev) => ({ query, status: "loading", data: prev.data }));
+    searcher.current
+      .search(query)
+      .then((data) => {
+        if (!alive) return;
+        const empty = !data.groups || !Object.keys(data.groups).length;
+        setState({ query, status: data.available === false ? "unavailable" : empty ? "idle" : "ready", data: empty ? null : data });
+      })
+      .catch((e) => {
+        if (alive && e?.code !== "aborted") setState({ query, status: "error", data: null });
+      });
+    return () => {
+      alive = false;
+    };
+  }, [query]);
+  useEffect(() => () => searcher.current?.cancel(), []);
+
+  async function more(group) {
+    const loaded = (state.data?.groups?.[group]?.items?.length || 0) + (extra[group]?.rows?.length || 0);
+    setExtra((x) => ({ ...x, [group]: { rows: x[group]?.rows || [], loading: true, error: false } }));
+    try {
+      const res = await searchContent(query, { kinds: [group], limit: CONTENT_PAGE, offset: loaded });
+      setExtra((x) => ({ ...x, [group]: { rows: [...(x[group]?.rows || []), ...(res.groups?.[group]?.items || [])], loading: false, error: false } }));
+    } catch {
+      setExtra((x) => ({ ...x, [group]: { rows: x[group]?.rows || [], loading: false, error: true } }));
+    }
+  }
+
+  if (state.status === "idle") return null;
+  if (state.status === "error") return <p role="alert" className="t-small px-1 text-ink-3">{t("content.error")}</p>;
+  if (state.status === "unavailable") return <p className="t-caption px-1">{t("content.unavailable")}</p>;
+  if (state.status === "loading" && !state.data) {
+    return <GroupSkeleton id={`${idBase}-loading`} icon={Layers} title={t("content.groups.node")} loadingLabel={t("content.loading")} rows={3} />;
+  }
+  const data = state.data;
+  const stale = state.status === "loading";
+  const groups = CONTENT_SEARCH_GROUPS.filter((g) => (data?.groups?.[g]?.items?.length || 0) > 0);
+  if (!groups.length) return null;
+  return (
+    <div className="space-y-7">
+      {groups.map((g) => {
+        const c = contentCount(data, g);
+        const rows = [...data.groups[g].items, ...(extra[g]?.rows || [])];
+        const shown = mode === "full" ? rows : rows.slice(0, CONTENT_PREVIEW[g]);
+        const canMore = mode === "full" && contentHasMore(data, g, rows.length);
+        const hidden = mode !== "full" && c && c.n > shown.length;
+        return (
+          <Group
+            key={g}
+            id={`${idBase}-${g}`}
+            icon={CONTENT_ICONS[g]}
+            title={t(`content.groups.${g}`)}
+            count={c ? countLabel(formatNumber(c.n, locale), c.capped) : null}
+            stale={stale}
+            {...(hidden && onViewAll ? { onViewAll, viewAllLabel: t("viewAll", { count: formatNumber(c.n, locale) }) } : {})}
+          >
+            <RowList>
+              {shown.map((item) => (
+                <ContentRow key={contentKey(g, item)} group={g} item={item} q={query} t={t} locale={locale} />
+              ))}
+            </RowList>
+            {canMore && (
+              <div className="border-t border-line/8 p-1.5">
+                <button
+                  type="button"
+                  onClick={() => more(g)}
+                  disabled={extra[g]?.loading}
+                  aria-busy={extra[g]?.loading || undefined}
+                  className="inline-flex h-11 w-full items-center justify-center rounded-md text-sm font-medium text-gold-600 transition-colors hover:bg-gold-50 disabled:opacity-60 sm:h-9"
+                >
+                  {t("content.more")}
+                </button>
+                {extra[g]?.error && (
+                  <p role="alert" className="t-caption px-2 pb-1 text-danger">
+                    {t("content.moreError")}
+                  </p>
+                )}
+              </div>
+            )}
+          </Group>
+        );
+      })}
+    </div>
+  );
+}

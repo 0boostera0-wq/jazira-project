@@ -1,0 +1,922 @@
+{
+ "schema": "engine-selections@1",
+ "description": "selectSession conformance (§5.3): template (id, or {base, overrides}), pool (pools.json), n after tier clamping, min_required, seed, history (histories.json), retake (stored allocation) → keys in session order, stored allocation, reused / short / lower_bound, or the error. SQL _ce_allocate/_ce_pick must reproduce these (WP7).",
+ "cases": [
+  {
+   "name": "lesson-quiz on one lesson (short session, a two-member group)",
+   "template": "lesson-quiz",
+   "pool": "lesson-n54",
+   "n": 10,
+   "min_required": 3,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-76a8277347",
+     "q-m1-math-7dc96f776c",
+     "q-m1-math-486bacc5c2",
+     "q-m1-math-2f5da6e992"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n54#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#3",
+      1
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": true,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "lesson-quiz on the §5.6 example pool",
+   "template": "lesson-quiz",
+   "pool": "lesson-20",
+   "n": 10,
+   "min_required": 3,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-a000000010",
+     "q-m1-math-a000000014",
+     "q-m1-math-a000000018",
+     "q-m1-math-a000000016",
+     "q-m1-math-a000000011",
+     "q-m1-math-a000000008",
+     "q-m1-math-a000000017",
+     "q-m1-math-a000000001",
+     "q-m1-math-a000000002",
+     "q-m1-math-a000000006"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n54#1",
+      4
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      4
+     ],
+     [
+      "middle/grade-1/math/n54#3",
+      2
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "chapter-quiz by lesson",
+   "template": "chapter-quiz",
+   "pool": "unit-n91",
+   "n": 10,
+   "min_required": 5,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-76a8277347",
+     "q-m1-math-2c3a4249d7",
+     "q-m1-math-d0f631ca1d",
+     "q-m1-math-7dc96f776c",
+     "q-m1-math-f46dd28a54",
+     "q-m1-math-0012a3fa00",
+     "q-m1-math-f55ff16f66",
+     "q-m1-math-486bacc5c2",
+     "q-m1-math-7c1c97df17",
+     "q-m1-math-9c0abe51c6"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n53#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n53#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n55#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n55#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n55#3",
+      1
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "chapter-quiz, another seed",
+   "template": "chapter-quiz",
+   "pool": "unit-n91",
+   "n": 10,
+   "min_required": 5,
+   "seed": "fedcba9876543210fedcba9876543210",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-730bea4ff1",
+     "q-m1-math-4814d92093",
+     "q-m1-math-f46dd28a54",
+     "q-m1-math-76a8277347",
+     "q-m1-math-486bacc5c2",
+     "q-m1-math-2c3a4249d7",
+     "q-m1-math-d0bf3e6ee1",
+     "q-m1-math-d0f631ca1d",
+     "q-m1-math-7c1c97df17",
+     "q-m1-math-9c0abe51c6"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n53#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n53#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n55#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n55#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n55#3",
+      1
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "subject-quiz by unit (lesson-count weight)",
+   "template": "subject-quiz",
+   "pool": "math-subject",
+   "n": 12,
+   "min_required": 10,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-2c3a4249d7",
+     "q-m1-math-f46dd28a54",
+     "q-m1-math-730bea4ff1",
+     "q-m1-math-ac0f09c0f8",
+     "q-m1-math-e788103ee1",
+     "q-m1-math-f55ff16f66",
+     "q-m1-math-486bacc5c2",
+     "q-m1-math-2f5da6e992",
+     "q-m1-math-f451a61749",
+     "q-m1-math-43700797e2",
+     "q-m1-math-8b53639f15",
+     "q-m1-math-7c1c97df17"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n91#1",
+      2
+     ],
+     [
+      "middle/grade-1/math/n91#2",
+      4
+     ],
+     [
+      "middle/grade-1/math/n91#3",
+      1
+     ],
+     [
+      "middle/grade-1/math/n92#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n92#2",
+      3
+     ],
+     [
+      "middle/grade-1/math/n92#3",
+      1
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "subject-quiz with half the pool seen (reuse pass)",
+   "template": "subject-quiz",
+   "pool": "math-subject",
+   "n": 20,
+   "min_required": 10,
+   "seed": "5f2a9c0e7b1d4386a0f9e2c47d1b6a38",
+   "history": "math-half",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-43700797e2",
+     "q-m1-math-730bea4ff1",
+     "q-m1-math-af327a6478",
+     "q-m1-math-f46dd28a54",
+     "q-m1-math-4539e4b488",
+     "q-m1-math-79b98f273c",
+     "q-m1-math-e788103ee1",
+     "q-m1-math-7dc96f776c",
+     "q-m1-math-d0f631ca1d",
+     "q-m1-math-0012a3fa00",
+     "q-m1-math-76a8277347",
+     "q-m1-math-82f3e9c695",
+     "q-m1-math-2c3a4249d7",
+     "q-m1-math-d0bf3e6ee1",
+     "q-m1-math-8b53639f15",
+     "q-m1-math-ac0f09c0f8",
+     "q-m1-math-9c0abe51c6",
+     "q-m1-math-2f5da6e992",
+     "q-m1-math-486bacc5c2"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n91#1",
+      4
+     ],
+     [
+      "middle/grade-1/math/n91#2",
+      5
+     ],
+     [
+      "middle/grade-1/math/n91#3",
+      3
+     ],
+     [
+      "middle/grade-1/math/n92#1",
+      3
+     ],
+     [
+      "middle/grade-1/math/n92#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n92#3",
+      2
+     ]
+    ],
+    "reused": true,
+    "reused_count": 6,
+    "short": true,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "full-year by (term, unit)",
+   "template": "full-year",
+   "pool": "math-subject",
+   "n": 20,
+   "min_required": 20,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-76a8277347",
+     "q-m1-math-2c3a4249d7",
+     "q-m1-math-7dc96f776c",
+     "q-m1-math-d0bf3e6ee1",
+     "q-m1-math-f46dd28a54",
+     "q-m1-math-0012a3fa00",
+     "q-m1-math-730bea4ff1",
+     "q-m1-math-79b98f273c",
+     "q-m1-math-ac0f09c0f8",
+     "q-m1-math-e788103ee1",
+     "q-m1-math-f55ff16f66",
+     "q-m1-math-486bacc5c2",
+     "q-m1-math-2f5da6e992",
+     "q-m1-math-f451a61749",
+     "q-m1-math-43700797e2",
+     "q-m1-math-cef7fc13a3",
+     "q-m1-math-8b53639f15",
+     "q-m1-math-7c1c97df17",
+     "q-m1-math-9c0abe51c6",
+     "q-m1-math-449777124b"
+    ],
+    "stored": [
+     [
+      "t1|middle/grade-1/math/n91#1",
+      3
+     ],
+     [
+      "t1|middle/grade-1/math/n91#2",
+      6
+     ],
+     [
+      "t1|middle/grade-1/math/n91#3",
+      3
+     ],
+     [
+      "t2|middle/grade-1/math/n92#1",
+      2
+     ],
+     [
+      "t2|middle/grade-1/math/n92#2",
+      4
+     ],
+     [
+      "t2|middle/grade-1/math/n92#3",
+      2
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "term-exam t1: insufficient pool",
+   "template": "term-exam",
+   "pool": "math-t1",
+   "n": 20,
+   "min_required": 20,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": false,
+    "error": "insufficient_pool",
+    "available": 15,
+    "required": 20
+   }
+  },
+  {
+   "name": "practice on a prep section (pool-size weight)",
+   "template": "practice",
+   "pool": "prep-verbal",
+   "n": 6,
+   "min_required": 5,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "av-103",
+     "av-106",
+     "av-109",
+     "av-101",
+     "av-102",
+     "av-105"
+    ],
+    "stored": [
+     [
+      "prep:aptitude/verbal/analogy#1",
+      1
+     ],
+     [
+      "prep:aptitude/verbal/analogy#2",
+      2
+     ],
+     [
+      "prep:aptitude/verbal/contextual-error#1",
+      1
+     ],
+     [
+      "prep:aptitude/verbal/contextual-error#2",
+      1
+     ],
+     [
+      "prep:aptitude/verbal/odd-word-out#2",
+      1
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "random-practice (no strata)",
+   "template": "random-practice",
+   "pool": "lesson-20",
+   "n": 10,
+   "min_required": 5,
+   "seed": "fedcba9876543210fedcba9876543210",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-a000000017",
+     "q-m1-math-a000000003",
+     "q-m1-math-a000000009",
+     "q-m1-math-a000000019",
+     "q-m1-math-a000000001",
+     "q-m1-math-a000000005",
+     "q-m1-math-a000000012",
+     "q-m1-math-a000000013",
+     "q-m1-math-a000000020",
+     "q-m1-math-a000000007"
+    ],
+    "stored": [
+     [
+      "*#1",
+      4
+     ],
+     [
+      "*#2",
+      3
+     ],
+     [
+      "*#3",
+      3
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "lower bound: 4 of 6 strata",
+   "template": "chapter-quiz",
+   "pool": "strata-6",
+   "n": 4,
+   "min_required": 4,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-b000000002",
+     "q-m1-math-b000000010",
+     "q-m1-math-b000000004",
+     "q-m1-math-b000000011"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n51#2",
+      1
+     ],
+     [
+      "middle/grade-1/math/n52#2",
+      1
+     ],
+     [
+      "middle/grade-1/math/n55#2",
+      1
+     ],
+     [
+      "middle/grade-1/math/n56#1",
+      1
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": true
+   }
+  },
+  {
+   "name": "all seen: reuse capped at 30 %",
+   "template": "lesson-quiz",
+   "pool": "lesson-20",
+   "n": 10,
+   "min_required": 3,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "lesson-20-all",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-a000000009",
+     "q-m1-math-a000000017",
+     "q-m1-math-a000000001"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n54#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      1
+     ],
+     [
+      "middle/grade-1/math/n54#3",
+      1
+     ]
+    ],
+    "reused": true,
+    "reused_count": 3,
+    "short": true,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "weakness-review prefers wrong items older than 24 h",
+   "template": "weakness-review",
+   "pool": "lesson-20",
+   "n": 5,
+   "min_required": 5,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "weak-n54",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-a000000010",
+     "q-m1-math-a000000003",
+     "q-m1-math-a000000011",
+     "q-m1-math-a000000017",
+     "q-m1-math-a000000002"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n54#1",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#3",
+      1
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "variants: one per exclusion group, stimulus kept together",
+   "template": "practice",
+   "pool": "variants",
+   "n": 12,
+   "min_required": 5,
+   "seed": "0123456789abcdef0123456789abcdef",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-c000000013",
+     "q-m1-math-c000000004",
+     "q-m1-math-c000000012",
+     "q-m1-math-c000000001",
+     "q-m1-math-c000000010",
+     "q-m1-math-c000000011",
+     "q-m1-math-c000000007",
+     "q-m1-math-c000000006",
+     "q-m1-math-c000000015",
+     "q-m1-math-c000000008",
+     "q-m1-math-c000000017",
+     "q-m1-math-c000000021"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n53#1",
+      3
+     ],
+     [
+      "middle/grade-1/math/n53#2",
+      3
+     ],
+     [
+      "middle/grade-1/math/n54#1",
+      3
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#3",
+      1
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "by_stratum question order",
+   "template": {
+    "base": "practice",
+    "overrides": {
+     "randomization": {
+      "question_order": "by_stratum",
+      "option_shuffle": true,
+      "one_per_exclusion_group": true
+     }
+    }
+   },
+   "pool": "variants",
+   "n": 10,
+   "min_required": 5,
+   "seed": "fedcba9876543210fedcba9876543210",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-c000000007",
+     "q-m1-math-c000000008",
+     "q-m1-math-c000000001",
+     "q-m1-math-c000000005",
+     "q-m1-math-c000000016",
+     "q-m1-math-c000000021",
+     "q-m1-math-c000000011",
+     "q-m1-math-c000000018",
+     "q-m1-math-c000000013",
+     "q-m1-math-c000000012"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n53#1",
+      2
+     ],
+     [
+      "middle/grade-1/math/n53#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#1",
+      3
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#3",
+      1
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "plain shuffle order",
+   "template": {
+    "base": "chapter-quiz",
+    "overrides": {
+     "randomization": {
+      "question_order": "shuffle",
+      "option_shuffle": true,
+      "one_per_exclusion_group": true
+     }
+    }
+   },
+   "pool": "unit-n91",
+   "n": 8,
+   "min_required": 5,
+   "seed": "5f2a9c0e7b1d4386a0f9e2c47d1b6a38",
+   "history": "none",
+   "retake": null,
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-f46dd28a54",
+     "q-m1-math-4539e4b488",
+     "q-m1-math-76a8277347",
+     "q-m1-math-7c1c97df17",
+     "q-m1-math-2c3a4249d7",
+     "q-m1-math-9c0abe51c6",
+     "q-m1-math-486bacc5c2",
+     "q-m1-math-4814d92093"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n53#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n53#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n55#2",
+      2
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "retake: chapter-quiz by lesson",
+   "template": "chapter-quiz",
+   "pool": "unit-n91",
+   "n": 10,
+   "min_required": 5,
+   "seed": "5f2a9c0e7b1d4386a0f9e2c47d1b6a38",
+   "history": "retake-of:chapter-quiz by lesson",
+   "retake": [
+    [
+     "middle/grade-1/math/n53#1",
+     1
+    ],
+    [
+     "middle/grade-1/math/n53#2",
+     2
+    ],
+    [
+     "middle/grade-1/math/n54#1",
+     1
+    ],
+    [
+     "middle/grade-1/math/n54#2",
+     2
+    ],
+    [
+     "middle/grade-1/math/n55#1",
+     1
+    ],
+    [
+     "middle/grade-1/math/n55#2",
+     2
+    ],
+    [
+     "middle/grade-1/math/n55#3",
+     1
+    ]
+   ],
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-4539e4b488",
+     "q-m1-math-76a8277347",
+     "q-m1-math-7c1c97df17",
+     "q-m1-math-2c3a4249d7",
+     "q-m1-math-d0bf3e6ee1",
+     "q-m1-math-4814d92093"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n53#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n53#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n54#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n55#1",
+      1
+     ],
+     [
+      "middle/grade-1/math/n55#2",
+      2
+     ],
+     [
+      "middle/grade-1/math/n55#3",
+      1
+     ]
+    ],
+    "reused": true,
+    "reused_count": 3,
+    "short": true,
+    "lower_bound": false
+   }
+  },
+  {
+   "name": "retake: lesson-quiz on the §5.6 example pool",
+   "template": "lesson-quiz",
+   "pool": "lesson-20",
+   "n": 10,
+   "min_required": 3,
+   "seed": "fedcba9876543210fedcba9876543210",
+   "history": "retake-of:lesson-quiz on the §5.6 example pool",
+   "retake": [
+    [
+     "middle/grade-1/math/n54#1",
+     4
+    ],
+    [
+     "middle/grade-1/math/n54#2",
+     4
+    ],
+    [
+     "middle/grade-1/math/n54#3",
+     2
+    ]
+   ],
+   "expected": {
+    "ok": true,
+    "keys": [
+     "q-m1-math-a000000003",
+     "q-m1-math-a000000009",
+     "q-m1-math-a000000019",
+     "q-m1-math-a000000015",
+     "q-m1-math-a000000005",
+     "q-m1-math-a000000012",
+     "q-m1-math-a000000013",
+     "q-m1-math-a000000004",
+     "q-m1-math-a000000020",
+     "q-m1-math-a000000007"
+    ],
+    "stored": [
+     [
+      "middle/grade-1/math/n54#1",
+      4
+     ],
+     [
+      "middle/grade-1/math/n54#2",
+      4
+     ],
+     [
+      "middle/grade-1/math/n54#3",
+      2
+     ]
+    ],
+    "reused": false,
+    "reused_count": 0,
+    "short": false,
+    "lower_bound": false
+   }
+  }
+ ]
+}

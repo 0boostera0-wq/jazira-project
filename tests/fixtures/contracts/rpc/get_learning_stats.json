@@ -1,0 +1,89 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "get_learning_stats",
+ "signature": "get_learning_stats(p_node text default null) → jsonb",
+ "grants": [
+  "authenticated",
+  "service_role"
+ ],
+ "description": "Own totals, by band, by lesson (weakest first by the Wilson lower bound, z = 1.645, lessons with answered ≥ 5), repeated mistakes (wrong_streak ≥ 2), average time per lesson and a 7/30-day trend. By-topic breakdowns stay Elite-gated (listed in `locked`).",
+ "cases": [
+  {
+   "name": "a subject",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_node": "middle/grade-1/math"
+   },
+   "response": {
+    "node": "middle/grade-1/math",
+    "totals": {
+     "answered": 24,
+     "correct": 15,
+     "time_seconds": 1500
+    },
+    "by_band": [
+     {
+      "band": 1,
+      "answered": 10,
+      "correct": 8
+     },
+     {
+      "band": 2,
+      "answered": 9,
+      "correct": 5
+     },
+     {
+      "band": 3,
+      "answered": 5,
+      "correct": 2
+     }
+    ],
+    "by_lesson": [
+     {
+      "lesson": "middle/grade-1/math/n54",
+      "title": "القوى و الأسس",
+      "answered": 8,
+      "correct": 3,
+      "accuracy": 0.375,
+      "wilson_lower": 0.1446,
+      "avg_time_seconds": 70
+     }
+    ],
+    "repeated_mistakes": [
+     {
+      "question_key": "q-m1-math-0000000000",
+      "wrong_streak": 2,
+      "lesson": "middle/grade-1/math/n54"
+     }
+    ],
+    "trend": {
+     "last_7_days": {
+      "answered": 12,
+      "correct": 8
+     },
+     "last_30_days": {
+      "answered": 24,
+      "correct": 15
+     }
+    },
+    "locked": [
+     "by_topic"
+    ]
+   }
+  },
+  {
+   "name": "an unknown node",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_node": "middle/grade-1/math/n999"
+   },
+   "error": {
+    "message": "scope_not_found",
+    "details": null
+   }
+  }
+ ]
+}

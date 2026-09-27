@@ -1,0 +1,212 @@
+{
+  "schema": "toc@1",
+  "resource_id": "ien-121391",
+  "toc_status": "found",
+  "toc_pages": [
+    5,
+    6,
+    7
+  ],
+  "page_offset": 0,
+  "run_id": "run-20260926-extract-01",
+  "entries": [
+    {
+      "level": "unit",
+      "title": "تطبيقات النضبة المئوية",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n4224",
+      "match_score": 0.75,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "التهيئة",
+      "printed_page": 11,
+      "pdf_page": 11,
+      "matched_node_id": "middle/grade-1/math/n7664",
+      "match_score": 1,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "اضتكضاف النسبة المئوية من عدد",
+      "printed_page": 12,
+      "pdf_page": 12,
+      "matched_node_id": "middle/grade-1/math/n3313",
+      "match_score": 0.74,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "النسبة المئوية من عدد",
+      "printed_page": 14,
+      "pdf_page": 14,
+      "matched_node_id": "middle/grade-1/math/n9532",
+      "match_score": 0.74,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "تقدير النسبة المئوية",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n3314",
+      "match_score": 1,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "حتديد معقولية الإجابة",
+      "printed_page": 25,
+      "pdf_page": 25,
+      "matched_node_id": "middle/grade-1/math/n3315",
+      "match_score": 0.43,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "اختبار منتضف الفضل",
+      "printed_page": 27,
+      "pdf_page": 27,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "التناسب المئوي",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n3316",
+      "match_score": 1,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "تطبيقات عىل النسبة المئوية",
+      "printed_page": 34,
+      "pdf_page": 34,
+      "matched_node_id": "middle/grade-1/math/n3317",
+      "match_score": 0.79,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "اختبار الفضل",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "الأختبار الرتاكمي (5)",
+      "printed_page": 40,
+      "pdf_page": 40,
+      "matched_node_id": null,
+      "match_score": 0.17,
+      "method": "text"
+    },
+    {
+      "level": "unit",
+      "title": "الأإحضاء",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n4225",
+      "match_score": 0.42,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "التهيئة",
+      "printed_page": 43,
+      "pdf_page": 43,
+      "matched_node_id": "middle/grade-1/math/n7550",
+      "match_score": 1,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "التمثيل بالنقاط",
+      "printed_page": 44,
+      "pdf_page": 44,
+      "matched_node_id": "middle/grade-1/math/n3318",
+      "match_score": 1,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "مقاييس النزعة المركزية والمدى",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n3319",
+      "match_score": 0.89,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "اختبار منتضف الفضل",
+      "printed_page": 55,
+      "pdf_page": 55,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "التمثيل بالأعمدة والمدرجات التكرارية",
+      "printed_page": 56,
+      "pdf_page": 56,
+      "matched_node_id": "middle/grade-1/math/n3320",
+      "match_score": 0.91,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "استعامل التمثيلات البيانية للتنبؤ",
+      "printed_page": 62,
+      "pdf_page": 62,
+      "matched_node_id": "middle/grade-1/math/n3321",
+      "match_score": 0.76,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "توضع التمثيل بالأعمدة المزدوجة والخطوط المزدوجة",
+      "printed_page": 67,
+      "pdf_page": 67,
+      "matched_node_id": "middle/grade-1/math/n9534",
+      "match_score": 0.78,
+      "method": "text"
+    },
+    {
+      "level": "lesson",
+      "title": "استعمال التمثيل البياين",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n3322",
+      "match_score": 0.44,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "اختبار الفضل",
+      "printed_page": 71,
+      "pdf_page": 71,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "الأختبار الرتاكمي (6)",
+      "printed_page": 72,
+      "pdf_page": 72,
+      "matched_node_id": null,
+      "match_score": 0.17,
+      "method": "text"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:runtime-bank-index",
+  "title": "Runtime bank index (§5.8)",
+  "description": "data/runtime/bank/index.json: the whitelist of bank files. File names are resolved only through `files`; a scope string is never concatenated into a path.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "bank_revision",
+    "files",
+    "nodes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "runtime-bank-index@1"
+    },
+    "bank_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16,64}$"
+    },
+    "files": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^(?:sel|c|k)/[a-z0-9][a-z0-9_-]{0,63}\\.json$"
+          },
+          "sha256": {
+            "$ref": "urn:jazira:schema:common#/$defs/sha256"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "nodes": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "urn:jazira:schema:common#/$defs/link_node_id"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "counts",
+          "sel"
+        ],
+        "properties": {
+          "counts": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "1",
+              "2",
+              "3"
+            ],
+            "properties": {
+              "1": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "2": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "3": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "sel": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+          }
+        }
+      }
+    }
+  }
+}

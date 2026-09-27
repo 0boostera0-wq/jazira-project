@@ -1,0 +1,461 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "ce_guest_items",
+ "signature": "ce_guest_items(p_keys text[], p_with_keys boolean) → jsonb",
+ "grants": [
+  "service_role"
+ ],
+ "description": "Content (and, with p_with_keys, the key: canonical payload with its answer, explanation, validated objective, source link-out) of published non-premium items, in p_keys order; unknown, retired or premium keys are omitted. `key_data` has the runtime bank's k/ item shape without key/revision.",
+ "cases": [
+  {
+   "name": "content only",
+   "match": "exact",
+   "args": {
+    "p_keys": [
+     "q-m1-math-76a8277347",
+     "q-m1-math-2c3a4249d7",
+     "q-m1-math-d0f631ca1d"
+    ],
+    "p_with_keys": false
+   },
+   "response": [
+    {
+     "key": "q-m1-math-76a8277347",
+     "revision": 1,
+     "type": "matching",
+     "language": "ar",
+     "stem": "سؤال b3؟",
+     "stimulus": null,
+     "public": {
+      "left": [
+       {
+        "id": "l857eca",
+        "text": "2³"
+       },
+       {
+        "id": "lf383bb",
+        "text": "3²"
+       },
+       {
+        "id": "l6dbe1b",
+        "text": "5²"
+       }
+      ],
+      "right": [
+       {
+        "id": "r6a3138",
+        "text": "8"
+       },
+       {
+        "id": "r5d01df",
+        "text": "9"
+       },
+       {
+        "id": "ra1aaba",
+        "text": "25"
+       },
+       {
+        "id": "r7ea934",
+        "text": "10"
+       }
+      ],
+      "scoring": "partial"
+     },
+     "shuffle_options": false,
+     "fixed_order_reason": null,
+     "time_limit_seconds": 60,
+     "band": 2,
+     "lesson": {
+      "id": "middle/grade-1/math/n54",
+      "title": "القوى و الأسس",
+      "term": "t1"
+     },
+     "topic": null
+    },
+    {
+     "key": "q-m1-math-2c3a4249d7",
+     "revision": 1,
+     "type": "mcq",
+     "language": "ar",
+     "stem": "سؤال a2؟",
+     "stimulus": null,
+     "public": {
+      "options": [
+       {
+        "id": "o0623a8",
+        "text": "7"
+       },
+       {
+        "id": "ofcc1de",
+        "text": "10"
+       },
+       {
+        "id": "od306ac",
+        "text": "32"
+       },
+       {
+        "id": "obb2a8e",
+        "text": "4"
+       }
+      ],
+      "fixed_order_reason": null
+     },
+     "shuffle_options": true,
+     "fixed_order_reason": null,
+     "time_limit_seconds": 60,
+     "band": 2,
+     "lesson": {
+      "id": "middle/grade-1/math/n53",
+      "title": "الخطوات الأربع لحل المسألة",
+      "term": "t1"
+     },
+     "topic": null
+    },
+    {
+     "key": "q-m1-math-d0f631ca1d",
+     "revision": 1,
+     "type": "mcq",
+     "language": "ar",
+     "stem": "سؤال c1؟",
+     "stimulus": null,
+     "public": {
+      "options": [
+       {
+        "id": "oa62c16",
+        "text": "سبت"
+       },
+       {
+        "id": "oc19e18",
+        "text": "أحد"
+       },
+       {
+        "id": "o2ab990",
+        "text": "اثنين"
+       },
+       {
+        "id": "o29d7f7",
+        "text": "ثلاثاء"
+       }
+      ],
+      "fixed_order_reason": null
+     },
+     "shuffle_options": true,
+     "fixed_order_reason": null,
+     "time_limit_seconds": 60,
+     "band": 1,
+     "lesson": {
+      "id": "middle/grade-1/math/n55",
+      "title": "ترتيب العمليات",
+      "term": "t1"
+     },
+     "topic": null
+    }
+   ]
+  },
+  {
+   "name": "with keys (check / submit)",
+   "match": "exact",
+   "args": {
+    "p_keys": [
+     "q-m1-math-76a8277347",
+     "q-m1-math-2c3a4249d7",
+     "q-m1-math-d0f631ca1d"
+    ],
+    "p_with_keys": true
+   },
+   "response": [
+    {
+     "key": "q-m1-math-76a8277347",
+     "revision": 1,
+     "type": "matching",
+     "language": "ar",
+     "stem": "سؤال b3؟",
+     "stimulus": null,
+     "public": {
+      "left": [
+       {
+        "id": "l857eca",
+        "text": "2³"
+       },
+       {
+        "id": "lf383bb",
+        "text": "3²"
+       },
+       {
+        "id": "l6dbe1b",
+        "text": "5²"
+       }
+      ],
+      "right": [
+       {
+        "id": "r6a3138",
+        "text": "8"
+       },
+       {
+        "id": "r5d01df",
+        "text": "9"
+       },
+       {
+        "id": "ra1aaba",
+        "text": "25"
+       },
+       {
+        "id": "r7ea934",
+        "text": "10"
+       }
+      ],
+      "scoring": "partial"
+     },
+     "shuffle_options": false,
+     "fixed_order_reason": null,
+     "time_limit_seconds": 60,
+     "band": 2,
+     "lesson": {
+      "id": "middle/grade-1/math/n54",
+      "title": "القوى و الأسس",
+      "term": "t1"
+     },
+     "topic": null,
+     "key_data": {
+      "payload": {
+       "left": [
+        {
+         "id": "l857eca",
+         "text": "2³"
+        },
+        {
+         "id": "lf383bb",
+         "text": "3²"
+        },
+        {
+         "id": "l6dbe1b",
+         "text": "5²"
+        }
+       ],
+       "right": [
+        {
+         "id": "r6a3138",
+         "text": "8"
+        },
+        {
+         "id": "r5d01df",
+         "text": "9"
+        },
+        {
+         "id": "ra1aaba",
+         "text": "25"
+        },
+        {
+         "id": "r7ea934",
+         "text": "10"
+        }
+       ],
+       "answer": {
+        "pairs": [
+         [
+          "l857eca",
+          "r6a3138"
+         ],
+         [
+          "lf383bb",
+          "r5d01df"
+         ],
+         [
+          "l6dbe1b",
+          "ra1aaba"
+         ]
+        ]
+       },
+       "scoring": "partial"
+      },
+      "explanation": {
+       "text": "شرح b3.",
+       "steps": [
+        "خطوة b3"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     }
+    },
+    {
+     "key": "q-m1-math-2c3a4249d7",
+     "revision": 1,
+     "type": "mcq",
+     "language": "ar",
+     "stem": "سؤال a2؟",
+     "stimulus": null,
+     "public": {
+      "options": [
+       {
+        "id": "o0623a8",
+        "text": "7"
+       },
+       {
+        "id": "ofcc1de",
+        "text": "10"
+       },
+       {
+        "id": "od306ac",
+        "text": "32"
+       },
+       {
+        "id": "obb2a8e",
+        "text": "4"
+       }
+      ],
+      "fixed_order_reason": null
+     },
+     "shuffle_options": true,
+     "fixed_order_reason": null,
+     "time_limit_seconds": 60,
+     "band": 2,
+     "lesson": {
+      "id": "middle/grade-1/math/n53",
+      "title": "الخطوات الأربع لحل المسألة",
+      "term": "t1"
+     },
+     "topic": null,
+     "key_data": {
+      "payload": {
+       "options": [
+        {
+         "id": "o0623a8",
+         "text": "7"
+        },
+        {
+         "id": "ofcc1de",
+         "text": "10"
+        },
+        {
+         "id": "od306ac",
+         "text": "32"
+        },
+        {
+         "id": "obb2a8e",
+         "text": "4"
+        }
+       ],
+       "answer": {
+        "option_id": "od306ac"
+       },
+       "fixed_order_reason": null
+      },
+      "explanation": {
+       "text": "شرح a2.",
+       "steps": [
+        "خطوة a2"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     }
+    },
+    {
+     "key": "q-m1-math-d0f631ca1d",
+     "revision": 1,
+     "type": "mcq",
+     "language": "ar",
+     "stem": "سؤال c1؟",
+     "stimulus": null,
+     "public": {
+      "options": [
+       {
+        "id": "oa62c16",
+        "text": "سبت"
+       },
+       {
+        "id": "oc19e18",
+        "text": "أحد"
+       },
+       {
+        "id": "o2ab990",
+        "text": "اثنين"
+       },
+       {
+        "id": "o29d7f7",
+        "text": "ثلاثاء"
+       }
+      ],
+      "fixed_order_reason": null
+     },
+     "shuffle_options": true,
+     "fixed_order_reason": null,
+     "time_limit_seconds": 60,
+     "band": 1,
+     "lesson": {
+      "id": "middle/grade-1/math/n55",
+      "title": "ترتيب العمليات",
+      "term": "t1"
+     },
+     "topic": null,
+     "key_data": {
+      "payload": {
+       "options": [
+        {
+         "id": "oa62c16",
+         "text": "سبت"
+        },
+        {
+         "id": "oc19e18",
+         "text": "أحد"
+        },
+        {
+         "id": "o2ab990",
+         "text": "اثنين"
+        },
+        {
+         "id": "o29d7f7",
+         "text": "ثلاثاء"
+        }
+       ],
+       "answer": {
+        "option_id": "oc19e18"
+       },
+       "fixed_order_reason": null
+      },
+      "explanation": {
+       "text": "شرح c1.",
+       "steps": [
+        "خطوة c1"
+       ]
+      },
+      "objective": null,
+      "source": {
+       "resource_id": "ien-120607",
+       "title": "مقرر الرياضيات /كتاب الطالب الجزء الأول",
+       "printed_start": 12,
+       "printed_end": 13,
+       "url": "https://iencontent.ien.edu.sa/books/1448-GE-ME-K07-SM1-math-part1.pdf#page=14"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "unknown and premium keys are omitted",
+   "match": "exact",
+   "args": {
+    "p_keys": [
+     "q-m1-math-0000000000",
+     "q-m1-math-25f682044b"
+    ],
+    "p_with_keys": true
+   },
+   "response": []
+  }
+ ]
+}

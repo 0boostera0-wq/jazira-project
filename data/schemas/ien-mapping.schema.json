@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:ien-mapping",
+  "title": "iEN ↔ node mapping (§2.5)",
+  "description": "data/staging/curriculum/ien-mapping.json: the single output mapping of WP2 (iEN id ↔ node id, source_only subjects).",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "const": "ien-mapping@1"
+    }
+  }
+}

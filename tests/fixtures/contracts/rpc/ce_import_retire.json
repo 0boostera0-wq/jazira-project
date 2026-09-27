@@ -1,0 +1,45 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "ce_import_retire",
+ "signature": "ce_import_retire(p_run uuid, p_keys text[]) → jsonb",
+ "grants": [
+  "service_role"
+ ],
+ "description": "Retires only the manifest's removed[] keys within the fully covered (shard, subject) set: is_active = false, status = 'retired' (never deleted). Refused (retire_refused, nothing retired) for --only runs, runs with errors, or a publish set filtered differently from the manifest.",
+ "cases": [
+  {
+   "name": "retire",
+   "role": "service_role",
+   "match": "shape",
+   "args": {
+    "p_run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "p_keys": [
+     "q-m1-math-0000000001"
+    ]
+   },
+   "response": {
+    "run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "retired": 1,
+    "skipped": []
+   }
+  },
+  {
+   "name": "refused after errors",
+   "role": "service_role",
+   "match": "exact",
+   "args": {
+    "p_run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "p_keys": [
+     "q-m1-math-0000000001"
+    ]
+   },
+   "error": {
+    "message": "retire_refused",
+    "details": {
+     "reason": "import_errors"
+    }
+   }
+  }
+ ]
+}

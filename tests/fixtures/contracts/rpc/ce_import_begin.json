@@ -1,0 +1,53 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "ce_import_begin",
+ "signature": "ce_import_begin(p_manifest jsonb) → uuid",
+ "grants": [
+  "service_role"
+ ],
+ "description": "Opens an import run (content_import_runs) for a validated manifest (§6.3 step 2).",
+ "cases": [
+  {
+   "name": "begin",
+   "role": "service_role",
+   "match": "shape",
+   "args": {
+    "p_manifest": {
+     "schema": "manifest@1",
+     "sha256": "<sha256>",
+     "files": "<manifest files>",
+     "removed": [
+      {
+       "key": "q-m1-math-0000000001",
+       "reason": "retired"
+      }
+     ]
+    }
+   },
+   "response": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f"
+  },
+  {
+   "name": "authenticated callers",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_manifest": {
+     "schema": "manifest@1",
+     "sha256": "<sha256>",
+     "files": "<manifest files>",
+     "removed": [
+      {
+       "key": "q-m1-math-0000000001",
+       "reason": "retired"
+      }
+     ]
+    }
+   },
+   "error": {
+    "message": "permission denied for function ce_import_begin",
+    "code": "42501"
+   }
+  }
+ ]
+}

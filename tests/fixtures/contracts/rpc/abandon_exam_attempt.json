@@ -1,0 +1,41 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "abandon_exam_attempt",
+ "signature": "abandon_exam_attempt(p_attempt uuid) → jsonb",
+ "grants": [
+  "authenticated",
+  "service_role"
+ ],
+ "description": "Finalizes as `abandoned`: answered items are graded for the learner statistics; no XP.",
+ "cases": [
+  {
+   "name": "abandon",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d"
+   },
+   "response": {
+    "attempt_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "status": "abandoned",
+    "answered_count": 3,
+    "xp_awarded": 0
+   }
+  },
+  {
+   "name": "already submitted",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d"
+   },
+   "error": {
+    "message": "attempt_closed",
+    "details": {
+     "status": "submitted"
+    }
+   }
+  }
+ ]
+}

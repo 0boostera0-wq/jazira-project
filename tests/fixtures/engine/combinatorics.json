@@ -1,0 +1,345 @@
+{
+ "schema": "engine-combinatorics@1",
+ "description": "§5.6: elementary symmetric polynomials and blueprints (seed 0…0 allocation, sets by component and with variants, attempts before forced reuse, lower-bound flag). The §5.6 example (20 items 8/8/4, lesson quiz 10 at 40/40/20) gives 29,400 sets and 2 attempts.",
+ "elementary_symmetric": [
+  {
+   "g": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "k": 2,
+   "expected": "6"
+  },
+  {
+   "g": [
+    2,
+    3,
+    4
+   ],
+   "k": 2,
+   "expected": "26"
+  },
+  {
+   "g": [
+    2,
+    3,
+    4
+   ],
+   "k": 3,
+   "expected": "24"
+  },
+  {
+   "g": [
+    5,
+    5,
+    5,
+    5,
+    5
+   ],
+   "k": 0,
+   "expected": "1"
+  },
+  {
+   "g": [
+    1,
+    2
+   ],
+   "k": 3,
+   "expected": "0"
+  }
+ ],
+ "blueprints": [
+  {
+   "template": "lesson-quiz",
+   "pool": "lesson-20",
+   "n": 10,
+   "expected": {
+    "template": "lesson-quiz@1",
+    "n": 10,
+    "pool_items": 20,
+    "components": 20,
+    "variants": 0,
+    "offered": true,
+    "selected": 10,
+    "short": false,
+    "lower_bound": false,
+    "allocation": [
+     {
+      "cell": "middle/grade-1/math/n54#1",
+      "quota": 4,
+      "groups": 8,
+      "items": 8
+     },
+     {
+      "cell": "middle/grade-1/math/n54#2",
+      "quota": 4,
+      "groups": 8,
+      "items": 8
+     },
+     {
+      "cell": "middle/grade-1/math/n54#3",
+      "quota": 2,
+      "groups": 4,
+      "items": 4
+     }
+    ],
+    "sets_by_component": {
+     "exact": "29400",
+     "log10": 4.468347
+    },
+    "sets_with_variants": {
+     "exact": "29400",
+     "log10": 4.468347
+    },
+    "attempts_before_reuse": 2,
+    "display_permutations": null
+   }
+  },
+  {
+   "template": "practice",
+   "pool": "variants",
+   "n": 12,
+   "expected": {
+    "template": "practice@1",
+    "n": 12,
+    "pool_items": 21,
+    "components": 14,
+    "variants": 7,
+    "offered": true,
+    "selected": 12,
+    "short": false,
+    "lower_bound": false,
+    "allocation": [
+     {
+      "cell": "middle/grade-1/math/n53#1",
+      "quota": 3,
+      "groups": 3,
+      "items": 6
+     },
+     {
+      "cell": "middle/grade-1/math/n53#2",
+      "quota": 3,
+      "groups": 4,
+      "items": 4
+     },
+     {
+      "cell": "middle/grade-1/math/n54#1",
+      "quota": 3,
+      "groups": 3,
+      "items": 3
+     },
+     {
+      "cell": "middle/grade-1/math/n54#2",
+      "quota": 2,
+      "groups": 2,
+      "items": 6
+     },
+     {
+      "cell": "middle/grade-1/math/n54#3",
+      "quota": 1,
+      "groups": 2,
+      "items": 2
+     }
+    ],
+    "sets_by_component": {
+     "exact": "8",
+     "log10": 0.90309
+    },
+    "sets_with_variants": {
+     "exact": "576",
+     "log10": 2.760422
+    },
+    "attempts_before_reuse": 1,
+    "display_permutations": null
+   }
+  },
+  {
+   "template": "chapter-quiz",
+   "pool": "unit-n91",
+   "n": 10,
+   "expected": {
+    "template": "chapter-quiz@1",
+    "n": 10,
+    "pool_items": 17,
+    "components": 16,
+    "variants": 1,
+    "offered": true,
+    "selected": 10,
+    "short": false,
+    "lower_bound": false,
+    "allocation": [
+     {
+      "cell": "middle/grade-1/math/n53#1",
+      "quota": 1,
+      "groups": 3,
+      "items": 3
+     },
+     {
+      "cell": "middle/grade-1/math/n53#2",
+      "quota": 2,
+      "groups": 2,
+      "items": 2
+     },
+     {
+      "cell": "middle/grade-1/math/n54#1",
+      "quota": 1,
+      "groups": 1,
+      "items": 2
+     },
+     {
+      "cell": "middle/grade-1/math/n54#2",
+      "quota": 2,
+      "groups": 2,
+      "items": 2
+     },
+     {
+      "cell": "middle/grade-1/math/n54#3",
+      "quota": 1,
+      "groups": 2,
+      "items": 2
+     },
+     {
+      "cell": "middle/grade-1/math/n55#1",
+      "quota": 1,
+      "groups": 1,
+      "items": 1
+     },
+     {
+      "cell": "middle/grade-1/math/n55#2",
+      "quota": 2,
+      "groups": 2,
+      "items": 2
+     }
+    ],
+    "sets_by_component": {
+     "exact": "6",
+     "log10": 0.778151
+    },
+    "sets_with_variants": {
+     "exact": "12",
+     "log10": 1.079181
+    },
+    "attempts_before_reuse": 1,
+    "display_permutations": null
+   }
+  },
+  {
+   "template": "subject-quiz",
+   "pool": "math-subject",
+   "n": 12,
+   "expected": {
+    "template": "subject-quiz@1",
+    "n": 12,
+    "pool_items": 29,
+    "components": 28,
+    "variants": 1,
+    "offered": true,
+    "selected": 12,
+    "short": false,
+    "lower_bound": false,
+    "allocation": [
+     {
+      "cell": "middle/grade-1/math/n91#1",
+      "quota": 2,
+      "groups": 5,
+      "items": 6
+     },
+     {
+      "cell": "middle/grade-1/math/n91#2",
+      "quota": 4,
+      "groups": 6,
+      "items": 6
+     },
+     {
+      "cell": "middle/grade-1/math/n91#3",
+      "quota": 1,
+      "groups": 5,
+      "items": 5
+     },
+     {
+      "cell": "middle/grade-1/math/n92#1",
+      "quota": 1,
+      "groups": 4,
+      "items": 4
+     },
+     {
+      "cell": "middle/grade-1/math/n92#2",
+      "quota": 3,
+      "groups": 4,
+      "items": 4
+     },
+     {
+      "cell": "middle/grade-1/math/n92#3",
+      "quota": 1,
+      "groups": 4,
+      "items": 4
+     }
+    ],
+    "sets_by_component": {
+     "exact": "48000",
+     "log10": 4.681241
+    },
+    "sets_with_variants": {
+     "exact": "67200",
+     "log10": 4.827369
+    },
+    "attempts_before_reuse": 1,
+    "display_permutations": null
+   }
+  },
+  {
+   "template": "chapter-quiz",
+   "pool": "strata-6",
+   "n": 4,
+   "expected": {
+    "template": "chapter-quiz@1",
+    "n": 4,
+    "pool_items": 12,
+    "components": 12,
+    "variants": 0,
+    "offered": true,
+    "selected": 4,
+    "short": false,
+    "lower_bound": true,
+    "allocation": [
+     {
+      "cell": "middle/grade-1/math/n51#2",
+      "quota": 1,
+      "groups": 1,
+      "items": 1
+     },
+     {
+      "cell": "middle/grade-1/math/n52#2",
+      "quota": 1,
+      "groups": 1,
+      "items": 1
+     },
+     {
+      "cell": "middle/grade-1/math/n55#1",
+      "quota": 1,
+      "groups": 1,
+      "items": 1
+     },
+     {
+      "cell": "middle/grade-1/math/n56#2",
+      "quota": 1,
+      "groups": 1,
+      "items": 1
+     }
+    ],
+    "sets_by_component": {
+     "exact": "1",
+     "log10": 0
+    },
+    "sets_with_variants": {
+     "exact": "1",
+     "log10": 0
+    },
+    "attempts_before_reuse": 1,
+    "display_permutations": null
+   }
+  }
+ ]
+}

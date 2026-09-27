@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:curriculum-audit",
+  "title": "Curriculum audit row (§2.5)",
+  "description": "data/staging/curriculum/audit.jsonl: TOC ↔ iEN and catalog-map mismatches (needs_review).",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "code"
+  ],
+  "properties": {
+    "schema": {
+      "const": "curriculum-audit@1"
+    },
+    "node_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "subject_node_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "resource_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "code": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "detail": {},
+    "status": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    }
+  }
+}

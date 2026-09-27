@@ -1,0 +1,35 @@
+{
+  "source": "iEN — https://www.ien.edu.sa (public portal API) · https://ibs.ien.edu.sa · https://iencontent.ien.edu.sa",
+  "operator": "Tatweer Educational Services for the Ministry of Education",
+  "licence": "All rights reserved (iEN footer). Metadata recorded; files linked, not redistributed.",
+  "provenance_status": "PROVENANCE_REVIEW_REQUIRED",
+  "retrieved_at": "2026-09-26T21:00:11.044Z",
+  "requests": 315,
+  "cache_hits": 708,
+  "counts": {
+    "nodes": 358,
+    "subjects": 312,
+    "subjects_by_stage": {
+      "elementary": 57,
+      "middle": 49,
+      "high-school": 206
+    },
+    "books": 315,
+    "books_by_year": {
+      "1448": 311,
+      "1488": 1,
+      "?": 3
+    },
+    "books_by_semester_code": {
+      "SM1": 312,
+      "?": 3
+    },
+    "books_head_ok": 315,
+    "books_bytes_total": 37538007769,
+    "lessons": 10102,
+    "units": 2126,
+    "subjects_with_lessons": 269,
+    "subjects_with_books": 234
+  },
+  "errors": []
+}

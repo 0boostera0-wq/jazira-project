@@ -17,6 +17,60 @@ live in `tests/` (`npm test`, `npm run test:db`).
 
 ---
 
+# Content engine scripts (`scripts/content/`)
+
+The content pipeline of [docs/CONTENT_ENGINE.md](../docs/CONTENT_ENGINE.md):
+discovery → curriculum → PDF extraction → generation → validation → dedup →
+variants → runtime bank / DB import → reports. Every script reads and writes
+`data/staging/` (layout and rules: [data/staging/README.md](../data/staging/README.md))
+and the content cache outside the repo (`C:/jazira/content-cache`, override
+`CONTENT_CACHE_DIR`). Textbook PDFs, page text, page renders and vision
+transcripts stay in the cache and are never committed. Every request to
+`*.ien.edu.sa` goes through the shared, persisted fetch queue (≤ 2 in flight,
+backoff, circuit breaker, hourly budget; §4.1).
+
+| npm script | File | Package | What it does |
+|---|---|---|---|
+| — | `ien-crawl.mjs` | WP3 | iEN discovery crawl → `sources/ien/{nodes,books,lessons}.jsonl`, `crawl-report.json` (API cache in `ien/api/`) |
+| `content:validate` | `validate-staging.mjs` | WP1 | Schemas, referential integrity, ids, sort order and canonical form, shard layout, budgets (`--budget`), `manifest.json` (`--write-manifest`), copyright rules (≤ 80-char excerpts, no quotes in questions, no absolute paths, no stray images), append-only id registry, runtime-bank index. Exit 0 ok · 1 invalid · 2 usage. Flags: `--changed`, `--root <dir>`, `--runtime <dir>` / `--no-runtime`, `--registry-baseline <file>\|none`, `--json` |
+| `content:curriculum` | `build-curriculum.mjs` | WP2 | Crawl + catalog + evidence → curriculum nodes, `subject-terms.jsonl`, `ien-mapping.json`, `audit.jsonl`, `resources.jsonl`, app outline |
+| `content:frontmatter` | `pdf-frontmatter.mjs` | WP3 | First 14 pages per book (range reads or the cached PDF) → cache `ien/text/<stem>/pNNN.txt` + `book-frontmatter.jsonl` |
+| `content:render` | `pdf-render.mjs` | WP3 | Page → 1100 px JPEG via pdf.js in local Chrome → cache `ien/pages/<stem>/pNNN.jpg` |
+| `content:fetch` | `fetch-books.mjs` | WP3 | Full PDF downloads for the current generation batch only (resumable `.part`, `%PDF-`/size/sha256 checks, `--max-gb`) |
+| `content:extract` | `extract-pdf.mjs` | WP3 | Text layer → lines, Arabic repairs, printed pages, TOC, term evidence, page maps, exercise index |
+| `content:vision` | `vision-queue.mjs` | WP3 | Vision jobs for untrusted/figure pages; imports transcripts into the cache |
+| `content:packets` | `make-packets.mjs` | WP4 | Generation packets (page text + images) into cache `packets/<run>/` |
+| `content:ingest` | `ingest-candidates.mjs` | WP4 | Generator output → `question@1` candidates (ids, hashes, opaque option ids, evidence sidecar) |
+| `content:check` | `check-questions.mjs` | WP4 | Deterministic checks (Appendix B) → validation records |
+| `content:exchange` | `exchange.mjs` | WP4 | Cross-AI request/response batches (`validation/exchange/`, git-ignored) |
+| `content:resolve` | `resolve-validation.mjs` | WP4 | Resolution matrix → statuses, review queue |
+| `content:dedup` | `dedup.mjs` | WP5 | Exact/near/related clusters, exclusion components |
+| `content:variants` | `build-variants.mjs` | WP5 | Template variants (sfc32, exact rationals) |
+| `content:import` | `import-staging.mjs` | WP7 | Manifest-driven import into PGlite / Supabase (batched, resumable, retire list) |
+| `content:pack` | `pack-runtime-bank.mjs` | WP6 | Published staging → `data/runtime/bank/**` (pre-DB fallback bank) |
+| `content:report` | `report.mjs` | WP10 | Coverage, quality dashboard, validation, duplicates, exam templates, manifests |
+
+Shared modules (WP1):
+
+| Module | What it provides |
+|---|---|
+| `lib/schemas.mjs` | AJV 8 (draft 2020-12) over `data/schemas/*.schema.json`: `validateRecord`, `stringifyRecord` (schema key order), `ruleFor(path)` (the staging path rules), `runtimeRuleFor` |
+| `lib/jsonl.mjs` | `readJsonlStream`, `readJsonl`, `inspectJsonlText`, `writeShards` (sorted, 4 MB `.pNN` shards, stale shards removed), `writeJsonl`, `writeJson`, `writeFileIfChanged` (atomic, no rewrite when unchanged) |
+| `lib/cache.mjs` | The one cache layout (`cachePaths()`), `CONTENT_CACHE_DIR`, PDF-name and segment sanitizing (`..`, `\`, `CON.pdf` rejected), containment checks |
+| `lib/id-registry.mjs` | Frozen `x…` node and `obj-…` ids: exact / alias (trigram ≥ 0.85) / mint; append-only |
+| `src/lib/content/*.js` | `enums`, `ids` (§2.2), `normalize` (Appendix A, `lam_order_fold`), `answers` (the only JS grader), `expr` (safe grammar, exact rationals), `prng` (HASH-CTR `u()`, sfc32) |
+
+Examples:
+
+```bash
+npm run content:validate                          # the staging tree (exit code 0/1/2)
+npm run content:validate -- --budget --changed    # before a commit
+npm run content:validate -- --write-manifest      # after a production run
+node scripts/content/validate-staging.mjs --root tests/fixtures/content/staging --no-runtime   # the fixture tree
+```
+
+---
+
 # Curriculum PDF importer
 
 Imports **approved** curriculum PDFs **once** from an authorized source you

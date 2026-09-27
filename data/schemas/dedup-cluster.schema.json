@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:dedup-cluster",
+  "title": "Dedup cluster (§2.11)",
+  "description": "data/staging/validation/dedup-clusters.jsonl.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "canonical_id",
+    "members",
+    "exclusion_group",
+    "run_id"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dedup-cluster@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/dedup_cluster_id"
+    },
+    "canonical_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/question_id"
+    },
+    "members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "class",
+          "score",
+          "signals"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "urn:jazira:schema:common#/$defs/question_id"
+          },
+          "class": {
+            "type": "string",
+            "enum": [
+              "EXACT_DUPLICATE",
+              "NEAR_DUPLICATE",
+              "RELATED"
+            ]
+          },
+          "score": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "stem_jaccard",
+              "item_jaccard",
+              "option_jaccard"
+            ],
+            "properties": {
+              "stem_jaccard": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "item_jaccard": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "option_jaccard": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "exact_hash",
+                "minhash",
+                "same_answer",
+                "same_pages",
+                "numeric_variant",
+                "template_variant",
+                "semantic_judged"
+              ]
+            },
+            "uniqueItems": true
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 500
+    },
+    "exclusion_group": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/exclusion_group"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "run_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/run_id"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:prep-alignment",
+  "title": "Prep alignment (§4.3b)",
+  "description": "data/staging/curriculum/prep-alignment.jsonl, sorted by (prep_topic, node_id).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "prep_topic",
+    "node_id",
+    "source_url",
+    "retrieved_at",
+    "status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "prep-alignment@1"
+    },
+    "prep_topic": {
+      "$ref": "urn:jazira:schema:common#/$defs/prep_scope"
+    },
+    "node_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/node_id"
+    },
+    "source_url": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/https_url"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "retrieved_at": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/iso_date_or_datetime"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "needs_review"
+      ]
+    }
+  }
+}

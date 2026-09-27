@@ -1,0 +1,28 @@
+{
+  "schema": "research-claims@1",
+  "retrieved_at": "2026-09-26",
+  "collected_by": "orchestrator (Claude) — WebSearch/WebFetch; quotes copied from the fetched pages",
+  "claims": [
+    {
+      "id": "two-terms-1447-1450",
+      "claim": "General-education schools run two terms per year for the four years starting 1447H (so 1448H has two terms).",
+      "scope": "all stages",
+      "url": "https://spa.gov.sa/N2373796",
+      "source_title": "وزارة التعليم تثمن موافقة مجلس الوزراء على إقرار فصلين دراسيين لمدارس التعليم العام وتطبيقها في الأعوام الأربعة القادمة",
+      "publisher": "Saudi Press Agency (SPA)",
+      "quote": "إقرار فصلين دراسيين لمدارس التعليم العام وتطبيقها في الأعوام الأربعة القادمة",
+      "confidence": "verified"
+    },
+    {
+      "id": "plan-guide-latest-5th",
+      "claim": "The latest published study-plan guide is the 5th edition (13 Oct 2025); no 1448-specific edition is listed.",
+      "scope": "all stages",
+      "url": "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx",
+      "source_title": "وزارة التعليم | الخطط الدراسية",
+      "publisher": "Ministry of Education",
+      "quote": "دليل الخطط الدراسية الإصدار الخامس",
+      "confidence": "verified"
+    }
+  ],
+  "conclusions": "1448 has two terms (verified). Per-subject term membership: for subjects whose book is split into two parts, term = inferred (part n → term n); for single-book courses (many secondary track courses) the term is unknown until an official distribution is found. Nothing is marked 'verified' per term. Madrasati (login) was not used."
+}

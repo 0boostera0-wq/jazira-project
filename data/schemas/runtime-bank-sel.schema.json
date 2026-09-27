@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:runtime-bank-sel",
+  "title": "Runtime bank selection index (§5.8)",
+  "description": "data/runtime/bank/sel/<file id>.json: one row per published item of a subject (or prep section).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "file_id",
+    "scope",
+    "columns",
+    "rows"
+  ],
+  "properties": {
+    "schema": {
+      "const": "runtime-bank-sel@1"
+    },
+    "file_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "scope": {
+      "$ref": "urn:jazira:schema:common#/$defs/link_node_id"
+    },
+    "columns": {
+      "const": [
+        "key",
+        "lesson",
+        "band",
+        "component",
+        "type",
+        "stimulus",
+        "premium",
+        "revision",
+        "chunk",
+        "objective"
+      ]
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "$ref": "urn:jazira:schema:common#/$defs/question_id"
+          },
+          {
+            "$ref": "urn:jazira:schema:common#/$defs/link_node_id"
+          },
+          {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          {
+            "type": "string",
+            "enum": [
+              "mcq",
+              "true_false",
+              "matching",
+              "ordering",
+              "short_answer",
+              "numeric"
+            ]
+          },
+          {
+            "anyOf": [
+              {
+                "$ref": "urn:jazira:schema:common#/$defs/stimulus_id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+          },
+          {
+            "anyOf": [
+              {
+                "$ref": "urn:jazira:schema:common#/$defs/objective_id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        ],
+        "minItems": 10,
+        "maxItems": 10
+      }
+    }
+  }
+}

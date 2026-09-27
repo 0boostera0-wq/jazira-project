@@ -1,0 +1,72 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "get_scope_availability",
+ "signature": "get_scope_availability(p_node text) → jsonb",
+ "grants": [
+  "anon",
+  "authenticated"
+ ],
+ "description": "Pool counts from scope_pool_counts and, per template that lists the node's scope kind, whether it is offered (the pool rule: exclusion components ≥ ceil(min × min_pool_factor), the mini count for a mini version) and min_pool.",
+ "cases": [
+  {
+   "name": "a unit",
+   "role": "anon",
+   "match": "shape",
+   "args": {
+    "p_node": "middle/grade-1/math/n91"
+   },
+   "response": {
+    "node": "middle/grade-1/math/n91",
+    "counts": {
+     "1": 7,
+     "2": 6,
+     "3": 5
+    },
+    "groups": 15,
+    "templates": [
+     {
+      "id": "chapter-quiz",
+      "version": 1,
+      "offered": true,
+      "mini": false,
+      "min_pool": 5
+     },
+     {
+      "id": "practice",
+      "version": 1,
+      "offered": true,
+      "mini": false,
+      "min_pool": 5
+     },
+     {
+      "id": "random-practice",
+      "version": 1,
+      "offered": true,
+      "mini": false,
+      "min_pool": 5
+     },
+     {
+      "id": "timed",
+      "version": 1,
+      "offered": true,
+      "mini": false,
+      "min_pool": 5
+     }
+    ]
+   }
+  },
+  {
+   "name": "an unknown node",
+   "role": "anon",
+   "match": "exact",
+   "args": {
+    "p_node": "nope/nope"
+   },
+   "error": {
+    "message": "scope_not_found",
+    "details": null
+   }
+  }
+ ]
+}

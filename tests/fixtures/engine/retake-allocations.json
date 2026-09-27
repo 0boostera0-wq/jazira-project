@@ -1,0 +1,263 @@
+{
+ "schema": "engine-retake-allocations@1",
+ "description": "retakeAllocation() conformance (§5.3 step 4 retake): unseen first per stored cell, shortfall from seen items up to ceil(n·share/100).",
+ "cases": [
+  {
+   "name": "hand: enough unseen — the stored quotas are reused as is",
+   "stored": [
+    [
+     "s#1",
+     5
+    ],
+    [
+     "s#2",
+     3
+    ],
+    [
+     "s#3",
+     2
+    ]
+   ],
+   "strata": [
+    {
+     "id": "s",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 6,
+       "seen": 5
+      },
+      "2": {
+       "unseen": 4,
+       "seen": 5
+      },
+      "3": {
+       "unseen": 3,
+       "seen": 5
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "n": 10,
+    "cells": [
+     [
+      "s#1",
+      5,
+      0
+     ],
+     [
+      "s#2",
+      3,
+      0
+     ],
+     [
+      "s#3",
+      2,
+      0
+     ]
+    ],
+    "placed": 10,
+    "reused": 0
+   }
+  },
+  {
+   "name": "hand: one short cell refills from seen items",
+   "stored": [
+    [
+     "s#1",
+     5
+    ],
+    [
+     "s#2",
+     3
+    ],
+    [
+     "s#3",
+     2
+    ]
+   ],
+   "strata": [
+    {
+     "id": "s",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 3,
+       "seen": 5
+      },
+      "2": {
+       "unseen": 3,
+       "seen": 5
+      },
+      "3": {
+       "unseen": 2,
+       "seen": 5
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "n": 10,
+    "cells": [
+     [
+      "s#1",
+      3,
+      2
+     ],
+     [
+      "s#2",
+      3,
+      0
+     ],
+     [
+      "s#3",
+      2,
+      0
+     ]
+    ],
+    "placed": 10,
+    "reused": 2
+   }
+  },
+  {
+   "name": "two short cells share the reuse budget",
+   "stored": [
+    [
+     "s#1",
+     5
+    ],
+    [
+     "s#2",
+     3
+    ],
+    [
+     "s#3",
+     2
+    ]
+   ],
+   "strata": [
+    {
+     "id": "s",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 3,
+       "seen": 5
+      },
+      "2": {
+       "unseen": 3,
+       "seen": 5
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 5
+      }
+     }
+    }
+   ],
+   "seed": "0123456789abcdef0123456789abcdef",
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "n": 10,
+    "cells": [
+     [
+      "s#1",
+      3,
+      2
+     ],
+     [
+      "s#2",
+      3,
+      0
+     ],
+     [
+      "s#3",
+      0,
+      1
+     ]
+    ],
+    "placed": 9,
+    "reused": 3
+   }
+  },
+  {
+   "name": "hand: nothing reusable — a short retake",
+   "stored": [
+    [
+     "a#1",
+     2
+    ],
+    [
+     "b#2",
+     2
+    ]
+   ],
+   "strata": [
+    {
+     "id": "a",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 1,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 0,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 0
+      }
+     }
+    },
+    {
+     "id": "b",
+     "weight": 1,
+     "cap": {
+      "1": {
+       "unseen": 0,
+       "seen": 0
+      },
+      "2": {
+       "unseen": 2,
+       "seen": 0
+      },
+      "3": {
+       "unseen": 0,
+       "seen": 0
+      }
+     }
+    }
+   ],
+   "seed": "fedcba9876543210fedcba9876543210",
+   "allow_reuse": true,
+   "max_reuse_share": 30,
+   "expected": {
+    "n": 4,
+    "cells": [
+     [
+      "a#1",
+      1,
+      0
+     ],
+     [
+      "b#2",
+      2,
+      0
+     ]
+    ],
+    "placed": 3,
+    "reused": 0
+   }
+  }
+ ]
+}

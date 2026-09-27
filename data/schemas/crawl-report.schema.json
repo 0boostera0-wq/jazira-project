@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:crawl-report",
+  "title": "Crawl report (§4.1)",
+  "description": "data/staging/sources/ien/crawl-report.json.",
+  "type": "object",
+  "required": [
+    "source",
+    "provenance_status",
+    "retrieved_at",
+    "requests",
+    "counts",
+    "errors"
+  ],
+  "properties": {
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "operator": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "licence": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "provenance_status": {
+      "$ref": "urn:jazira:schema:common#/$defs/provenance_status"
+    },
+    "retrieved_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T"
+    },
+    "requests": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "cache_hits": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "counts": {
+      "type": "object"
+    },
+    "errors": {
+      "type": "array",
+      "items": {}
+    }
+  }
+}

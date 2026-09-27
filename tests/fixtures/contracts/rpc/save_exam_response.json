@@ -1,0 +1,176 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "save_exam_response",
+ "signature": "save_exam_response(p_attempt uuid, p_position smallint, p_response jsonb, p_time_spent int default 0, p_flagged boolean default null) → jsonb",
+ "grants": [
+  "authenticated",
+  "service_role"
+ ],
+ "description": "Owner lock; in progress; not past expires_at + 30 s; refuses a locked position; validates the display response per type (indexes in range, lengths), maps it to canonical ids through choice_order / display_map and stores it. Never writes score or is_correct; time_spent is monotonic.",
+ "cases": [
+  {
+   "name": "mcq display index",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 1,
+    "p_response": {
+     "option_index": 2
+    },
+    "p_time_spent": 14
+   },
+   "response": {
+    "attempt_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "position": 1,
+    "response": {
+     "option_index": 2
+    },
+    "flagged": false,
+    "time_spent_seconds": 14,
+    "saved_at": "<iso>",
+    "seconds_remaining": 720
+   }
+  },
+  {
+   "name": "matching pairs",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 4,
+    "p_response": {
+     "pairs": [
+      [
+       0,
+       2
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       1
+      ]
+     ]
+    }
+   },
+   "response": {
+    "attempt_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "position": 4,
+    "response": {
+     "pairs": [
+      [
+       0,
+       2
+      ],
+      [
+       1,
+       0
+      ],
+      [
+       2,
+       1
+      ]
+     ]
+    },
+    "flagged": false,
+    "time_spent_seconds": 0,
+    "saved_at": "<iso>",
+    "seconds_remaining": 700
+   }
+  },
+  {
+   "name": "index out of range",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 1,
+    "p_response": {
+     "option_index": 9
+    }
+   },
+   "error": {
+    "message": "invalid_response",
+    "details": {
+     "position": 1,
+     "reason": "index_out_of_range"
+    }
+   }
+  },
+  {
+   "name": "numeric with an ambiguous separator",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 7,
+    "p_response": {
+     "value": "0,125"
+    }
+   },
+   "error": {
+    "message": "invalid_response",
+    "details": {
+     "position": 7,
+     "reason": "ambiguous_separator"
+    }
+   }
+  },
+  {
+   "name": "a checked (locked) item",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 2,
+    "p_response": {
+     "option_index": 0
+    }
+   },
+   "error": {
+    "message": "item_locked",
+    "details": {
+     "position": 2
+    }
+   }
+  },
+  {
+   "name": "after the deadline + 30 s",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "p_position": 1,
+    "p_response": {
+     "option_index": 1
+    }
+   },
+   "error": {
+    "message": "attempt_closed",
+    "details": {
+     "status": "expired"
+    }
+   }
+  },
+  {
+   "name": "another member's attempt",
+   "role": "authenticated",
+   "match": "exact",
+   "args": {
+    "p_attempt": "3f2b1c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+    "p_position": 1,
+    "p_response": {
+     "option_index": 1
+    }
+   },
+   "error": {
+    "message": "attempt_not_found",
+    "details": null
+   }
+  }
+ ]
+}

@@ -9,7 +9,7 @@ import GradeCards from "../GradeCards";
 import SubjectMatrix from "../SubjectMatrix";
 import OfficialChannels from "../OfficialChannels";
 import PlanCard from "../PlanCard";
-import { compareGrades, newSubjectsByGrade, subjectMatrix, totalPeriods } from "../model";
+import { compareGrades, newSubjectsByGrade, subjectMatrix, termsStatusOf, totalPeriods } from "../model";
 import { OFFICIAL_LINKS, PLAN_URL, breadcrumbs, channelsCopy, nameOf, titleOf } from "../copy";
 import { pageList } from "../parts";
 
@@ -26,6 +26,8 @@ export default async function StageView({ slug, node, trail, locale }) {
   const newBy = newSubjectsByGrade(grades);
   const matrix = subjectMatrix(grades);
   const pages = [...new Set(grades.flatMap((g) => g.plan?.pages || []))].sort((a, b) => a - b);
+  // The plan's "terms" row: the split is stated only once every subject's term is backed by evidence.
+  const termsStatus = termsStatusOf(grades.flatMap((g) => g.subjects || []));
 
   const facts = [
     { key: "grades", value: grades.length, label: t("facts.grades", { count: grades.length }) },
@@ -88,7 +90,7 @@ export default async function StageView({ slug, node, trail, locale }) {
             rows={[
               { label: t("plan.source"), value: t("plan.guide"), wide: true, hint: t("plan.pages", { count: pages.length, pages: pageList(pages, locale) }) },
               { label: t("plan.checked"), value: formatDate(SOURCES_CHECKED, locale) },
-              { label: t("plan.terms"), value: t("plan.termsValue"), wide: true },
+              { label: t("plan.terms"), value: t(termsStatus === "unverified" ? "plan.termsValue" : `plan.termsValueKnown.${termsStatus}`), wide: true },
             ]}
             source={{ href: PLAN_URL, label: t("plan.open"), newTab: t("channels.newTab") }}
             note={t("plan.tahfeez")}

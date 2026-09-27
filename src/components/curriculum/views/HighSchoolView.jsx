@@ -11,7 +11,7 @@ import OfficialChannels from "../OfficialChannels";
 import PlanCard from "../PlanCard";
 import { SubjectTile } from "../SubjectIcon";
 import { Chevron, SubjectChip, pageList } from "../parts";
-import { TRACK_COLOR, distinctiveSubjects, nodeHref, sharedSubjects } from "../model";
+import { TRACK_COLOR, distinctiveSubjects, nodeHref, sharedSubjects, termsStatusOf } from "../model";
 import { OFFICIAL_LINKS, PLAN_URL, breadcrumbs, channelsCopy, nameOf, titleOf } from "../copy";
 
 /** /curriculum/high-school — the common first year, the five tracks and what they share. */
@@ -26,6 +26,8 @@ export default async function HighSchoolView({ slug, node, trail, locale }) {
   const shared = new Map(trackYears.map((g) => [g.id, sharedSubjects(g.children)]));
   const pages = [...new Set(years.flatMap((g) => g.children.flatMap((c) => c.plan?.pages || [])))].sort((a, b) => a - b);
   const distinctNames = new Set(years.flatMap((g) => g.children.flatMap((c) => c.subjects.map((s) => s.name))));
+  // The plan's "terms" row: the split is stated only once every subject's term is backed by evidence.
+  const termsStatus = termsStatusOf(years.flatMap((g) => g.children.flatMap((c) => c.subjects)));
 
   const facts = [
     { key: "years", value: years.length, label: t("facts.grades", { count: years.length }) },
@@ -168,7 +170,7 @@ export default async function HighSchoolView({ slug, node, trail, locale }) {
           rows={[
             { label: t("plan.source"), value: t("plan.guide"), wide: true, hint: t("plan.pages", { count: pages.length, pages: pageList(pages, locale) }) },
             { label: t("plan.checked"), value: formatDate(SOURCES_CHECKED, locale) },
-            { label: t("plan.terms"), value: t("plan.termsValue"), wide: true },
+            { label: t("plan.terms"), value: t(termsStatus === "unverified" ? "plan.termsValue" : `plan.termsValueKnown.${termsStatus}`), wide: true },
           ]}
           source={{ href: PLAN_URL, label: t("plan.open"), newTab: t("channels.newTab") }}
         />

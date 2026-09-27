@@ -10,6 +10,11 @@
 //                                     typeahead helper: 250 ms debounce, cancels
 //                                     the stale request, resolves only the latest
 //   debounce(fn, ms)                  generic trailing debounce with .cancel()
+//   searchContent(q, { kinds, node, limit, offset, signal })
+//                                     lessons, units, books and quizzes
+//                                     (search_content when signed in, else
+//                                     GET /api/content/search); see below
+//   createContentSearcher(opts)       typeahead for searchContent
 //
 // Results are cached in memory (LRU, 50 entries, 2 min) PER VIEWER: the key
 // starts with the signed-in user's id (or "anon"), and the cache is cleared
@@ -293,5 +298,160 @@ export function createSearcher({ delay = SEARCH_DEBOUNCE_MS, limit = 5, types = 
     });
   };
 
+  return { search, cancel };
+}
+
+// ── content search (lessons, units, books, quizzes) ─────────────────────────
+// docs/CONTENT_ENGINE.md §7 "Search". Signed-in users ask search_content
+// directly (their lesson-level question counts come back; never stems);
+// guests — and databases without 0014 — go through the rate-limited
+// GET /api/content/search (service role with p_anon, or the server-side
+// outline index). Same payload either way:
+//   { query, available, source, groups: { node, resource, exam, question?: { total, capped, items[] } } }
+export const CONTENT_GROUPS = ["node", "resource", "exam", "question"];
+export const CONTENT_MAX_LIMIT = 20;
+export const CONTENT_MAX_OFFSET = 100;
+const ROUTE_KINDS = ["node", "resource", "exam"];
+
+export const emptyContentResults = (query = "", available = true) => ({ query, available, source: null, groups: {} });
+
+/** `kinds` → the canonical subset of CONTENT_GROUPS (null = all). Throws invalid_argument. */
+export function normalizeContentKinds(kinds) {
+  if (kinds === null || kinds === undefined) return null;
+  const list = Array.isArray(kinds) ? kinds : [kinds];
+  if (!list.length || list.some((k) => !CONTENT_GROUPS.includes(k))) throw dataError("invalid_argument");
+  return CONTENT_GROUPS.filter((k) => list.includes(k));
+}
+
+function contentGroups(data, kinds) {
+  const out = {};
+  for (const k of CONTENT_GROUPS) {
+    if (kinds && !kinds.includes(k)) continue;
+    const g = data?.groups?.[k];
+    if (!g || typeof g !== "object") continue;
+    const total = Number(g.total);
+    out[k] = {
+      total: Number.isFinite(total) && total >= 0 ? Math.min(total, SEARCH_TOTAL_CAP) : 0,
+      capped: Boolean(g.capped) || total > SEARCH_TOTAL_CAP,
+      items: Array.isArray(g.items) ? g.items : [],
+    };
+  }
+  return out;
+}
+
+async function contentFromRoute(query, { kinds, node, limit, offset, signal }) {
+  const routeKinds = kinds ? kinds.filter((k) => ROUTE_KINDS.includes(k)) : null;
+  if (routeKinds && !routeKinds.length) return { ...emptyContentResults(query), source: "index" };
+  const params = new URLSearchParams({ q: query, limit: String(limit), offset: String(offset) });
+  if (routeKinds && routeKinds.length < ROUTE_KINDS.length) params.set("kinds", routeKinds.join(","));
+  if (node) params.set("node", node);
+  let res;
+  try {
+    res = await fetch(`/api/content/search?${params}`, { signal, headers: { Accept: "application/json" } });
+  } catch (e) {
+    throw dataError(signal?.aborted || e?.name === "AbortError" ? "aborted" : "network", e);
+  }
+  let json = null;
+  try {
+    json = await res.json();
+  } catch {
+    json = null;
+  }
+  if (!res.ok) {
+    if (res.status === 429) throw dataError("rate_limited");
+    if (res.status === 400) throw dataError("invalid_argument");
+    if (res.status === 503) return emptyContentResults(query, false);
+    throw dataError("unknown");
+  }
+  return { query: typeof json?.query === "string" ? json.query : query, available: true, source: json?.source ?? "index", groups: contentGroups(json, routeKinds) };
+}
+
+/**
+ * @param {string} q
+ * @param {{ kinds?: string[]|null, node?: string|null, limit?: number, offset?: number, signal?: AbortSignal }} [opts]
+ *   kinds ⊆ CONTENT_GROUPS ("question" only reaches signed-in users); node = subtree
+ *   filter (a node id); limit 1..20 (default 5); offset 0..100.
+ */
+export async function searchContent(q, { kinds = null, node = null, limit = 5, offset = 0, signal } = {}) {
+  if (!Number.isInteger(limit) || limit < 1 || limit > CONTENT_MAX_LIMIT) throw dataError("invalid_argument");
+  if (!Number.isInteger(offset) || offset < 0 || offset > CONTENT_MAX_OFFSET) throw dataError("invalid_argument");
+  const groups = normalizeContentKinds(kinds);
+  if (node !== null && (typeof node !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*){0,5}$/.test(node))) throw dataError("invalid_argument");
+  const query = normalizeQuery(q);
+  if (query.length < SEARCH_MIN_CHARS) return emptyContentResults(query);
+  if (signal?.aborted) throw dataError("aborted");
+
+  let supabase = null;
+  try {
+    supabase = await getSupabase();
+  } catch {
+    supabase = null;
+  }
+  const viewer = supabase ? await resolveViewer(supabase) : "anon";
+  const key = `content\u0000${searchCacheKey(viewer, query, { limit, offset, types: groups })}\u0000${node || ""}`;
+  const hit = cache.get(key);
+  if (hit) return hit;
+
+  let out = null;
+  if (supabase && viewer !== "anon") {
+    let req = supabase.rpc("search_content", { p_q: query, p_kinds: groups, p_node: node, p_limit: limit, p_offset: offset });
+    if (signal) req = req.abortSignal(signal);
+    let res;
+    try {
+      res = await req;
+    } catch (e) {
+      throw dataError(signal?.aborted ? "aborted" : "network", e);
+    }
+    const { data, error } = res;
+    if (!error) out = { query: typeof data?.query === "string" ? data.query : query, available: true, source: "db", groups: contentGroups(data, groups) };
+    else if (signal?.aborted || /abort/i.test(`${error.message || ""}`)) throw dataError("aborted", error);
+    else if (error.message === "invalid_argument") throw dataError("invalid_argument", error);
+    else if (!MISSING.has(error.code) && !/could not find the function|schema cache/i.test(error.message || "")) {
+      if (!error.code && /fetch|network|load failed/i.test(`${error.message || ""}`)) throw dataError("network", error);
+      throw dataError("unknown", error);
+    }
+    // search_content not deployed yet → the route (outline index)
+  }
+  if (!out) out = await contentFromRoute(query, { kinds: groups, node, limit, offset, signal });
+  if (viewerKey === null || viewerKey === viewer) cache.set(key, out);
+  return out;
+}
+
+/**
+ * Typeahead for content search: 250 ms debounce, a newer call aborts the
+ * older one (rejects with code "aborted"), queries under 2 chars resolve empty
+ * without a request.
+ */
+export function createContentSearcher({ delay = SEARCH_DEBOUNCE_MS, limit = 5, kinds = null, node = null } = {}) {
+  let timer = null;
+  let controller = null;
+  let pendingReject = null;
+  const cancel = () => {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    if (controller) controller.abort();
+    controller = null;
+    if (pendingReject) pendingReject(dataError("aborted"));
+    pendingReject = null;
+  };
+  const search = (q) => {
+    cancel();
+    const query = normalizeQuery(q);
+    if (query.length < SEARCH_MIN_CHARS) return Promise.resolve(emptyContentResults(query));
+    return new Promise((resolve, reject) => {
+      pendingReject = reject;
+      timer = setTimeout(() => {
+        timer = null;
+        pendingReject = null;
+        controller = new AbortController();
+        const mine = controller;
+        searchContent(query, { limit, kinds, node, signal: mine.signal })
+          .then(resolve, reject)
+          .finally(() => {
+            if (controller === mine) controller = null;
+          });
+      }, delay);
+    });
+  };
   return { search, cancel };
 }

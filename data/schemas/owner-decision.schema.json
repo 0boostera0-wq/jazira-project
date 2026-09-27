@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:owner-decision",
+  "title": "Owner decision (§2.4)",
+  "description": "data/staging/curriculum/owner-decisions.jsonl: the owner records \"part N = term N\" for a subject set; gives `inferred`, shown as unconfirmed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "decision",
+    "subject_node_ids",
+    "mapping",
+    "decided_by",
+    "decided_at",
+    "note"
+  ],
+  "properties": {
+    "schema": {
+      "const": "owner-decision@1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^od-[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "decision": {
+      "const": "part_equals_term"
+    },
+    "subject_node_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:jazira:schema:common#/$defs/node_id"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "1",
+        "2"
+      ],
+      "properties": {
+        "1": {
+          "$ref": "urn:jazira:schema:common#/$defs/term"
+        },
+        "2": {
+          "$ref": "urn:jazira:schema:common#/$defs/term"
+        }
+      }
+    },
+    "decided_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "decided_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_date_or_datetime"
+    },
+    "note": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 1000
+    }
+  }
+}

@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:validation-record",
+  "title": "Validation record (§2.10)",
+  "description": "data/staging/validation/records/<shard>.jsonl.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "question_id",
+    "revision",
+    "content_hash",
+    "role",
+    "agent",
+    "run_id",
+    "prompt_version",
+    "checked_at",
+    "verdict",
+    "checks",
+    "blind_answer",
+    "support",
+    "ambiguity",
+    "difficulty_estimate",
+    "issues",
+    "notes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "validation-record@1"
+    },
+    "id": {
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "^run-\\d{8}-[a-z]+-\\d{2}:[a-z0-9-]{3,40}:(?:deterministic|primary|resolver|language|human)$"
+    },
+    "question_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/question_id"
+        },
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/template_id"
+        }
+      ]
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "content_hash": {
+      "$ref": "urn:jazira:schema:common#/$defs/content_hash"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "deterministic",
+        "primary",
+        "resolver",
+        "language",
+        "human"
+      ]
+    },
+    "agent": {
+      "type": "string",
+      "pattern": "^(?:script|claude_subagent|chatgpt_web|gemini_web|human:[A-Za-z]{1,8})$"
+    },
+    "run_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/run_id"
+    },
+    "prompt_version": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+\\.v\\d+$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "checked_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_datetime"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "warn",
+        "fail",
+        "disagree",
+        "abstain"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "result",
+          "detail"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z]\\d{3}$"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "warn",
+              "fail"
+            ]
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "maxItems": 60
+    },
+    "blind_answer": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "support": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "supported",
+            "partial",
+            "unsupported",
+            "not_checked"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ambiguity": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "none",
+            "minor",
+            "ambiguous"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "difficulty_estimate": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/difficulty"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "span",
+          "suggestion"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "span": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "suggestion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "maxItems": 30
+    },
+    "notes": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 1000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

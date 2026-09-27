@@ -1,0 +1,106 @@
+[
+  {
+    "schema": "source@1",
+    "id": "ien",
+    "kind": "official_portal",
+    "name_ar": "عين",
+    "name_en": "iEN",
+    "operator": "Tatweer Educational Services for the Ministry of Education",
+    "base_urls": [
+      "https://www.ien.edu.sa",
+      "https://ibs.ien.edu.sa",
+      "https://iencontent.ien.edu.sa"
+    ],
+    "domain": "ien.edu.sa",
+    "retrieval": {
+      "method": "api_get",
+      "tool": "ien-crawl@1",
+      "retrieved_at": "2026-09-26T21:00:11Z",
+      "request_count": 315
+    },
+    "license_status": "all_rights_reserved",
+    "provenance_status": "PROVENANCE_REVIEW_REQUIRED",
+    "redistribution": "link_only",
+    "publish_policy": "pending_owner_decision",
+    "decided_by": null,
+    "decided_at": null,
+    "note": null,
+    "notes": "All rights reserved (iEN footer). Metadata and page references are recorded; files are linked, never redistributed. Items derived from the textbooks reach production only after the owner records publish_policy here (docs/CONTENT_ENGINE.md §1.4, §2.3)."
+  },
+  {
+    "schema": "source@1",
+    "id": "jazira-original",
+    "kind": "internal",
+    "name_ar": "جزيرة (محتوى أصلي)",
+    "name_en": "Jazira original",
+    "operator": "Jazira",
+    "base_urls": [],
+    "domain": "internal",
+    "retrieval": {
+      "method": "manual",
+      "tool": null,
+      "retrieved_at": null,
+      "request_count": null
+    },
+    "license_status": "internal",
+    "provenance_status": "verified",
+    "redistribution": "internal",
+    "publish_policy": "derived_questions_allowed",
+    "decided_by": null,
+    "decided_at": null,
+    "note": "Initial policy for the internal source (docs/CONTENT_ENGINE.md §2.3).",
+    "notes": "Questions written by the Jazira team, including the legacy bank of 300 items (src/content/questions)."
+  },
+  {
+    "schema": "source@1",
+    "id": "moe-plan-guide-5",
+    "kind": "official_document",
+    "name_ar": "دليل الخطط الدراسية - الإصدار الخامس",
+    "name_en": "Study plans guide, 5th edition",
+    "operator": "Ministry of Education",
+    "base_urls": [
+      "https://www.moe.gov.sa/ar/education/generaleducation/StudyPlans/Pages/Study-plans.aspx"
+    ],
+    "domain": "moe.gov.sa",
+    "retrieval": {
+      "method": "manual",
+      "tool": null,
+      "retrieved_at": "2026-09-26",
+      "request_count": null
+    },
+    "license_status": "unknown",
+    "provenance_status": "verified",
+    "redistribution": "link_only",
+    "publish_policy": "pending_owner_decision",
+    "decided_by": null,
+    "decided_at": null,
+    "note": null,
+    "notes": "Per-term study-plan tables (edition 1447). Term evidence route plan_guide gives at best `inferred` (§2.4). Research claim plan-guide-latest-5th."
+  },
+  {
+    "schema": "source@1",
+    "id": "moe-two-terms",
+    "kind": "official_news",
+    "name_ar": "إقرار فصلين دراسيين لمدارس التعليم العام",
+    "name_en": "Two-term school year decision",
+    "operator": "Saudi Press Agency (SPA)",
+    "base_urls": [
+      "https://spa.gov.sa/N2373796"
+    ],
+    "domain": "spa.gov.sa",
+    "retrieval": {
+      "method": "manual",
+      "tool": null,
+      "retrieved_at": "2026-09-26",
+      "request_count": null
+    },
+    "license_status": "unknown",
+    "provenance_status": "verified",
+    "redistribution": "link_only",
+    "publish_policy": "pending_owner_decision",
+    "decided_by": null,
+    "decided_at": null,
+    "note": null,
+    "notes": "Two terms per year for the four years starting 1447H. Research claim two-terms-1447-1450."
+  }
+]

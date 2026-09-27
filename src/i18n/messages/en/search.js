@@ -161,6 +161,38 @@ const search = {
       feedback: "suggestion idea opinion",
     },
   },
+
+  // Lessons, units, books and quizzes from the curriculum outline (docs/CONTENT_ENGINE.md §7).
+  content: {
+    groups: { node: "Lessons & units", exam: "Quizzes", resource: "Official books", question: "Practice questions by lesson" },
+    kinds: { stage: "Stage", grade: "Grade", track: "Track", subject: "Subject", unit: "Unit", chapter: "Chapter", lesson: "Lesson" },
+    templates: {
+      "lesson-quiz": "Lesson quiz",
+      "chapter-quiz": "Unit quiz",
+      "subject-quiz": "Subject quiz",
+      "term-exam": "Term exam",
+      "full-year": "Full-year exam",
+      practice: "Practice",
+    },
+    resourceKinds: {
+      student_book: "Student book",
+      activity_book: "Activity book",
+      teacher_guide: "Teacher's guide",
+      practice_resource: "Practice file",
+      test_resource: "Test file",
+      audio: "Audio",
+      question_bank_external: "iEN question bank",
+      other: "File",
+    },
+    part: "Part {part}",
+    onIen: "On iEN",
+    published: { zero: "No questions yet", one: "{count} question", other: "{count} questions" },
+    loading: "Searching lessons and books…",
+    error: "Lessons and books couldn't be searched. Try again.",
+    unavailable: "Lesson search isn't available right now.",
+    more: "Show more",
+    moreError: "Couldn't load more results.",
+  },
 };
 
 export default search;

@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { readFileSync } from "node:fs";
+import { describe, it, expect, vi } from "vitest";
+import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import * as catalog from "@/lib/curriculum";
 import {
@@ -106,20 +106,39 @@ describe("curriculum catalog (1447H)", () => {
     walk(CURRICULUM);
   });
 
-  it("lists every subject in both terms and marks the split unverified (no invented single-term examples)", () => {
-    for (const { node } of allLeaves()) {
+  it("takes terms from the research: a verified split needs evidence ids, anything else keeps both terms", () => {
+    // Research subjects by catalog path (K–9 tracks with catalog_path; secondary stage/grade/track).
+    const research = new Map();
+    for (const st of k9.stages) for (const g of st.grades) for (const t of g.tracks) if (t.catalog_path) for (const s of t.subjects) research.set(`${t.catalog_path.join("/")}/${s.id}`, s);
+    for (const st of secondary.stages) for (const g of st.grades) for (const t of g.tracks) for (const s of t.subjects) research.set(`${st.id}/${g.id}/${t.id}/${s.id}`, s);
+    const evidenceFile = root("data/staging/resources/term-evidence.jsonl");
+    const evidenceIds = existsSync(evidenceFile)
+      ? new Set(readFileSync(evidenceFile, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l).id))
+      : null;
+    for (const { slug, node } of allLeaves()) {
       for (const s of node.subjects) {
-        expect(s.terms).toEqual(["t1", "t2"]);
-        expect(s.terms_status).toBe("unverified");
+        const r = research.get(`${slug.join("/")}/${s.id}`);
+        expect(r, `${slug.join("/")}/${s.id}`).toBeTruthy();
         expect(s.status).toBe("verified");
+        if (r.terms_status === "verified") {
+          expect(s.terms_status).toBe("verified");
+          expect(s.terms).toEqual(r.terms);
+          expect(r.terms_evidence?.length).toBeGreaterThan(0);
+          if (evidenceIds) for (const id of r.terms_evidence) expect(evidenceIds.has(id), id).toBe(true);
+        } else {
+          // No verified evidence → never removed from a term (no invented single-term examples).
+          expect(s.terms).toEqual(["t1", "t2"]);
+          expect(s.terms_status).toBe("unverified");
+        }
       }
     }
   });
 
-  it("builds one resource per type per term with unique keys and no hosted file", () => {
+  it("builds one resource per type per listed term with unique keys and no hosted file", () => {
     const all = allResources();
-    const subjects = allLeaves().reduce((n, l) => n + l.node.subjects.length, 0);
-    expect(all).toHaveLength(subjects * TERMS.length * RESOURCE_TYPES.length);
+    const slots = allLeaves().reduce((n, l) => n + l.node.subjects.reduce((m, s) => m + s.terms.length, 0), 0);
+    expect(all).toHaveLength(slots * RESOURCE_TYPES.length);
+    expect(TERMS).toHaveLength(2);
     expect(new Set(all.map((r) => r.key)).size).toBe(all.length);
     for (const r of all) {
       expect(AVAILABILITY).toContain(r.availability);
@@ -236,6 +255,20 @@ describe("curriculum manifest", () => {
     expect(() => buildManifest({ catalog, k9, secondary, hostedFiles: [{ ...entry, key: "1447/nope.pdf" }] })).toThrow(/not a catalog key/);
   });
 
+  it("cross-checks terms: a verified split needs evidence and must match the catalog", () => {
+    const d = structuredClone(secondary);
+    const s = d.stages[0].grades[0].tracks[0].subjects.find((x) => x.id === "math");
+    s.terms = ["t1"];
+    s.terms_status = "verified";
+    const problems = crossCheck(catalog, k9, d);
+    expect(problems.some((p) => /math: research terms are "verified" without terms_evidence/.test(p))).toBe(true);
+    expect(problems.some((p) => /math: catalog terms \["t1","t2"\] \(unverified\) ≠ verified research \["t1"\]/.test(p))).toBe(true);
+    // An unverified single-term hint in the research is never applied to the catalog.
+    const hint = structuredClone(secondary);
+    hint.stages[0].grades[0].tracks[0].subjects.find((x) => x.id === "math").terms = ["t2"];
+    expect(crossCheck(catalog, k9, hint)).toEqual([]);
+  });
+
   it("refuses to build when the catalog drifts from the research", () => {
     const drifted = JSON.parse(JSON.stringify(k9));
     drifted.stages[0].grades[0].tracks.find((t) => t.catalog_path).subjects[0].name_ar = "اسم آخر";
@@ -328,5 +361,30 @@ describe("curriculum UI model", () => {
     expect(crumbs.map((c) => c.href)).toEqual(["/curriculum/high-school", null, null]);
     const hs = resolveCurriculum(["high-school", "grade-1"]).node;
     expect(nodeHref(["high-school", "grade-1"], hs)).toBe("/curriculum/high-school/grade-1/first-year");
+  });
+});
+
+describe("catalog term table → catalog (generated catalog-terms.js)", () => {
+  it("applies a verified split to exactly that subject and builds resources only for its terms", async () => {
+    vi.resetModules();
+    vi.doMock("../../src/content/curriculum/outline/catalog-terms.js", () => ({
+      CATALOG_TERMS: {
+        default: { terms: ["t1", "t2"], terms_status: "unverified" },
+        subjects: { "middle/grade-1/math": { terms: ["t2"], terms_status: "verified", terms_evidence: ["te-ien-120607-p1-t2"] } },
+      },
+    }));
+    try {
+      const c = await import("../../src/lib/curriculum.js");
+      const leaf = c.resolveCurriculum(["middle", "grade-1"]).node;
+      const math = leaf.subjects.find((s) => s.id === "math");
+      expect(math).toMatchObject({ terms: ["t2"], terms_status: "verified" });
+      expect(new Set(math.resources.map((r) => r.term ?? r.key.split("/").at(-2)))).toEqual(new Set(["t2"]));
+      for (const s of leaf.subjects.filter((x) => x.id !== "math")) expect(s).toMatchObject({ terms: ["t1", "t2"], terms_status: "unverified" });
+      const sci = c.resolveCurriculum(["middle", "grade-2"]).node.subjects.find((s) => s.id === "math");
+      expect(sci.terms).toEqual(["t1", "t2"]); // the key is leaf-scoped
+    } finally {
+      vi.doUnmock("../../src/content/curriculum/outline/catalog-terms.js");
+      vi.resetModules();
+    }
   });
 });

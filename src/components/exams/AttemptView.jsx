@@ -3,14 +3,15 @@
 import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { ClipboardCheck, LogIn, RotateCcw } from "lucide-react";
-import { usePathname } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { useT } from "@/i18n/client";
 import { useAuthUser } from "@/context/AuthProvider";
 import { getAttempt, isLocalAttemptId } from "@/lib/data/exams";
+import { isGuestAttemptId } from "@/lib/data/exam-sessions";
 import Button from "@/components/ui/Button";
 import Illustration from "@/components/ui/Illustration";
 import ExamRunner from "./ExamRunner";
-import { getLocalPointer, readDraft, takeAttempt } from "./handoff";
+import { getLocalPointer, handOff, readDraft, takeAttempt } from "./handoff";
 import { mergeDrafts, toRunnerSession } from "./runner-logic";
 import { ResultsSkeleton, RunnerSkeleton } from "./skeletons";
 import { signInHref } from "./labels";
@@ -25,24 +26,34 @@ const ExamResults = dynamic(loadResults, { ssr: false, loading: () => <ResultsSk
 /**
  * /exams/attempt/[id] — one route for the whole attempt lifecycle:
  *   loading → running (runner) → results, plus honest error states.
- * id "local" resolves to this tab's latest local practice attempt.
+ * id "local" resolves to this tab's latest local practice attempt or guest
+ * template session ("g-…", kept in this browser until its deadline).
  *
  * Instant start: the builder stashes the start payload in memory, so a
  * client-side navigation renders the runner without another request.
  * Resume: getAttempt() returns saved answers + seconds_remaining; unsent
  * answers kept on the device (offline drafts) are merged back and re-sent.
+ * Retake / "practise my mistakes" from the results open the new session in
+ * place (guest: same route) or on the new attempt's route.
  */
 export default function AttemptView({ id }) {
   const t = useT("exams");
   const path = usePathname();
+  const router = useRouter();
   const { isLoaded, isSignedIn } = useAuthUser();
   // Always start in "loading" so the server HTML and the first client render
   // match (the stash and sessionStorage only exist in the browser).
   const [view, setView] = useState({ phase: "loading" });
   const [nonce, setNonce] = useState(0);
+  // a new attempt id on the same route (a retake of a saved attempt) starts over
+  const [shownId, setShownId] = useState(id);
+  if (shownId !== id) {
+    setShownId(id);
+    setView({ phase: "loading" });
+  }
 
   const withDrafts = useCallback((session) => {
-    if (session.mode === "local") return session;
+    if (session.mode !== "db") return session; // local / guest answers live in this browser already
     const { answers, spent, dirty } = mergeDrafts(session.answers, session.spent, readDraft(session.id));
     return { ...session, answers, spent, dirty };
   }, []);
@@ -61,7 +72,8 @@ export default function AttemptView({ id }) {
       return;
     }
     // Saved attempts need the session: wait for auth before asking the database.
-    if (!isLocalAttemptId(resolved) && !isLoaded) return;
+    const onDevice = isLocalAttemptId(resolved) || isGuestAttemptId(resolved);
+    if (!onDevice && !isLoaded) return;
     let alive = true;
     getAttempt(resolved)
       .then((payload) => {
@@ -76,8 +88,8 @@ export default function AttemptView({ id }) {
       .catch((e) => {
         if (!alive) return;
         const code = e?.code;
-        if (code === "attempt_not_found" || code === "invalid_argument") setView({ phase: id === "local" || isLocalAttemptId(resolved) ? "noLocal" : "notFound" });
-        else if (code === "not_authenticated" || (!isSignedIn && !isLocalAttemptId(resolved))) setView({ phase: "signIn" });
+        if (code === "attempt_not_found" || code === "invalid_argument") setView({ phase: id === "local" || onDevice ? "noLocal" : "notFound" });
+        else if (code === "not_authenticated" || (!isSignedIn && !onDevice)) setView({ phase: "signIn" });
         else setView({ phase: "failed", code });
       });
     return () => {
@@ -101,6 +113,21 @@ export default function AttemptView({ id }) {
   }, [running]);
 
   const onResult = useCallback((result) => setView({ phase: "results", result }), []);
+  // a session started from the results (retake, practise my mistakes)
+  const onStart = useCallback(
+    (payload) => {
+      const href = handOff(payload);
+      if (href === `/exams/attempt/${id}`) {
+        takeAttempt(payload.attempt_id);
+        const session = toRunnerSession(payload);
+        setView(session ? { phase: "running", session: withDrafts(session) } : { phase: "failed" });
+        window.scrollTo({ top: 0 });
+      } else {
+        router.push(href);
+      }
+    },
+    [id, router, withDrafts]
+  );
   const reload = useCallback(() => {
     setView({ phase: "loading" });
     setNonce((n) => n + 1);
@@ -108,7 +135,7 @@ export default function AttemptView({ id }) {
 
   if (view.phase === "loading") return <RunnerSkeleton />;
   if (view.phase === "running") return <ExamRunner session={view.session} isSignedIn={isSignedIn} onResult={onResult} onReload={reload} />;
-  if (view.phase === "results") return <ExamResults result={view.result} isSignedIn={isSignedIn} path={path} />;
+  if (view.phase === "results") return <ExamResults result={view.result} isSignedIn={isSignedIn} path={path} onStart={onStart} />;
 
   const states = {
     noLocal: { image: "exams.timed", action: <Button href="/exams" iconStart={ClipboardCheck}>{t("runner.states.noLocal.cta")}</Button> },

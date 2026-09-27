@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:source",
+  "title": "Source (§2.3)",
+  "description": "One row of data/staging/sources/registry.json (a JSON array sorted by id).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "name_ar",
+    "name_en",
+    "operator",
+    "base_urls",
+    "domain",
+    "retrieval",
+    "license_status",
+    "provenance_status",
+    "redistribution",
+    "publish_policy",
+    "decided_by",
+    "decided_at",
+    "note",
+    "notes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "source@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/slug"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "official_portal",
+        "official_document",
+        "official_news",
+        "internal",
+        "licensed"
+      ]
+    },
+    "name_ar": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "name_en": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "operator": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "base_urls": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:jazira:schema:common#/$defs/https_url"
+      },
+      "maxItems": 20
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "retrieval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "tool",
+        "retrieved_at",
+        "request_count"
+      ],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "api_get",
+            "download",
+            "manual"
+          ]
+        },
+        "tool": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9-]+@\\d+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "retrieved_at": {
+          "anyOf": [
+            {
+              "$ref": "urn:jazira:schema:common#/$defs/iso_date_or_datetime"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "request_count": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "license_status": {
+      "$ref": "urn:jazira:schema:common#/$defs/license_status"
+    },
+    "provenance_status": {
+      "$ref": "urn:jazira:schema:common#/$defs/provenance_status"
+    },
+    "redistribution": {
+      "$ref": "urn:jazira:schema:common#/$defs/redistribution"
+    },
+    "publish_policy": {
+      "type": "string",
+      "enum": [
+        "pending_owner_decision",
+        "derived_questions_allowed",
+        "blocked"
+      ]
+    },
+    "decided_by": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "decided_at": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/iso_date_or_datetime"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 2000
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:term-evidence",
+  "title": "Term evidence (§2.4)",
+  "description": "data/staging/resources/term-evidence.jsonl. pdf_page 0 = not from a page (listing title, plan guide, course code, owner decision).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "resource_id",
+    "pdf_page",
+    "method",
+    "term",
+    "excerpt",
+    "reads",
+    "confidence",
+    "run_id",
+    "extracted_at"
+  ],
+  "properties": {
+    "schema": {
+      "const": "term-evidence@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/term_evidence_id"
+    },
+    "resource_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+    },
+    "pdf_page": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "cover_text",
+        "title_page_text",
+        "listing_title",
+        "toc_marker",
+        "vision",
+        "plan_guide",
+        "course_code",
+        "owner_decision"
+      ]
+    },
+    "term": {
+      "$ref": "urn:jazira:schema:common#/$defs/term"
+    },
+    "excerpt": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/excerpt"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reads": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/run_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "extracted_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_datetime"
+    }
+  }
+}

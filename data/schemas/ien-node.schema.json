@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:ien-node",
+  "title": "iEN tree node (crawl, §4.1)",
+  "description": "data/staging/sources/ien/nodes.jsonl (raw normalized crawl; order set by the crawler).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ien_id",
+    "parent_ien_id",
+    "title",
+    "code_id",
+    "code_type",
+    "full_path",
+    "order_in_parent",
+    "depth",
+    "path_titles",
+    "stage",
+    "grade_ien_id",
+    "grade_code",
+    "track_ien_id",
+    "track_code",
+    "year_node_ien_id"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ien-node@1"
+    },
+    "ien_id": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "parent_ien_id": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "listed_under_ien_id": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "code_id": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 60
+    },
+    "code_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10
+    },
+    "full_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "order_in_parent": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "is_active": {
+      "type": "boolean"
+    },
+    "h_date": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 40
+    },
+    "g_date": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 40
+    },
+    "gender": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 10
+    },
+    "subject_group_id": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "has_subject_books": {
+      "type": "boolean"
+    },
+    "subject_books_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ien_question_bank_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "teacher_guides_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "interactive_activities_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "depth": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "path_titles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "elementary",
+        "middle",
+        "high-school"
+      ]
+    },
+    "grade_ien_id": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "grade_code": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "track_ien_id": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "track_code": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "year_node_ien_id": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

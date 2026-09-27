@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:id-registry",
+  "title": "Id registry (§2.2)",
+  "description": "data/staging/curriculum/id-registry.jsonl: frozen hash-derived x-node and objective ids; append-only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "scope",
+    "first_title_norm",
+    "aliases",
+    "assigned_at"
+  ],
+  "properties": {
+    "schema": {
+      "const": "id-registry@1"
+    },
+    "id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/objective_id"
+        }
+      ]
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "x_node",
+        "objective"
+      ]
+    },
+    "scope": {
+      "$ref": "urn:jazira:schema:common#/$defs/node_id"
+    },
+    "first_title_norm": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      },
+      "uniqueItems": true,
+      "maxItems": 50
+    },
+    "assigned_at": {
+      "$ref": "urn:jazira:schema:common#/$defs/iso_datetime"
+    }
+  }
+}

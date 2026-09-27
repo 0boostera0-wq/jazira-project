@@ -8,8 +8,9 @@ import Dialog from "@/components/ui/Dialog";
 import EmptyState from "@/components/ui/EmptyState";
 import Button from "@/components/ui/Button";
 import Tabs from "@/components/ui/Tabs";
-import SubjectDetail from "./SubjectDetail";
+import SubjectDetail, { loadSubjectLearn } from "./SubjectDetail";
 import { SubjectTile } from "./SubjectIcon";
+import { termsStatusOf } from "./model";
 
 // The resource viewer only exists for files Jazira is authorised to host
 // (none today) — it is never part of the page bundle until one is opened.
@@ -34,6 +35,8 @@ export default function SubjectExplorer({ subjects = [], context, links, emptyHr
   const byId = useMemo(() => new Map(subjects.map((s) => [s.id, s])), [subjects]);
   const list = useMemo(() => (term === "all" ? subjects : subjects.filter((s) => s.terms?.includes(term))), [subjects, term]);
   const open = openId ? byId.get(openId) : null;
+  // The term note depends on the evidence behind the subjects' terms (terms_status).
+  const termsStatus = useMemo(() => termsStatusOf(subjects), [subjects]);
 
   const syncUrl = useCallback((id) => {
     try {
@@ -60,6 +63,10 @@ export default function SubjectExplorer({ subjects = [], context, links, emptyHr
   const show = (id) => {
     setOpenId(id);
     syncUrl(id);
+  };
+  // The drawer's outline payload loads on open; a press starts it a few frames earlier.
+  const warm = (s) => {
+    if (s.learn?.node) loadSubjectLearn(s.learn.node).catch(() => {});
   };
   const close = useCallback(() => {
     setOpenId(null);
@@ -99,7 +106,7 @@ export default function SubjectExplorer({ subjects = [], context, links, emptyHr
 
       <p className="t-caption mt-3 flex items-start gap-2 rounded-md border border-line/10 bg-surface-2/60 px-3 py-2.5">
         <Info size={15} aria-hidden="true" className="mt-0.5 shrink-0 text-ink-3" />
-        <span>{t("terms.note")}</span>
+        <span>{termsStatus === "unverified" ? t("terms.note") : t(`terms.noteKnown.${termsStatus}`)}</span>
       </p>
 
       <ul className="mt-4 grid gap-2.5 sm:grid-cols-2 sm:gap-3 2xl:grid-cols-3">
@@ -111,6 +118,7 @@ export default function SubjectExplorer({ subjects = [], context, links, emptyHr
               <button
                 type="button"
                 onClick={() => show(s.id)}
+                onPointerDown={() => warm(s)}
                 aria-haspopup="dialog"
                 aria-label={t("subject.open", { name })}
                 className="group flex h-full w-full items-center gap-3.5 rounded-lg border border-line/15 bg-surface p-3.5 text-start shadow-xs transition-[transform,box-shadow,border-color] duration ease-out hover:-translate-y-0.5 hover:border-line/20 hover:shadow-md sm:p-4"

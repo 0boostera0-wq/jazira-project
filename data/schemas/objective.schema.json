@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:objective",
+  "title": "Learning objective (§2.7)",
+  "description": "data/staging/curriculum/objectives/<stage>/<grade>[-<track>].jsonl.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "lesson_node_id",
+    "text_ar",
+    "text_en",
+    "origin",
+    "source",
+    "status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "objective@1"
+    },
+    "id": {
+      "$ref": "urn:jazira:schema:common#/$defs/objective_id"
+    },
+    "lesson_node_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/node_id"
+    },
+    "text_ar": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "text_en": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "extracted",
+        "authored"
+      ]
+    },
+    "source": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "resource_id",
+            "pdf_page"
+          ],
+          "properties": {
+            "resource_id": {
+              "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+            },
+            "pdf_page": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "validated"
+      ]
+    }
+  }
+}

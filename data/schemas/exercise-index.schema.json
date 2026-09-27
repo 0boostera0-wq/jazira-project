@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:exercise-index",
+  "title": "Exercise index row (§2.6)",
+  "description": "data/staging/resources/exercise-index/<resource_id>.jsonl, no body text, sorted by (pdf_page, label).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "resource_id",
+    "pdf_page",
+    "label",
+    "kind",
+    "lesson_node_id",
+    "method"
+  ],
+  "properties": {
+    "schema": {
+      "const": "exercise-index@1"
+    },
+    "resource_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+    },
+    "pdf_page": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "example",
+        "exercise",
+        "review",
+        "answer_key"
+      ]
+    },
+    "lesson_node_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "text",
+        "vision"
+      ]
+    }
+  }
+}

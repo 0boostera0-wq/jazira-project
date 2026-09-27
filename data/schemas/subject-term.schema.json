@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:subject-term",
+  "title": "Subject-term membership (§2.5)",
+  "description": "data/staging/curriculum/subject-terms.jsonl, sorted by (subject_node_id, term).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "subject_node_id",
+    "term",
+    "status",
+    "evidence"
+  ],
+  "properties": {
+    "schema": {
+      "const": "subject-term@1"
+    },
+    "subject_node_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/node_id"
+    },
+    "term": {
+      "type": "string",
+      "enum": [
+        "t1",
+        "t2"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "inferred",
+        "needs_review",
+        "absent"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:jazira:schema:common#/$defs/term_evidence_id"
+      },
+      "maxItems": 100
+    }
+  }
+}

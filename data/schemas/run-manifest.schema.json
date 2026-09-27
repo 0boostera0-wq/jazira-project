@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:run-manifest",
+  "title": "Run manifest (§4)",
+  "description": "data/staging/validation/runs/<run_id>.json: inputs' hashes, parameters, counts, errors, agents available.",
+  "type": "object",
+  "required": [
+    "run_id"
+  ],
+  "properties": {
+    "schema": {
+      "const": "run-manifest@1"
+    },
+    "run_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/run_id"
+    }
+  }
+}

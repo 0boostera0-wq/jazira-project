@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, History, PlayCircle, RotateCcw, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, History, PlayCircle, RotateCcw, Sparkles } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useLocale, useT } from "@/i18n/client";
 import { formatNumber, formatPercent, formatRelative } from "@/i18n/format";
 import { useAuthUser } from "@/context/AuthProvider";
 import { getExamStats, listAttempts } from "@/lib/data/exams";
+import { getSupabase } from "@/lib/supabase-lazy";
 import { LIMITS } from "@/lib/exams/catalog";
+import { textProps } from "@/components/community/text";
 import Alert from "@/components/ui/Alert";
 import Button from "@/components/ui/Button";
 import IconTile from "@/components/ui/IconTile";
@@ -15,9 +17,49 @@ import Skeleton from "@/components/ui/Skeleton";
 import { cn } from "@/components/ui/cn";
 import { builderHref } from "./builder-logic";
 import { examIcon, sectionLabel, signInHref } from "./labels";
-import { scoreTone } from "./results-logic";
+import { scoreTone, templateName } from "./results-logic";
+import { isOpenAttempt } from "./stats-logic";
 
 const TONE_TEXT = { green: "text-green-700", gold: "text-gold-700", danger: "text-danger", neutral: "text-ink-3" };
+const MISSING = new Set(["PGRST202", "PGRST205", "42P01", "42883"]);
+
+/**
+ * The latest attempts with their template and scope (list_exam_attempts_v2,
+ * 0014); a database without it falls back to list_exam_attempts (legacy rows).
+ */
+async function listRecent(limit) {
+  const supabase = await getSupabase().catch(() => null);
+  if (supabase) {
+    const { data, error } = await supabase.rpc("list_exam_attempts_v2", { p_limit: limit, p_before: null, p_before_id: null });
+    if (!error) return { mode: "db", items: Array.isArray(data) ? data : [] };
+    if (!MISSING.has(error.code) && !/could not find the function|schema cache/i.test(error.message || "")) throw error;
+  }
+  return listAttempts({ limit });
+}
+
+/**
+ * Row title of an attempt: template attempts name the template and the scope
+ * they covered (lesson / unit / subject title — educational content, marked
+ * with the language its own text is in); legacy attempts name exam + section.
+ */
+function AttemptTitle({ it, t }) {
+  if (!it.template_id) return <>{t(`types.${it.exam}`)} · {sectionLabel(t, it.exam, it.section)}</>;
+  const scope = typeof it.scope_title === "string" && it.scope_title.trim() ? it.scope_title : null;
+  return (
+    <>
+      {templateName(t, it.template_id)}
+      {scope && (
+        <>
+          {" · "}
+          <bdi {...textProps(scope)}>{scope}</bdi>
+        </>
+      )}
+    </>
+  );
+}
+
+/** School (curriculum) attempts get a book; aptitude / achievement keep their exam glyph. */
+const attemptIcon = (it) => (it.exam === "school" ? BookOpen : examIcon(it.exam));
 
 /** Hub rail: the viewer's exam activity (guest pitch / empty / stats + recent). */
 export default function ExamActivity() {
@@ -32,7 +74,7 @@ export default function ExamActivity() {
     if (!isLoaded || !isSignedIn) return;
     let alive = true;
     setState({ status: "loading" });
-    Promise.allSettled([getExamStats(), listAttempts({ limit: 4 })]).then(([s, l]) => {
+    Promise.allSettled([getExamStats(), listRecent(4)]).then(([s, l]) => {
       if (!alive) return;
       const stats = s.status === "fulfilled" ? s.value : null;
       const list = l.status === "fulfilled" ? l.value : null;
@@ -101,7 +143,7 @@ export default function ExamActivity() {
     const totals = stats?.totals || {};
     const completed = Number(stats?.completed_attempts) || 0;
     const now = Date.now();
-    const open = items.find((it) => it.status === "in_progress" && Date.parse(it.expires_at) > now);
+    const open = items.find((it) => isOpenAttempt(it, now));
     const recent = items.filter((it) => it !== open).slice(0, 3);
 
     if (!completed && !items.length) {
@@ -125,7 +167,9 @@ export default function ExamActivity() {
               <PlayCircle size={20} aria-hidden="true" className="shrink-0 text-gold-600" />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-ink">{t("hub.activity.resume.title")}</p>
-                <p className="t-caption truncate">{t(`types.${open.exam}`)} · {sectionLabel(t, open.exam, open.section)}</p>
+                <p className="t-caption truncate">
+                  <AttemptTitle it={open} t={t} />
+                </p>
               </div>
               <Button href={`/exams/attempt/${open.id}`} size="sm" variant="secondary">{t("hub.activity.resume.cta")}</Button>
             </div>
@@ -143,7 +187,7 @@ export default function ExamActivity() {
               <h3 className="t-caption mt-5 font-medium text-ink-2">{t("hub.activity.recent")}</h3>
               <ul className="mt-2 divide-y divide-line/10">
                 {recent.map((it) => {
-                  const Icon = examIcon(it.exam);
+                  const Icon = attemptIcon(it);
                   const pct = it.score_percent === null || it.score_percent === undefined ? null : Number(it.score_percent);
                   return (
                     <li key={it.id}>
@@ -151,7 +195,7 @@ export default function ExamActivity() {
                         <IconTile icon={Icon} tone="neutral" size="sm" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-ink">
-                            {t(`types.${it.exam}`)} · {sectionLabel(t, it.exam, it.section)}
+                            <AttemptTitle it={it} t={t} />
                           </p>
                           <p className="t-caption">{formatRelative(it.started_at, locale)}</p>
                         </div>

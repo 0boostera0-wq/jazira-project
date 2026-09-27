@@ -5,7 +5,9 @@ import { cn } from "@/components/ui/cn";
 
 /**
  * Question map: one numbered button per question showing answered /
- * unanswered / flagged / current. Used in the desktop rail and the mobile sheet.
+ * unanswered / flagged / current (and checked, for immediate-feedback
+ * items). Used in the desktop rail and the mobile sheet. An answer is a
+ * chosen option (`selected`) or a typed response (`response`).
  */
 export default function QuestionNavigator({ t, positions, answers, current, onGo, columns = 5, className }) {
   return (
@@ -13,16 +15,18 @@ export default function QuestionNavigator({ t, positions, answers, current, onGo
       <ol className="grid gap-2" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
         {positions.map((p, i) => {
           const a = answers[p];
-          const answered = a?.selected !== null && a?.selected !== undefined;
+          const answered = (a?.selected !== null && a?.selected !== undefined) || (a?.response !== null && a?.response !== undefined);
+          const checked = Boolean(a?.locked);
           const flagged = Boolean(a?.flagged);
           const isCurrent = p === current;
-          const label = answered && flagged
+          const base = answered && flagged
             ? t("runner.navigator.itemAnsweredFlagged", { n: i + 1 })
             : answered
               ? t("runner.navigator.itemAnswered", { n: i + 1 })
               : flagged
                 ? t("runner.navigator.itemFlagged", { n: i + 1 })
                 : t("runner.navigator.item", { n: i + 1 });
+          const label = checked ? `${base}, ${t("runner.navigator.checked")}` : base;
           return (
             <li key={p}>
               <button
@@ -37,6 +41,7 @@ export default function QuestionNavigator({ t, positions, answers, current, onGo
                 )}
               >
                 {i + 1}
+                {checked && <span aria-hidden="true" className="absolute bottom-1 h-1 w-3 rounded-full bg-gold-500" />}
                 {flagged && (
                   <span aria-hidden="true" className="absolute -end-1 -top-1 grid h-4 w-4 place-items-center rounded-full bg-warning text-surface ring-2 ring-surface">
                     <Flag size={9} className="fill-current" />

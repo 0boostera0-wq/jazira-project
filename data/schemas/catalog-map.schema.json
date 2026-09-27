@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:catalog-map",
+  "title": "Catalog ↔ iEN subject map (agent audit)",
+  "description": "data/staging/sources/research/catalog-map.jsonl (origin: agent_audit). Verified by WP2, never trusted unchecked (§2.5).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "jazira_stage",
+    "jazira_leaf",
+    "jazira_subject_id",
+    "jazira_name",
+    "jazira_labels",
+    "catalog",
+    "ien_subject_ids",
+    "ien_titles",
+    "ien_codes",
+    "books",
+    "textbook_titles",
+    "lesson_count",
+    "unit_count",
+    "ien_question_bank_count",
+    "match",
+    "notes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "catalog-map@1"
+    },
+    "origin": {
+      "const": "agent_audit"
+    },
+    "jazira_stage": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "jazira_leaf": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "jazira_subject_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/slug"
+    },
+    "jazira_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "jazira_labels": {
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "catalog": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "ien_subject_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "ien_titles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    "ien_codes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 40
+      }
+    },
+    "books": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    "textbook_titles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    "lesson_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unit_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ien_question_bank_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "match": {
+      "type": "string",
+      "enum": [
+        "exact",
+        "partial",
+        "none"
+      ]
+    },
+    "notes": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 2000
+    }
+  }
+}

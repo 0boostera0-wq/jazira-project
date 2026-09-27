@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:ien-book",
+  "title": "iEN book listing (crawl, §4.1)",
+  "description": "data/staging/sources/ien/books.jsonl (raw normalized crawl + HEAD check).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ien_book_id",
+    "subject_ien_id",
+    "title",
+    "path",
+    "url",
+    "is_active",
+    "tree_path",
+    "parsed",
+    "file_ext",
+    "http_status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ien-book@1"
+    },
+    "ien_book_id": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "subject_ien_id": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "url": {
+      "$ref": "urn:jazira:schema:common#/$defs/https_url"
+    },
+    "is_active": {
+      "type": "boolean"
+    },
+    "download_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tree_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "parsed": {
+      "type": "boolean"
+    },
+    "file_ext": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10
+    },
+    "year_hijri": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 9999
+    },
+    "system": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10
+    },
+    "level_segments": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 20
+      }
+    },
+    "grade_code": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "track_code": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "semester_code": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "slug": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "part": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "http_status": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 599
+    },
+    "content_type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "last_modified": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "accept_ranges": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 40
+    }
+  }
+}

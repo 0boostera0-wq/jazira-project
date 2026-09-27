@@ -75,6 +75,12 @@ RLS policy (it affects 0 rows). "own" means RLS restricts the rows to
 | `user_sessions` | own | own (bounded text) | own | own |
 | `storage.objects` (`avatars`, `post-media`) | **owner's folder only**; public URLs need no RLS | own folder `<uid>/…` | own folder | own folder |
 | `storage.objects` (`post-media/anon/<uuid>/<file>`) | the uploader (`owner`) only | any signed-in member, as `owner` of it | — (write-once) | the uploader |
+| `questions` (0014) | active rows, **never `exam = 'school'` and never staging-imported rows** (`import_origin = 'staging'`: their keys are minted from a hash that includes the answer), premium only for premium members; **column list only** (`content_hash`, `exclusion_group`, `provenance`, `validation_status`, `import_origin`, `revision`, source columns, `option_flags`, `stem_norm` are not granted) | — | — | — |
+| `question_keys`, `question_stimuli`, `question_curriculum`, `question_revisions`, `scope_pool_members`, `question_item_stats`, `content_import_*` | — | — | — | — |
+| `exam_attempts` (0014) | own rows, **every column except `seed`** (the seed keys the opaque item handles) | — | — | — |
+| `exam_attempt_items` | own rows, **columns** `attempt_id, position, question_id, selected_index, is_correct, time_spent_seconds, flagged, answered_at, score, question_revision, locked_at, voided` (not `choice_order`, `display_map`, `response`). For template items `selected_index` is the **display** index (a canonical index would reveal `choice_order`) | — | — | — |
+| `learner_question_stats`, `learner_node_stats` | own | — (`_exam_finalize`) | — | — |
+| `content_sources`, `curriculum_nodes` (not `source_only`), `subject_terms`, `curriculum_resources`, `lesson_resource_ranges`, `learning_objectives` (validated), `exam_templates` (active), `scope_pool_counts` | everyone | — (importer) | — | — |
 
 No API role has `TRUNCATE`, `TRIGGER` or `REFERENCES` on the tables above.
 `TRUNCATE` bypasses RLS.
@@ -146,8 +152,12 @@ Rules for every definer function:
 | `can_send_message(p_conversation)` | used by the `messages` INSERT policy: participant, no block, recipient allows messages, only the requester writes while a request is pending |
 | `get_public_social_settings(p_user)` | anon-callable: `show_likes_on_profile`, `show_reposts_on_profile`, `allow_messages` |
 | `community_feed(…)`, `community_comments(…)`, `community_new_posts_count(…)` (0012) | anon-callable **readers** of posts / comments. They are definer because they must return other members' anonymous rows, which RLS hides; they return author columns only when the row is public or the caller's own, never `user_id` otherwise, and apply blocks / `show_*_on_profile` themselves |
-| `search_all(…)` (0012: now definer) | same masking for posts; people = public columns of members not in anonymous mode; questions re-implement the `questions` RLS rule (`is_active and (not is_premium or has_premium(auth.uid()))`) |
+| `search_all(…)` (0012: now definer) | same masking for posts; people = public columns of members not in anonymous mode; questions re-implement the `questions` RLS rule (`is_active and (not is_premium or has_premium(auth.uid()))`); 0014 patches both question queries to exclude `exam = 'school'` (school items are found lesson-level only, through `search_content`) |
 | `post_public_author(p_post)` (0012) | helper for the reaction / comment INSERT policies: the author of a **public** post, `null` for an anonymous one. It only returns what the table already shows |
+| `start_template_attempt`, `save_exam_response`, `check_exam_item`, `abandon_exam_attempt`, `list_exam_attempts_v2`, `get_learning_stats`, `get_practice_recommendations`, `search_content` (0014) | authenticated (+ service role). Owner lock (`for update`) on the attempt; `retake_of` must be one of the caller's attempts (`not_found`); the seed is always generated server side (`seed_not_allowed`); premium items only for `has_premium`; responses arrive as display indexes and are mapped to canonical ids server side; `score` / `is_correct` are written only by `check_exam_item` (one locked item) and `_exam_finalize`; a locked item cannot be changed (`item_locked`) and `submit` ignores new answers for it; answers after `expires_at + 30 s` are ignored |
+| `submit_exam_attempt`, `get_exam_attempt`, `start_exam_attempt`, `_exam_finalize` (0014) | same signatures; template attempts dispatch to `_ce_submit` / `_ce_get` / `_ce_finalize` (revision guard: an item whose question changed is voided and rendered from `question_revisions`); legacy attempts keep the 0010–0013 code path. The free daily limit of `start_exam_attempt` counts exam-quota attempts only |
+| `get_scope_availability` (0014) | anon + authenticated: counts only |
+| `ce_import_begin/_batch/_retire/_finish`, `ce_refresh_aggregates`, `ce_guest_start`, `ce_guest_items` (0014) | **service role only** (import pipeline, guest routes). `ce_import_retire` refuses `--only` runs, runs with errors and filtered publish sets; `ce_guest_*` never return premium items and return only the picked rows |
 
 Definer **triggers** own the derived data: `sync_post_counts` (post counters),
 `sync_hashtag_count`, `index_post_entities` (`#tags` → `hashtags` /
@@ -226,6 +236,39 @@ any later change with `anonymity_immutable`) and
   Report reason: at most 1000. `user_sessions` text columns are bounded.
   Hashtags: `^[0-9a-z_؀-ۿ]{2,50}$`.
 
+### Content engine (0014)
+
+- **The answer never reaches a client before it may.** Keys live in
+  `question_keys` (no privilege); `content_hash` includes the answer and is not
+  granted on `questions`; a test brute-forces every candidate answer against
+  every anon-readable column and must find nothing. Session payloads carry
+  display indexes only (no option / left / right / item ids), and the mapping
+  (`choice_order`, `display_map`) and canonical `response` columns are not
+  granted to the owner either.
+- **Question keys are answer-derived, so no client sees one before the result.**
+  A key `q-<grade>-<subject>-<hex10>` is minted from
+  `sha256(anchor | type | normalize(stem) | canonicalAnswer)` (§2.2): with the
+  stem and options a client could hash each candidate answer and match the
+  key. DB session payloads therefore carry `key` = an opaque per-attempt
+  handle (`_ce_item_handle(seed, key)`, `h-` + 20 hex), the owner cannot read
+  `exam_attempts.seed`, and staging-imported rows are not readable through
+  PostgREST. Guest routes (tokens, `/start` payloads, seen lists) must follow
+  the same rule; see §9.
+- **The curriculum bank is served only by RPCs** (`questions_read` excludes
+  `exam = 'school'` and staging rows; `search_all` excludes `exam = 'school'`).
+- **The legacy builder only serves what it can grade:** `_exam_pick` and
+  `question_bank_counts` take `mcq` / `true_false` items only (choices +
+  `correct_index`); a legacy row is updated by the importer only when the
+  staging key names the seeded `correct_index` (`legacy_mismatch` otherwise).
+- **Locked items are final** and `score` stays null until lock or finalize, so
+  checking and then changing an answer never gains score.
+- **Import is service-role only**, each row is an isolated upsert, and
+  retirement never deletes (`is_active = false, status = 'retired'`).
+- `_ce_u` and `_ce_stratum` are the only functions without `set search_path`:
+  small `immutable` SQL helpers (not definer, not API-callable) left inlinable
+  on purpose (the selection draws `_ce_u` thousands of times); their bodies
+  are `pg_catalog`-qualified.
+
 ## 7. What client code must never do
 
 - `select("*")` or `profiles(*)` on `profiles`. Also never select `phone` or
@@ -273,6 +316,16 @@ any later change with `anonymity_immutable`) and
    the legitimate flow.
 
 ## 9. Known limits and follow-ups
+
+- **Content engine (0014):** guest sessions are stateless, so their item lock
+  is advisory (signed check receipts make a changed answer useless for score,
+  a per-IP key-reveal cap bounds scraping); `search_content` for guests must
+  go through the rate-limited route. **Open:** the guest path (WP6) still
+  hands real question keys to the browser (the v2 token payload is readable
+  base64 JSON with `q:[keys]`, and `/start` items and the seen list carry
+  keys), so a guest can recover mcq / true_false / ordering answers offline
+  until those routes switch to opaque handles or the id rule stops hashing
+  the answer.
 
 - The test harness runs on PGlite with a Supabase shim, not a real project.
   It does not exercise GoTrue or the Storage API's size/MIME enforcement; only

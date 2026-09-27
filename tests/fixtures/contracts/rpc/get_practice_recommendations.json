@@ -1,0 +1,43 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "get_practice_recommendations",
+ "signature": "get_practice_recommendations(p_limit int default 5) → jsonb",
+ "grants": [
+  "authenticated",
+  "service_role"
+ ],
+ "description": "[{kind: lesson_quiz | lesson_review | weakness_review, node, title, reason: {accuracy, answered}, href}] from learner_node_stats.",
+ "cases": [
+  {
+   "name": "recommendations",
+   "role": "authenticated",
+   "match": "shape",
+   "args": {
+    "p_limit": 2
+   },
+   "response": [
+    {
+     "kind": "weakness_review",
+     "node": "middle/grade-1/math/n54",
+     "title": "القوى و الأسس",
+     "reason": {
+      "accuracy": 0.375,
+      "answered": 8
+     },
+     "href": "/learn/middle/grade-1/math/n54"
+    },
+    {
+     "kind": "lesson_quiz",
+     "node": "middle/grade-1/math/n55",
+     "title": "الخطوات الأربع لحل المسألة",
+     "reason": {
+      "accuracy": null,
+      "answered": 0
+     },
+     "href": "/learn/middle/grade-1/math/n55"
+    }
+   ]
+  }
+ ]
+}

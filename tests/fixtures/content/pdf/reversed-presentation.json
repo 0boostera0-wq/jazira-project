@@ -1,0 +1,151 @@
+{
+ "description": "Visual-order (reversed) runs — one item per word, and one item for a whole line — and a line in Arabic presentation forms (U+FE70–FEFF) with the lam-alef ligature ﻻ.",
+ "page": {
+  "pdf_page": 11,
+  "width": 600,
+  "height": 800,
+  "images": 0,
+  "items": [
+   {
+    "str": "باتك",
+    "dir": "ltr",
+    "x": 536,
+    "y": 100,
+    "w": 24,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 532.5,
+    "y": 100,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "ةغللا",
+    "dir": "ltr",
+    "x": 502,
+    "y": 100,
+    "w": 30,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 498.5,
+    "y": 100,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "ةيبرعلا",
+    "dir": "ltr",
+    "x": 456,
+    "y": 100,
+    "w": 42,
+    "size": 12
+   },
+   {
+    "str": "ةينفلا ةيبرتلا ةدام",
+    "dir": "ltr",
+    "x": 400,
+    "y": 130,
+    "w": 114,
+    "size": 12
+   },
+   {
+    "str": "ﺍﻟﺮﻳﺎﺿﻴﺎﺕ",
+    "dir": "rtl",
+    "x": 506,
+    "y": 160,
+    "w": 54,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 503,
+    "y": 160,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "ﻻ",
+    "dir": "rtl",
+    "x": 496,
+    "y": 160,
+    "w": 6,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 493,
+    "y": 160,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "ﻣﺘﻨﺎﻫﻲ",
+    "dir": "rtl",
+    "x": 456,
+    "y": 160,
+    "w": 36,
+    "size": 12
+   },
+   {
+    "str": "الصف",
+    "dir": "rtl",
+    "x": 536,
+    "y": 190,
+    "w": 24,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 533,
+    "y": 190,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "الأول",
+    "dir": "rtl",
+    "x": 502,
+    "y": 190,
+    "w": 30,
+    "size": 12
+   },
+   {
+    "str": " ",
+    "dir": "ltr",
+    "x": 499,
+    "y": 190,
+    "w": 3,
+    "size": 12
+   },
+   {
+    "str": "المتوسط",
+    "dir": "rtl",
+    "x": 456,
+    "y": 190,
+    "w": 42,
+    "size": 12
+   }
+  ]
+ },
+ "expect": {
+  "lines": [
+   "كتاب اللغة العربية",
+   "مادة التربية الفنية",
+   "الرياضيات لا متناهي",
+   "الصف الأول المتوسط"
+  ],
+  "flags": [
+   "reversed_fixed",
+   "presentation_forms_fixed"
+  ]
+ }
+}

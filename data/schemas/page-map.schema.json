@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:page-map",
+  "title": "Page map row (§2.6)",
+  "description": "data/staging/resources/page-maps/<resource_id>.jsonl, one row per PDF page, no body text, sorted by pdf_page.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "resource_id",
+    "pdf_page",
+    "printed_page",
+    "kind",
+    "lesson_node_id",
+    "headings",
+    "char_count",
+    "text_sha256",
+    "has_text_layer",
+    "script",
+    "flags",
+    "text_method",
+    "text_quality"
+  ],
+  "properties": {
+    "schema": {
+      "const": "page-map@1"
+    },
+    "resource_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+    },
+    "pdf_page": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "printed_page": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "cover",
+        "front_matter",
+        "toc",
+        "unit_opener",
+        "lesson",
+        "exercise",
+        "review",
+        "answer_key",
+        "glossary",
+        "back_matter",
+        "unknown"
+      ]
+    },
+    "lesson_node_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/node_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "headings": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:jazira:schema:common#/$defs/excerpt"
+      },
+      "maxItems": 3
+    },
+    "char_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "text_sha256": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/sha256"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "has_text_layer": {
+      "type": "boolean"
+    },
+    "script": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arabic",
+        "latin",
+        "digits"
+      ],
+      "properties": {
+        "arabic": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "latin": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "digits": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "reversed_fixed",
+          "presentation_forms_fixed",
+          "ligature_fixed",
+          "split_letters_fixed",
+          "font_garbage",
+          "low_text",
+          "no_text_layer",
+          "two_column",
+          "vision_read"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "text_method": {
+      "type": "string",
+      "enum": [
+        "text",
+        "vision",
+        "none"
+      ]
+    },
+    "text_quality": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "repaired",
+        "untrusted"
+      ]
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:extraction",
+  "title": "Extraction status (§4.2)",
+  "description": "data/staging/resources/extraction.jsonl: per-resource extraction status, sorted by resource_id.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "resource_id",
+    "status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "extraction@1"
+    },
+    "resource_id": {
+      "$ref": "urn:jazira:schema:common#/$defs/resource_id"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "frontmatter_done",
+        "full_done",
+        "failed",
+        "not_applicable"
+      ]
+    },
+    "run_id": {
+      "anyOf": [
+        {
+          "$ref": "urn:jazira:schema:common#/$defs/run_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

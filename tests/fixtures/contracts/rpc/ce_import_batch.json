@@ -1,0 +1,103 @@
+{
+ "schema": "rpc-contract@1",
+ "conventions": "Errors are PostgreSQL P0001 exceptions: `message` is the error code, `details` a JSON object (PostgREST returns them as error.message / error.details). `match: exact` responses are deterministic and must be equal; `match: shape` responses fix keys and types — values marked <uuid>, <iso>, <seed> vary.",
+ "rpc": "ce_import_batch",
+ "signature": "ce_import_batch(p_run uuid, p_entity text, p_batch_no int, p_rows jsonb) → jsonb",
+ "grants": [
+  "service_role"
+ ],
+ "description": "One transaction, `jazira.bulk_import = on`; upserts on the natural key with `is distinct from`, so replays are idempotent; a changed question appends its previous version to question_revisions and bumps revision; rows whose content_hash equals another manifest row under a different key are rejected (duplicate_content). Entities: sources, resources, nodes, subject_terms, lesson_ranges, objectives, stimuli, questions, templates.",
+ "cases": [
+  {
+   "name": "a question batch",
+   "role": "service_role",
+   "match": "shape",
+   "args": {
+    "p_run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "p_entity": "questions",
+    "p_batch_no": 1,
+    "p_rows": "<≤ 500 question@1 records>"
+   },
+   "response": {
+    "run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "entity": "questions",
+    "batch_no": 1,
+    "rows": 500,
+    "inserted": 480,
+    "updated": 12,
+    "unchanged": 8,
+    "rejected": 0,
+    "errors": []
+   }
+  },
+  {
+   "name": "an idempotent replay",
+   "role": "service_role",
+   "match": "shape",
+   "args": {
+    "p_run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "p_entity": "questions",
+    "p_batch_no": 1,
+    "p_rows": "<the same rows>"
+   },
+   "response": {
+    "run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "entity": "questions",
+    "batch_no": 1,
+    "rows": 500,
+    "inserted": 0,
+    "updated": 0,
+    "unchanged": 500,
+    "rejected": 0,
+    "errors": []
+   }
+  },
+  {
+   "name": "duplicate content",
+   "role": "service_role",
+   "match": "shape",
+   "args": {
+    "p_run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "p_entity": "questions",
+    "p_batch_no": 2,
+    "p_rows": "<rows>"
+   },
+   "response": {
+    "run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "entity": "questions",
+    "batch_no": 2,
+    "rows": 2,
+    "inserted": 1,
+    "updated": 0,
+    "unchanged": 0,
+    "rejected": 1,
+    "errors": [
+     {
+      "key": "q-m1-math-0000000002",
+      "code": "duplicate_content",
+      "detail": {
+       "same_as": "q-m1-math-0000000003"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "unknown entity",
+   "role": "service_role",
+   "match": "exact",
+   "args": {
+    "p_run": "7c1e2d3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+    "p_entity": "nope",
+    "p_batch_no": 1,
+    "p_rows": []
+   },
+   "error": {
+    "message": "invalid_argument",
+    "details": {
+     "field": "entity"
+    }
+   }
+  }
+ ]
+}

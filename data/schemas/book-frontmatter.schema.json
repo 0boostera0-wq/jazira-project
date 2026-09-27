@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jazira:schema:book-frontmatter",
+  "title": "Book front matter (§3)",
+  "description": "data/staging/sources/ien/book-frontmatter.jsonl: per-book cover/TOC summaries. Snippets ≤ 80 chars, no cache_dir, no term_* keys (terms are re-derived, §2.4).",
+  "type": "object",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "required": [
+        "ien_book_id",
+        "subject_ien_id",
+        "path",
+        "title",
+        "page_count",
+        "pages_read",
+        "page_chars",
+        "text_layer",
+        "evidence",
+        "toc_candidate_pages"
+      ],
+      "properties": {
+        "schema": {
+          "const": "book-frontmatter@1"
+        },
+        "ien_book_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "subject_ien_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "page_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pdf_creation_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pdf_mod_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 60
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pdf_language": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 20
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pages_read": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "page_chars": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "text_layer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "text_quality": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "repaired",
+            "untrusted"
+          ]
+        },
+        "evidence": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^(?!term_)[a-z0-9_]+$"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "page",
+              "snippet"
+            ],
+            "properties": {
+              "page": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "snippet": {
+                "$ref": "urn:jazira:schema:common#/$defs/excerpt"
+              }
+            }
+          }
+        },
+        "toc_candidate_pages": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "$ref": "urn:jazira:schema:common#/$defs/run_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    {
+      "additionalProperties": false,
+      "required": [
+        "ien_book_id",
+        "path",
+        "error"
+      ],
+      "properties": {
+        "schema": {
+          "const": "book-frontmatter@1"
+        },
+        "ien_book_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "error": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      }
+    }
+  ]
+}

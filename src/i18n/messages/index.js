@@ -26,6 +26,7 @@ export const NAMESPACES = [
   "support",       // about, contact, support center, faq, feedback, reviews
   "legal",         // privacy, terms, refund, acceptable use, community guidelines
   "achievements",  // achievements, streaks, badges, competitions & leaderboard
+  "learn",         // /learn outline, lesson pages, "test yourself" entry points, official book links
 ];
 
 const loaders = {
@@ -50,6 +51,7 @@ const loaders = {
     support: () => import("./ar/support.js"),
     legal: () => import("./ar/legal.js"),
     achievements: () => import("./ar/achievements.js"),
+    learn: () => import("./ar/learn.js"),
   },
   en: {
     common: () => import("./en/common.js"),
@@ -72,6 +74,7 @@ const loaders = {
     support: () => import("./en/support.js"),
     legal: () => import("./en/legal.js"),
     achievements: () => import("./en/achievements.js"),
+    learn: () => import("./en/learn.js"),
   },
 };
 

@@ -170,7 +170,7 @@ export const totalPeriods = (leaf) => (leaf.subjects || []).reduce((n, s) => n +
  * are passed individually (they get a viewer); the rest is per-type policy:
  * resources: [{ type, base, hosted: [{ term, key, title, title_en }] }].
  */
-export function toClientSubject(s, { practice = null, tag = null, art = null } = {}) {
+export function toClientSubject(s, { practice = null, tag = null, art = null, learn = null } = {}) {
   const types = {};
   for (const r of s.resources || []) {
     // base = the type's availability where no authorised file is hosted.
@@ -188,12 +188,27 @@ export function toClientSubject(s, { practice = null, tag = null, art = null } =
     color: s.color,
     periods: s.periods,
     terms: s.terms,
+    ...(s.terms_status ? { terms_status: s.terms_status } : {}),
     notes: s.notes || [],
     resources: Object.values(types).sort((a, b) => order(a.type) - order(b.type)),
     practice,
     tag,
     art,
+    // Outline layer (docs/CONTENT_ENGINE.md §7), when the leaf has one:
+    // { href, outline: compactOutline(), entries: { primary, related }, books: resourceView()[] }
+    ...(learn ? { outline: learn.outline ?? null, learn: { href: learn.href, entries: learn.entries, books: learn.books } } : {}),
   };
+}
+
+/**
+ * How sure the terms of a set of subjects are: "verified" only when every
+ * subject's split is verified, "inferred" when all are at least inferred,
+ * else "unverified" (the plan gives annual periods only).
+ */
+export function termsStatusOf(subjects) {
+  const list = (subjects || []).map((s) => s?.terms_status || "unverified");
+  if (!list.length || list.some((x) => x !== "verified" && x !== "inferred")) return "unverified";
+  return list.every((x) => x === "verified") ? "verified" : "inferred";
 }
 const ORDER = ["student_book", "activity_book", "exam_samples"];
 const order = (type) => ORDER.indexOf(type);

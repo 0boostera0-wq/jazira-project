@@ -1,0 +1,389 @@
+{
+ "description": "Cover/title pages for the strict term routes: a cover naming «الفصل الدراسي الأول» with a swapped lam ligature, a title page with a chapter heading «الفصل الثاني» and «الجزء الثاني» (never term evidence), an English cover «Second Semester», and a third-term cover (an anomaly, not evidence).",
+ "pages": [
+  {
+   "pdf_page": 1,
+   "width": 600,
+   "height": 800,
+   "images": 3,
+   "items": [
+    {
+     "str": "الرياضيات",
+     "dir": "rtl",
+     "x": 425,
+     "y": 100,
+     "w": 135,
+     "size": 30
+    },
+    {
+     "str": "الصف",
+     "dir": "rtl",
+     "x": 524,
+     "y": 160,
+     "w": 36,
+     "size": 18
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 521,
+     "y": 160,
+     "w": 3,
+     "size": 18
+    },
+    {
+     "str": "األول",
+     "dir": "rtl",
+     "x": 475,
+     "y": 160,
+     "w": 45,
+     "size": 18
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 472,
+     "y": 160,
+     "w": 3,
+     "size": 18
+    },
+    {
+     "str": "املتوسط",
+     "dir": "rtl",
+     "x": 408,
+     "y": 160,
+     "w": 63,
+     "size": 18
+    },
+    {
+     "str": "الفصل",
+     "dir": "rtl",
+     "x": 515,
+     "y": 200,
+     "w": 45,
+     "size": 18
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 512,
+     "y": 200,
+     "w": 3,
+     "size": 18
+    },
+    {
+     "str": "الدراسي",
+     "dir": "rtl",
+     "x": 448,
+     "y": 200,
+     "w": 63,
+     "size": 18
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 445,
+     "y": 200,
+     "w": 3,
+     "size": 18
+    },
+    {
+     "str": "األول",
+     "dir": "rtl",
+     "x": 399,
+     "y": 200,
+     "w": 45,
+     "size": 18
+    },
+    {
+     "str": "الجزء",
+     "dir": "rtl",
+     "x": 520,
+     "y": 240,
+     "w": 40,
+     "size": 16
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 517,
+     "y": 240,
+     "w": 3,
+     "size": 16
+    },
+    {
+     "str": "األول",
+     "dir": "rtl",
+     "x": 476,
+     "y": 240,
+     "w": 40,
+     "size": 16
+    },
+    {
+     "str": "طبعة",
+     "dir": "rtl",
+     "x": 536,
+     "y": 700,
+     "w": 24,
+     "size": 12
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 533,
+     "y": 700,
+     "w": 3,
+     "size": 12
+    },
+    {
+     "str": "1448",
+     "dir": "ltr",
+     "x": 508,
+     "y": 700,
+     "w": 24,
+     "size": 12
+    }
+   ]
+  },
+  {
+   "pdf_page": 3,
+   "width": 600,
+   "height": 800,
+   "images": 0,
+   "items": [
+    {
+     "str": "الفصل",
+     "dir": "rtl",
+     "x": 510,
+     "y": 100,
+     "w": 50,
+     "size": 20
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 507,
+     "y": 100,
+     "w": 3,
+     "size": 20
+    },
+    {
+     "str": "الثاني:",
+     "dir": "rtl",
+     "x": 436,
+     "y": 100,
+     "w": 70,
+     "size": 20
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 433,
+     "y": 100,
+     "w": 3,
+     "size": 20
+    },
+    {
+     "str": "الأعداد",
+     "dir": "rtl",
+     "x": 362,
+     "y": 100,
+     "w": 70,
+     "size": 20
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 359,
+     "y": 100,
+     "w": 3,
+     "size": 20
+    },
+    {
+     "str": "الصحيحة",
+     "dir": "rtl",
+     "x": 288,
+     "y": 100,
+     "w": 70,
+     "size": 20
+    },
+    {
+     "str": "الجزء",
+     "dir": "rtl",
+     "x": 520,
+     "y": 140,
+     "w": 40,
+     "size": 16
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 517,
+     "y": 140,
+     "w": 3,
+     "size": 16
+    },
+    {
+     "str": "الثاني",
+     "dir": "rtl",
+     "x": 468,
+     "y": 140,
+     "w": 48,
+     "size": 16
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 465,
+     "y": 140,
+     "w": 3,
+     "size": 16
+    },
+    {
+     "str": "من",
+     "dir": "rtl",
+     "x": 448,
+     "y": 140,
+     "w": 16,
+     "size": 16
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 445,
+     "y": 140,
+     "w": 3,
+     "size": 16
+    },
+    {
+     "str": "المقرر",
+     "dir": "rtl",
+     "x": 396,
+     "y": 140,
+     "w": 48,
+     "size": 16
+    }
+   ]
+  },
+  {
+   "pdf_page": 1,
+   "width": 600,
+   "height": 800,
+   "images": 0,
+   "items": [
+    {
+     "str": "Mega",
+     "dir": "ltr",
+     "x": 40,
+     "y": 100,
+     "w": 40,
+     "size": 20
+    },
+    {
+     "str": "Goal",
+     "dir": "ltr",
+     "x": 88,
+     "y": 100,
+     "w": 40,
+     "size": 20
+    },
+    {
+     "str": "2",
+     "dir": "ltr",
+     "x": 136,
+     "y": 100,
+     "w": 10,
+     "size": 20
+    },
+    {
+     "str": "Second",
+     "dir": "ltr",
+     "x": 154,
+     "y": 100,
+     "w": 60,
+     "size": 20
+    },
+    {
+     "str": "Semester",
+     "dir": "ltr",
+     "x": 222,
+     "y": 100,
+     "w": 80,
+     "size": 20
+    }
+   ]
+  },
+  {
+   "pdf_page": 1,
+   "width": 600,
+   "height": 800,
+   "images": 0,
+   "items": [
+    {
+     "str": "الفصل",
+     "dir": "rtl",
+     "x": 510,
+     "y": 100,
+     "w": 50,
+     "size": 20
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 507,
+     "y": 100,
+     "w": 3,
+     "size": 20
+    },
+    {
+     "str": "الدراسي",
+     "dir": "rtl",
+     "x": 436,
+     "y": 100,
+     "w": 70,
+     "size": 20
+    },
+    {
+     "str": " ",
+     "dir": "ltr",
+     "x": 433,
+     "y": 100,
+     "w": 3,
+     "size": 20
+    },
+    {
+     "str": "الثالث",
+     "dir": "rtl",
+     "x": 372,
+     "y": 100,
+     "w": 60,
+     "size": 20
+    }
+   ]
+  }
+ ],
+ "expect": {
+  "terms": [
+   [
+    [
+     "cover_text",
+     "t1"
+    ]
+   ],
+   [],
+   [
+    [
+     "cover_text",
+     "t2"
+    ]
+   ],
+   []
+  ],
+  "anomalies": [
+   0,
+   0,
+   0,
+   1
+  ]
+ }
+}
