@@ -1,12 +1,571 @@
 {
   "schema": "toc@1",
   "resource_id": "ien-120607",
-  "toc_status": "partial",
+  "toc_status": "found",
   "toc_pages": [
     6,
     7
   ],
   "page_offset": 0,
-  "run_id": "run-20260926-extract-01",
-  "entries": []
+  "run_id": "run-20260926-extract-02",
+  "entries": [
+    {
+      "level": "other",
+      "title": "[شكل: صورة عجلة دوارة في مدينة ملاهٍ]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.05,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ١ الجبر والدوال",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n91",
+      "match_score": 0.6,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التهيئة",
+      "printed_page": 11,
+      "pdf_page": 11,
+      "matched_node_id": "middle/grade-1/math/n7550",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الخطوات الأربع لحل المسألة",
+      "printed_page": 12,
+      "pdf_page": 12,
+      "matched_node_id": "middle/grade-1/math/n53",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "القوى والأسس",
+      "printed_page": 17,
+      "pdf_page": 17,
+      "matched_node_id": "middle/grade-1/math/n54",
+      "match_score": 0.73,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "ترتيب العمليات",
+      "printed_page": 21,
+      "pdf_page": 21,
+      "matched_node_id": "middle/grade-1/math/n55",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "استراتيجية حل المسألة التخمين والتحقق",
+      "printed_page": 25,
+      "pdf_page": 25,
+      "matched_node_id": "middle/grade-1/math/n56",
+      "match_score": 0.62,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الجبر: المتغيرات والعبارات الجبرية",
+      "printed_page": 27,
+      "pdf_page": 27,
+      "matched_node_id": "middle/grade-1/math/n57",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار منتصف الفصل",
+      "printed_page": 31,
+      "pdf_page": 31,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الجبر: المعادلات",
+      "printed_page": 32,
+      "pdf_page": 32,
+      "matched_node_id": "middle/grade-1/math/n58",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الجبر: الخصائص",
+      "printed_page": 36,
+      "pdf_page": 36,
+      "matched_node_id": "middle/grade-1/math/n59",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الجبر: المعادلات والدوال",
+      "printed_page": 40,
+      "pdf_page": 40,
+      "matched_node_id": "middle/grade-1/math/n60",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار الفصل",
+      "printed_page": 45,
+      "pdf_page": 45,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الاختبار التراكمي (١)",
+      "printed_page": 46,
+      "pdf_page": 46,
+      "matched_node_id": null,
+      "match_score": 0.16,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٢ الأعداد الصحيحة",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n92",
+      "match_score": 0.71,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التهيئة",
+      "printed_page": 49,
+      "pdf_page": 49,
+      "matched_node_id": "middle/grade-1/math/n7551",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الأعداد الصحيحة والقيمة المطلقة",
+      "printed_page": 50,
+      "pdf_page": 50,
+      "matched_node_id": "middle/grade-1/math/n61",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "مقارنة الأعداد الصحيحة وترتيبها",
+      "printed_page": 54,
+      "pdf_page": 54,
+      "matched_node_id": "middle/grade-1/math/n62",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "المستوى الإحداثي",
+      "printed_page": 58,
+      "pdf_page": 58,
+      "matched_node_id": "middle/grade-1/math/n63",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استكشاف جمع الأعداد الصحيحة",
+      "printed_page": 63,
+      "pdf_page": 63,
+      "matched_node_id": "middle/grade-1/math/n14317",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "جمع الأعداد الصحيحة",
+      "printed_page": 65,
+      "pdf_page": 65,
+      "matched_node_id": "middle/grade-1/math/n64",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار منتصف الفصل",
+      "printed_page": 70,
+      "pdf_page": 70,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استكشاف طرح الأعداد الصحيحة",
+      "printed_page": 71,
+      "pdf_page": 71,
+      "matched_node_id": "middle/grade-1/math/n14318",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "طرح الأعداد الصحيحة",
+      "printed_page": 73,
+      "pdf_page": 73,
+      "matched_node_id": "middle/grade-1/math/n65",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "ضرب الأعداد الصحيحة",
+      "printed_page": 77,
+      "pdf_page": 77,
+      "matched_node_id": "middle/grade-1/math/n66",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "استراتيجية حل المسألة",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n67",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "البحث عن نمط",
+      "printed_page": 82,
+      "pdf_page": 82,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "قسمة الأعداد الصحيحة",
+      "printed_page": 84,
+      "pdf_page": 84,
+      "matched_node_id": "middle/grade-1/math/n68",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار الفصل",
+      "printed_page": 89,
+      "pdf_page": 89,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الاختبار التراكمي (٢)",
+      "printed_page": 90,
+      "pdf_page": 90,
+      "matched_node_id": null,
+      "match_score": 0.16,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: صورة ألعاب في مدينة ملاهٍ وأشجار]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.09,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: صورة برج بكرة ذهبية في أعلاه]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٣ الجبر: المعادلات الخطية والدوال",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n93",
+      "match_score": 0.81,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التهيئة",
+      "printed_page": 93,
+      "pdf_page": 93,
+      "matched_node_id": "middle/grade-1/math/n7552",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "كتابة العبارات الجبرية والمعادلات",
+      "printed_page": 94,
+      "pdf_page": 94,
+      "matched_node_id": "middle/grade-1/math/n69",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استكشاف حل المعادلات باستعمال النماذج",
+      "printed_page": 101,
+      "pdf_page": 101,
+      "matched_node_id": "middle/grade-1/math/n14324",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "معادلات الجمع والطرح",
+      "printed_page": 103,
+      "pdf_page": 103,
+      "matched_node_id": "middle/grade-1/math/n70",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "معادلات الضرب",
+      "printed_page": 109,
+      "pdf_page": 109,
+      "matched_node_id": "middle/grade-1/math/n71",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "استراتيجية حل المسألة الحل عكسيًا",
+      "printed_page": 114,
+      "pdf_page": 114,
+      "matched_node_id": "middle/grade-1/math/n72",
+      "match_score": 0.72,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار منتصف الفصل",
+      "printed_page": 116,
+      "pdf_page": 116,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "المعادلات ذات الخطوتين",
+      "printed_page": 117,
+      "pdf_page": 117,
+      "matched_node_id": "middle/grade-1/math/n73",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "القياس: المحيط والمساحة",
+      "printed_page": 122,
+      "pdf_page": 122,
+      "matched_node_id": "middle/grade-1/math/n74",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استكشاف تمثيل العلاقات بيانيًا",
+      "printed_page": 128,
+      "pdf_page": 128,
+      "matched_node_id": "middle/grade-1/math/n14325",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "التمثيل البياني للدوال",
+      "printed_page": 129,
+      "pdf_page": 129,
+      "matched_node_id": "middle/grade-1/math/n75",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار الفصل",
+      "printed_page": 135,
+      "pdf_page": 135,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الاختبار التراكمي (٣)",
+      "printed_page": 136,
+      "pdf_page": 136,
+      "matched_node_id": null,
+      "match_score": 0.16,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٤ النسبة والتناسب",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n30615",
+      "match_score": 0.73,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التهيئة",
+      "printed_page": 139,
+      "pdf_page": 139,
+      "matched_node_id": "middle/grade-1/math/n7553",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "النسبة",
+      "printed_page": 140,
+      "pdf_page": 140,
+      "matched_node_id": "middle/grade-1/math/n76",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "المعدَّل",
+      "printed_page": 145,
+      "pdf_page": 145,
+      "matched_node_id": "middle/grade-1/math/n77",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "القياس: التحويل بين الوحدات الإنجليزية",
+      "printed_page": 150,
+      "pdf_page": 150,
+      "matched_node_id": "middle/grade-1/math/n78",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "القياس: التحويل بين الوحدات المترية",
+      "printed_page": 155,
+      "pdf_page": 155,
+      "matched_node_id": "middle/grade-1/math/n79",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار منتصف الفصل",
+      "printed_page": 160,
+      "pdf_page": 160,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الجبر: حل التناسبات",
+      "printed_page": 161,
+      "pdf_page": 161,
+      "matched_node_id": "middle/grade-1/math/n80",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "استراتيجية حل المسألة الرسم",
+      "printed_page": 167,
+      "pdf_page": 167,
+      "matched_node_id": "middle/grade-1/math/n81",
+      "match_score": 0.84,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "مقياس الرسم",
+      "printed_page": 169,
+      "pdf_page": 169,
+      "matched_node_id": "middle/grade-1/math/n82",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الكسور والنسب المئوية",
+      "printed_page": 176,
+      "pdf_page": 176,
+      "matched_node_id": "middle/grade-1/math/n83",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار الفصل",
+      "printed_page": 181,
+      "pdf_page": 181,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الاختبار التراكمي (٤)",
+      "printed_page": 182,
+      "pdf_page": 182,
+      "matched_node_id": null,
+      "match_score": 0.16,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: صورة مبنى برج شاهق]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.06,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "وزارة التعليم",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.16,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "Ministry of Education",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0,
+      "method": "vision"
+    }
+  ]
 }

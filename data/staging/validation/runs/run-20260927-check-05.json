@@ -1,0 +1,42 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260927-check-05",
+  "kind": "check",
+  "tool": "check-questions@1",
+  "checked_at": "2026-09-27T12:55:26Z",
+  "inputs": {
+    "question_ids_sha256": "70a76ef76ec7d805a25be24156130bf9d4af98e4365fd94e322a953bd77c1014",
+    "cache": "content-cache"
+  },
+  "scopes": {
+    "ids:23f93230eff0": {
+      "checked_at": "2026-09-27T12:55:26Z",
+      "counts": {
+        "checked": 43,
+        "pass": 27,
+        "warn": 4,
+        "rejected": 11,
+        "review_required": 1,
+        "fixed": 0,
+        "high_risk": 32
+      },
+      "failures": {
+        "N002": 11,
+        "P006": 1
+      }
+    }
+  },
+  "counts": {
+    "checked": 43,
+    "pass": 27,
+    "warn": 4,
+    "rejected": 11,
+    "review_required": 1,
+    "fixed": 0,
+    "high_risk": 32
+  },
+  "failures": {
+    "N002": 11,
+    "P006": 1
+  }
+}

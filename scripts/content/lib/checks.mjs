@@ -28,7 +28,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { searchNormalize, mapSuperscriptsAndFractions } from "../../../src/lib/content/normalize.js";
 import { contentHash, gradeCode, isQuestionKey, LEGACY_QUESTION_ID_RE, questionIdHash, variantId } from "../../../src/lib/content/ids.js";
 import { canonicalAnswer, parseNumber } from "../../../src/lib/content/answers.js";
-import { absR, cmp, evaluate, formatValue, isRational, mul, parseDecimal, sub, toRational } from "../../../src/lib/content/expr.js";
+import { absR, add, cmp, evaluate, formatValue, isRational, mul, parseDecimal, rat, sub, toRational } from "../../../src/lib/content/expr.js";
 import { sha256Hex } from "../../../src/lib/content/prng.js";
 import { cachePaths, cacheRoot } from "./cache.mjs";
 import { validateRecord } from "./schemas.mjs";
@@ -362,8 +362,19 @@ export function optionNumber(text) {
   const t = String(text ?? "").trim();
   const whole = parseNumber(t);
   if (whole.ok) return whole.value;
+  // A mixed number «3 1/2» / «−3 1/2»: the display template mcq options use (§4.6).
+  const mixed = /^([-−]?)(\d+) (\d+)\/(\d+)$/.exec(t);
+  if (mixed && BigInt(mixed[3]) < BigInt(mixed[4])) {
+    const v = add(rat(BigInt(mixed[2])), rat(BigInt(mixed[3]), BigInt(mixed[4])));
+    return mixed[1] ? mul(v, rat(-1n)) : v;
+  }
   const m = /^([-−+]?[0-9٠-٩۰-۹][0-9٠-٩۰-۹.,٫٬/]*)\s*(.+)$/u.exec(t);
   if (m && parseUnit(m[2])) {
+    const n = parseNumber(m[1]);
+    if (n.ok) return n.value;
+  }
+  // «6 مثلثات», «35 كوبًا من العصير»: a count noun (Arabic words only, no digits) after the number.
+  if (m && /^[ء-يً-ْـ]+(?:\s[ء-يً-ْـ]+){0,3}$/u.test(m[2].trim())) {
     const n = parseNumber(m[1]);
     if (n.ok) return n.value;
   }
@@ -867,6 +878,7 @@ CHECK.E001 = (q, ctx) => {
   if (!ev.length) return origin === "source_derived" ? fail("E001", "source_derived item without evidence") : pass("E001", "no evidence");
   const sidecar = ctx.evidence ? ctx.evidence(q.id, q.revision) ?? [] : [];
   const missing = [];
+  const garbled = [];
   const unread = [];
   for (const e of ev) {
     const row = sidecar.find((r) => r.pdf_page === e.pdf_page && r.quote_sha256 === e.quote_sha256);
@@ -877,12 +889,19 @@ CHECK.E001 = (q, ctx) => {
       unread.push(e.pdf_page);
       continue;
     }
-    if (!locateQuote(page.text, row.quote)) missing.push(e.pdf_page);
+    if (locateQuote(page.text, row.quote)) continue;
+    // A repaired text layer still garbles letters and joins words («باإسارة»,
+    // «عندماتفكرفي»); the generator quoted the page image, which wins (§4.3).
+    // Such a miss warns, which makes the item high-risk, so the independent
+    // evidence extractor verifies the quote against the image (§4.4).
+    if (page.method === "text" && page.quality === "repaired") garbled.push(e.pdf_page);
+    else missing.push(e.pdf_page);
   }
   if (missing.length) {
     const detail = `quote not found on page ${missing.join(", ")}`;
     return strict ? fail("E001", detail) : warn("E001", detail);
   }
+  if (garbled.length) return warn("E001", `quote not found in the repaired text layer of page ${garbled.join(", ")} (the evidence extractor checks the image)`);
   if (unread.length) return notChecked("E001", `page ${unread.join(", ")} has no trustworthy text or transcript yet`);
   return pass("E001");
 };
@@ -1058,8 +1077,10 @@ CHECK.L002 = (q, ctx) => {
   if (/[  ]/.test(text)) return fail("L002", "non-breaking space");
   if ([t.stem, t.stimulus, ...t.options, t.explanation].some((s) => / {2,}/.test(s))) return fail("L002", "double space");
   // «بـ 3p⁶», «لـ ΔH», «بـ«…»»: a detached prefix before a non-Arabic token.
-  const rest = text.replace(/(?<=[بلفك])ـ(?=\s?[^\sء-ي])/g, "");
-  if (rest.includes("ـ")) return fail("L002", "tatweel outside the بـ/لـ/فـ + Latin form");
+  // «أ ب جـ د», «∠هـ», «1445هـ», «لـ ط»: a single letter standing alone as a
+  // label, the Hijri abbreviation or a detached prefix (Saudi textbook notation).
+  const rest = text.replace(/(?<=[بلفك])ـ(?=\s?[^\sء-ي])/g, "").replace(/(?<![ء-ي])([ء-ي])ـ(?![ء-يـ])/g, "$1");
+  if (rest.includes("ـ")) return fail("L002", "tatweel inside a word (allowed only on a single-letter token and in the بـ/لـ/فـ + symbol form)");
   return pass("L002");
 };
 

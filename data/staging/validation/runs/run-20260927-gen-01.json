@@ -1,0 +1,33 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260927-gen-01",
+  "kind": "gen",
+  "tool": "ingest-candidates@1",
+  "packets_at": "2026-09-27T09:53:23Z",
+  "prompt_version": "generate.v1",
+  "scope": {
+    "subject": "middle/grade-1/science",
+    "prep": null,
+    "lessons": 26,
+    "questions": null
+  },
+  "counts": {
+    "packets": 26,
+    "pages": 352,
+    "missing_images": 0,
+    "ingest": {
+      "packets": 1,
+      "lines": 15,
+      "accepted": 15,
+      "rejected": 0,
+      "rejected_by_code": {
+        "O001": 1
+      }
+    }
+  },
+  "agents": {
+    "claude_subagent": "available",
+    "deepseek": "unavailable"
+  },
+  "ingested_at": "2026-09-27T11:31:14Z"
+}

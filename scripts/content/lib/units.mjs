@@ -17,13 +17,18 @@ import { searchNormalize } from "../../../src/lib/content/normalize.js";
 /** key → [dimension, aliases…] (aliases in any script; matched normalized). */
 const TABLE = {
   // length
-  km: ["length", "km", "كم", "كيلومتر", "كيلو متر", "كيلومترات"],
+  km: ["length", "km", "كم", "كلم", "كيلومتر", "كيلو متر", "كيلومترات"],
   m: ["length", "m", "م", "متر", "مترا", "أمتار", "امتار", "مترًا"],
   dm: ["length", "dm", "دسم", "ديسيمتر"],
   cm: ["length", "cm", "سم", "سنتيمتر", "سنتمتر", "سنتيمترات"],
   mm: ["length", "mm", "مم", "مليمتر", "ملليمتر", "مليمترات"],
   um: ["length", "µm", "μm", "um", "ميكرومتر"],
   nm: ["length", "nm", "نانومتر"],
+  // customary length (taught with conversions in middle-school math)
+  in: ["length", "in", "بوصة", "بوصات", "إنش", "انش"],
+  ft: ["length", "ft", "قدم", "أقدام", "اقدام", "قدما"],
+  yd: ["length", "yd", "ياردة", "ياردات"],
+  mi: ["length", "mi", "ميل", "أميال", "اميال", "ميلا"],
   // area
   "km^2": ["area", "km^2", "km2", "كم^2", "كم2", "كيلومتر مربع"],
   "m^2": ["area", "m^2", "m2", "م^2", "م2", "متر مربع", "مترا مربعا"],
@@ -35,17 +40,27 @@ const TABLE = {
   "cm^3": ["volume", "cm^3", "cm3", "سم^3", "سم3", "سنتيمتر مكعب"],
   l: ["volume", "l", "L", "لتر", "لترا", "لترات"],
   ml: ["volume", "ml", "mL", "مل", "ملل", "مليلتر", "ملليلتر"],
+  cup: ["volume", "cup", "كوب", "أكواب", "اكواب", "كوبا"],
+  gal: ["volume", "gal", "جالون", "جالونات", "غالون"],
+  qt: ["volume", "qt", "كوارت", "كوارتات"],
+  pt: ["volume", "pt", "باينت", "باينتات"],
+  floz: ["volume", "fl oz", "أونصة سائلة", "اونصة سائلة"],
   // mass
   t: ["mass", "t", "طن", "أطنان", "اطنان"],
   kg: ["mass", "kg", "كجم", "كغ", "كيلوجرام", "كيلوغرام", "كيلو جرام"],
   g: ["mass", "g", "جم", "غ", "جرام", "غرام", "جرامات", "غرامات"],
   mg: ["mass", "mg", "ملجم", "مجم", "ملغ", "مليجرام", "ملليجرام"],
+  lb: ["mass", "lb", "رطل", "أرطال", "ارطال", "رطلا"],
+  oz: ["mass", "oz", "أونصة", "اونصة", "أونصات", "اونصات"],
   // time
   h: ["time", "h", "hr", "ساعة", "ساعات", "سا"],
   min: ["time", "min", "دقيقة", "دقائق", "د"],
   s: ["time", "s", "sec", "ث", "ثانية", "ثوان", "ثواني", "ثوانٍ"],
   ms: ["time", "ms", "ملي ثانية", "مللي ثانية"],
-  day: ["time", "يوم", "أيام", "ايام"],
+  day: ["time", "يوم", "أيام", "ايام", "يوما"],
+  week: ["time", "أسبوع", "اسبوع", "أسابيع", "اسابيع", "أسبوعا"],
+  month: ["time", "شهر", "أشهر", "اشهر", "شهور", "شهرا"],
+  year: ["time", "سنة", "سنوات", "عام", "أعوام", "اعوام", "عاما"],
   // speed / acceleration
   "m/s": ["speed", "m/s", "م/ث", "متر/ثانية", "متر لكل ثانية"],
   "km/h": ["speed", "km/h", "كم/س", "كم/ساعة", "كم/سا", "كيلومتر/ساعة", "كيلومتر لكل ساعة"],
@@ -113,7 +128,15 @@ export function parseUnit(text) {
     // «ال» prefix and a trailing tanween alef: «المتر», «مترًا»
     ?? BY_ALIAS.get(`n:${searchNormalize(raw).replace(/^ال/, "")}`)
     ?? null;
-  return key ? { key, dimension: DIMENSION.get(key) } : null;
+  if (key) return { key, dimension: DIMENSION.get(key) };
+  // A rate of two known units not in the table: «ريالًا / ساعة», «صفحة/دقيقة» needs both known.
+  const parts = raw.split(/\s*\/\s*/);
+  if (parts.length === 2 && parts[0] && parts[1]) {
+    const a = parseUnit(parts[0]);
+    const b = parseUnit(parts[1]);
+    if (a && b) return { key: `${a.key}/${b.key}`, dimension: `${a.dimension}/${b.dimension}` };
+  }
+  return null;
 }
 
 export const dimensionOf = (text) => parseUnit(text)?.dimension ?? null;

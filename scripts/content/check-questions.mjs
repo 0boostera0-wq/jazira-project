@@ -187,6 +187,16 @@ export function recordsFor(bank, q) {
   return out;
 }
 
+/**
+ * The latest record of one role for a question revision (by checked_at, then
+ * id), or null: a re-check (--all) adds a newer deterministic record next to
+ * the earlier one, and only the newest describes the item.
+ */
+export function latestRecord(bank, q, role) {
+  const list = recordsFor(bank, q).filter((r) => r.role === role);
+  return list.sort((a, b) => cOrder(a.checked_at, b.checked_at) || cOrder(a.id, b.id)).at(-1) ?? null;
+}
+
 /** Add a validation record and link it from the question (current revision only). */
 export function attachRecord(bank, q, record) {
   const base = bank.where.get(q.id);
@@ -396,6 +406,12 @@ export function checkBank(bank, { runId, now = isoNow(), ids = null, subject = n
       enqueueReview(bank, q, `deterministic: ${result.review.join(", ")}`, [record.id], now);
       counts.review_required++;
     } else {
+      // A re-check (--all) that now passes lifts an earlier deterministic
+      // rejection or review; resolve-validation re-applies everything else.
+      if (q.status === "rejected" || q.status === "review_required") {
+        q.status = "candidate";
+        bank.reviewQueue = bank.reviewQueue.filter((r) => !(r.question_id === q.id && r.revision === q.revision && /^deterministic:/.test(r.reason)));
+      }
       q.validation.status = "structural_pass";
       counts[result.verdict === "warn" ? "warn" : "pass"]++;
     }
@@ -458,11 +474,26 @@ export async function main(argv = process.argv.slice(2), log = console) {
     saveQuestions(bank);
     saveRecords(bank);
     saveReviewQueue(bank);
-    updateRunManifest(bank.staging, o.run, {
-      kind: "check", tool: "check-questions@1", checked_at: now,
-      inputs: { question_ids_sha256: inputHash, cache: "content-cache" },
-      counts, failures,
-    });
+    // One run may be invoked per scope (subject, ids, all): each scope keeps
+    // its own counts and `counts` is their sum, so a later invocation never
+    // hides an earlier one; a rerun that checked nothing leaves a scope's
+    // earlier counts as they are.
+    const scope = o.subject ?? (o.ids ? `ids:${sha256Hex([...o.ids].sort(cOrder).join(",")).slice(0, 12)}` : o.all ? "all" : "pending");
+    const manifestPath = join(bank.staging, "validation/runs", `${o.run}.json`);
+    const known = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")).scopes?.[scope] : null;
+    if (counts.checked > 0 || !known) {
+      const next = updateRunManifest(bank.staging, o.run, {
+        kind: "check", tool: "check-questions@1", checked_at: now,
+        inputs: { question_ids_sha256: inputHash, cache: "content-cache" },
+        scopes: { [scope]: { checked_at: now, counts, failures } },
+      });
+      const sum = (key) => {
+        const t = {};
+        for (const s of Object.values(next.scopes ?? {})) for (const [k, v] of Object.entries(s[key] ?? {})) t[k] = (t[k] ?? 0) + v;
+        return t;
+      };
+      updateRunManifest(bank.staging, o.run, { counts: sum("counts"), failures: sum("failures") });
+    }
     log.log(`checked ${counts.checked}: pass ${counts.pass}, warn ${counts.warn}, rejected ${counts.rejected}, review_required ${counts.review_required}, O004 fixes ${counts.fixed}, high-risk ${counts.high_risk}`);
     for (const r of outcomes.filter((x) => x.outcome !== "pass")) log.log(`  ${r.id} r${r.revision}: ${r.outcome} (${[...r.failed, ...r.review].join(", ")})`);
     return 0;

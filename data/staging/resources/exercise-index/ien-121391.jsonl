@@ -1,58 +1,341 @@
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":11,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7664","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":11,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7664","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":11,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n7664","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":11,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n7664","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":16,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":11,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7664","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":11,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7664","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":11,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n7664","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":11,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n7664","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":12,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3313","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":12,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3313","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":13,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3313","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":13,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3313","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":14,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":15,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":15,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":16,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":16,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":16,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
 {"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":17,"label":"إجابات","kind":"answer_key","lesson_node_id":"middle/grade-1/math/n9532","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":22,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":22,"label":"مثال 8","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":22,"label":"مثال 9","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":27,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":31,"label":"مثال 9","kind":"example","lesson_node_id":null,"method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":18,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":18,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":19,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":20,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":20,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":21,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":21,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":22,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":22,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":22,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":22,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":22,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":23,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":24,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":24,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n9532","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":27,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":28,"label":"مثال","kind":"example","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":29,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":29,"label":"مثال","kind":"example","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":30,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":30,"label":"مثال","kind":"example","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":31,"label":"تأكد","kind":"exercise","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":31,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":31,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"vision"}
 {"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":33,"label":"إجابات","kind":"answer_key","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":36,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3317","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":36,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3317","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":36,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n3317","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":40,"label":"الاختبار التراكمي 5","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":43,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7550","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":43,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7550","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"مثال 8","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":49,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":50,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":52,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":52,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":55,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":72,"label":"الاختبار التراكمي 6","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":75,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":75,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":78,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":78,"label":"مثال 10","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":83,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":86,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":90,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":91,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":94,"label":"الاختبار التراكمي","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":97,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":97,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":97,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":119,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":119,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":119,"label":"مثال 5","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":122,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":141,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":141,"label":"مثال 6","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":146,"label":"الاختبار التراكمي 8","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 5","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":175,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":178,"label":"مثال","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":194,"label":"مثال","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":194,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":199,"label":"الاختبار التراكمي 9","kind":"review","lesson_node_id":null,"method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":34,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":35,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":36,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":36,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":36,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":36,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":36,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":36,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":37,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":38,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":38,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":38,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":39,"label":"اختبار الفصل","kind":"review","lesson_node_id":"middle/grade-1/math/n3317","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":40,"label":"الاختبار التراكمي 5","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":43,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7550","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":43,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7550","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":44,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":44,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":45,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":46,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":47,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":48,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":48,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":49,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":49,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":49,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":50,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":50,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":51,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":51,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":52,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":52,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":52,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":52,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":52,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":53,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":54,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":54,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":54,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3318","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":55,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":56,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":56,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":57,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":57,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":58,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":58,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":59,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":60,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":61,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":61,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3320","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":62,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":63,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":64,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":64,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":64,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":64,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":65,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":65,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":66,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":66,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3321","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":67,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9534","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":68,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9534","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":71,"label":"اختبار الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":72,"label":"الاختبار التراكمي 6","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":75,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7551","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":75,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7551","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":76,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":76,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":77,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":77,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":78,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":78,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":78,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":78,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":78,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":79,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":79,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":80,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":80,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3323","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":81,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n144546","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":83,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":84,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":84,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":84,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":85,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":85,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":86,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":86,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":86,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":86,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":86,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":87,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":87,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":88,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":88,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3324","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":89,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":89,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":90,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":90,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":90,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":90,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":91,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":91,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":92,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":92,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":92,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3325","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":93,"label":"اختبار الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":94,"label":"الاختبار التراكمي 7","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":97,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7665","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":97,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7665","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":97,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n7665","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":98,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":98,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":99,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":99,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":100,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":100,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":100,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":100,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":100,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":101,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":102,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":102,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3326","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":103,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3327","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":104,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3327","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":104,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3327","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":105,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3327","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":105,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3327","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":105,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3327","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":106,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3327","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":107,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3327","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":107,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3327","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":108,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":109,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":109,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":110,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":111,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":111,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":111,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":113,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":113,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":114,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3328","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":115,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n143384","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":116,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":116,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":116,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":117,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":117,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":118,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":118,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":119,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":119,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":119,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":119,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":119,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":120,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":121,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":121,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3329","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":122,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":125,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9677","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":127,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3331","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":128,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3331","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":128,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3331","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":128,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3331","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":128,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3331","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":129,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3331","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":130,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3331","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":131,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3331","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":131,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3331","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":132,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":133,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":133,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":134,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":134,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":135,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":135,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":135,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":135,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":135,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":136,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":137,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":137,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3332","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":139,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":139,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":140,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":140,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":141,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":141,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":141,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":141,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":141,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":142,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":143,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":143,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3333","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":144,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9535","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":144,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9535","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":145,"label":"اختبار الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":146,"label":"الاختبار التراكمي 8","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7666","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7666","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n7666","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n7666","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":149,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n7666","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":150,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9536","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":151,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":151,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":152,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":152,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":153,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":153,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":153,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":153,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":154,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":155,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":155,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":155,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3334","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":156,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9696","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":158,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3335","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":158,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3335","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":159,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3335","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":159,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3335","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":160,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3335","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":161,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3335","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":161,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3335","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":162,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":162,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":162,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":163,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":163,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":164,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":164,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":164,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":165,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":166,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":166,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3336","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":169,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":169,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":170,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":170,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":170,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":170,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":170,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":171,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":172,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":172,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":172,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3338","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":173,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9537","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":173,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9537","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":175,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":177,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3339","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":177,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3339","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":178,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3339","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":178,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3339","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":178,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3339","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":179,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3339","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":180,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3339","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":180,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3339","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":181,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9538","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":181,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n9538","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":182,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":182,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":183,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":183,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":184,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":184,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":184,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":184,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":184,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":185,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":186,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":186,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3340","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":187,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":188,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":188,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":189,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":189,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":190,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":190,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":190,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":190,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":190,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":192,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":192,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":192,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3341","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":193,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":193,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":194,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":194,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":194,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":194,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":194,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":195,"label":"تدرب وحل المسائل","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":196,"label":"التفكير العليا","kind":"exercise","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":197,"label":"تدريب على اختبار","kind":"review","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":197,"label":"مراجعة تراكمية","kind":"review","lesson_node_id":"middle/grade-1/math/n3342","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":198,"label":"اختبار الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121391","pdf_page":199,"label":"الاختبار التراكمي 9","kind":"review","lesson_node_id":null,"method":"vision"}

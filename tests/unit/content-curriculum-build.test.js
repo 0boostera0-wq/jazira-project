@@ -478,7 +478,10 @@ describe("buildCurriculum on the committed crawl (run R2)", () => {
   it("builds the whole iEN structure and never adds a source-only subject to the catalog", () => {
     const count = (f) => r.nodes.filter(f).length;
     expect(count((n) => n.kind === "lesson")).toBe(10102);
-    expect(count((n) => n.kind === "unit")).toBe(2126);
+    // iEN units plus the TOC-only units of the pilot books (WP3 x-nodes, e.g.
+    // «الوحدة ١ العلم وتفاعلات الأجسام» of the middle-1 science book).
+    expect(count((n) => n.kind === "unit" && !/\/x[0-9a-f]{8}$/.test(n.id))).toBe(2112);
+    expect(count((n) => n.kind === "unit" && /\/x[0-9a-f]{8}$/.test(n.id))).toBe(20);
     expect(count((n) => n.kind === "term")).toBe(40);
     const catalogIds = new Set(catalogLeaves(realCatalog).flatMap((l) => l.subjects.map((s) => `${l.leaf}/${s.id}`)));
     for (const n of r.nodes.filter((x) => x.kind === "subject")) {

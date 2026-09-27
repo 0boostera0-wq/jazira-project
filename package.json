@@ -27,6 +27,9 @@
     "content:resolve": "node scripts/content/resolve-validation.mjs",
     "content:dedup": "node scripts/content/dedup.mjs",
     "content:variants": "node scripts/content/build-variants.mjs",
+    "content:templates": "node scripts/content/ingest-templates.mjs",
+    "content:promote": "node scripts/content/promote-templates.mjs",
+    "content:publish": "node scripts/content/publish.mjs",
     "content:import": "node scripts/content/import-staging.mjs",
     "content:pack": "node scripts/content/pack-runtime-bank.mjs",
     "content:report": "node scripts/content/report.mjs"

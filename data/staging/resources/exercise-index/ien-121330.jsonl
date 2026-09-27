@@ -1,4 +1,32 @@
-{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":82,"label":"نشاط","kind":"exercise","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":132,"label":"نشاط","kind":"exercise","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":194,"label":"نشاط","kind":"exercise","lesson_node_id":null,"method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":38,"label":"مراجعة الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":39,"label":"مراجعة الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":42,"label":"إجابات","kind":"answer_key","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":48,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3347","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":50,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3347","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":70,"label":"مراجعة الفصل 8","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":71,"label":"مراجعة الفصل 8","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":73,"label":"اختبار مقنن","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":82,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3359","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":97,"label":"مراجعة الفصل 9","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":112,"label":"نشاط","kind":"exercise","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":122,"label":"مراجعة الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":123,"label":"مراجعة الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":132,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3355","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":143,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3356","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":150,"label":"مراجعة الفصل 11","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":151,"label":"مثال","kind":"example","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":151,"label":"مراجعة الفصل 11","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":158,"label":"مراجعة الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":161,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3363","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":173,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/science/n3364","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":180,"label":"مراجعة الفصل 12","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":181,"label":"مراجعة الفصل 12","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":183,"label":"مثال","kind":"example","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":191,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3367","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":194,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3368","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":195,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3368","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":196,"label":"نشاط","kind":"exercise","lesson_node_id":"middle/grade-1/science/n3368","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":210,"label":"مراجعة الفصل 13","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":211,"label":"مراجعة الفصل 13","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":213,"label":"اختبار مقنن","kind":"review","lesson_node_id":null,"method":"vision"}
 {"schema":"exercise-index@1","resource_id":"ien-121330","pdf_page":214,"label":"اختبار مقنن","kind":"review","lesson_node_id":null,"method":"text"}

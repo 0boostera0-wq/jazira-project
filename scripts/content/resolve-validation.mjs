@@ -39,7 +39,7 @@ import { cacheRoot } from "./lib/cache.mjs";
 import { createPageStore, isHighRisk, locateQuote, matchForm, REVIEW_CODES } from "./lib/checks.mjs";
 import { validateRecord } from "./lib/schemas.mjs";
 import {
-  attachRecord, bumpRevision, DEFAULT_STAGING, enqueueReview, evidenceRows, evidenceStore, isoNow, loadStaging, recordsFor,
+  attachRecord, bumpRevision, DEFAULT_STAGING, enqueueReview, evidenceRows, evidenceStore, isoNow, latestRecord, loadStaging, recordsFor,
   saveQuestions, saveRecords, saveReviewQueue, updateRunManifest,
 } from "./check-questions.mjs";
 import { displaySeed, displayView, languageNeed, resolverNeed, toCanonical } from "./exchange.mjs";
@@ -149,7 +149,7 @@ export function addPrimaryRecords(bank, raws, { runId, spans = [], pages = null,
   const out = raws.map((raw) => normalizePrimaryRecord(bank, raw, runId));
   const byQuestion = new Map(spans.map((s) => [`${s.question_id}#${s.revision}`, s.spans ?? []]));
   for (const { q, record } of out) {
-    const needsExtractor = isHighRisk(q, recordsFor(bank, q).find((r) => r.role === "deterministic")?.checks ?? []) && SOURCE_BASED.has(q.provenance.origin) && q.source?.resource_id;
+    const needsExtractor = isHighRisk(q, latestRecord(bank, q, "deterministic")?.checks ?? []) && SOURCE_BASED.has(q.provenance.origin) && q.source?.resource_id;
     const s = byQuestion.get(`${q.id}#${q.revision}`);
     if (needsExtractor && s) applyEvidenceResult(q, record, s, { pages, evidence });
     attachRecord(bank, q, record);

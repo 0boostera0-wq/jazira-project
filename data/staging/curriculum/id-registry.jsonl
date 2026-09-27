@@ -9,6 +9,12 @@
 {"schema":"id-registry@1","id":"middle/grade-1/islamic/xad8b3f5b","kind":"x_node","scope":"middle/grade-1/islamic","first_title_norm":"سوره االخالص وسوره المسد ien unit 121","aliases":[],"assigned_at":"2026-09-27T01:37:41Z"}
 {"schema":"id-registry@1","id":"middle/grade-1/islamic/xbf3fe29f","kind":"x_node","scope":"middle/grade-1/islamic","first_title_norm":"سوره النصر وسوره الكافرون ien unit 122","aliases":[],"assigned_at":"2026-09-27T01:37:41Z"}
 {"schema":"id-registry@1","id":"middle/grade-1/life/x30a7d20b","kind":"x_node","scope":"middle/grade-1/life","first_title_norm":"الغذاء والتغذيه ien unit 113","aliases":[],"assigned_at":"2026-09-27T01:37:41Z"}
+{"schema":"id-registry@1","id":"middle/grade-1/science/x2c88876c","kind":"x_node","scope":"middle/grade-1/science","first_title_norm":"الوحده 6 الحياه والبييه","aliases":[],"assigned_at":"2026-09-27T09:50:23Z"}
+{"schema":"id-registry@1","id":"middle/grade-1/science/x733b38df","kind":"x_node","scope":"middle/grade-1/science","first_title_norm":"الوحده 1 العلم وتفاعالت االجسام","aliases":[],"assigned_at":"2026-09-27T09:50:23Z"}
 {"schema":"id-registry@1","id":"middle/grade-1/science/x9469eb25","kind":"x_node","scope":"middle/grade-1/science","first_title_norm":"طبيعه العلم ien unit 97","aliases":[],"assigned_at":"2026-09-27T01:37:41Z"}
+{"schema":"id-registry@1","id":"middle/grade-1/science/xaf580cf3","kind":"x_node","scope":"middle/grade-1/science","first_title_norm":"الوحده 3 سطح االرض المتغير","aliases":[],"assigned_at":"2026-09-27T09:50:23Z"}
+{"schema":"id-registry@1","id":"middle/grade-1/science/xbc5fb4eb","kind":"x_node","scope":"middle/grade-1/science","first_title_norm":"الوحده 2 طبيعه الماده","aliases":[],"assigned_at":"2026-09-27T09:50:23Z"}
+{"schema":"id-registry@1","id":"middle/grade-1/science/xc0294a2e","kind":"x_node","scope":"middle/grade-1/science","first_title_norm":"الوحده 4 ما وراء االرض","aliases":[],"assigned_at":"2026-09-27T09:50:23Z"}
+{"schema":"id-registry@1","id":"middle/grade-1/science/xeb23ebf0","kind":"x_node","scope":"middle/grade-1/science","first_title_norm":"الوحده 5 تباين الحياه","aliases":[],"assigned_at":"2026-09-27T09:50:23Z"}
 {"schema":"id-registry@1","id":"middle/grade-2/islamic/x3da6b382","kind":"x_node","scope":"middle/grade-2/islamic","first_title_norm":"الحج ien unit 195","aliases":[],"assigned_at":"2026-09-27T01:37:41Z"}
 {"schema":"id-registry@1","id":"middle/grade-2/islamic/x5d5e8956","kind":"x_node","scope":"middle/grade-2/islamic","first_title_norm":"الجمعه ien unit 188","aliases":[],"assigned_at":"2026-09-27T01:37:41Z"}

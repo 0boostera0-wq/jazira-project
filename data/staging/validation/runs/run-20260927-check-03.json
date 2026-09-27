@@ -1,0 +1,74 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260927-check-03",
+  "kind": "check",
+  "tool": "check-questions@1",
+  "checked_at": "2026-09-27T11:31:16Z",
+  "inputs": {
+    "question_ids_sha256": "a8201522ba0d25964317a99af1125cc658e39ccad29710e21280bb7b71ad1c55",
+    "cache": "content-cache"
+  },
+  "counts": {
+    "checked": 1166,
+    "pass": 985,
+    "warn": 80,
+    "rejected": 84,
+    "review_required": 17,
+    "fixed": 0,
+    "high_risk": 570
+  },
+  "failures": {
+    "N002": 11,
+    "E001": 43,
+    "P006": 20,
+    "L002": 8,
+    "P005": 5,
+    "S004": 5,
+    "N004": 1,
+    "P004": 10,
+    "N003": 1,
+    "L007": 2
+  },
+  "scopes": {
+    "middle/grade-1/math": {
+      "reconstructed_from": "validation records",
+      "counts": {
+        "checked": 776,
+        "pass": 635,
+        "warn": 58,
+        "rejected": 66,
+        "review_required": 17,
+        "fixed": 0,
+        "high_risk": 409
+      },
+      "failures": {
+        "N002": 11,
+        "E001": 36,
+        "P006": 20,
+        "L002": 8,
+        "P005": 5,
+        "S004": 5,
+        "N004": 1,
+        "P004": 1
+      }
+    },
+    "middle/grade-1/science": {
+      "checked_at": "2026-09-27T11:31:16Z",
+      "counts": {
+        "checked": 390,
+        "pass": 350,
+        "warn": 22,
+        "rejected": 18,
+        "review_required": 0,
+        "fixed": 0,
+        "high_risk": 161
+      },
+      "failures": {
+        "E001": 7,
+        "P004": 9,
+        "N003": 1,
+        "L007": 2
+      }
+    }
+  }
+}

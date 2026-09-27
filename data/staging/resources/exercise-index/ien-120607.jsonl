@@ -1,75 +1,90 @@
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":11,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":11,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":11,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":11,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":14,"label":"تأكد","kind":"exercise","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":14,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":14,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":18,"label":"مثال 5","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":23,"label":"مثال 7","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":29,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":34,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":34,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":34,"label":"مثال 5","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":38,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":42,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":11,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7550","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":11,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7550","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":11,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n7550","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":11,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n7550","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":14,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n53","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":14,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n53","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":14,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n53","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":17,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n54","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":18,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n54","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":23,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n55","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":29,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n57","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":34,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n58","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":34,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n58","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":34,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n58","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":38,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n59","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":40,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n60","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":40,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n60","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":42,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n60","method":"text"}
 {"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":46,"label":"الاختبار التراكمي 1","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":49,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":49,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":49,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":52,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":55,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":55,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":68,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":68,"label":"مثال 7","kind":"example","lesson_node_id":null,"method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":48,"label":"مثال","kind":"example","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":49,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7551","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":49,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7551","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":49,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n7551","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":52,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n61","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":55,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n62","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":55,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n62","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":60,"label":"تأكد","kind":"exercise","lesson_node_id":"middle/grade-1/math/n63","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":60,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n63","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":60,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n63","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":60,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n63","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":60,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n63","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":60,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n63","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":68,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n64","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":68,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n64","method":"text"}
 {"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":70,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":75,"label":"مثال 10","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":75,"label":"مثال 7","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":79,"label":"مثال 10","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":79,"label":"مثال 7","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":86,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":86,"label":"مثال 9","kind":"example","lesson_node_id":null,"method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":75,"label":"مثال 10","kind":"example","lesson_node_id":"middle/grade-1/math/n65","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":75,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n65","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":79,"label":"مثال 10","kind":"example","lesson_node_id":"middle/grade-1/math/n66","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":79,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n66","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":86,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n68","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":86,"label":"مثال 9","kind":"example","lesson_node_id":"middle/grade-1/math/n68","method":"text"}
 {"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":90,"label":"الاختبار التراكمي 2","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":93,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":93,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":93,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":93,"label":"مثال 5","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":97,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":97,"label":"مثال 7","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":97,"label":"مثال 8","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":106,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":106,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":106,"label":"مثال 5","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":106,"label":"مثال 8","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":111,"label":"مثال 5","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":111,"label":"مثال 6","kind":"example","lesson_node_id":null,"method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":93,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7552","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":93,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n7552","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":93,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n7552","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":93,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n7552","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":95,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n69","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":95,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n69","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":97,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n69","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":97,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n69","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":97,"label":"مثال 8","kind":"example","lesson_node_id":"middle/grade-1/math/n69","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":106,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n70","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":106,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n70","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":106,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n70","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":106,"label":"مثال 8","kind":"example","lesson_node_id":"middle/grade-1/math/n70","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":111,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n71","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":111,"label":"مثال 6","kind":"example","lesson_node_id":"middle/grade-1/math/n71","method":"text"}
 {"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":116,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":119,"label":"مثال 7","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":124,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":124,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":124,"label":"مثال 6","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":132,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":132,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":132,"label":"مثال 6","kind":"example","lesson_node_id":null,"method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":119,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n73","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":124,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n74","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":124,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n74","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":124,"label":"مثال 6","kind":"example","lesson_node_id":"middle/grade-1/math/n74","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":130,"label":"تحقق من فهمك","kind":"exercise","lesson_node_id":"middle/grade-1/math/n75","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":130,"label":"مثال","kind":"example","lesson_node_id":"middle/grade-1/math/n75","method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":132,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n75","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":132,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n75","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":132,"label":"مثال 6","kind":"example","lesson_node_id":"middle/grade-1/math/n75","method":"text"}
 {"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":136,"label":"الاختبار التراكمي 3","kind":"review","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":139,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":139,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":139,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":139,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":142,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":142,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":142,"label":"مثال 6","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":147,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":147,"label":"مثال 5","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":152,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":152,"label":"مثال 6","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":152,"label":"مثال 7","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":164,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":164,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":164,"label":"مثال 7","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":172,"label":"مثال 1","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":172,"label":"مثال 2","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":172,"label":"مثال 3","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":172,"label":"مثال 4","kind":"example","lesson_node_id":null,"method":"text"}
-{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":179,"label":"مثال 6","kind":"example","lesson_node_id":null,"method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":139,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n7553","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":139,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n7553","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":139,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n7553","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":139,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n7553","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":142,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n76","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":142,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n76","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":142,"label":"مثال 6","kind":"example","lesson_node_id":"middle/grade-1/math/n76","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":147,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n77","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":147,"label":"مثال 5","kind":"example","lesson_node_id":"middle/grade-1/math/n77","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":152,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n78","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":152,"label":"مثال 6","kind":"example","lesson_node_id":"middle/grade-1/math/n78","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":152,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n78","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":160,"label":"اختبار منتصف الفصل","kind":"review","lesson_node_id":null,"method":"vision"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":164,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n80","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":164,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n80","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":164,"label":"مثال 7","kind":"example","lesson_node_id":"middle/grade-1/math/n80","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":172,"label":"مثال 1","kind":"example","lesson_node_id":"middle/grade-1/math/n82","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":172,"label":"مثال 2","kind":"example","lesson_node_id":"middle/grade-1/math/n82","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":172,"label":"مثال 3","kind":"example","lesson_node_id":"middle/grade-1/math/n82","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":172,"label":"مثال 4","kind":"example","lesson_node_id":"middle/grade-1/math/n82","method":"text"}
+{"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":179,"label":"مثال 6","kind":"example","lesson_node_id":"middle/grade-1/math/n83","method":"text"}
 {"schema":"exercise-index@1","resource_id":"ien-120607","pdf_page":182,"label":"الاختبار التراكمي 4","kind":"review","lesson_node_id":null,"method":"text"}

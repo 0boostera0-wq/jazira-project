@@ -1,9 +1,562 @@
 {
   "schema": "toc@1",
   "resource_id": "ien-121330",
-  "toc_status": "not_found",
-  "toc_pages": [],
+  "toc_status": "found",
+  "toc_pages": [
+    6,
+    7
+  ],
   "page_offset": 0,
-  "run_id": "run-20260926-extract-01",
-  "entries": []
+  "run_id": "run-20260926-extract-02",
+  "entries": [
+    {
+      "level": "other",
+      "title": "كيف تستخدم كتاب العلوم؟",
+      "printed_page": 8,
+      "pdf_page": 8,
+      "matched_node_id": null,
+      "match_score": 0.13,
+      "method": "vision"
+    },
+    {
+      "level": "unit",
+      "title": "الوحدة ٤ ما وراء الأرض",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.26,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٧ الغلاف الجوي المتحرك",
+      "printed_page": 14,
+      "pdf_page": 14,
+      "matched_node_id": "middle/grade-1/science/n4230",
+      "match_score": 0.77,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – الاستدلال",
+      "printed_page": 16,
+      "pdf_page": 16,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: الغلاف الجوي والطقس",
+      "printed_page": 18,
+      "pdf_page": 18,
+      "matched_node_id": "middle/grade-1/science/n3343",
+      "match_score": 0.75,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: الكتل والجبهات الهوائية",
+      "printed_page": 28,
+      "pdf_page": 28,
+      "matched_node_id": "middle/grade-1/science/n3344",
+      "match_score": 0.79,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 34,
+      "pdf_page": 34,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 37,
+      "pdf_page": 37,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 38,
+      "pdf_page": 38,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٨ استكشاف الفضاء",
+      "printed_page": 40,
+      "pdf_page": 40,
+      "matched_node_id": "middle/grade-1/science/n4231",
+      "match_score": 0.74,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – أسئلة وإجابات",
+      "printed_page": 42,
+      "pdf_page": 42,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: الأرض والنظام الشمسي",
+      "printed_page": 44,
+      "pdf_page": 44,
+      "matched_node_id": "middle/grade-1/science/n3347",
+      "match_score": 0.77,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: الفضاء والنجوم والمجرات",
+      "printed_page": 56,
+      "pdf_page": 56,
+      "matched_node_id": "middle/grade-1/science/n3348",
+      "match_score": 0.78,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 66,
+      "pdf_page": 66,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 69,
+      "pdf_page": 69,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 70,
+      "pdf_page": 70,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار مقنن",
+      "printed_page": 72,
+      "pdf_page": 72,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    },
+    {
+      "level": "unit",
+      "title": "الوحدة ٥ تباين الحياة",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.22,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٩ الخلايا لَبِنَات الحياة",
+      "printed_page": 76,
+      "pdf_page": 76,
+      "matched_node_id": "middle/grade-1/science/n32382",
+      "match_score": 0.76,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – تحديد الفكرة الرئيسة",
+      "printed_page": 78,
+      "pdf_page": 78,
+      "matched_node_id": null,
+      "match_score": 0.07,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: عالم الخلايا",
+      "printed_page": 80,
+      "pdf_page": 80,
+      "matched_node_id": "middle/grade-1/science/n3359",
+      "match_score": 0.68,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: وظائف الخلايا",
+      "printed_page": 87,
+      "pdf_page": 87,
+      "matched_node_id": "middle/grade-1/science/n3360",
+      "match_score": 0.7,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 92,
+      "pdf_page": 92,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 95,
+      "pdf_page": 95,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 96,
+      "pdf_page": 96,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ١٠ الحيوانات اللافقارية",
+      "printed_page": 98,
+      "pdf_page": 98,
+      "matched_node_id": "middle/grade-1/science/n32383",
+      "match_score": 0.74,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – المفردات الجديدة",
+      "printed_page": 100,
+      "pdf_page": 100,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الدرس١: الإسفنجيات واللاسعات والديدان",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/science/n3351",
+      "match_score": 0.6,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "المفلطحة والديدان الأسطوانية",
+      "printed_page": 102,
+      "pdf_page": 102,
+      "matched_node_id": null,
+      "match_score": 0.26,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: الرخويات والديدان الحلقية والمفصليات",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/science/n3352",
+      "match_score": 0.68,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "وشوكيات الجلد",
+      "printed_page": 108,
+      "pdf_page": 108,
+      "matched_node_id": null,
+      "match_score": 0.19,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 118,
+      "pdf_page": 118,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 121,
+      "pdf_page": 121,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 122,
+      "pdf_page": 122,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "فهرس",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ١١ الحيوانات الفقارية",
+      "printed_page": 124,
+      "pdf_page": 124,
+      "matched_node_id": "middle/grade-1/science/n32384",
+      "match_score": 0.74,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – تسجيل الملاحظات",
+      "printed_page": 126,
+      "pdf_page": 126,
+      "matched_node_id": null,
+      "match_score": 0.13,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: الحبليات ومجموعاتها",
+      "printed_page": 128,
+      "pdf_page": 128,
+      "matched_node_id": "middle/grade-1/science/n3355",
+      "match_score": 0.77,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: الطيور والثدييات",
+      "printed_page": 137,
+      "pdf_page": 137,
+      "matched_node_id": "middle/grade-1/science/n3356",
+      "match_score": 0.74,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 146,
+      "pdf_page": 146,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 149,
+      "pdf_page": 149,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 150,
+      "pdf_page": 150,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار مقنن",
+      "printed_page": 152,
+      "pdf_page": 152,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: أسماك مخططة بالأبيض والأسود وسرب أسماك قرب شعاب مرجانية]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "unit",
+      "title": "الوحدة ٦ الحياة والبيئة",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.27,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ١٢ علم البيئة",
+      "printed_page": 156,
+      "pdf_page": 156,
+      "matched_node_id": "middle/grade-1/science/n32385",
+      "match_score": 0.61,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – التوقع",
+      "printed_page": 158,
+      "pdf_page": 158,
+      "matched_node_id": null,
+      "match_score": 0.09,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: ما النظام البيئي؟",
+      "printed_page": 160,
+      "pdf_page": 160,
+      "matched_node_id": "middle/grade-1/science/n3363",
+      "match_score": 0.71,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: المخلوقات الحية والبيئة والطاقة",
+      "printed_page": 167,
+      "pdf_page": 167,
+      "matched_node_id": "middle/grade-1/science/n3364",
+      "match_score": 0.81,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 176,
+      "pdf_page": 176,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 179,
+      "pdf_page": 179,
+      "matched_node_id": null,
+      "match_score": 0.09,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 180,
+      "pdf_page": 180,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ١٣ موارد الأرض",
+      "printed_page": 182,
+      "pdf_page": 182,
+      "matched_node_id": "middle/grade-1/science/n32386",
+      "match_score": 0.6,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – المقارنة",
+      "printed_page": 184,
+      "pdf_page": 184,
+      "matched_node_id": null,
+      "match_score": 0.09,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: استخدام الموارد الطبيعية",
+      "printed_page": 186,
+      "pdf_page": 186,
+      "matched_node_id": "middle/grade-1/science/n3367",
+      "match_score": 0.79,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: الإنسان والبيئة",
+      "printed_page": 193,
+      "pdf_page": 193,
+      "matched_node_id": "middle/grade-1/science/n3368",
+      "match_score": 0.7,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 206,
+      "pdf_page": 206,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 209,
+      "pdf_page": 209,
+      "matched_node_id": null,
+      "match_score": 0.09,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 210,
+      "pdf_page": 210,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار مقنن",
+      "printed_page": 212,
+      "pdf_page": 212,
+      "matched_node_id": null,
+      "match_score": 0.06,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مصادر تعليمية للطالب",
+      "printed_page": 215,
+      "pdf_page": 215,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    }
+  ]
 }

@@ -39,7 +39,7 @@ import { isHighRisk, isLegacyItem, isStemItem, optionNumber } from "./lib/checks
 import { cmp } from "../../src/lib/content/expr.js";
 import { writeFileIfChanged, writeJson } from "./lib/jsonl.mjs";
 import { validateRecord } from "./lib/schemas.mjs";
-import { attachRecord, DEFAULT_STAGING, isoNow, loadStaging, recordsFor, saveQuestions, saveRecords, updateRunManifest } from "./check-questions.mjs";
+import { attachRecord, DEFAULT_STAGING, isoNow, latestRecord, loadStaging, recordsFor, saveQuestions, saveRecords, updateRunManifest } from "./check-questions.mjs";
 
 export const AGENTS = Object.freeze({
   chatgpt: { agent: "chatgpt_web", role: "resolver", prompt_version: "chatgpt-resolve.v1", prompt: "scripts/content/prompts/chatgpt-resolve.v1.md" },
@@ -172,7 +172,7 @@ export function toCanonical(type, map, response) {
 /** Seeded inclusion: u(seed, tag, id) < rate × 2^52 (reproducible from the run manifest). */
 export const sampled = (seed, tag, id, rate) => rate >= 1 || (rate > 0 && u(seed, tag, id) < Math.round(rate * U_MAX));
 
-const deterministicOf = (bank, q) => recordsFor(bank, q).find((r) => r.role === "deterministic") ?? null;
+const deterministicOf = (bank, q) => latestRecord(bank, q, "deterministic");
 
 /** "required" | "sampled" | null: whether the ChatGPT blind solve applies to an item. */
 export function resolverNeed(q, manifest, det) {

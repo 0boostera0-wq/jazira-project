@@ -1,0 +1,101 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260927-check-02",
+  "kind": "check",
+  "tool": "check-questions@1",
+  "checked_at": "2026-09-27T10:42:03Z",
+  "inputs": {
+    "question_ids_sha256": "33dfe9d14ab5cdea1f4a926b72afed6389f744024110005e39a774eefe2e75ae",
+    "cache": "content-cache"
+  },
+  "counts": {
+    "checked": 300,
+    "pass": 236,
+    "warn": 64,
+    "rejected": 0,
+    "review_required": 0,
+    "fixed": 0,
+    "high_risk": 188
+  },
+  "failures": {},
+  "scopes": {
+    "prep:achievement/biology": {
+      "reconstructed_from": "validation records",
+      "counts": {
+        "checked": 40,
+        "pass": 39,
+        "warn": 1,
+        "rejected": 0,
+        "review_required": 0,
+        "fixed": 0,
+        "high_risk": 8
+      },
+      "failures": {}
+    },
+    "prep:achievement/chemistry": {
+      "reconstructed_from": "validation records",
+      "counts": {
+        "checked": 40,
+        "pass": 31,
+        "warn": 9,
+        "rejected": 0,
+        "review_required": 0,
+        "fixed": 0,
+        "high_risk": 15
+      },
+      "failures": {}
+    },
+    "prep:achievement/math": {
+      "reconstructed_from": "validation records",
+      "counts": {
+        "checked": 40,
+        "pass": 38,
+        "warn": 2,
+        "rejected": 0,
+        "review_required": 0,
+        "fixed": 0,
+        "high_risk": 10
+      },
+      "failures": {}
+    },
+    "prep:achievement/physics": {
+      "reconstructed_from": "validation records",
+      "counts": {
+        "checked": 40,
+        "pass": 30,
+        "warn": 10,
+        "rejected": 0,
+        "review_required": 0,
+        "fixed": 0,
+        "high_risk": 15
+      },
+      "failures": {}
+    },
+    "prep:aptitude/quantitative": {
+      "reconstructed_from": "validation records",
+      "counts": {
+        "checked": 80,
+        "pass": 75,
+        "warn": 5,
+        "rejected": 0,
+        "review_required": 0,
+        "fixed": 0,
+        "high_risk": 80
+      },
+      "failures": {}
+    },
+    "prep:aptitude/verbal": {
+      "reconstructed_from": "validation records",
+      "counts": {
+        "checked": 60,
+        "pass": 23,
+        "warn": 37,
+        "rejected": 0,
+        "review_required": 0,
+        "fixed": 0,
+        "high_risk": 60
+      },
+      "failures": {}
+    }
+  }
+}

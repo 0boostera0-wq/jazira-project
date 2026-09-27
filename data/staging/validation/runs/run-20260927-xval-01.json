@@ -1,0 +1,35 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260927-xval-01",
+  "kind": "xval",
+  "tool": "exchange@1",
+  "planned_at": "2026-09-27T10:09:37Z",
+  "sampling": {
+    "seed": "d3b634e99d4cc32609bf2b0a91191255",
+    "pilot": true,
+    "rates": {
+      "chatgpt_stem": 1,
+      "chatgpt_other": 1,
+      "language": 0.1
+    }
+  },
+  "agents": {
+    "chatgpt_web": "user_session",
+    "gemini_web": "user_session",
+    "claude_subagent": "available",
+    "deepseek": "unavailable"
+  },
+  "budget_note": "about 20 batches (≈ 500 items) per system per day; record the measured rate",
+  "exchange": {
+    "chatgpt": {
+      "batches": 3,
+      "items_exported": 68,
+      "items_imported": 68
+    },
+    "gemini": {
+      "batches": 1,
+      "items_exported": 13,
+      "items_imported": 13
+    }
+  }
+}

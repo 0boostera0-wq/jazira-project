@@ -36,7 +36,7 @@ import { cachePaths, cacheRoot } from "./lib/cache.mjs";
 import { createPageStore, isHighRisk, isStemItem, lessonAncestor, subjectSlug } from "./lib/checks.mjs";
 import { writeJson } from "./lib/jsonl.mjs";
 import { REPO_ROOT } from "./lib/schemas.mjs";
-import { DEFAULT_STAGING, loadStaging, recordsFor, updateRunManifest, isoNow } from "./check-questions.mjs";
+import { DEFAULT_STAGING, latestRecord, loadStaging, recordsFor, updateRunManifest, isoNow } from "./check-questions.mjs";
 import { displaySeed, displayView } from "./exchange.mjs";
 import { loadCatalog } from "../build-question-seed.mjs";
 
@@ -243,7 +243,7 @@ export function buildValidationPackets(bank, q, { runId, pages, root }) {
   const view = displayView(q, displaySeed(runId));
   const llm = cachePaths(root).llmDir(runId);
   const missing = [];
-  const det = recordsFor(bank, q).find((r) => r.role === "deterministic");
+  const det = latestRecord(bank, q, "deterministic");
   const name = packetName(q.id);
   const blind = {
     packet_id: `${runId}:${q.id}:blind`, kind: "validate_blind", step: 1,
@@ -370,7 +370,7 @@ async function buildAll(bank, o, ctx) {
       if (o.kind === "validate") {
         const v = buildValidationPackets(bank, q, ctx);
         out.push({ name: `${v.name}.blind`, packet: v.blind, missing: [] }, { name: `${v.name}.keyed`, packet: v.keyed, missing: v.missing });
-      } else if (isHighRisk(q, recordsFor(bank, q).find((r) => r.role === "deterministic")?.checks ?? []) && q.source?.resource_id) {
+      } else if (isHighRisk(q, latestRecord(bank, q, "deterministic")?.checks ?? []) && q.source?.resource_id) {
         const e = buildEvidencePacket(bank, q, ctx);
         out.push({ name: `${e.name}.evidence`, packet: e.packet, missing: e.missing });
       }

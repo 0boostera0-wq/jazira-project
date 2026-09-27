@@ -8,7 +8,7 @@
     7
   ],
   "page_offset": 0,
-  "run_id": "run-20260926-extract-01",
+  "run_id": "run-20260926-extract-02",
   "entries": [
     {
       "level": "unit",
@@ -207,6 +207,447 @@
       "matched_node_id": null,
       "match_score": 0.17,
       "method": "text"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: صورة محطة صناعية بمداخن عالية]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.07,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٧ الاحتمال",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n32084",
+      "match_score": 0.56,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التهيئة",
+      "printed_page": 75,
+      "pdf_page": 75,
+      "matched_node_id": "middle/grade-1/math/n7551",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الحوادث والاحتمالات",
+      "printed_page": 76,
+      "pdf_page": 76,
+      "matched_node_id": "middle/grade-1/math/n3323",
+      "match_score": 0.8,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "استراتيجية حل المسألة إنشاء قائمة منظّمة",
+      "printed_page": 81,
+      "pdf_page": 81,
+      "matched_node_id": "middle/grade-1/math/n144546",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار منتصف الفصل",
+      "printed_page": 83,
+      "pdf_page": 83,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "عدّ النواتج",
+      "printed_page": 84,
+      "pdf_page": 84,
+      "matched_node_id": "middle/grade-1/math/n3324",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "مبدأ العدّ الأساسي",
+      "printed_page": 89,
+      "pdf_page": 89,
+      "matched_node_id": "middle/grade-1/math/n3325",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار الفصل",
+      "printed_page": 93,
+      "pdf_page": 93,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الاختبار التراكمي (٧)",
+      "printed_page": 94,
+      "pdf_page": 94,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٨ الهندسة : المضلَعات",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n32085",
+      "match_score": 0.71,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التهيئة",
+      "printed_page": 97,
+      "pdf_page": 97,
+      "matched_node_id": "middle/grade-1/math/n7665",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "العلاقات بين الزوايا",
+      "printed_page": 98,
+      "pdf_page": 98,
+      "matched_node_id": "middle/grade-1/math/n3326",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الزوايا المتتامّة والمتكاملة",
+      "printed_page": 103,
+      "pdf_page": 103,
+      "matched_node_id": "middle/grade-1/math/n3327",
+      "match_score": 0.88,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "إحصاء: التمثيل بالقطاعات الدائرية",
+      "printed_page": 108,
+      "pdf_page": 108,
+      "matched_node_id": "middle/grade-1/math/n3328",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "توسع إنشاء القطاعات الدائرية",
+      "printed_page": 115,
+      "pdf_page": 115,
+      "matched_node_id": "middle/grade-1/math/n143384",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "المثلثات",
+      "printed_page": 116,
+      "pdf_page": 116,
+      "matched_node_id": "middle/grade-1/math/n3329",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار منتصف الفصل",
+      "printed_page": 122,
+      "pdf_page": 122,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "استراتيجية حل المسألة التبرير المنطقي",
+      "printed_page": 123,
+      "pdf_page": 123,
+      "matched_node_id": "middle/grade-1/math/n3330",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استكشاف الأشكال الرباعية",
+      "printed_page": 125,
+      "pdf_page": 125,
+      "matched_node_id": "middle/grade-1/math/n9677",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الأشكال الرباعية",
+      "printed_page": 126,
+      "pdf_page": 126,
+      "matched_node_id": "middle/grade-1/math/n3331",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الأشكال المتشابهة",
+      "printed_page": 132,
+      "pdf_page": 132,
+      "matched_node_id": "middle/grade-1/math/n3332",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "التبليط والمضلعات",
+      "printed_page": 138,
+      "pdf_page": 138,
+      "matched_node_id": "middle/grade-1/math/n3333",
+      "match_score": 0.84,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "توسع التبليط",
+      "printed_page": 144,
+      "pdf_page": 144,
+      "matched_node_id": "middle/grade-1/math/n9535",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار الفصل",
+      "printed_page": 145,
+      "pdf_page": 145,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الاختبار التراكمي (٨)",
+      "printed_page": 146,
+      "pdf_page": 146,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: صورة ساحل بحري ومنشآت صناعية]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.05,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "وزارة التعليم",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.16,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: صورة أبراج وعمارات سكنية شاهقة]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٩ القياس: الأشكال الثنائية الأبعاد والثلاثية الأبعاد",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/math/n32086",
+      "match_score": 0.78,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التهيئة",
+      "printed_page": 149,
+      "pdf_page": 149,
+      "matched_node_id": "middle/grade-1/math/n7666",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استكشاف المثلث وشبه المنحرف",
+      "printed_page": 150,
+      "pdf_page": 150,
+      "matched_node_id": "middle/grade-1/math/n9536",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "مساحة المثلث وشبه المنحرف",
+      "printed_page": 151,
+      "pdf_page": 151,
+      "matched_node_id": "middle/grade-1/math/n3334",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استكشاف محيط الدائرة",
+      "printed_page": 156,
+      "pdf_page": 156,
+      "matched_node_id": "middle/grade-1/math/n9696",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "محيط الدائرة",
+      "printed_page": 157,
+      "pdf_page": 157,
+      "matched_node_id": "middle/grade-1/math/n3335",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "مساحة الدائرة",
+      "printed_page": 162,
+      "pdf_page": 162,
+      "matched_node_id": "middle/grade-1/math/n3336",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "استراتيجية حل المسألة حل مسألة أبسط",
+      "printed_page": 167,
+      "pdf_page": 167,
+      "matched_node_id": "middle/grade-1/math/n3337",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "مساحة أشكال مركبة",
+      "printed_page": 169,
+      "pdf_page": 169,
+      "matched_node_id": "middle/grade-1/math/n3338",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "توسع المخططات والمساحة السطحية",
+      "printed_page": 173,
+      "pdf_page": 173,
+      "matched_node_id": "middle/grade-1/math/n9537",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار منتصف الفصل",
+      "printed_page": 175,
+      "pdf_page": 175,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الأشكال الثلاثية الأبعاد",
+      "printed_page": 176,
+      "pdf_page": 176,
+      "matched_node_id": "middle/grade-1/math/n3339",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استكشاف الأشكال الثلاثية الأبعاد",
+      "printed_page": 181,
+      "pdf_page": 181,
+      "matched_node_id": "middle/grade-1/math/n9538",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "رسم الأشكال الثلاثية الأبعاد",
+      "printed_page": 182,
+      "pdf_page": 182,
+      "matched_node_id": "middle/grade-1/math/n3340",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "حجم المنشور",
+      "printed_page": 187,
+      "pdf_page": 187,
+      "matched_node_id": "middle/grade-1/math/n3341",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "حجم الأسطوانة",
+      "printed_page": 193,
+      "pdf_page": 193,
+      "matched_node_id": "middle/grade-1/math/n3342",
+      "match_score": 1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار الفصل",
+      "printed_page": 198,
+      "pdf_page": 198,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الاختبار التراكمي (٩)",
+      "printed_page": 199,
+      "pdf_page": 199,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: صورة عمارات سكنية وأشجار]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "وزارة التعليم",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.16,
+      "method": "vision"
     }
   ]
 }

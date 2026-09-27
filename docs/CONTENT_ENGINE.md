@@ -579,6 +579,12 @@ resource:  listed → active | unavailable | needs_review ; extraction: not_star
 session:   in_progress → submitted | expired (deadline + grace passed) | abandoned (user or 7-day untimed timeout)
 ```
 
+`scripts/content/publish.mjs` performs the `validated → published` step: it
+requires the current revision's validation, a dedup class without
+`duplicate_of`, and a source that is internal or whose `publish_policy` is
+`derived_questions_allowed`; everything else stays `validated` with its
+reason reported, and published items are never unpublished silently.
+
 Editing a validated question creates a new `revision`: `status` returns to
 `candidate`, and the old validation records no longer apply
 (`checked_revision` mismatch).
@@ -1154,6 +1160,26 @@ A decision is itself a `human` validation record.
   instantiations. Its variants inherit `validated` only if every code check
   passes. The template's validation record ids are copied into the variant's
   `validation.record_ids`.
+- **Pipeline** (all deterministic except the author):
+  1. an author subagent (`prompts/template.v1.md`) writes draft lines for a
+     lesson's computational skills (0–3 per lesson, only skills the pages
+     teach) and self-checks them with `ingest-templates.mjs --dry-run`, which
+     prints the three previews with the key marked;
+  2. `ingest-templates.mjs --run <var run>` assigns the id (§2.2
+     `mintTemplateId`), source (the lesson's resource and page span, no
+     quotes), provenance (`generated_practice`; `license_status` = the cited
+     resource's, as P001 requires), status `candidate`; it rejects any other
+     field (S005), a failing `checkTemplate` (T001), fewer than 3 passing
+     previews (T002) and exact repeats (D001). Previews are drawn after the
+     id exists, because variants are seeded by it;
+  3. `build-variants.mjs` materializes every variant as `candidate`;
+  4. variants 01–03 (the previews) run through check-questions,
+     make-packets/validate, the exchange and resolve like any item;
+  5. `promote-templates.mjs` sets the template `validated` when all three
+     previews are `validated` (record ids copied), `review_required` when
+     any preview is rejected or in review, and leaves it alone otherwise;
+  6. `build-variants.mjs` again: the variants of a validated template
+     inherit `validated`.
 - Variants keep the template's lesson, objective, difficulty and solution
   method, with `provenance.origin = generated_practice` and a `member_of`
   edge to the template id (their `exclusion_group` is the component id,
@@ -2265,6 +2291,21 @@ gaps, the commit hash) are listed in the final report on the branch.
     - whether the UI discloses that practice questions are prepared with AI
       assistance and validated (without naming a provider);
     - the separate `practice` daily quota (30/day free).
+12. **Middle-1 Arabic has no lesson → page mapping** (0 of 91 lessons): the
+    book's table of contents is organized by skill strands inside units,
+    not by the iEN lesson titles, so the TOC matcher finds no pages. No
+    Arabic questions are generated until a mapping (owner- or
+    agent-audited, with evidence) exists; nothing is guessed.
+13. **The Gemini language review is lenient.** In the 2026-09-27 pilot it
+    passed 270 of 271 reviewed items (one number–noun agreement warning),
+    and the web app switched itself from its Pro to its Flash model partway
+    through. Deterministic L-checks and the Claude validator remain the
+    primary language gate; the Gemini sample is a secondary signal.
+14. **Templates do not inflect counted nouns.** A stem like «{a} ريال» is
+    correct Arabic only for some numbers (3–10 take the plural, 11–99 the
+    accusative singular «ريالًا»). Template authors must avoid counted nouns
+    after a parameter (write «المبلغ بالريال» or put the unit in a label)
+    until an agreement helper exists; Gemini flagged one such variant.
 
 ---
 
@@ -2303,14 +2344,14 @@ left untouched and unused by new code.
 | O008 | fail | explanation refers to an option by letter or position |
 | O009 | fail | ids reveal the answer (matching `r_i`↔`l_i` pairing, ordering ids ascending in answer order, option ids in authoring order when the answer is always first/last) |
 | O010 | fail | `short_answer` tagged `spelling`, `diacritics` or `i3rab` without `match: exact_marks` |
-| E001 | fail / review | each evidence quote (normalized, `lam_order_fold`ed) is a substring of the cited page's repaired text or vision transcript; not found → fail for `source_derived`/`transformed`; page not yet readable → `not_checked`, `review_required` |
+| E001 | fail / warn / review | each evidence quote (normalized, `lam_order_fold`ed) is a substring of the cited page's repaired text or vision transcript; not found in a vision transcript or `ok` text → fail for `source_derived`/`transformed`; not found in a `repaired` text layer (garbled letters, joined words) → warn, which makes the item high-risk so the evidence extractor checks the image; page not yet readable → `not_checked`, `review_required` |
 | V001 | fail | a rewrite variant keeps the parent's objective, difficulty and solution method |
 | N001 | fail | numeric answer parses; tolerance valid |
 | N002 | fail | `computation` recomputed (exact rationals) equals the key; required for computation items |
 | N003 | fail/warn | unit present when required; units consistent across stem, answer and explanation (SI + Arabic unit table) |
 | N004 | fail | numeric distractors differ from the answer and from each other |
 | L001 | fail | script matches `language` (Arabic items: Arabic letters ≥ 50 % of letters outside math; English items: no Arabic outside quotes) |
-| L002 | fail | no Persian ی/ک, no bidi controls, no NBSP, no double spaces, tatweel only in the بـ/لـ/فـ + Latin form |
+| L002 | fail | no Persian ی/ک, no bidi controls, no NBSP, no double spaces; tatweel only on a single-letter token (vertex labels «أ ب جـ», «∠هـ», the Hijri «1445هـ», a detached «لـ ط») or in the بـ/لـ/فـ + Latin form, never stretched inside a word |
 | L003 | warn | Arabic stems end with `؟` or a givens block, not `?` |
 | L004 | fail | no Arabic presentation forms (U+FB50–FDFF, U+FE70–FEFF), allowlist ﷺ ﷻ; math and science symbols (² ³ ½ µ ℃ Å) are allowed |
 | L005 | fail | one digit system per item |
@@ -2415,3 +2456,21 @@ describe it.
 | S6 | The ordering swap rule made the answer the one order never shown | Removed; display maps never depend on the answer (§5.4). |
 | S7 | The guest seen list was plain keys from the browser | Sealed `s1.` blob (AES-256-GCM, deflate, `jz.exam.seen`), issued by `/start` and echoed back; an unopenable blob is ignored (§5.3, §5.8). |
 | S8 | Runtime bank lacked objectives, so `lesson-quiz` could not stratify by objective | Selection rows have 10 columns incl. `objective`; `lesson-quiz` stratifies by objective, falling back to the lesson when null (§5.8). |
+
+### Pilot run fixes (2026-09-27)
+
+Found while running the pilot (78 lessons of middle-1 math and science, the
+legacy 300 and 153 templates) through the pipeline; each has a test.
+
+| Id | Finding | Resolution |
+|---|---|---|
+| P1 | No path from a template draft to staging, and nothing turned validated previews into a validated template | `ingest-templates.mjs`, `promote-templates.mjs`, `prompts/template.v1.md` (§4.6). |
+| P2 | Template ingest set `license_status: internal` on templates that cite a textbook resource, so every preview failed P001 | The template carries the cited resource's license (§4.6 step 2); publication stays governed by the publish policy. |
+| P3 | L002 rejected standard notation: vertex labels «أ ب جـ», «∠هـ», the Hijri «1445هـ», «لـ ط» | Tatweel allowed on a single-letter token; still a failure inside a word (App. B). |
+| P4 | N002 could not read template mixed numbers («3 3/16»), customary units (بوصة، قدم، ياردة، ميل، رطل، كوب), rates («ريالًا / ساعة») or count nouns («6 مثلثات») and rejected correct items | `optionNumber` reads mixed numbers and a trailing Arabic count noun; `units.mjs` gained customary length/mass/volume, week/month/year, «كلم» and composite rates. |
+| P5 | E001 rejected quotes that are on the page image but garbled in the repaired text layer | A miss in a `repaired` text layer warns (high-risk → evidence extractor); a miss in a transcript or clean text still fails (App. B). |
+| P6 | A re-check (`--all`) that passed left the old `rejected`/`review_required` status | A passing re-check sets `candidate` and drops the stale deterministic review-queue row. |
+| P7 | make-packets, exchange sampling and add-records read the *first* deterministic record, not the latest | `latestRecord(bank, q, role)` everywhere (resolve already used the latest). Re-export after the fix added 64 ChatGPT and 14 Gemini items. |
+| P8 | A check run invoked per subject kept only the last invocation's counts | Run manifests keep `scopes.<scope>` and a summed `counts`; a no-op rerun leaves counts alone. |
+| P9 | Nothing implemented `validated → published`, so no new item could reach the runtime bank | `publish.mjs` (§2.15); iEN-derived items stay `validated` while `ien.publish_policy` is `pending_owner_decision`. |
+| P10 | 26 templates put a counted noun after a parameter («{a} ريالات»), wrong Arabic for some numbers | Ingest rule T003 rejects such drafts; `promote-templates` sends existing ones to review; the author prompt forbids it. |

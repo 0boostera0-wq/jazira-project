@@ -1,9 +1,555 @@
 {
   "schema": "toc@1",
   "resource_id": "ien-120617",
-  "toc_status": "not_found",
-  "toc_pages": [],
+  "toc_status": "found",
+  "toc_pages": [
+    6,
+    7,
+    8,
+    9
+  ],
   "page_offset": 0,
-  "run_id": "run-20260926-extract-01",
-  "entries": []
+  "run_id": "run-20260926-extract-02",
+  "entries": [
+    {
+      "level": "other",
+      "title": "فهرس",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "كيف تستخدم كتاب العلوم؟",
+      "printed_page": 10,
+      "pdf_page": 10,
+      "matched_node_id": null,
+      "match_score": 0.13,
+      "method": "vision"
+    },
+    {
+      "level": "unit",
+      "title": "الوحدة ١ العلم وتفاعلات الأجسام",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.17,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ١ طبيعة العلم",
+      "printed_page": 16,
+      "pdf_page": 16,
+      "matched_node_id": "middle/grade-1/science/n97",
+      "match_score": 0.67,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – نظرة عامة",
+      "printed_page": 18,
+      "pdf_page": 18,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: العلم وعملياته",
+      "printed_page": 20,
+      "pdf_page": 20,
+      "matched_node_id": "middle/grade-1/science/n84",
+      "match_score": 0.71,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: النماذج العلمية",
+      "printed_page": 28,
+      "pdf_page": 28,
+      "matched_node_id": "middle/grade-1/science/n85",
+      "match_score": 0.7,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٣: تقويم التفسيرات العلمية",
+      "printed_page": 32,
+      "pdf_page": 32,
+      "matched_node_id": "middle/grade-1/science/n86",
+      "match_score": 0.79,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 36,
+      "pdf_page": 36,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 39,
+      "pdf_page": 39,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 40,
+      "pdf_page": 40,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٢ الحركة والقوى والآلات البسيطة",
+      "printed_page": 42,
+      "pdf_page": 42,
+      "matched_node_id": "middle/grade-1/science/n98",
+      "match_score": 0.81,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – تصورات ذهنية",
+      "printed_page": 44,
+      "pdf_page": 44,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: الحركة",
+      "printed_page": 46,
+      "pdf_page": 46,
+      "matched_node_id": "middle/grade-1/science/n87",
+      "match_score": 0.54,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: قوانين نيوتن للحركة",
+      "printed_page": 52,
+      "pdf_page": 52,
+      "matched_node_id": "middle/grade-1/science/n88",
+      "match_score": 0.71,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٣: الشغل والآلات البسيطة",
+      "printed_page": 62,
+      "pdf_page": 62,
+      "matched_node_id": "middle/grade-1/science/n89",
+      "match_score": 0.77,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: شعار وزارة التعليم]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.09,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "فهرس",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 70,
+      "pdf_page": 70,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 73,
+      "pdf_page": 73,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 74,
+      "pdf_page": 74,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار مقنن",
+      "printed_page": 76,
+      "pdf_page": 76,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    },
+    {
+      "level": "unit",
+      "title": "الوحدة ٢ طبيعة المادة",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.24,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٣ المادة وتغيراتها",
+      "printed_page": 80,
+      "pdf_page": 80,
+      "matched_node_id": "middle/grade-1/science/n100",
+      "match_score": 0.74,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – مراقبة التعلم",
+      "printed_page": 82,
+      "pdf_page": 82,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: الخواص والتغيرات الفيزيائية",
+      "printed_page": 84,
+      "pdf_page": 84,
+      "matched_node_id": "middle/grade-1/science/n90",
+      "match_score": 0.81,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: الخواص والتغيرات الكيميائية",
+      "printed_page": 91,
+      "pdf_page": 91,
+      "matched_node_id": "middle/grade-1/science/n91",
+      "match_score": 0.81,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 96,
+      "pdf_page": 96,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 99,
+      "pdf_page": 99,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 100,
+      "pdf_page": 100,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: شعار وزارة التعليم]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "فهرس",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٤ الذرات والعناصر والجدول الدوري",
+      "printed_page": 102,
+      "pdf_page": 102,
+      "matched_node_id": "middle/grade-1/science/n101",
+      "match_score": 0.81,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – المفردات الجديدة",
+      "printed_page": 104,
+      "pdf_page": 104,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: تركيب المادة",
+      "printed_page": 106,
+      "pdf_page": 106,
+      "matched_node_id": "middle/grade-1/science/n92",
+      "match_score": 0.68,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: العناصر والمركبات والمخاليط",
+      "printed_page": 111,
+      "pdf_page": 111,
+      "matched_node_id": "middle/grade-1/science/n93",
+      "match_score": 0.8,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 122,
+      "pdf_page": 122,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 125,
+      "pdf_page": 125,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 126,
+      "pdf_page": 126,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار مقنن",
+      "printed_page": 128,
+      "pdf_page": 128,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    },
+    {
+      "level": "unit",
+      "title": "الوحدة ٣ سطح الأرض المتغير",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.2,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٥ الصخور والمعادن",
+      "printed_page": 132,
+      "pdf_page": 132,
+      "matched_node_id": "middle/grade-1/science/n31042",
+      "match_score": 0.73,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – السبب والنتيجة",
+      "printed_page": 134,
+      "pdf_page": 134,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: المعادن – جواهر الأرض",
+      "printed_page": 136,
+      "pdf_page": 136,
+      "matched_node_id": "middle/grade-1/science/n94",
+      "match_score": 0.66,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: شعار وزارة التعليم]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "فهرس",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: أنواع الصخور",
+      "printed_page": 143,
+      "pdf_page": 143,
+      "matched_node_id": "middle/grade-1/science/n95",
+      "match_score": 0.67,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 154,
+      "pdf_page": 154,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 157,
+      "pdf_page": 157,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 158,
+      "pdf_page": 158,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "chapter",
+      "title": "الفصل ٦ القوى المشكلة للأرض",
+      "printed_page": 160,
+      "pdf_page": 160,
+      "matched_node_id": "middle/grade-1/science/n31043",
+      "match_score": 0.73,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "أتهيأ للقراءة – التلخيص",
+      "printed_page": 162,
+      "pdf_page": 162,
+      "matched_node_id": null,
+      "match_score": 0.09,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ١: صفائح الأرض المتحركة",
+      "printed_page": 164,
+      "pdf_page": 164,
+      "matched_node_id": "middle/grade-1/science/n96",
+      "match_score": 0.77,
+      "method": "vision"
+    },
+    {
+      "level": "lesson",
+      "title": "الدرس ٢: التجوية والتعرية وأثرهما",
+      "printed_page": 178,
+      "pdf_page": 178,
+      "matched_node_id": null,
+      "match_score": 0.15,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "استقصاء من واقع الحياة",
+      "printed_page": 190,
+      "pdf_page": 190,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل مراجعة الفصل",
+      "printed_page": 193,
+      "pdf_page": 193,
+      "matched_node_id": null,
+      "match_score": 0.1,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مراجعة الفصل",
+      "printed_page": 194,
+      "pdf_page": 194,
+      "matched_node_id": null,
+      "match_score": 0.12,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "اختبار مقنن",
+      "printed_page": 196,
+      "pdf_page": 196,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "مصادر تعليمية للطالب",
+      "printed_page": 200,
+      "pdf_page": 200,
+      "matched_node_id": null,
+      "match_score": 0.07,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "[شكل: شعار وزارة التعليم]",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.08,
+      "method": "vision"
+    }
+  ]
 }

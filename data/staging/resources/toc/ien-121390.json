@@ -1,9 +1,319 @@
 {
   "schema": "toc@1",
   "resource_id": "ien-121390",
-  "toc_status": "not_found",
-  "toc_pages": [],
+  "toc_status": "partial",
+  "toc_pages": [
+    8,
+    9
+  ],
   "page_offset": 0,
-  "run_id": "run-20260926-extract-01",
-  "entries": []
+  "run_id": "run-20260926-extract-02",
+  "entries": [
+    {
+      "level": "other",
+      "title": "رقم الوحدة | ٤ | ٥",
+      "printed_page": 6,
+      "pdf_page": 6,
+      "matched_node_id": null,
+      "match_score": 0.25,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "غلاف الوحدة | الحياة الاجتماعية | البيئة والصحة | حرف وهوايات",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.15,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "دليل الوحدة | ١٣ | ٩٣",
+      "printed_page": 169,
+      "pdf_page": 169,
+      "matched_node_id": null,
+      "match_score": 0.23,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "المدخل | ١٤ | ٩٤",
+      "printed_page": 170,
+      "pdf_page": 170,
+      "matched_node_id": null,
+      "match_score": 0.19,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "نصوص الوحدة | الانطلاق | العنوان | رسالة أم | ماء الشرب | زراعة اللؤلؤ",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n9584",
+      "match_score": 0.41,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٢١ | ٩٧",
+      "printed_page": 172,
+      "pdf_page": 172,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الاستماع | العنوان | البساطة | أماكن الراحة | العمل ثروة",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n9245",
+      "match_score": 0.44,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٦١ | ١٤٢",
+      "printed_page": 221,
+      "pdf_page": 221,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الدعم | العنوان | لمن تبتسم الحياة؟! | فيه شفاء | لذة الإبداع",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n111918",
+      "match_score": 0.41,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٦٦ | ١٤٦",
+      "printed_page": 225,
+      "pdf_page": 225,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الشعري | العنوان | الشمعة | الرياضة | من أغاني الرعاة",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n9593",
+      "match_score": 0.5,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٧٨ | ١٥٥",
+      "printed_page": 232,
+      "pdf_page": 232,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الإثرائي | العنوان | مجتمعان | ورد الطائف | الحِرَف اليدوية في العالم العربي",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n9594",
+      "match_score": 0.55,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٨٤ | ١٦٠",
+      "printed_page": 237,
+      "pdf_page": 237,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التنمية القرائية | ٢٣ | ٩٩",
+      "printed_page": 175,
+      "pdf_page": 175,
+      "matched_node_id": "middle/grade-1/arabic/n4327",
+      "match_score": 0.65,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "وزارة التعليم",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "Ministry of Education",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الدروس اللغوية | الصنف اللغوي | العنوان | المعرب والمبني من الأسماء- الضمائر |",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n111910",
+      "match_score": 0.7,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٢٩،٧٤ | ١٠٥",
+      "printed_page": 183,
+      "pdf_page": 183,
+      "matched_node_id": null,
+      "match_score": 0.03,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الوظيفة النحوية | العنوان | الجر بحرف الجر | الجر بالإضافة | رفع الفعل المضارع",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n9239",
+      "match_score": 0.49,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٣٣ | ١١٢",
+      "printed_page": 188,
+      "pdf_page": 188,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الأسلوب اللغوي | العنوان | النهي | الجملة الاسمية المثبتة | الجملة الفعلية",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n9587",
+      "match_score": 0.67,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٣٩ | ١٢١",
+      "printed_page": 196,
+      "pdf_page": 196,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الرسم الإملائي | العنوان | ١-رسم الأسماء المبدوءة باللام بعد دخول (ال) الشمسية",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.21,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٤١ | ١٢٤",
+      "printed_page": 200,
+      "pdf_page": 200,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "الرسم الكتابي | العنوان | كتابة الواو بخط الرقعة | كتابة (الدال، الذال) بخط",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n111914",
+      "match_score": 0.65,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٤٩ | ١٣٢",
+      "printed_page": 209,
+      "pdf_page": 209,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التواصل اللغوي | التواصل الشفهي | العنوان | إدارة ندوة مصغرة | إلقاء خطبة |",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n125510",
+      "match_score": 0.66,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٥٢ | ١٣٤",
+      "printed_page": 211,
+      "pdf_page": 211,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "التواصل الكتابي | العنوان | كتابة رسائل شخصية | كتابة رسائل شخصية | التلخيص",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": "middle/grade-1/arabic/n111916",
+      "match_score": 0.59,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "ص | ٥٧ | ١٣٨",
+      "printed_page": 216,
+      "pdf_page": 216,
+      "matched_node_id": null,
+      "match_score": 0.04,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "نماذج الاختبارات | نموذج اختبار (٤) | نموذج اختبار (٥) | نموذج اختبار (٦)",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.11,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "وزارة التعليم",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0.14,
+      "method": "vision"
+    },
+    {
+      "level": "other",
+      "title": "Ministry of Education",
+      "printed_page": null,
+      "pdf_page": null,
+      "matched_node_id": null,
+      "match_score": 0,
+      "method": "vision"
+    }
+  ]
 }

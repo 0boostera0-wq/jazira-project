@@ -10,7 +10,7 @@ import {
 } from "../../scripts/content/lib/checks.mjs";
 import { parseUnit, sameDimension, unitsAfterNumbers } from "../../scripts/content/lib/units.mjs";
 import {
-  attachRecord, bumpRevision, checkContext, checkBank, evidenceRows, evidenceStore, loadStaging, main as checkMain, recordsFor, rehash,
+  attachRecord, bumpRevision, checkContext, checkBank, evidenceRows, evidenceStore, latestRecord, loadStaging, main as checkMain, recordsFor, rehash,
 } from "../../scripts/content/check-questions.mjs";
 import { ingestCandidate, ingestLines, opaqueIds, main as ingestMain } from "../../scripts/content/ingest-candidates.mjs";
 import { buildGenPacket, buildValidationPackets, buildEvidencePacket, buildPrepPacket, allocate, main as packetsMain } from "../../scripts/content/make-packets.mjs";
@@ -244,6 +244,58 @@ describe("Appendix B — every code has a passing and a failing fixture", () => 
   }
 });
 
+describe("L002 tatweel and N002 mixed-number options", () => {
+  it("allows tatweel on single-letter labels, the Hijri year and detached prefixes, never inside a word", () => {
+    const l002 = (stem) => {
+      const { q, ctx } = ok();
+      q.stem = stem;
+      return runCheck("L002", q, ctx).result;
+    };
+    expect(l002("في المثلث أ ب جـ، ما ق∠جـ؟")).toBe("pass");
+    expect(l002("إذا كان △ أ ب جـ ~ △ د هـ و، فما طول هـ و؟")).toBe("pass");
+    expect(l002("في عام 1445هـ، كم عدد الطلاب؟")).toBe("pass");
+    expect(l002("استعمل 3.14 قيمةً تقريبية لـ ط، فما المحيط؟")).toBe("pass");
+    expect(l002("ما الـحساب الصحيح؟")).toBe("fail");
+    expect(l002("مـحمد يقرأ، فما عدد الصفحات؟")).toBe("fail");
+    expect(l002("ما قيمة جــ؟")).toBe("fail");
+  });
+
+  it("reads a mixed-number answer option («3 3/16») as its exact value", () => {
+    const { q, ctx } = ok();
+    q.item_style = "computation";
+    q.computation = { expr: "a/b", vars: { a: 51, b: 16 } };
+    q.payload.options[0].text = "3 3/16";
+    q.payload.answer.option_id = q.payload.options[0].id;
+    expect(runCheck("N002", q, ctx).result).toBe("pass");
+    q.payload.options[0].text = "3 5/16";
+    expect(runCheck("N002", q, ctx).result).toBe("fail");
+    q.computation = { expr: "-a/b", vars: { a: 3, b: 2 } };
+    q.payload.options[0].text = "−1 1/2";
+    expect(runCheck("N002", q, ctx).result).toBe("pass");
+  });
+
+  it("reads customary units, rates and count nouns after the number", () => {
+    const { q, ctx } = ok();
+    q.item_style = "computation";
+    q.payload.answer.option_id = q.payload.options[0].id;
+    const shows = (text, expr, vars) => {
+      q.computation = { expr, vars };
+      q.payload.options[0].text = text;
+      return runCheck("N002", q, ctx).result;
+    };
+    expect(shows("180 بوصة", "a*b", { a: 15, b: 12 })).toBe("pass");
+    expect(shows("7.5 أميال", "a*b/c", { a: 2200, b: 6, c: 1760 })).toBe("pass");
+    expect(shows("30 ريالًا / ساعة", "a/b", { a: 960, b: 32 })).toBe("pass");
+    expect(shows("6 مثلثات", "n-2", { n: 8 })).toBe("pass");
+    expect(shows("35 كوبًا", "b*c/(a+b)", { a: 2, b: 7, c: 45 })).toBe("pass");
+    expect(shows("36 كوبًا", "b*c/(a+b)", { a: 2, b: 7, c: 45 })).toBe("fail");
+    expect(shows("3 من 5", "a", { a: 3 })).toBe("fail"); // not a number + unit or count noun
+    expect(parseUnit("ياردة")).toEqual({ key: "yd", dimension: "length" });
+    expect(parseUnit("ريالًا / ساعة")).toEqual({ key: "sar/h", dimension: "currency/time" });
+    expect(sameDimension("قدم", "سم")).toBe(true);
+  });
+});
+
 describe("check outcomes", () => {
   it("routes P006 and V001 failures to review, other failures to rejection", () => {
     const { q, ctx } = ok();
@@ -273,6 +325,25 @@ describe("check outcomes", () => {
     expect(r).toMatchObject({ result: "warn", review: true });
     expect(r.detail).toMatch(/^not_checked/);
     expect(runChecks(q, ctx).outcome).toBe("review");
+  });
+
+  it("E001 warns (not rejects) on a miss in a repaired text layer; a miss in a transcript still fails", () => {
+    const { q, ctx } = ok();
+    const quote = "الأعداد الموجبة تكتب مسبوقة بإشارة (+) أو بدونها";
+    q.provenance.origin = "transformed";
+    q.source.evidence = [{ pdf_page: 14, quote_sha256: sha256Hex(quote), char_offsets: [0, 0], quote_kind: "fact" }];
+    ctx.evidence = () => [{ pdf_page: 14, quote_sha256: sha256Hex(quote), quote_kind: "fact", quote }];
+    const page = (method, quality) => ({ get: () => ({ text: "اأعداد سحيحة وتكتب مسبوقة باإسارة (+) اأو بدونها", method, quality, readable: true, image: null, image_exists: false }) });
+    ctx.pages = page("text", "repaired");
+    const r = runCheck("E001", q, ctx);
+    expect(r.result).toBe("warn");
+    expect(r.detail).toMatch(/repaired text layer/);
+    expect(isHighRisk(q, [r])).toBe(true); // → the evidence extractor reads the image
+    expect(runChecks(q, ctx).failed).not.toContain("E001");
+    ctx.pages = page("vision", "ok");
+    expect(runCheck("E001", q, ctx).result).toBe("fail");
+    ctx.pages = page("text", "ok");
+    expect(runCheck("E001", q, ctx).result).toBe("fail");
   });
 
   it("P004 is a char-5-gram check with permitted quote kinds and not_checked on unread pages", () => {
@@ -539,6 +610,17 @@ describe("ingest-candidates → check-questions (CLI)", () => {
     // rerun is a no-op: already-checked revisions are skipped
     expect(await checkMain(["--run", "run-20260928-check-02", "--staging", stg, "--cache", cache, "--baseline", "none"], quiet)).toBe(0);
     expect(JSON.parse(readFileSync(join(stg, "validation/runs/run-20260928-check-02.json"), "utf8")).counts.checked).toBe(0);
+    // a re-check (--all) that now passes lifts an earlier deterministic rejection or review
+    const b2 = loadStaging(stg);
+    const q = b2.questions.get(by.mcq.id);
+    q.status = "review_required";
+    b2.reviewQueue.push({ schema: "review-queue@1", question_id: q.id, revision: q.revision, reason: "deterministic: E001", record_ids: [], queued_at: "2026-09-28T09:00:00Z" });
+    const { outcomes } = checkBank(b2, { runId: "run-20260928-check-03", now: "2026-09-28T10:00:00Z", ids: [q.id], all: true, catalog, pages, evidence: evidenceStore(cache) });
+    expect(outcomes[0].outcome).toBe("pass");
+    expect(q).toMatchObject({ status: "candidate", validation: { status: "structural_pass" } });
+    expect(b2.reviewQueue.some((r) => r.question_id === q.id)).toBe(false);
+    // the newest deterministic record describes the item (not the first one)
+    expect(latestRecord(b2, q, "deterministic").run_id).toBe("run-20260928-check-03");
   });
 
   it("P006 fails an item without an explanation", () => {

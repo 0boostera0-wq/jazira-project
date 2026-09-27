@@ -1,0 +1,26 @@
+{
+  "schema": "run-manifest@1",
+  "run_id": "run-20260927-check-01",
+  "kind": "check",
+  "tool": "check-questions@1",
+  "checked_at": "2026-09-27T10:05:40Z",
+  "inputs": {
+    "question_ids_sha256": "0ea14ede6fd754df20bf0601573a8fca870697b7f396eea6d3576250ad3c4641",
+    "cache": "content-cache"
+  },
+  "counts": {
+    "checked": 75,
+    "pass": 61,
+    "warn": 7,
+    "rejected": 5,
+    "review_required": 2,
+    "fixed": 0,
+    "high_risk": 37
+  },
+  "failures": {
+    "O008": 3,
+    "P006": 3,
+    "N003": 1,
+    "P005": 1
+  }
+}
